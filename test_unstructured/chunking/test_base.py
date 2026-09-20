@@ -352,6 +352,21 @@ class DescribeTextSplitterTokenMode:
         """Skip test if tiktoken is not installed."""
         pytest.importorskip("tiktoken")
 
+    def it_makes_progress_when_one_code_point_exceeds_the_token_budget(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        opts = ChunkingOptions(max_tokens=1, tokenizer="unused-by-fake-measure")
+        monkeypatch.setattr(
+            ChunkingOptions,
+            "measure",
+            lambda _self, text: 0 if not text else (2 if text.startswith("🫠") else len(text)),
+        )
+
+        fragment, remainder = _TextSplitter(opts)("🫠a")
+
+        assert fragment == "🫠"
+        assert remainder == "a"
+
     def it_returns_text_unchanged_when_under_token_limit(self, _tiktoken_installed: None):
         opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base")
         split = _TextSplitter(opts)
@@ -3310,6 +3325,46 @@ class Describe_TableChunker:
 
 class Describe_HtmlTableSplitter:
     """Unit-test suite for `unstructured.chunking.base._HtmlTableSplitter`."""
+
+    def it_makes_progress_when_a_token_splitter_cannot_consume_the_next_code_point(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        html_table = HtmlTable.from_html_text("<table><tr><td>a🫠z</td></tr></table>")
+        splitter = _HtmlTableSplitter(
+            html_table, ChunkingOptions(max_tokens=12, tokenizer="cl100k_base")
+        )
+        cell = next(next(html_table.iter_rows()).iter_cells())
+
+        def fake_split(_self: _TextSplitter, text: str) -> tuple[str, str]:
+            return {
+                "a🫠z": ("a", "🫠z"),
+                "🫠z": ("", "🫠z"),
+                "z": ("z", ""),
+            }[text]
+
+        monkeypatch.setattr(_TextSplitter, "__call__", fake_split)
+
+        splits = list(splitter._iter_cell_splits(cell, maxlen=12))
+
+        assert [text for text, _html in splits] == ["a", "🫠", "z"]
+
+    def it_disables_repeated_headers_that_force_one_code_point_token_fragments(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        html_table = HtmlTable.from_html_text(
+            "<table><tr><th>1234567</th></tr><tr><td>🫠🫠🫠🫠🫠</td></tr></table>"
+        )
+        opts = ChunkingOptions(max_tokens=20, tokenizer="unused-by-fake-measure")
+        monkeypatch.setattr(
+            ChunkingOptions,
+            "measure",
+            lambda _self, text: sum(3 if char == "🫠" else 1 for char in text),
+        )
+
+        splitter = _HtmlTableSplitter(html_table, opts, header_row_count=1)
+
+        assert splitter._would_starve_oversized_body_cell is True
+        assert splitter.carried_over_header_row_count == 0
 
     def it_splits_an_HTML_table_on_whole_row_boundaries_when_possible(self):
         opts = ChunkingOptions(max_characters=(40))

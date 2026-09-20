@@ -1535,11 +1535,14 @@ class _HtmlTableSplitter:
             )
             split = _TextSplitter(opts)
 
-            text, remainder = split(cell.text)
-            yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
-
+            remainder = cell.text
             while remainder:
+                prior_remainder = remainder
                 text, remainder = split(remainder)
+                if not text or len(remainder) >= len(prior_remainder):
+                    # A single code point can exceed a very small token budget. Preserve it
+                    # intact and accept the unavoidable overflow so this loop always advances.
+                    text, remainder = prior_remainder[:1], prior_remainder[1:].lstrip()
                 yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
             return
 
@@ -1672,9 +1675,6 @@ class _HtmlTableSplitter:
     def _would_starve_oversized_body_cell(self) -> bool:
         """True when repetition would leave no usable split budget for an oversized body cell."""
         maxlen = max(1, self._opts.hard_max - self._header_text_len - 1)
-        if self._opts.use_token_counting and maxlen > 11:
-            return False
-
         if self._header_text_len > maxlen and any(
             idx < self._header_row_count for idx in self._reduced_budget_header_row_idxs
         ):
@@ -1697,6 +1697,9 @@ class _HtmlTableSplitter:
                     continue
                 if self._opts.use_token_counting:
                     if maxlen <= 11:
+                        return True
+                    split_budget = max(1, maxlen - 10)
+                    if any(self._opts.measure(char) > split_budget for char in set(cell.text)):
                         return True
                     continue
                 probe = (
@@ -1965,7 +1968,9 @@ class _TextSplitter:
 
         # -- fallback: split on whitespace boundary using binary search to find token limit --
         # -- find the approximate character position that corresponds to maxlen tokens --
-        low, high = 0, len(s)
+        # -- Position zero cannot make progress. If even the first code point exceeds the token
+        # -- budget, retain `best_pos == 1` and tolerate that indivisible overflow.
+        low, high = 1, len(s)
         best_pos = max(overlap + 1, 1)  # -- minimum viable position --
 
         while low <= high:
