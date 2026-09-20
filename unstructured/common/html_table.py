@@ -169,7 +169,11 @@ class HtmlTable:
         header_row_idxs = set()
         for idx, tr in enumerate(rows):
             cells = cast("list[HtmlElement]", tr.xpath("./th | ./td"))
-            if tr.getparent().tag == "thead" or (cells and all(cell.tag == "th" for cell in cells)):
+            has_th = any(cell.tag == "th" for cell in cells)
+            has_nonempty_td = any(
+                cell.tag == "td" and bool(cell.text_content().strip()) for cell in cells
+            )
+            if tr.getparent().tag == "thead" or (has_th and not has_nonempty_td):
                 header_row_idxs.add(idx)
         # -- row-group identity is each row's parent element (a `<thead>`/`<tbody>`/`<tfoot>`, or
         # -- the `<table>` itself); captured now since it survives `.drop_tag()` below --
@@ -279,7 +283,7 @@ class HtmlRow:
 
     @property
     def is_header(self) -> bool:
-        """True when this row originated from `<thead>` or contains `<th>` cells."""
+        """True for a `<thead>` row or a row with `<th>` cells and no non-empty `<td>` cells."""
         return self._is_header
 
     @property

@@ -1288,7 +1288,10 @@ class _HtmlTableSplitter:
                 # -- into whatever rows follow in the reassembled table --
                 bounded_row = group[0].row_clipped_to_rows(group_bounds[0])
                 for text, html in self._iter_row_splits(
-                    bounded_row, maxlen=self._maxlen(is_first_chunk)
+                    # -- this generator can yield multiple fragments; size every fragment for
+                    # -- the continuation case because all but its first yield carry headers --
+                    bounded_row,
+                    maxlen=self._maxlen(False),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -1300,7 +1303,10 @@ class _HtmlTableSplitter:
                 # -- like an ordinary oversized row, re-materializing any covered column a
                 # -- fragment boundary separates from the row whose rowspan declares it.
                 for text, html in self._iter_oversized_group_splits(
-                    group, maxlen=self._maxlen(is_first_chunk)
+                    # -- this generator can yield multiple fragments; size every fragment for
+                    # -- the continuation case because all but its first yield carry headers --
+                    group,
+                    maxlen=self._maxlen(False),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -1638,12 +1644,34 @@ class _HtmlTableSplitter:
         if not self._header_rows:
             return False
 
-        # -- guard against pathological headers where one row consumes more than half the window
-        # -- or all repeated rows together leave less than a quarter for continuation content.
+        # -- guard against pathological headers where one row consumes more than half the window,
+        # -- all repeated rows together leave less than a quarter for continuation content, or
+        # -- the remaining window would force an oversized body cell into one-unit fragments.
         return (
             self._max_header_row_len <= (self._opts.hard_max + 1) // 2
             and self._header_text_len <= (3 * self._opts.hard_max) // 4
+            and not self._would_starve_oversized_body_cell
         )
+
+    @cached_property
+    def _would_starve_oversized_body_cell(self) -> bool:
+        """True when repetition would leave no usable split budget for an oversized body cell."""
+        maxlen = max(1, self._opts.hard_max - self._header_text_len - 1)
+        rows = tuple(self._table_element.iter_rows())[self._header_row_count :]
+        for row in rows:
+            for cell in row.iter_cells():
+                if self._opts.measure(cell.text) <= maxlen:
+                    continue
+                if self._opts.use_token_counting:
+                    if maxlen <= 10:
+                        return True
+                    continue
+                empty_fragment_len = len(
+                    f"<table><tr>{_format_td('', cell.colspan, rowspan=1)}</tr></table>"
+                )
+                if maxlen <= empty_fragment_len:
+                    return True
+        return False
 
     @cached_property
     def _max_header_row_len(self) -> int:

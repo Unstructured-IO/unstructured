@@ -1939,10 +1939,10 @@ class Describe_TableChunker:
         assert len(exact_fit_chunks) == 3
         assert exact_fit_chunks[1].text == f"{header_text_prefix}{row_2}"
         assert exact_fit_chunks[2].text == f"{header_text_prefix}{row_3}"
-        assert len(near_boundary_chunks) > len(exact_fit_chunks)
         assert all(len(chunk.text) <= 59 for chunk in near_boundary_chunks)
-        for chunk in near_boundary_chunks[1:]:
-            assert chunk.text.startswith(header_text_prefix)
+        assert [chunk.metadata.num_carried_over_header_rows for chunk in near_boundary_chunks] == [
+            0
+        ] * len(near_boundary_chunks)
 
     def but_it_falls_back_to_non_repeating_behavior_when_header_rows_are_pathologically_large(self):
         pathological_header = "H" * 31
@@ -1984,7 +1984,8 @@ class Describe_TableChunker:
 
         for max_characters, header_a, header_b in (
             (500, "A" * 248, "B" * 249),
-            (60, "A" * 29, "B" * 29),
+            (100, "A" * 37, "B" * 37),
+            (60, "A" * 25, "B" * 25),
         ):
             table_html = (
                 "<table><thead>"
@@ -3746,6 +3747,25 @@ class Describe_HtmlTableSplitter:
         combined_text = " ".join(chunk.text for chunk in chunks)
         for word in ("NW", "Southwest", "Midwest"):
             assert combined_text.count(word) == 1
+
+    def and_it_reserves_repeated_header_space_for_every_oversized_rowspan_fragment(self):
+        html = (
+            "<table><thead>"
+            '<tr><th rowspan="3">HHHHHHHHHHHHHHHHHHHH</th><th>x</th></tr>'
+            "</thead><tbody>"
+            f"<tr><td>{'a' * 30}</td></tr>"
+            f"<tr><td>{'b' * 30}</td></tr>"
+            "</tbody></table>"
+        )
+        table = Table(
+            f"{'H' * 20} x {'a' * 30} {'b' * 30}",
+            metadata=ElementMetadata(text_as_html=html),
+        )
+
+        chunks = chunk_by_title([table], max_characters=60, repeat_table_headers=True)
+
+        assert len(chunks) > 1
+        assert all(len(chunk.text) <= 60 for chunk in chunks)
 
     def and_it_bounds_a_positive_rowspan_whose_own_row_is_oversized_even_alone(self):
         """`Region`'s `rowspan="3"` exactly reaches the table's last row, so it opens a 3-row
