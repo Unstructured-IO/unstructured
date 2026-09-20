@@ -21,6 +21,7 @@ from test_unstructured.unit_utils import (
     example_doc_text,
     function_mock,
 )
+from unstructured.chunking.dispatch import reconstruct_table_from_chunks
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
@@ -1267,6 +1268,26 @@ def test_partition_html_applies_text_as_html_metadata_for_tables(
 
     assert len(elements) == 1
     assert elements[0].metadata.text_as_html == expected_value
+
+
+def test_partition_html_reconstructs_wrapped_repeated_headers_without_duplication():
+    html_text = (
+        "<table><thead><tr><th>foo \nbar</th></tr></thead><tbody>"
+        + "".join(f"<tr><td>body row {i} with enough text to split</td></tr>" for i in range(6))
+        + "</tbody></table>"
+    )
+
+    chunks = partition_html(
+        text=html_text,
+        chunking_strategy="by_title",
+        max_characters=60,
+        combine_text_under_n_chars=0,
+    )
+    [table] = reconstruct_table_from_chunks(chunks)
+
+    assert table.text.count("foo bar") == 1
+    assert table.metadata.text_as_html is not None
+    assert " ".join(etree.HTML(table.metadata.text_as_html).itertext()).split().count("foo") == 1
 
 
 # -- .metadata.url -------------------------------------------------------------------------------

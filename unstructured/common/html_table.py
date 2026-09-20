@@ -21,6 +21,22 @@ if TYPE_CHECKING:
 SpannedCell: TypeAlias = "tuple[str, int, int]"
 
 
+def normalize_html_cell_text(cell: HtmlElement) -> str:
+    """Return normalized cell text, treating a ``<br>`` as a word boundary.
+
+    ``lxml.text_content()`` does not consistently insert whitespace for a line break; whether a
+    space survives can depend on incidental source whitespace around the tag. Normalize that
+    semantic boundary explicitly so compactified and source-preserving table HTML agree.
+    """
+    if next(cell.iterdescendants("br"), None) is None:
+        return " ".join(cell.text_content().split())
+
+    normalized_cell = copy.deepcopy(cell)
+    for br in normalized_cell.xpath(".//br"):
+        br.tail = f" {br.tail or ''}"
+    return " ".join(normalized_cell.text_content().split())
+
+
 def _format_td(cell_text: str, colspan: int = 1, rowspan: int = 1) -> str:
     """Format a single `<td>` element, escaping and normalizing `cell_text`.
 
@@ -310,7 +326,7 @@ class HtmlRow:
         A cell that is empty or contains only whitespace does not generate a string.
         """
         for td in self._tr:
-            text = " ".join(td.text_content().split())
+            text = normalize_html_cell_text(td)
             if not text:
                 continue
             yield text
@@ -385,7 +401,7 @@ class HtmlCell:
     @cached_property
     def text(self) -> str:
         """Text inside `<td>` element, empty string when no text."""
-        return " ".join(self._td.text_content().split())
+        return normalize_html_cell_text(self._td)
 
     @cached_property
     def rowspan(self) -> int | None:

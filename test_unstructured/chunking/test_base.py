@@ -1608,6 +1608,9 @@ class Describe_TableChunker:
         ]
         assert continuation_table.xpath("./thead/tr[1]/td") == []
 
+        [reconstructed] = reconstruct_table_from_chunks(chunks)
+        assert reconstructed.text.count("Nested") == 1
+
     def and_it_preserves_non_text_only_carried_header_cells(self):
         table_html = (
             "<table>"
@@ -2122,6 +2125,135 @@ class Describe_TableChunker:
         assert [c.metadata.num_carried_over_header_rows for c in repeated_header_chunks] == [
             0
         ] * len(repeated_header_chunks)
+
+    @pytest.mark.parametrize("rowspan", ["5", "0"])
+    def and_it_does_not_starve_header_rows_covered_by_an_incoming_rowspan(self, rowspan: str):
+        header_a = "H"
+        header_b = "A" * 35
+        header_c = "B" * 35
+        body_a = "x" * 20
+        body_b = "y" * 20
+        table_html = (
+            "<table>"
+            f'<tr><th rowspan="{rowspan}">{header_a}</th></tr>'
+            f"<tr><th>{header_b}</th></tr><tr><th>{header_c}</th></tr>"
+            f"<tr><td>{body_a}</td></tr><tr><td>{body_b}</td></tr>"
+            "</table>"
+        )
+        table_text = " ".join((header_a, header_b, header_c, body_a, body_b))
+
+        repeated_header_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=100,
+            repeat_table_headers=True,
+        )
+        baseline_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=100,
+            repeat_table_headers=False,
+        )
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
+            (c.text, c.metadata.text_as_html) for c in baseline_chunks
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated_header_chunks] == [
+            0
+        ] * len(repeated_header_chunks)
+
+    @pytest.mark.parametrize("reduced_budget", range(39, 45))
+    def and_it_requires_room_for_two_maximally_escaped_characters(self, reduced_budget: int):
+        max_characters = 160
+        header_a = "A" * 59
+        header_b = "B" * (max_characters - reduced_budget - 61)
+        body = "'" * 1_000
+        table_html = (
+            "<table><thead>"
+            f"<tr><th>{header_a}</th></tr><tr><th>{header_b}</th></tr>"
+            f"</thead><tbody><tr><td>{html_stdlib.escape(body)}</td></tr></tbody></table>"
+        )
+        table_text = f"{header_a} {header_b} {body}"
+
+        repeated_header_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=max_characters,
+            repeat_table_headers=True,
+        )
+        baseline_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=max_characters,
+            repeat_table_headers=False,
+        )
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
+            (c.text, c.metadata.text_as_html) for c in baseline_chunks
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated_header_chunks] == [
+            0
+        ] * len(repeated_header_chunks)
+        assert "".join(c.text for c in repeated_header_chunks).count("'") == len(body)
+
+    def and_it_repeats_headers_when_two_maximally_escaped_characters_fit(self):
+        header_a = "A" * 59
+        header_b = "B" * 54
+        body = "'" * 100
+        chunks = self._table_chunks(
+            table_text=f"{header_a} {header_b} {body}",
+            table_html=(
+                "<table><thead>"
+                f"<tr><th>{header_a}</th></tr><tr><th>{header_b}</th></tr>"
+                f"</thead><tbody><tr><td>{html_stdlib.escape(body)}</td></tr></tbody></table>"
+            ),
+            max_characters=160,
+            repeat_table_headers=True,
+        )
+
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0] + [2] * (
+            len(chunks) - 1
+        )
+        assert all(c.text.count("'") >= 2 for c in chunks[1:])
+
+    def and_it_keeps_repetition_when_a_rowspan_bound_header_group_fits_the_first_chunk(self):
+        header_a = "H"
+        header_b = "A" * 22
+        header_c = "B" * 50
+        body_rows = ["x" * 20, "y" * 20]
+        chunks = self._table_chunks(
+            table_text=" ".join((header_a, header_b, header_c, *body_rows)),
+            table_html=(
+                "<table><thead>"
+                f'<tr><th rowspan="2">{header_a}</th><th>{header_b}</th></tr>'
+                f"<tr><th>{header_c}</th></tr>"
+                "</thead><tbody>"
+                + "".join(f"<tr><td>{text}</td></tr>" for text in body_rows)
+                + "</tbody></table>"
+            ),
+            max_characters=100,
+            repeat_table_headers=True,
+        )
+
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0, 2]
+
+    def and_it_scans_a_singleton_header_after_a_clipped_row_group_flush(self):
+        header_a = "A" * 24
+        header_b = "B" * 50
+        body = "x" * 20
+        table_html = (
+            f'<table><thead><tr><th rowspan="0">{header_a}</th></tr></thead>'
+            f"<tbody><tr><th>{header_b}</th></tr><tr><td>{body}</td></tr></tbody></table>"
+        )
+        table_text = " ".join((header_a, header_b, body))
+
+        repeated = self._table_chunks(table_text, table_html, 100, repeat_table_headers=True)
+        baseline = self._table_chunks(table_text, table_html, 100, repeat_table_headers=False)
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated] == [
+            (c.text, c.metadata.text_as_html) for c in baseline
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
 
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (

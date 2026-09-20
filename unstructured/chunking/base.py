@@ -1665,10 +1665,9 @@ class _HtmlTableSplitter:
             return False
 
         for idx, row in enumerate(self._table_element.iter_rows()):
-            # -- A singleton header row is emitted in the first full-sized chunk. A header row
-            # -- whose rowspan binds later rows can enter the reduced-budget split path, so scan
-            # -- it along with every body row.
-            if idx < self._header_row_count and row.max_rowspan == 1:
+            # -- Header rows only need scanning when the real packing decisions can route their
+            # -- group into a reduced-budget row/cell split. All body rows are scanned.
+            if idx < self._header_row_count and idx not in self._reduced_budget_header_row_idxs:
                 continue
             for cell in row.iter_cells():
                 if self._opts.measure(cell.text) <= maxlen:
@@ -1677,13 +1676,71 @@ class _HtmlTableSplitter:
                     if maxlen <= 11:
                         return True
                     continue
-                one_char_fragment_len = len(
-                    # -- a quote has the longest `html.escape()` spelling of any character --
-                    f"<table><tr>{_format_td(chr(39), cell.colspan, rowspan=1)}</tr></table>"
+                two_char_fragment_len = len(
+                    # -- a quote has the longest `html.escape()` spelling of any character;
+                    # -- require capacity for two so splitting cannot degrade to one character.
+                    f"<table><tr>{_format_td(chr(39) * 2, cell.colspan, rowspan=1)}</tr></table>"
                 )
-                if maxlen <= one_char_fragment_len:
+                if maxlen < two_char_fragment_len:
                     return True
         return False
+
+    @cached_property
+    def _reduced_budget_header_row_idxs(self) -> set[int]:
+        """Header-row indices that can reach row/cell splitting at the reduced budget."""
+        if self._header_row_count <= 0:
+            return set()
+
+        at_risk_idxs: set[int] = set()
+        start_idx = 0
+        is_first_chunk = True
+        accum = _RowAccumulator(maxlen=self._opts.hard_max, measure=self._opts.measure)
+
+        for group, bounds, is_clipped in self._iter_rowspan_bound_row_groups():
+            if start_idx >= self._header_row_count:
+                break
+
+            if (
+                accum.last_row_group_key is not None
+                and group[0].row_group_key is not accum.last_row_group_key
+                and accum.crosses_a_row_group_unsafely_if_extended
+            ):
+                if any(accum.flush()):
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=(
+                        self._opts.hard_max
+                        if is_first_chunk
+                        else max(1, self._opts.hard_max - self._header_text_len - 1)
+                    ),
+                    measure=self._opts.measure,
+                )
+
+            if not accum.will_fit(group):
+                if any(accum.flush()):
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=(
+                        self._opts.hard_max
+                        if is_first_chunk
+                        else max(1, self._opts.hard_max - self._header_text_len - 1)
+                    ),
+                    measure=self._opts.measure,
+                )
+
+            if accum.will_fit(group):
+                accum.add_rows(group, bounds, is_clipped=is_clipped)
+            else:
+                stop_idx = min(start_idx + len(group), self._header_row_count)
+                at_risk_idxs.update(range(start_idx, stop_idx))
+                is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=max(1, self._opts.hard_max - self._header_text_len - 1),
+                    measure=self._opts.measure,
+                )
+
+            start_idx += len(group)
+        return at_risk_idxs
 
     @cached_property
     def _max_header_row_len(self) -> int:

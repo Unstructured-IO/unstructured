@@ -14,7 +14,22 @@ from unstructured.common.html_table import (
     collapse_matrix_of_keyed_cells_to_spans,
     htmlify_matrix_of_cell_texts,
     htmlify_matrix_of_spanned_cell_texts,
+    normalize_html_cell_text,
 )
+
+
+@pytest.mark.parametrize(
+    ("cell_html", "expected"),
+    [
+        ("<td>foo<br/>bar</td>", "foo bar"),
+        ("<td><br/>foo</td>", "foo"),
+        ("<td>foo<br/></td>", "foo"),
+        ("<td><b>foo<br/>bar</b><br/>baz</td>", "foo bar baz"),
+        ("<td><br/></td>", ""),
+    ],
+)
+def test_normalize_html_cell_text(cell_html: str, expected: str):
+    assert normalize_html_cell_text(fragment_fromstring(cell_html)) == expected
 
 
 class Describe_htmlify_matrix_of_cell_texts:

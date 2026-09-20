@@ -19,6 +19,7 @@ from typing_extensions import ParamSpec
 
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
+from unstructured.common.html_table import normalize_html_cell_text
 from unstructured.documents.elements import Element, Table, TableChunk
 from unstructured.utils import get_call_args_applying_defaults
 
@@ -284,7 +285,7 @@ def _leading_row_texts_match(first_chunk_rows: list[Any], carried_rows: list[Any
 
 def _row_text_signature(row: Any) -> tuple[str, ...]:
     """Normalized cell text tuple for a row."""
-    return tuple(" ".join(cell.text_content().split()) for cell in row.iter("td", "th"))
+    return tuple(normalize_html_cell_text(cell) for cell in row.xpath("./td | ./th"))
 
 
 def _strip_carried_over_header_text(chunk: TableChunk) -> str:
@@ -309,7 +310,7 @@ def _strip_carried_over_header_text(chunk: TableChunk) -> str:
     carried_header_text = " ".join(
         text
         for row in rows[:carried_row_count]
-        for text in (" ".join(cell.text_content().split()) for cell in row.iter("td", "th"))
+        for text in (normalize_html_cell_text(cell) for cell in row.xpath("./td | ./th"))
         if text
     )
     if not carried_header_text:
