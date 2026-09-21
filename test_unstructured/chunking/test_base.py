@@ -4499,6 +4499,22 @@ class Describe_CellAccumulator:
 
         assert accum._cells == [cell]
 
+    def it_checks_runs_of_empty_cells_in_constant_measurement_work(self):
+        measured_texts: list[str] = []
+
+        def measure(text: str) -> int:
+            measured_texts.append(text)
+            return len(text)
+
+        accum = _CellAccumulator(maxlen=10, measure=measure)
+        empty_cell = HtmlCell(fragment_fromstring("<td/>"))
+
+        for _ in range(2_000):
+            assert accum.will_fit(empty_cell) is True
+            accum.add_cell(empty_cell)
+
+        assert measured_texts == [""]
+
     @pytest.mark.parametrize(
         ("cell_html", "expected_value"),
         [

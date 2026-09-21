@@ -2114,45 +2114,34 @@ class _CellAccumulator:
         self._maxlen = maxlen
         self._measure = measure
         self._cells: list[HtmlCell] = []
+        self._text = ""
+        self._text_len = self._measure("")
 
     def add_cell(self, cell: HtmlCell) -> None:
         """Add `cell` to this accumulation. Caller is responsible for ensuring it will fit."""
         self._cells.append(cell)
+        if cell.text:
+            self._text = f"{self._text} {cell.text}" if self._text else cell.text
+            self._text_len = self._measure(self._text)
 
     def flush(self) -> Iterator[TextAndHtml]:
         """Generate zero-or-one (text, html) pairs for accumulated sub-sub-table."""
         if not self._cells:
             return
-        text = " ".join(self._iter_cell_texts())
+        text = self._text
         tds_str = "".join(c.html for c in self._cells)
         html = f"<table><tr>{tds_str}</tr></table>"
         self._cells.clear()
+        self._text = ""
+        self._text_len = self._measure("")
         yield text, html
 
     def will_fit(self, cell: HtmlCell) -> bool:
         """True when `cell` will fit within remaining space left by accummulated cells."""
-        texts = [c.text for c in self._cells if c.text]
-        if cell.text:
-            texts.append(cell.text)
-        return self._measure(" ".join(texts)) <= self._maxlen
-
-    def _iter_cell_texts(self) -> Iterator[str]:
-        """Generate contents of each accumulated cell as a separate string.
-
-        A cell that is empty or contains only whitespace does not generate a string.
-        """
-        for cell in self._cells:
-            if not (text := cell.text):
-                continue
-            yield text
-
-    @property
-    def _remaining_space(self) -> int:
-        """Number of characters remaining when text of accumulated cells is joined."""
-        # -- separators are one space (" ") at the end of each cell's text, including last one to
-        # -- account for space before prospective next cell.
-        separators_len = len(self._cells)
-        return self._maxlen - separators_len - sum(len(c.text) for c in self._cells)
+        if not cell.text:
+            return self._text_len <= self._maxlen
+        candidate_text = f"{self._text} {cell.text}" if self._text else cell.text
+        return self._measure(candidate_text) <= self._maxlen
 
 
 class _RowAccumulator:
