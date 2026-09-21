@@ -4339,6 +4339,37 @@ class Describe_HtmlTableSplitter:
 
         assert chunks[0] == ("Region", "<table><tr><td>Region</td></tr></table>")
 
+    @pytest.mark.parametrize("repeat_table_headers", [False, True])
+    def and_it_expires_retained_rowspan_0_coverage_at_its_source_row_group(
+        self, repeat_table_headers: bool
+    ):
+        note = "x" * 60
+        source = (
+            "<table><tbody>"
+            '<tr><td rowspan="3">G</td><td>A</td></tr>'
+            '<tr><td rowspan="0">X</td><td>B</td></tr>'
+            f'<tr><td rowspan="3">{note}</td></tr>'
+            "</tbody><tfoot>"
+            "<tr><td>FOOT</td><td>Y</td></tr>"
+            "<tr><td>TAIL</td><td>Z</td></tr>"
+            "</tfoot></table>"
+        )
+        table = Table(
+            f"G A X B {note} FOOT Y TAIL Z",
+            metadata=ElementMetadata(text_as_html=source),
+        )
+
+        chunks = chunk_by_title(
+            [table], max_characters=50, repeat_table_headers=repeat_table_headers
+        )
+        footer_html = next(
+            chunk.metadata.text_as_html or "" for chunk in chunks if "FOOT" in chunk.text
+        )
+
+        assert ">X<" not in footer_html
+        assert "<tr><td>FOOT</td><td>Y</td></tr>" in footer_html
+        assert "<tr><td>TAIL</td><td>Z</td></tr>" in footer_html
+
     def and_it_bounds_a_singleton_oversized_rows_span_through_chunk_by_title_and_reconstruction(
         self,
     ):

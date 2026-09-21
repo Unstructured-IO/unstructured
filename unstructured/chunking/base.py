@@ -1401,6 +1401,7 @@ class _HtmlTableSplitter:
         across fragments, the accepted trade-off for honoring the hard size limit.
         """
         n = len(group)
+        group_last_idx = self._group_last_idx(group)
         active: list[_OpenSpan] = []
         fragment_cells: list[list[str]] = []
         fragment_texts: list[list[str]] = []
@@ -1431,11 +1432,17 @@ class _HtmlTableSplitter:
                 if own_idx < len(own_cells):
                     cell = own_cells[own_idx]
                     own_idx += 1
-                    cells.append(cell.html)
+                    cells.append(
+                        cell.html
+                        if cell.rowspan is not None
+                        else cell.html_clipped_to_rows(group_last_idx[idx] - idx + 1)
+                    )
                     if cell.text:
                         texts.append(cell.text)
                     cell_reach = (
-                        n - 1 if cell.rowspan is None else min(idx + cell.rowspan - 1, n - 1)
+                        group_last_idx[idx]
+                        if cell.rowspan is None
+                        else min(idx + cell.rowspan - 1, n - 1)
                     )
                     if cell_reach > idx:
                         new_active.append(_OpenSpan(col, cell.colspan, cell.text, cell_reach))
