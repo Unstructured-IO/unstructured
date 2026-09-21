@@ -4370,6 +4370,29 @@ class Describe_HtmlTableSplitter:
         assert "<tr><td>FOOT</td><td>Y</td></tr>" in footer_html
         assert "<tr><td>TAIL</td><td>Z</td></tr>" in footer_html
 
+    def and_it_preserves_many_retained_spans_across_many_fully_covered_empty_rows(self):
+        n_spans = 200
+        n_empty_rows = 200
+        opening_cells = "".join(f'<td rowspan="{n_empty_rows + 2}"/>' for _ in range(n_spans))
+        source = (
+            f"<table><tbody><tr>{opening_cells}<td>G</td></tr>"
+            f"<tr><td>{'x' * 600}</td></tr>" + "<tr/>" * n_empty_rows + "</tbody></table>"
+        )
+        table = Table(f"G {'x' * 600}", metadata=ElementMetadata(text_as_html=source))
+
+        chunks = chunk_by_title(
+            [table],
+            max_characters=500,
+            repeat_table_headers=False,
+            include_orig_elements=False,
+        )
+
+        assert "".join(chunk.text.replace(" ", "") for chunk in chunks) == f"G{'x' * 600}"
+        assert (
+            sum((chunk.metadata.text_as_html or "").count("<tr") for chunk in chunks)
+            >= n_empty_rows + 2
+        )
+
     def and_it_bounds_a_singleton_oversized_rows_span_through_chunk_by_title_and_reconstruction(
         self,
     ):

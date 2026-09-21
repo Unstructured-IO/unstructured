@@ -1407,14 +1407,17 @@ class _HtmlTableSplitter:
         fragment_texts: list[list[str]] = []
 
         def build_row(
-            row: HtmlRow, idx: int, active: list[_OpenSpan], materialize: bool
+            row: HtmlRow,
+            idx: int,
+            active: list[_OpenSpan],
+            materialize: bool,
+            own_cells: Sequence[HtmlCell],
         ) -> tuple[list[str], list[str], list[_OpenSpan]]:
             cells: list[str] = []
             texts: list[str] = []
             new_active: list[_OpenSpan] = []
             spans = iter(sorted((s for s in active if s.reach_idx >= idx), key=lambda s: s.col))
             next_span = next(spans, None)
-            own_cells = list(row.iter_cells())
             own_idx = 0
             col = 0
             while True:
@@ -1488,8 +1491,18 @@ class _HtmlTableSplitter:
             yield text, html
 
         for idx, row in enumerate(group):
+            own_cells = list(row.iter_cells())
+            if fragment_cells and not own_cells:
+                # -- A fully covered empty source row adds neither cells nor text to the current
+                # -- fragment. Keep the ordered span state unchanged; the next row that needs it
+                # -- will discard expired spans by index. This avoids O(spans * empty-rows) work.
+                fragment_cells.append([])
+                fragment_texts.append([])
+                continue
             active = [s for s in active if s.reach_idx >= idx]
-            cells, texts, next_active = build_row(row, idx, active, materialize=False)
+            cells, texts, next_active = build_row(
+                row, idx, active, materialize=False, own_cells=own_cells
+            )
             if fragment_cells and fits(texts):
                 fragment_cells.append(cells)
                 fragment_texts.append(texts)
@@ -1498,7 +1511,9 @@ class _HtmlTableSplitter:
 
             yield from flush_fragment()
 
-            mat_cells, mat_texts, mat_active = build_row(row, idx, active, materialize=True)
+            mat_cells, mat_texts, mat_active = build_row(
+                row, idx, active, materialize=True, own_cells=own_cells
+            )
             if self._opts.measure(" ".join(mat_texts)) <= maxlen:
                 fragment_cells, fragment_texts = [mat_cells], [mat_texts]
                 active = mat_active
