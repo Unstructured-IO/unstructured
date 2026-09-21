@@ -1091,11 +1091,7 @@ class _TableChunker:
             header_row_count=header_row_count,
         )
         yield from self._make_table_chunks(
-            _HtmlTableSplitter.iter_subtables(
-                html_table,
-                self._opts,
-                header_row_count=header_row_count,
-            ),
+            splitter._iter_subtables(),
             num_carried_over_header_rows=splitter.carried_over_header_row_count,
         )
 

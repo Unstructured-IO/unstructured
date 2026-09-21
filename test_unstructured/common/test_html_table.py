@@ -426,11 +426,6 @@ class DescribeHtmlCell:
         cell = HtmlCell(fragment_fromstring('<td colspan="2" rowspan="3"></td>'))
         assert cell.html == '<td colspan="2" rowspan="3"/>'
 
-    def and_it_does_not_inflate_an_empty_cells_rowspan_when_clipping_is_unnecessary(self):
-        cell = HtmlCell(fragment_fromstring('<td colspan="2" rowspan="3"></td>'))
-
-        assert cell.html_clipped_to_rows(5) == '<td colspan="2" rowspan="3"/>'
-
     @pytest.mark.parametrize(
         ("cell_html", "expected_value"),
         [

@@ -9,8 +9,8 @@
 - **Preserve HTML table header semantics.** The v1 HTML parser now retains `<thead>`, `<tbody>`,
   and `<tfoot>` row groups and preserves `<th>` cells in `Table.metadata.text_as_html`. Table text,
   nested content extraction, and attribute sanitization are unchanged. Chunking now detects and
-  repeats eligible v1 HTML header rows by default; `repeat_table_headers=False` retains the prior
-  non-repeating chunk output.
+  repeats eligible v1 HTML header rows by default; `repeat_table_headers=False` disables header
+  repetition. Split-table chunk text now treats `<br>` as a word boundary for all table sources.
 
 - **Recognize HTML and Markdown loose-list items.** A list item containing a single ordinary text block (such as `<li><p>text</p></li>`) now produces a `ListItem`, preserving inline annotations and list depth. Multi-paragraph items and specialized blocks retain their existing behavior. Resolves #3499.
 
