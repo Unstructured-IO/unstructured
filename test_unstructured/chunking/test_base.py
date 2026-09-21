@@ -4376,7 +4376,7 @@ class Describe_HtmlTableSplitter:
         opening_cells = "".join(f'<td rowspan="{n_empty_rows + 2}"/>' for _ in range(n_spans))
         source = (
             f"<table><tbody><tr>{opening_cells}<td>G</td></tr>"
-            f"<tr><td>{'x' * 600}</td></tr>" + "<tr/>" * n_empty_rows + "</tbody></table>"
+            f"<tr><td>{'x' * 600}</td></tr>" + "<tr><td/></tr>" * n_empty_rows + "</tbody></table>"
         )
         table = Table(f"G {'x' * 600}", metadata=ElementMetadata(text_as_html=source))
 

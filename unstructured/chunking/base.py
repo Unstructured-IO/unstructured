@@ -1492,11 +1492,12 @@ class _HtmlTableSplitter:
 
         for idx, row in enumerate(group):
             own_cells = list(row.iter_cells())
-            if fragment_cells and not own_cells:
-                # -- A fully covered empty source row adds neither cells nor text to the current
-                # -- fragment. Keep the ordered span state unchanged; the next row that needs it
-                # -- will discard expired spans by index. This avoids O(spans * empty-rows) work.
-                fragment_cells.append([])
+            if fragment_cells and all(not cell.text and cell.rowspan == 1 for cell in own_cells):
+                # -- A text-empty source row whose own cells open no spans adds no measured text
+                # -- and cannot change coverage. Preserve its own markup without walking the
+                # -- incoming spans; the next row that needs them discards expirations by index.
+                # -- This avoids O(spans * sparse-rows) work while retaining source structure.
+                fragment_cells.append([cell.html for cell in own_cells])
                 fragment_texts.append([])
                 continue
             active = [s for s in active if s.reach_idx >= idx]
