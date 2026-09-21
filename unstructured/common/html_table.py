@@ -191,7 +191,8 @@ class HtmlTable:
                 for cell in cells[:first_th_idx]
             )
             has_only_th_after_corner = first_th_idx is not None and all(
-                cell.tag == "th" for cell in cells[first_th_idx:]
+                cell.tag == "th" or (cell.tag == "td" and not cell.text_content().strip())
+                for cell in cells[first_th_idx:]
             )
             if tr.getparent().tag == "thead" or (has_blank_corner and has_only_th_after_corner):
                 header_row_idxs.add(idx)

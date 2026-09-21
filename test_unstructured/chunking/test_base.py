@@ -3371,7 +3371,8 @@ class Describe_HtmlTableSplitter:
     ):
         n_body_rows = 100
         html_table = HtmlTable.from_html_text(
-            f'<table><tr><th rowspan="{n_body_rows + 1}">H</th></tr>'
+            f'<table><tr><th rowspan="{n_body_rows + 2}">H</th></tr>'
+            "<tr><th>S</th></tr>"
             + "".join(
                 f'<tr><td rowspan="{n_body_rows - idx}">{"A" * 95}</td></tr>'
                 for idx in range(n_body_rows)
@@ -3386,11 +3387,11 @@ class Describe_HtmlTableSplitter:
 
         monkeypatch.setattr(ChunkingOptions, "measure", measure)
         splitter = _HtmlTableSplitter(
-            html_table, ChunkingOptions(max_characters=500), header_row_count=1
+            html_table, ChunkingOptions(max_characters=500), header_row_count=2
         )
 
-        assert splitter._materialized_row_text_lens == (1,)
-        assert measured_texts == ["H"]
+        assert splitter._materialized_row_text_lens == (1, 3)
+        assert measured_texts == ["H", "H S"]
 
     def it_splits_an_HTML_table_on_whole_row_boundaries_when_possible(self):
         opts = ChunkingOptions(max_characters=(40))
@@ -4514,6 +4515,22 @@ class Describe_CellAccumulator:
             accum.add_cell(empty_cell)
 
         assert measured_texts == [""]
+
+    def and_it_reuses_the_measured_candidate_when_adding_a_cell(self):
+        measured_texts: list[str] = []
+
+        def measure(text: str) -> int:
+            measured_texts.append(text)
+            return len(text)
+
+        accum = _CellAccumulator(maxlen=10, measure=measure)
+        cell = HtmlCell(fragment_fromstring("<td>abc</td>"))
+
+        assert accum.will_fit(cell) is True
+        assert accum.will_fit(cell) is True
+        accum.add_cell(cell)
+
+        assert measured_texts == ["", "abc"]
 
     @pytest.mark.parametrize(
         ("cell_html", "expected_value"),

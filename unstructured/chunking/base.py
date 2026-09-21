@@ -1724,6 +1724,7 @@ class _HtmlTableSplitter:
                 break
             active: list[tuple[int, str]] = []
             n = len(group)
+            row_group_ends = {id(row.row_group_key): idx for idx, row in enumerate(group)}
             for idx, row in enumerate(group):
                 if len(measured) >= self._header_row_count:
                     break
@@ -1733,7 +1734,11 @@ class _HtmlTableSplitter:
                 measured.append(self._opts.measure(" ".join(texts)))
 
                 for cell in row.iter_cells():
-                    reach = n - 1 if cell.rowspan is None else min(idx + cell.rowspan - 1, n - 1)
+                    reach = (
+                        row_group_ends[id(row.row_group_key)]
+                        if cell.rowspan is None
+                        else min(idx + cell.rowspan - 1, n - 1)
+                    )
                     if reach > idx:
                         active.append((reach, cell.text))
 
@@ -2116,13 +2121,21 @@ class _CellAccumulator:
         self._cells: list[HtmlCell] = []
         self._text = ""
         self._text_len = self._measure("")
+        self._pending_cell: HtmlCell | None = None
+        self._pending_text = ""
+        self._pending_text_len = self._text_len
 
     def add_cell(self, cell: HtmlCell) -> None:
         """Add `cell` to this accumulation. Caller is responsible for ensuring it will fit."""
         self._cells.append(cell)
         if cell.text:
-            self._text = f"{self._text} {cell.text}" if self._text else cell.text
-            self._text_len = self._measure(self._text)
+            if self._pending_cell is cell:
+                self._text = self._pending_text
+                self._text_len = self._pending_text_len
+            else:
+                self._text = f"{self._text} {cell.text}" if self._text else cell.text
+                self._text_len = self._measure(self._text)
+        self._pending_cell = None
 
     def flush(self) -> Iterator[TextAndHtml]:
         """Generate zero-or-one (text, html) pairs for accumulated sub-sub-table."""
@@ -2134,14 +2147,20 @@ class _CellAccumulator:
         self._cells.clear()
         self._text = ""
         self._text_len = self._measure("")
+        self._pending_cell = None
         yield text, html
 
     def will_fit(self, cell: HtmlCell) -> bool:
         """True when `cell` will fit within remaining space left by accummulated cells."""
         if not cell.text:
             return self._text_len <= self._maxlen
+        if self._pending_cell is cell:
+            return self._pending_text_len <= self._maxlen
         candidate_text = f"{self._text} {cell.text}" if self._text else cell.text
-        return self._measure(candidate_text) <= self._maxlen
+        self._pending_cell = cell
+        self._pending_text = candidate_text
+        self._pending_text_len = self._measure(candidate_text)
+        return self._pending_text_len <= self._maxlen
 
 
 class _RowAccumulator:

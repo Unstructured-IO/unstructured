@@ -320,7 +320,7 @@ class DescribeHtmlTable:
             True,
             True,
             True,
-            False,
+            True,
             False,
             False,
         ]
