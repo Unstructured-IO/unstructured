@@ -1091,11 +1091,7 @@ class _TableChunker:
             header_row_count=header_row_count,
         )
         yield from self._make_table_chunks(
-            _HtmlTableSplitter.iter_subtables(
-                html_table,
-                self._opts,
-                header_row_count=header_row_count,
-            ),
+            splitter._iter_subtables(),
             num_carried_over_header_rows=splitter.carried_over_header_row_count,
         )
 
@@ -1288,7 +1284,10 @@ class _HtmlTableSplitter:
                 # -- into whatever rows follow in the reassembled table --
                 bounded_row = group[0].row_clipped_to_rows(group_bounds[0])
                 for text, html in self._iter_row_splits(
-                    bounded_row, maxlen=self._maxlen(is_first_chunk)
+                    # -- this generator can yield multiple fragments; size every fragment for
+                    # -- the continuation case because all but its first yield carry headers --
+                    bounded_row,
+                    maxlen=self._maxlen(False),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -1300,7 +1299,10 @@ class _HtmlTableSplitter:
                 # -- like an ordinary oversized row, re-materializing any covered column a
                 # -- fragment boundary separates from the row whose rowspan declares it.
                 for text, html in self._iter_oversized_group_splits(
-                    group, maxlen=self._maxlen(is_first_chunk)
+                    # -- this generator can yield multiple fragments; size every fragment for
+                    # -- the continuation case because all but its first yield carry headers --
+                    group,
+                    maxlen=self._maxlen(False),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -1491,7 +1493,7 @@ class _HtmlTableSplitter:
 
     def _iter_row_splits(self, row: HtmlRow, maxlen: int) -> Iterator[TextAndHtml]:
         """Split oversized row into (text, html) pairs containing as many cells as will fit."""
-        accum = _CellAccumulator(maxlen=maxlen)
+        accum = _CellAccumulator(maxlen=maxlen, measure=self._opts.measure)
 
         for cell in row.iter_cells():
             # -- if cell won't fit, flush and check again --
@@ -1516,11 +1518,14 @@ class _HtmlTableSplitter:
             )
             split = _TextSplitter(opts)
 
-            text, remainder = split(cell.text)
-            yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
-
+            remainder = cell.text
             while remainder:
+                prior_remainder = remainder
                 text, remainder = split(remainder)
+                if not text or len(remainder) >= len(prior_remainder):
+                    # A single code point can exceed a very small token budget. Preserve it
+                    # intact and accept the unavoidable overflow so this loop always advances.
+                    text, remainder = prior_remainder[:1], prior_remainder[1:].lstrip()
                 yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
             return
 
@@ -1638,9 +1643,146 @@ class _HtmlTableSplitter:
         if not self._header_rows:
             return False
 
-        # -- guard against pathological headers where a single repeated header row would consume
-        # -- more than half the chunking window.
-        return self._max_header_row_len <= (self._opts.hard_max + 1) // 2
+        # -- guard against pathological headers where one row consumes more than half the window,
+        # -- all repeated rows together leave less than a quarter for continuation content, the
+        # -- serialized header markup is disproportionate to the window, or the remaining window
+        # -- would force an oversized body cell into one-unit fragments.
+        return (
+            self._max_header_row_len <= (self._opts.hard_max + 1) // 2
+            and self._header_text_len <= (3 * self._opts.hard_max) // 4
+            and self._opts.measure(self._header_rows_html) <= 4 * self._opts.hard_max
+            and not self._would_starve_oversized_body_cell
+        )
+
+    @cached_property
+    def _would_starve_oversized_body_cell(self) -> bool:
+        """True when repetition would leave no usable split budget for an oversized body cell."""
+        maxlen = max(1, self._opts.hard_max - self._header_text_len - 1)
+        if self._header_text_len > maxlen and any(
+            idx < self._header_row_count for idx in self._reduced_budget_header_row_idxs
+        ):
+            return True
+
+        for idx, row in enumerate(self._table_element.iter_rows()):
+            # -- Header rows only need scanning when the real packing decisions can route their
+            # -- group into a reduced-budget row/cell split. All body rows are scanned.
+            if idx < self._header_row_count and idx not in self._reduced_budget_header_row_idxs:
+                continue
+            if idx < self._header_row_count:
+                row_text_len = self._materialized_row_text_lens[idx]
+                if row_text_len <= self._opts.hard_max and row_text_len > maxlen:
+                    # -- The oversized-group splitter reserves header room for every fragment.
+                    # -- Avoid degrading a size-compliant header row for headers the first
+                    # -- fragment would not even carry. --
+                    return True
+            for cell in row.iter_cells():
+                if self._opts.measure(cell.text) <= maxlen:
+                    continue
+                if self._opts.use_token_counting:
+                    if maxlen <= 11:
+                        return True
+                    split_budget = max(1, maxlen - 10)
+                    if any(self._opts.measure(char) > split_budget for char in set(cell.text)):
+                        return True
+                    continue
+                probe = (
+                    f"{chr(39)} {chr(39)}" if any(c.isspace() for c in cell.text) else chr(39) * 2
+                )
+                two_char_fragment_len = len(
+                    # -- a quote has the longest `html.escape()` spelling of any character;
+                    # -- include a normalized separator when the actual cell has whitespace. --
+                    f"<table><tr>{_format_td(probe, cell.colspan, rowspan=1)}</tr></table>"
+                )
+                if maxlen < two_char_fragment_len:
+                    return True
+        return False
+
+    @cached_property
+    def _materialized_row_text_lens(self) -> tuple[int, ...]:
+        """Header-row sizes including text from incoming rowspans materialized at a split."""
+        measured: list[int] = []
+
+        for group, _bounds, _is_clipped in self._iter_rowspan_bound_row_groups():
+            if len(measured) >= self._header_row_count:
+                break
+            active: list[tuple[int, str]] = []
+            n = len(group)
+            row_group_ends = {id(row.row_group_key): idx for idx, row in enumerate(group)}
+            for idx, row in enumerate(group):
+                if len(measured) >= self._header_row_count:
+                    break
+                active = [(reach, text) for reach, text in active if reach >= idx]
+                texts = [text for _reach, text in active if text]
+                texts.extend(row.iter_cell_texts())
+                measured.append(self._opts.measure(" ".join(texts)))
+
+                for cell in row.iter_cells():
+                    reach = (
+                        row_group_ends[id(row.row_group_key)]
+                        if cell.rowspan is None
+                        else min(idx + cell.rowspan - 1, n - 1)
+                    )
+                    if reach > idx:
+                        active.append((reach, cell.text))
+
+        return tuple(measured)
+
+    @cached_property
+    def _reduced_budget_header_row_idxs(self) -> set[int]:
+        """Header-row indices that can reach row/cell splitting at the reduced budget."""
+        if self._header_row_count <= 0:
+            return set()
+
+        at_risk_idxs: set[int] = set()
+        start_idx = 0
+        is_first_chunk = True
+        accum = _RowAccumulator(maxlen=self._opts.hard_max, measure=self._opts.measure)
+
+        for group, bounds, is_clipped in self._iter_rowspan_bound_row_groups():
+            if start_idx >= self._header_row_count:
+                break
+
+            if (
+                accum.last_row_group_key is not None
+                and group[0].row_group_key is not accum.last_row_group_key
+                and accum.crosses_a_row_group_unsafely_if_extended
+            ):
+                if any(accum.flush()):
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=(
+                        self._opts.hard_max
+                        if is_first_chunk
+                        else max(1, self._opts.hard_max - self._header_text_len - 1)
+                    ),
+                    measure=self._opts.measure,
+                )
+
+            if not accum.will_fit(group):
+                if any(accum.flush()):
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=(
+                        self._opts.hard_max
+                        if is_first_chunk
+                        else max(1, self._opts.hard_max - self._header_text_len - 1)
+                    ),
+                    measure=self._opts.measure,
+                )
+
+            if accum.will_fit(group):
+                accum.add_rows(group, bounds, is_clipped=is_clipped)
+            else:
+                stop_idx = min(start_idx + len(group), self._header_row_count)
+                at_risk_idxs.update(range(start_idx, stop_idx))
+                is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=max(1, self._opts.hard_max - self._header_text_len - 1),
+                    measure=self._opts.measure,
+                )
+
+            start_idx += len(group)
+        return at_risk_idxs
 
     @cached_property
     def _max_header_row_len(self) -> int:
@@ -1818,7 +1960,9 @@ class _TextSplitter:
 
         # -- fallback: split on whitespace boundary using binary search to find token limit --
         # -- find the approximate character position that corresponds to maxlen tokens --
-        low, high = 0, len(s)
+        # -- Position zero cannot make progress. If even the first code point exceeds the token
+        # -- budget, retain `best_pos == 1` and tolerate that indivisible overflow.
+        low, high = 1, len(s)
         best_pos = max(overlap + 1, 1)  # -- minimum viable position --
 
         while low <= high:
@@ -1954,45 +2098,56 @@ class _CellAccumulator:
     subtable composed of all those rows that fit in the window.
     """
 
-    def __init__(self, maxlen: int):
+    def __init__(self, maxlen: int, measure: Callable[[str], int] = len):
         self._maxlen = maxlen
+        self._measure = measure
         self._cells: list[HtmlCell] = []
+        self._empty_cell_count = 0
+        self._text = ""
+        self._text_len = self._measure("")
+        self._pending_cell: HtmlCell | None = None
+        self._pending_text = ""
+        self._pending_text_len = self._text_len
 
     def add_cell(self, cell: HtmlCell) -> None:
         """Add `cell` to this accumulation. Caller is responsible for ensuring it will fit."""
         self._cells.append(cell)
+        if cell.text:
+            if self._pending_cell is cell:
+                self._text = self._pending_text
+                self._text_len = self._pending_text_len
+            else:
+                self._text = f"{self._text} {cell.text}" if self._text else cell.text
+                self._text_len = self._measure(self._text)
+        else:
+            self._empty_cell_count += 1
+        self._pending_cell = None
 
     def flush(self) -> Iterator[TextAndHtml]:
         """Generate zero-or-one (text, html) pairs for accumulated sub-sub-table."""
         if not self._cells:
             return
-        text = " ".join(self._iter_cell_texts())
+        text = self._text
         tds_str = "".join(c.html for c in self._cells)
         html = f"<table><tr>{tds_str}</tr></table>"
         self._cells.clear()
+        self._empty_cell_count = 0
+        self._text = ""
+        self._text_len = self._measure("")
+        self._pending_cell = None
         yield text, html
 
     def will_fit(self, cell: HtmlCell) -> bool:
         """True when `cell` will fit within remaining space left by accummulated cells."""
-        return self._remaining_space >= len(cell.text)
-
-    def _iter_cell_texts(self) -> Iterator[str]:
-        """Generate contents of each accumulated cell as a separate string.
-
-        A cell that is empty or contains only whitespace does not generate a string.
-        """
-        for cell in self._cells:
-            if not (text := cell.text):
-                continue
-            yield text
-
-    @property
-    def _remaining_space(self) -> int:
-        """Number of characters remaining when text of accumulated cells is joined."""
-        # -- separators are one space (" ") at the end of each cell's text, including last one to
-        # -- account for space before prospective next cell.
-        separators_len = len(self._cells)
-        return self._maxlen - separators_len - sum(len(c.text) for c in self._cells)
+        if not cell.text:
+            return self._text_len + self._empty_cell_count + 1 <= self._maxlen
+        if self._pending_cell is cell:
+            return self._pending_text_len + self._empty_cell_count <= self._maxlen
+        candidate_text = f"{self._text} {cell.text}" if self._text else cell.text
+        self._pending_cell = cell
+        self._pending_text = candidate_text
+        self._pending_text_len = self._measure(candidate_text)
+        return self._pending_text_len + self._empty_cell_count <= self._maxlen
 
 
 class _RowAccumulator:

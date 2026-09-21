@@ -19,6 +19,7 @@ from typing_extensions import ParamSpec
 
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
+from unstructured.common.html_table import normalize_html_cell_text
 from unstructured.documents.elements import Element, Table, TableChunk
 from unstructured.utils import get_call_args_applying_defaults
 
@@ -252,7 +253,19 @@ def _first_carried_header_rows(chunks: list[TableChunk]) -> tuple[int, list[Any]
         if not _leading_row_texts_match(first_chunk_rows, carried_rows):
             continue
 
-        return carried_row_count, [copy.deepcopy(row) for row in rows[:carried_row_count]]
+        canonical_rows = [copy.deepcopy(row) for row in rows[:carried_row_count]]
+        for original_row, canonical_row in zip(first_chunk_rows, canonical_rows):
+            original_cells = original_row.xpath("./td | ./th")
+            canonical_cells = canonical_row.xpath("./td | ./th")
+            for original_cell, canonical_cell in zip(original_cells, canonical_cells):
+                for attr_name in ("colspan", "rowspan"):
+                    attr_value = original_cell.get(attr_name)
+                    if attr_value is None:
+                        canonical_cell.attrib.pop(attr_name, None)
+                    elif canonical_cell.get(attr_name) != attr_value:
+                        canonical_cell.attrib[attr_name] = attr_value
+
+        return carried_row_count, canonical_rows
 
     return 0, []
 
@@ -284,7 +297,7 @@ def _leading_row_texts_match(first_chunk_rows: list[Any], carried_rows: list[Any
 
 def _row_text_signature(row: Any) -> tuple[str, ...]:
     """Normalized cell text tuple for a row."""
-    return tuple(" ".join(cell.text_content().split()) for cell in row.iter("td", "th"))
+    return tuple(normalize_html_cell_text(cell) for cell in row.xpath("./td | ./th"))
 
 
 def _strip_carried_over_header_text(chunk: TableChunk) -> str:
@@ -309,7 +322,7 @@ def _strip_carried_over_header_text(chunk: TableChunk) -> str:
     carried_header_text = " ".join(
         text
         for row in rows[:carried_row_count]
-        for text in (" ".join(cell.text_content().split()) for cell in row.iter("td", "th"))
+        for text in (normalize_html_cell_text(cell) for cell in row.xpath("./td | ./th"))
         if text
     )
     if not carried_header_text:

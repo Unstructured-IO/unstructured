@@ -6,6 +6,12 @@
 
 ### Fixes
 
+- **Preserve HTML table header semantics.** The v1 HTML parser now retains `<thead>`, `<tbody>`,
+  and `<tfoot>` row groups and preserves `<th>` cells in `Table.metadata.text_as_html`. Table text,
+  nested content extraction, and attribute sanitization are unchanged. Chunking now detects and
+  repeats eligible v1 HTML header rows by default; `repeat_table_headers=False` disables header
+  repetition. Split-table chunk text now treats `<br>` as a word boundary for all table sources.
+
 - **Recognize HTML and Markdown loose-list items.** A list item containing a single ordinary text block (such as `<li><p>text</p></li>`) now produces a `ListItem`, preserving inline annotations and list depth. Multi-paragraph items and specialized blocks retain their existing behavior. Resolves #3499.
 
 - **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
