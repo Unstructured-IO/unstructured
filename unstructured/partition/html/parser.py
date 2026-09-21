@@ -75,6 +75,7 @@ Other background
 
 from __future__ import annotations
 
+import html
 import re
 from collections import defaultdict, deque
 from functools import cached_property
@@ -85,7 +86,6 @@ from lxml import etree
 from typing_extensions import TypeAlias
 
 from unstructured.cleaners.core import clean_bullets
-from unstructured.common.html_table import htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import (
     Address,
     CodeSnippet,
@@ -557,32 +557,60 @@ class TableBlock(Flow):
         # -- for the _cell_ containing the table (and this is recursive, so a table nested within
         # -- a cell within a table within a cell too.)
 
-        trs = cast(list[etree._Element], self.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
+        html_parts = ["<table>"]
+        row_texts: list[str] = []
 
-        if not trs:
-            return
+        def append_row(tr: etree._Element) -> None:
+            """Append the text and sanitized HTML for one recognized table row."""
+            cell_htmls: list[str] = []
+            cell_texts: list[str] = []
 
-        def iter_cell_texts(tr: etree._Element) -> Iterator[str]:
-            """Generate the text of each cell in `tr`."""
-            # -- a cell can be either a "data" cell (td) or a "heading" cell (th) --
-            tds = cast(list[etree._Element], tr.xpath("./td | ./th"))
-            for td in tds:
+            for cell in tr:
+                if cell.tag not in ("th", "td"):
+                    continue
+
                 # -- a cell can contain other elements like spans etc. so we can't count on the
-                # -- text being directly below the `<td>` element. `.itertext()` gets all of it
-                # -- recursively. Filter out whitespace text nodes resulting from HTML formatting.
-                stripped_text_nodes = (t.strip() for t in td.itertext())
-                yield " ".join(t for t in stripped_text_nodes if t)
+                # -- text being directly below the cell. `.itertext()` gets all of it recursively.
+                # -- Filter out whitespace text nodes resulting from HTML formatting.
+                stripped_text_nodes = (t.strip() for t in cell.itertext())
+                cell_text = " ".join(t for t in stripped_text_nodes if t)
+                cell_texts.append(cell_text)
 
-        table_data = [list(iter_cell_texts(tr)) for tr in trs]
-        html_table = htmlify_matrix_of_cell_texts(table_data)
-        table_text = " ".join(" ".join(t for t in row if t) for row in table_data).strip()
+                # -- Reconstruct only the recognized cell tag and escaped text. Source attributes
+                # -- and nested markup are intentionally excluded from this sanitized
+                # -- representation.
+                escaped_text = html.escape(cell_text)
+                cell_body = " ".join("<br/>".join(escaped_text.split("\n")).split())
+                cell_htmls.append(
+                    f"<{cell.tag}>{cell_body}</{cell.tag}>" if cell_body else f"<{cell.tag}/>"
+                )
+
+            # -- Retain an entry for empty rows to preserve the existing plain-text join behavior.
+            row_texts.append(" ".join(t for t in cell_texts if t))
+            if cell_htmls:
+                html_parts.extend(("<tr>", "".join(cell_htmls), "</tr>"))
+
+        for child in self:
+            if child.tag == "tr":
+                append_row(child)
+            elif child.tag in ("thead", "tbody", "tfoot"):
+                html_parts.append(f"<{child.tag}>")
+                for tr in child:
+                    if tr.tag == "tr":
+                        append_row(tr)
+                html_parts.append(f"</{child.tag}>")
+
+        table_text = " ".join(row_texts).strip()
 
         if table_text == "":
             return
 
+        html_parts.append("</table>")
         yield Table(
             table_text,
-            metadata=ElementMetadata(text_as_html=html_table, page_number=self._page_number),
+            metadata=ElementMetadata(
+                text_as_html="".join(html_parts), page_number=self._page_number
+            ),
         )
 
 
