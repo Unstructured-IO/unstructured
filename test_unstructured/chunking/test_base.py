@@ -14,6 +14,7 @@ import pytest
 from lxml.html import fragment_fromstring
 
 import unstructured.chunking.base as chunking_base
+from test_unstructured.unit_utils import Mock
 from unstructured.chunking.base import (
     ChunkingOptions,
     PreChunk,
@@ -823,6 +824,50 @@ class DescribePreChunk:
         next_pre_chunk = PreChunk(
             [Text("In rhoncus sum sed lectus.")],  # len == 26
             overlap_prefix="sectetur adipiscing.",  # len == 20 but shouldn't come into computation
+            opts=opts,
+        )
+
+        assert pre_chunk.can_combine(next_pre_chunk) is expected_value
+
+    @pytest.mark.parametrize(
+        ("max_tokens", "combine_text_under_n_chars", "expected_value"),
+        [
+            # Will exactly fit:
+            # - text = 7 tokens < combine_text_under_n_chars
+            # - pre_chunk + separator + next_pre_chunk_text = 7 + 0 + 5 = 12 <= max_tokens
+            (12, 8, True),
+            # -- already exceeds the combine threshold, which is also counted in tokens --
+            (12, 7, False),
+            # -- would exceed the hard-max chunking-window threshold --
+            (11, 8, False),
+        ],
+    )
+    def it_measures_in_tokens_when_it_can_combine_itself_with_another_PreChunk_instance(
+        self,
+        max_tokens: int,
+        combine_text_under_n_chars: int,
+        expected_value: bool,
+        word_token_counter_: Mock,
+    ):
+        """Both thresholds are token counts in token mode, not character counts.
+
+        Measuring the text in characters here made `.can_combine()` answer `False` for every
+        short pre-chunk, because even a handful of tokens is more characters than the token
+        budget. `chunk_by_title()` then emitted one chunk per section.
+        """
+        opts = ChunkingOptions(
+            max_tokens=max_tokens,
+            tokenizer="cl100k_base",
+            combine_text_under_n_chars=combine_text_under_n_chars,
+        )
+        pre_chunk = PreChunk(
+            [Text("Lorem ipsum dolor sit amet consectetur adipiscing.")],  # -- 7 tokens, 50 chars
+            overlap_prefix="",
+            opts=opts,
+        )
+        next_pre_chunk = PreChunk(
+            [Text("In rhoncus sum sed lectus.")],  # -- 5 tokens, 26 chars
+            overlap_prefix="",
             opts=opts,
         )
 
