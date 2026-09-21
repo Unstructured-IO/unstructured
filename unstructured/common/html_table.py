@@ -402,15 +402,15 @@ class HtmlCell:
     def html_clipped_to_rows(self, max_rowspan: int) -> str:
         """Serialize this cell with any over-reaching rowspan clipped to `max_rowspan`."""
         td = copy.deepcopy(self._td)
-        if self.rowspan is None or self.rowspan > max_rowspan:
+        rowspan = self.rowspan
+        if rowspan is None or rowspan > max_rowspan:
+            rowspan = max_rowspan
             if max_rowspan <= 1:
                 td.attrib.pop("rowspan", None)
             else:
                 td.attrib["rowspan"] = str(max_rowspan)
         return (
-            etree.tostring(td, encoding=str)
-            if self.text
-            else _format_td("", self.colspan, max_rowspan)
+            etree.tostring(td, encoding=str) if self.text else _format_td("", self.colspan, rowspan)
         )
 
     @cached_property
