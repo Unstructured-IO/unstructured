@@ -4449,10 +4449,11 @@ class Describe_CellAccumulator:
         accum = _CellAccumulator(maxlen=10, measure=measure)
         empty_cell = HtmlCell(fragment_fromstring("<td/>"))
 
-        for _ in range(2_000):
+        for _ in range(10):
             assert accum.will_fit(empty_cell) is True
             accum.add_cell(empty_cell)
 
+        assert accum.will_fit(empty_cell) is False
         assert measured_texts == [""]
 
     def and_it_reuses_the_measured_candidate_when_adding_a_cell(self):

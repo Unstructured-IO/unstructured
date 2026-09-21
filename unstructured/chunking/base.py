@@ -2102,6 +2102,7 @@ class _CellAccumulator:
         self._maxlen = maxlen
         self._measure = measure
         self._cells: list[HtmlCell] = []
+        self._empty_cell_count = 0
         self._text = ""
         self._text_len = self._measure("")
         self._pending_cell: HtmlCell | None = None
@@ -2118,6 +2119,8 @@ class _CellAccumulator:
             else:
                 self._text = f"{self._text} {cell.text}" if self._text else cell.text
                 self._text_len = self._measure(self._text)
+        else:
+            self._empty_cell_count += 1
         self._pending_cell = None
 
     def flush(self) -> Iterator[TextAndHtml]:
@@ -2128,6 +2131,7 @@ class _CellAccumulator:
         tds_str = "".join(c.html for c in self._cells)
         html = f"<table><tr>{tds_str}</tr></table>"
         self._cells.clear()
+        self._empty_cell_count = 0
         self._text = ""
         self._text_len = self._measure("")
         self._pending_cell = None
@@ -2136,14 +2140,14 @@ class _CellAccumulator:
     def will_fit(self, cell: HtmlCell) -> bool:
         """True when `cell` will fit within remaining space left by accummulated cells."""
         if not cell.text:
-            return self._text_len <= self._maxlen
+            return self._text_len + self._empty_cell_count + 1 <= self._maxlen
         if self._pending_cell is cell:
-            return self._pending_text_len <= self._maxlen
+            return self._pending_text_len + self._empty_cell_count <= self._maxlen
         candidate_text = f"{self._text} {cell.text}" if self._text else cell.text
         self._pending_cell = cell
         self._pending_text = candidate_text
         self._pending_text_len = self._measure(candidate_text)
-        return self._pending_text_len <= self._maxlen
+        return self._pending_text_len + self._empty_cell_count <= self._maxlen
 
 
 class _RowAccumulator:
