@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import collections
 import copy
+import heapq
 import uuid
 from functools import cached_property
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, NamedTuple, Sequence, cast
@@ -1403,8 +1404,26 @@ class _HtmlTableSplitter:
         n = len(group)
         group_last_idx = self._group_last_idx(group)
         active: list[_OpenSpan] = []
+        active_ids: set[int] = set()
+        expiry_heap: list[tuple[int, int, _OpenSpan]] = []
+        active_is_contiguous = True
+        active_end = 0
         fragment_cells: list[list[str]] = []
         fragment_texts: list[list[str]] = []
+
+        def sync_active_state() -> None:
+            nonlocal active_ids, expiry_heap, active_is_contiguous, active_end
+            active_ids = {id(span) for span in active}
+            expiry_heap = [(span.reach_idx, id(span), span) for span in active]
+            heapq.heapify(expiry_heap)
+            expected_col = 0
+            active_is_contiguous = True
+            for span in active:
+                if span.col != expected_col:
+                    active_is_contiguous = False
+                    break
+                expected_col += span.colspan
+            active_end = expected_col if active_is_contiguous else 0
 
         def build_row(
             row: HtmlRow,
@@ -1416,7 +1435,7 @@ class _HtmlTableSplitter:
             cells: list[str] = []
             texts: list[str] = []
             new_active: list[_OpenSpan] = []
-            spans = iter(sorted((s for s in active if s.reach_idx >= idx), key=lambda s: s.col))
+            spans = iter(active)
             next_span = next(spans, None)
             own_idx = 0
             col = 0
@@ -1492,13 +1511,39 @@ class _HtmlTableSplitter:
 
         for idx, row in enumerate(group):
             own_cells = list(row.iter_cells())
-            if fragment_cells and all(not cell.text and cell.rowspan == 1 for cell in own_cells):
-                # -- A text-empty source row whose own cells open no spans adds no measured text
-                # -- and cannot change coverage. Preserve its own markup without walking the
-                # -- incoming spans; the next row that needs them discards expirations by index.
-                # -- This avoids O(spans * sparse-rows) work while retaining source structure.
+            while active and active[-1].reach_idx < idx:
+                active_ids.discard(id(active.pop()))
+                active_end = active[-1].col + active[-1].colspan if active else 0
+            while expiry_heap and id(expiry_heap[0][2]) not in active_ids:
+                heapq.heappop(expiry_heap)
+            has_internal_expiry = bool(expiry_heap and expiry_heap[0][0] < idx)
+            extends_coverage = all(not cell.text and cell.rowspan != 1 for cell in own_cells)
+            preserves_coverage = all(not cell.text and cell.rowspan == 1 for cell in own_cells)
+            if (
+                fragment_cells
+                and active_is_contiguous
+                and not has_internal_expiry
+                and (extends_coverage or preserves_coverage)
+            ):
+                # -- This text-empty row either preserves coverage or appends spans to a
+                # -- contiguous covered prefix. Update only that suffix instead of rescanning it.
                 fragment_cells.append([cell.html for cell in own_cells])
                 fragment_texts.append([])
+                col = active_end
+                for cell in own_cells:
+                    if cell.rowspan != 1:
+                        reach = (
+                            group_last_idx[idx]
+                            if cell.rowspan is None
+                            else min(idx + cell.rowspan - 1, n - 1)
+                        )
+                        span = _OpenSpan(col, cell.colspan, cell.text, reach)
+                        active.append(span)
+                        active_ids.add(id(span))
+                        heapq.heappush(expiry_heap, (reach, id(span), span))
+                    col += cell.colspan
+                if extends_coverage:
+                    active_end = col
                 continue
             active = [s for s in active if s.reach_idx >= idx]
             cells, texts, next_active = build_row(
@@ -1508,6 +1553,7 @@ class _HtmlTableSplitter:
                 fragment_cells.append(cells)
                 fragment_texts.append(texts)
                 active = next_active
+                sync_active_state()
                 continue
 
             yield from flush_fragment()
@@ -1518,6 +1564,7 @@ class _HtmlTableSplitter:
             if self._opts.measure(" ".join(mat_texts)) <= maxlen:
                 fragment_cells, fragment_texts = [mat_cells], [mat_texts]
                 active = mat_active
+                sync_active_state()
             else:
                 # -- even this single row, with its covered columns materialized, is too big to
                 # -- fit alone; fall back to cell-level splitting, the same tolerance granted an
@@ -1528,6 +1575,7 @@ class _HtmlTableSplitter:
                 # -- retain coverage anchored in an earlier row; only spans declared by the row
                 # -- being degraded to cell-level fragments are discarded --
                 active = [span for span in active if span.reach_idx > idx]
+                sync_active_state()
 
         yield from flush_fragment()
 
