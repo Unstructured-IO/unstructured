@@ -2374,65 +2374,6 @@ class Describe_TableChunker:
         ]
         assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
 
-    def and_it_retains_nonadjacent_incoming_rowspans_across_an_empty_covered_row(self):
-        left = "A" * 20
-        right = "B" * 20
-        middle = "c" * 40
-        last = "z" * 30
-        table_html = (
-            "<table><tbody>"
-            f'<tr><th rowspan="5">{left}</th><th>x</th><th rowspan="4">{right}</th></tr>'
-            f'<tr><td rowspan="2">{middle}</td></tr>'
-            "<tr></tr>"
-            "<tr><td>VALUE</td></tr>"
-            f"<tr><td>{last}</td><td/></tr>"
-            "</tbody></table>"
-        )
-        # -- Repetition leaves a 56-character continuation budget, forcing the middle row into
-        # -- cell splitting and leaving only the non-adjacent incoming spans active on row 3. --
-        chunks = chunk_by_title(
-            [
-                Table(
-                    " ".join((left, "x", right, middle, "VALUE", last)),
-                    metadata=ElementMetadata(text_as_html=table_html),
-                )
-            ],
-            max_characters=100,
-            repeat_table_headers=True,
-        )
-
-        expanded_rows: list[list[str]] = []
-        for chunk in chunks:
-            chunk_html = chunk.metadata.text_as_html
-            assert chunk_html is not None
-            table = fragment_fromstring(chunk_html)
-            active: dict[int, tuple[str, int]] = {}
-            for row in table.xpath("./tr | ./thead/tr | ./tbody/tr"):
-                values: dict[int, str] = {
-                    col: text for col, (text, remaining) in active.items() if remaining > 0
-                }
-                next_active = {
-                    col: (text, remaining - 1)
-                    for col, (text, remaining) in active.items()
-                    if remaining > 1
-                }
-                col = 0
-                for cell in row.xpath("./td | ./th"):
-                    while col in values:
-                        col += 1
-                    text = " ".join(cell.text_content().split())
-                    colspan = int(cell.get("colspan", "1"))
-                    rowspan = int(cell.get("rowspan", "1"))
-                    values[col] = text
-                    if rowspan > 1:
-                        next_active[col] = (text, rowspan - 1)
-                    col += colspan
-                active = next_active
-                expanded_rows.append([values[idx] for idx in sorted(values)])
-
-        assert [left, "VALUE", right] in expanded_rows
-        assert all(len(chunk.text) <= 100 for chunk in chunks)
-
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
             "<table>\n"
@@ -4264,7 +4205,8 @@ class Describe_HtmlTableSplitter:
         assert len(chunks) > 1
         assert all(len(chunk.text) <= 60 for chunk in chunks)
 
-    def and_it_retains_incoming_rowspan_coverage_after_cell_level_splitting(self):
+    def and_it_matches_main_after_cell_splitting_an_oversized_rowspan_group(self):
+        """Incoming spans are discarded after cell fallback, preserving main's limitation."""
         html = (
             "<table><tbody>"
             '<tr><th rowspan="4">HHHHHHHHHHHHHHHHHHHH</th><th>x</th></tr>'
@@ -4284,10 +4226,7 @@ class Describe_HtmlTableSplitter:
         value_chunk = next(chunk for chunk in chunks if "VALUE" in chunk.text)
         value_html = fragment_fromstring(value_chunk.metadata.text_as_html or "")
         value_row = next(row for row in value_html.xpath(".//tr") if "VALUE" in row.text_content())
-        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == [
-            "HHHHHHHHHHHHHHHHHHHH",
-            "VALUE",
-        ]
+        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == ["VALUE"]
 
     def and_it_bounds_a_positive_rowspan_whose_own_row_is_oversized_even_alone(self):
         """`Region`'s `rowspan="3"` exactly reaches the table's last row, so it opens a 3-row
@@ -4338,62 +4277,6 @@ class Describe_HtmlTableSplitter:
         chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
 
         assert chunks[0] == ("Region", "<table><tr><td>Region</td></tr></table>")
-
-    @pytest.mark.parametrize("repeat_table_headers", [False, True])
-    def and_it_expires_retained_rowspan_0_coverage_at_its_source_row_group(
-        self, repeat_table_headers: bool
-    ):
-        note = "x" * 60
-        source = (
-            "<table><tbody>"
-            '<tr><td rowspan="3">G</td><td>A</td></tr>'
-            '<tr><td rowspan="0">X</td><td>B</td></tr>'
-            f'<tr><td rowspan="3">{note}</td></tr>'
-            "</tbody><tfoot>"
-            "<tr><td>FOOT</td><td>Y</td></tr>"
-            "<tr><td>TAIL</td><td>Z</td></tr>"
-            "</tfoot></table>"
-        )
-        table = Table(
-            f"G A X B {note} FOOT Y TAIL Z",
-            metadata=ElementMetadata(text_as_html=source),
-        )
-
-        chunks = chunk_by_title(
-            [table], max_characters=50, repeat_table_headers=repeat_table_headers
-        )
-        footer_html = next(
-            chunk.metadata.text_as_html or "" for chunk in chunks if "FOOT" in chunk.text
-        )
-
-        assert ">X<" not in footer_html
-        assert "<tr><td>FOOT</td><td>Y</td></tr>" in footer_html
-        assert "<tr><td>TAIL</td><td>Z</td></tr>" in footer_html
-
-    def and_it_preserves_many_retained_spans_across_many_fully_covered_empty_rows(self):
-        n_spans = 200
-        n_empty_rows = 200
-        opening_cells = "".join(f'<td rowspan="{n_empty_rows + 2}"/>' for _ in range(n_spans))
-        source = (
-            f"<table><tbody><tr>{opening_cells}<td>G</td></tr>"
-            f"<tr><td>{'x' * 600}</td></tr>"
-            + ('<tr><td rowspan="2"/></tr><tr/>' * (n_empty_rows // 2))
-            + "</tbody></table>"
-        )
-        table = Table(f"G {'x' * 600}", metadata=ElementMetadata(text_as_html=source))
-
-        chunks = chunk_by_title(
-            [table],
-            max_characters=500,
-            repeat_table_headers=False,
-            include_orig_elements=False,
-        )
-
-        assert "".join(chunk.text.replace(" ", "") for chunk in chunks) == f"G{'x' * 600}"
-        assert (
-            sum((chunk.metadata.text_as_html or "").count("<tr") for chunk in chunks)
-            >= n_empty_rows + 2
-        )
 
     def and_it_bounds_a_singleton_oversized_rows_span_through_chunk_by_title_and_reconstruction(
         self,

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import collections
 import copy
-import heapq
 import uuid
 from functools import cached_property
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, NamedTuple, Sequence, cast
@@ -1402,45 +1401,23 @@ class _HtmlTableSplitter:
         across fragments, the accepted trade-off for honoring the hard size limit.
         """
         n = len(group)
-        group_last_idx = self._group_last_idx(group)
         active: list[_OpenSpan] = []
-        active_ids: set[int] = set()
-        expiry_heap: list[tuple[int, int, _OpenSpan]] = []
-        active_is_contiguous = True
-        active_end = 0
         fragment_cells: list[list[str]] = []
         fragment_texts: list[list[str]] = []
 
-        def sync_active_state() -> None:
-            nonlocal active_ids, expiry_heap, active_is_contiguous, active_end
-            active_ids = {id(span) for span in active}
-            expiry_heap = [(span.reach_idx, id(span), span) for span in active]
-            heapq.heapify(expiry_heap)
-            expected_col = 0
-            active_is_contiguous = True
-            for span in active:
-                if span.col != expected_col:
-                    active_is_contiguous = False
-                    break
-                expected_col += span.colspan
-            active_end = expected_col if active_is_contiguous else 0
-
         def build_row(
-            row: HtmlRow,
-            idx: int,
-            active: list[_OpenSpan],
-            materialize: bool,
-            own_cells: Sequence[HtmlCell],
+            row: HtmlRow, idx: int, active: list[_OpenSpan], materialize: bool
         ) -> tuple[list[str], list[str], list[_OpenSpan]]:
             cells: list[str] = []
             texts: list[str] = []
             new_active: list[_OpenSpan] = []
-            spans = iter(active)
+            spans = iter(sorted((s for s in active if s.reach_idx >= idx), key=lambda s: s.col))
             next_span = next(spans, None)
+            own_cells = list(row.iter_cells())
             own_idx = 0
             col = 0
             while True:
-                if next_span is not None and next_span.col <= col:
+                if next_span is not None and next_span.col == col:
                     if materialize:
                         remaining = next_span.reach_idx - idx + 1
                         cells.append(_format_td(next_span.text, next_span.colspan, remaining))
@@ -1454,32 +1431,15 @@ class _HtmlTableSplitter:
                 if own_idx < len(own_cells):
                     cell = own_cells[own_idx]
                     own_idx += 1
-                    cells.append(
-                        cell.html
-                        if cell.rowspan is not None
-                        else cell.html_clipped_to_rows(group_last_idx[idx] - idx + 1)
-                    )
+                    cells.append(cell.html)
                     if cell.text:
                         texts.append(cell.text)
                     cell_reach = (
-                        group_last_idx[idx]
-                        if cell.rowspan is None
-                        else min(idx + cell.rowspan - 1, n - 1)
+                        n - 1 if cell.rowspan is None else min(idx + cell.rowspan - 1, n - 1)
                     )
                     if cell_reach > idx:
                         new_active.append(_OpenSpan(col, cell.colspan, cell.text, cell_reach))
                     col += cell.colspan
-                    continue
-                if next_span is not None:
-                    # -- A row can have no originating cell before a later incoming span (for
-                    # -- example, an empty row fully covered by non-adjacent rowspans). Advance
-                    # -- across that gap rather than dropping the still-live span. When this row
-                    # -- is materialized in a new fragment, emit an empty cell so the later span
-                    # -- retains its original column. --
-                    gap = next_span.col - col
-                    if materialize and gap > 0:
-                        cells.append(_format_td("", colspan=gap, rowspan=1))
-                    col = next_span.col
                     continue
                 break
             return cells, texts, new_active
@@ -1510,61 +1470,20 @@ class _HtmlTableSplitter:
             yield text, html
 
         for idx, row in enumerate(group):
-            own_cells = list(row.iter_cells())
-            while active and active[-1].reach_idx < idx:
-                active_ids.discard(id(active.pop()))
-                active_end = active[-1].col + active[-1].colspan if active else 0
-            while expiry_heap and id(expiry_heap[0][2]) not in active_ids:
-                heapq.heappop(expiry_heap)
-            has_internal_expiry = bool(expiry_heap and expiry_heap[0][0] < idx)
-            extends_coverage = all(not cell.text and cell.rowspan != 1 for cell in own_cells)
-            preserves_coverage = all(not cell.text and cell.rowspan == 1 for cell in own_cells)
-            if (
-                fragment_cells
-                and active_is_contiguous
-                and not has_internal_expiry
-                and (extends_coverage or preserves_coverage)
-            ):
-                # -- This text-empty row either preserves coverage or appends spans to a
-                # -- contiguous covered prefix. Update only that suffix instead of rescanning it.
-                fragment_cells.append([cell.html for cell in own_cells])
-                fragment_texts.append([])
-                col = active_end
-                for cell in own_cells:
-                    if cell.rowspan != 1:
-                        reach = (
-                            group_last_idx[idx]
-                            if cell.rowspan is None
-                            else min(idx + cell.rowspan - 1, n - 1)
-                        )
-                        span = _OpenSpan(col, cell.colspan, cell.text, reach)
-                        active.append(span)
-                        active_ids.add(id(span))
-                        heapq.heappush(expiry_heap, (reach, id(span), span))
-                    col += cell.colspan
-                if extends_coverage:
-                    active_end = col
-                continue
             active = [s for s in active if s.reach_idx >= idx]
-            cells, texts, next_active = build_row(
-                row, idx, active, materialize=False, own_cells=own_cells
-            )
+            cells, texts, next_active = build_row(row, idx, active, materialize=False)
             if fragment_cells and fits(texts):
                 fragment_cells.append(cells)
                 fragment_texts.append(texts)
                 active = next_active
-                sync_active_state()
                 continue
 
             yield from flush_fragment()
 
-            mat_cells, mat_texts, mat_active = build_row(
-                row, idx, active, materialize=True, own_cells=own_cells
-            )
+            mat_cells, mat_texts, mat_active = build_row(row, idx, active, materialize=True)
             if self._opts.measure(" ".join(mat_texts)) <= maxlen:
                 fragment_cells, fragment_texts = [mat_cells], [mat_texts]
                 active = mat_active
-                sync_active_state()
             else:
                 # -- even this single row, with its covered columns materialized, is too big to
                 # -- fit alone; fall back to cell-level splitting, the same tolerance granted an
@@ -1572,10 +1491,7 @@ class _HtmlTableSplitter:
                 tr = _HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(mat_cells)}</tr>")
                 bounded_row = HtmlRow(tr).row_clipped_to_rows(1)
                 yield from self._iter_row_splits(bounded_row, maxlen=maxlen)
-                # -- retain coverage anchored in an earlier row; only spans declared by the row
-                # -- being degraded to cell-level fragments are discarded --
-                active = [span for span in active if span.reach_idx > idx]
-                sync_active_state()
+                active = []
 
         yield from flush_fragment()
 
