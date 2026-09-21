@@ -1,3 +1,9 @@
+## 0.27.32-dev3
+
+### Fixes
+
+- **Token-based `chunk_by_title()` fills the chunking window again.** `PreChunk.can_combine()` sized its text with `len()`, so the `combine_text_under_n_chars` threshold and the hard-max check counted characters even when `max_tokens` selected token counting; every section looked too large to combine and became its own chunk (with `max_tokens=60`, twelve ten-token sections produced twelve chunks instead of two full ones). Both measurements now go through `ChunkingOptions.measure()`, as the rest of the class already does. Character-mode behavior is unchanged.
+
 ## 0.27.32-dev2
 
 ### Enhancements
