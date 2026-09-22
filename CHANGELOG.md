@@ -1,10 +1,12 @@
-## 0.27.8-dev0
+## 0.27.8
 
 ### Enhancements
 
 - **Reuse spaCy results across tokenization helpers.** Cache the processed `Doc` for text up to 8,192 characters so sentence, word, and part-of-speech tokenization run the spaCy pipeline only once per distinct text.
 
 ### Fixes
+
+- **`GLOBAL_WORKING_PROCESS_DIR` no longer crashes on Windows.** Use `os.getpid()` when the POSIX-only `os.getpgid()` is unavailable.
 
 - **Preserve HTML table header semantics.** The v1 HTML parser now retains `<thead>`, `<tbody>`,
   and `<tfoot>` row groups and preserves `<th>` cells in `Table.metadata.text_as_html`. Table text,
