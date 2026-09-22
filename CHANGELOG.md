@@ -1,3 +1,9 @@
+## 0.27.9
+
+### Fixes
+
+- **JSON/NDJSON disambiguation no longer decodes a non-UTF-8 payload with `errors="ignore"`.** `_disambiguate_json_file_type` read the first 1 MiB of the source as bytes and decoded it with the declared encoding (UTF-8 unless the caller asserted otherwise) using `errors="ignore"`, silently stripping every byte that encoding could not decode. A UTF-16 payload — NDJSON written by Windows tooling, or JSON downloaded from an object store — was mangled into text whose lines no longer parsed, so a multi-record payload classified as `FileType.JSON` instead of `FileType.NDJSON`. The read now decodes through the same fallback character-set detection `text_head` uses, shared by both through `_decode_head_bytes()`, for file-like objects and file paths alike.
+
 ## 0.27.8
 
 ### Enhancements
