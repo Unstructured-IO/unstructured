@@ -20,6 +20,7 @@ from test_unstructured.unit_utils import (
     property_mock,
 )
 from unstructured.file_utils.filetype import (
+    _decode_head_bytes,
     _FileTypeDetectionContext,
     _OleFileDetector,
     _TextFileDifferentiator,
@@ -659,6 +660,44 @@ def it_classifies_multiple_json_object_lines_as_NDJSON():
 
 def and_it_classifies_an_arbitrary_ndjson_file_as_NDJSON():
     assert detect_filetype(example_doc_path("arbitrary-records.ndjson")) == FileType.NDJSON
+
+
+def and_it_classifies_a_non_UTF8_ndjson_file_like_object_as_NDJSON():
+    """Regression for #4434: a non-UTF-8 payload must not be decoded with `errors="ignore"`.
+
+    Disambiguation decoded its read using the declared encoding with `errors="ignore"`, which
+    silently stripped every byte UTF-8 could not decode. A UTF-16 payload -- such as NDJSON
+    written by Windows tooling and uploaded to S3/GCS -- was mangled into text whose lines no
+    longer parsed, so a multi-record payload classified as JSON instead of NDJSON.
+    """
+    records = [{"sku": "GRD-8842", "name": "café münchen"}, {"sku": "GRD-1290", "name": "büro"}]
+    ndjson_text = "\n".join(json.dumps(record, ensure_ascii=False) for record in records)
+    payload = ndjson_text.encode("utf-16")
+
+    file_type = detect_filetype(file=io.BytesIO(payload), content_type=FileType.JSON.mime_type)
+
+    assert file_type == FileType.NDJSON
+
+
+def and_it_classifies_a_non_UTF8_json_file_as_NDJSON(tmp_path):
+    # -- a file path is read as bytes for disambiguation just like a file-like object, so it
+    # -- decodes through the same fallback and is no longer misclassified either --
+    records = [{"sku": "GRD-8842"}, {"sku": "GRD-1290"}]
+    payload = "\n".join(json.dumps(record) for record in records).encode("utf-16")
+    json_file = tmp_path / "records.json"
+    json_file.write_bytes(payload)
+
+    file_type = detect_filetype(file_path=str(json_file), content_type=FileType.JSON.mime_type)
+
+    assert file_type == FileType.NDJSON
+
+
+def and_it_decodes_a_non_UTF8_head_without_stripping_its_characters():
+    # -- characters of a non-UTF-8 payload survive the decode used for classification instead
+    # -- of being dropped as undecodable --
+    text = '{"name": "café münchen"}'
+
+    assert _decode_head_bytes(text.encode("cp1252"), encoding="utf-8", eof_reached=True) == text
 
 
 def it_routes_not_unstructured_payload_json_away_from_ndjson_via_detect_filetype():
