@@ -242,7 +242,11 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         combine_text_under_n_chars = self.hard_max if arg_value is None else arg_value
 
         # -- NOTE(abo3losh1): `new_after_n_chars` takes precedence on conflict. A threshold above
-        # -- the soft-max would combine pre-chunks the soft-max has already declared full.
+        # -- the soft-max would combine pre-chunks the soft-max has already declared full. Only in
+        # -- character mode: this threshold is a character count, measured against `len(text)` in
+        # -- `PreChunk.can_combine()`, while `soft_max` is a token count when chunking by tokens.
+        if self.use_token_counting:
+            return combine_text_under_n_chars
         return min(combine_text_under_n_chars, self.soft_max)
 
     @cached_property
