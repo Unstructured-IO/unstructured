@@ -728,6 +728,22 @@ class Describe_ByTitleChunkingOptions:
 
         assert opts.combine_text_under_n_chars == expected_value
 
+    def it_does_not_cap_combine_text_under_n_chars_when_counting_tokens(self):
+        """The cap is a character-mode rule; `soft_max` is a token count in token mode.
+
+        Capping a character threshold at a token count mixes units, so a 50-character
+        combine-threshold would silently become 10 characters under `new_after_n_tokens=10`.
+        """
+        opts = _ByTitleChunkingOptions.new(
+            max_tokens=100,
+            new_after_n_tokens=10,
+            tokenizer="cl100k_base",
+            combine_text_under_n_chars=50,
+        )
+
+        assert opts.soft_max == 10
+        assert opts.combine_text_under_n_chars == 50
+
     def it_does_not_complain_when_specifying_new_after_n_chars_by_itself(self):
         """Caller can specify `new_after_n_chars` arg without specifying any other options."""
         try:
