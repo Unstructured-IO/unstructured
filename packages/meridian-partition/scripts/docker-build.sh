@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+
+# The Dockerfile builds the whole workspace, so the build context is the repository root.
+cd "$(dirname "${BASH_SOURCE[0]}")/../../.."
+
 DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-quay.io/meridian_partition-io/meridian_partition}"
 DOCKER_IMAGE="${DOCKER_IMAGE:-meridian_partition:dev}"
 

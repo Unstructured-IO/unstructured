@@ -133,15 +133,6 @@ dmypy.json
 # pyright (Python LSP/type-checker in VSCode) config
 /pyrightconfig.json
 
-# ingest outputs
-/structured-output
-test_unstructured_ingest/workdir/
-test_unstructured_ingest/delta-table-dest/
-test_unstructured_ingest/skipped-files.txt
-test_unstructured_ingest/chroma-dest/
-
-# suggested ingest mirror directory
-/mirror
 
 ## https://github.com/github/gitignore/blob/main/Global/Emacs.gitignore (partial)
 
@@ -196,7 +187,6 @@ unstructured-inference/sample-docs/*
 .ppm
 unstructured-inference/
 
-example-docs/*_images
 examples/**/output/
 
 outputdiff.txt

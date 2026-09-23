@@ -9,8 +9,8 @@ set -euo pipefail
 # Use current working directory as repo root (where Renovate executes the script)
 # Override these via environment variables if your repo has different paths
 REPO_ROOT="${REPO_ROOT:-$(pwd)}"
-VERSION_FILE="${VERSION_FILE:-$REPO_ROOT/meridian_partition/__version__.py}"
-CHANGELOG_FILE="${CHANGELOG_FILE:-$REPO_ROOT/CHANGELOG.md}"
+VERSION_FILE="${VERSION_FILE:-$REPO_ROOT/packages/meridian-partition/meridian_partition/__version__.py}"
+CHANGELOG_FILE="${CHANGELOG_FILE:-$REPO_ROOT/packages/meridian-partition/CHANGELOG.md}"
 
 echo "=== Renovate Security Version Bump ==="
 
@@ -67,11 +67,11 @@ rm -f "$VERSION_FILE.bak"
 
 # Detect changed packages from git diff (best effort, not critical)
 echo "Detecting changed dependencies..."
-CHANGED_PACKAGES=$(git diff --cached uv.lock pyproject.toml 2>/dev/null | grep -E "^[-+](name|version) = " | sed 's/^[+-]//' | sort -u | head -20 || true)
+CHANGED_PACKAGES=$(git diff --cached uv.lock packages/meridian-partition/pyproject.toml 2>/dev/null | grep -E "^[-+](name|version) = " | sed 's/^[+-]//' | sort -u | head -20 || true)
 
 if [ -z "$CHANGED_PACKAGES" ]; then
   # Try without --cached
-  CHANGED_PACKAGES=$(git diff uv.lock pyproject.toml 2>/dev/null | grep -E "^[-+](name|version) = " | sed 's/^[+-]//' | sort -u | head -20 || true)
+  CHANGED_PACKAGES=$(git diff uv.lock packages/meridian-partition/pyproject.toml 2>/dev/null | grep -E "^[-+](name|version) = " | sed 's/^[+-]//' | sort -u | head -20 || true)
 fi
 
 # Build changelog entry (generic for now, can be manually edited)

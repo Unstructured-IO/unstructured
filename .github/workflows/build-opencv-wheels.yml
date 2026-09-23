@@ -61,7 +61,7 @@ jobs:
             cgr.dev/chainguard/wolfi-base:latest sh -c '
               set -euo pipefail
               # Retry apk install: the chainguard mirror occasionally returns
-              # transient errors mid-install (matches the pattern in meridian_partition/Dockerfile).
+              # transient errors mid-install (matches the pattern in the repository-root Dockerfile).
               apk_ok=false
               for attempt in 1 2 3; do
                 apk update && \

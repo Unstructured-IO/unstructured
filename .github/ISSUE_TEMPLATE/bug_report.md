@@ -20,7 +20,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Environment Info**
-Please run `python scripts/collect_env.py` and paste the output here. 
+Please run `python packages/meridian-partition/scripts/collect_env.py` and paste the output here. 
 This will help us understand more about the environment in which the bug occurred.
 
 **Additional context**

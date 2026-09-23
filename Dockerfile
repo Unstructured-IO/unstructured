@@ -7,9 +7,10 @@ USER root
 WORKDIR /app
 
 COPY pyproject.toml uv.lock README.md ./
-COPY meridian_partition meridian_partition
-COPY test_meridian_partition test_meridian_partition
-COPY example-docs example-docs
+COPY packages/meridian-partition/pyproject.toml packages/meridian-partition/README.md packages/meridian-partition/LICENSE.md packages/meridian-partition/
+COPY packages/meridian-partition/meridian_partition packages/meridian-partition/meridian_partition
+COPY packages/meridian-partition/test_meridian_partition packages/meridian-partition/test_meridian_partition
+COPY packages/meridian-partition/example-docs packages/meridian-partition/example-docs
 
 RUN apk_ok=false; \
     for attempt in 1 2 3; do \
@@ -43,7 +44,7 @@ RUN addgroup --gid ${NB_UID} ${NB_USER} && \
 
 ENV USER=${NB_USER}
 ENV HOME=/home/${NB_USER}
-COPY --chown=${NB_USER} scripts/initialize-libreoffice.sh ${HOME}/initialize-libreoffice.sh
+COPY --chown=${NB_USER} packages/meridian-partition/scripts/initialize-libreoffice.sh ${HOME}/initialize-libreoffice.sh
 
 # Remove unused Python versions
 RUN rm -rf /usr/lib/python3.10 && \
@@ -72,7 +73,7 @@ ENV UV_COMPILE_BYTECODE=1
 ENV UV_PYTHON_DOWNLOADS=never
 
 # Install Python dependencies via uv, then trigger spaCy model self-install while network is available
-RUN uv sync --locked --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
+RUN uv sync --locked --all-packages --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
     uv run --no-sync $PYTHON -c "from meridian_partition.nlp.tokenize import _get_nlp; print('spaCy model loaded:', _get_nlp().meta['name'])" && \
     uv run --no-sync $PYTHON -c "from meridian_partition.partition.model_init import initialize; initialize()" && \
     uv run --no-sync $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"

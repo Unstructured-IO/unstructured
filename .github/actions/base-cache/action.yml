@@ -18,4 +18,4 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        uv sync --locked --all-extras --all-groups
+        uv sync --locked --all-packages --all-extras --all-groups

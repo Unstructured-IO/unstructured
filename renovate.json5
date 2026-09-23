@@ -10,11 +10,11 @@
   "vulnerabilityAlerts": {
     "postUpgradeTasks": {
       "commands": [
-        "bash scripts/renovate-security-bump.sh"
+        "bash packages/meridian-partition/scripts/renovate-security-bump.sh"
       ],
       "fileFilters": [
-        "meridian_partition/__version__.py",
-        "CHANGELOG.md"
+        "packages/meridian-partition/meridian_partition/__version__.py",
+        "packages/meridian-partition/CHANGELOG.md"
       ],
       "executionMode": "branch"
     }

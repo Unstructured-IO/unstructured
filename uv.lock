@@ -21,6 +21,9 @@ required-markers = [
 ]
 
 [manifest]
+members = [
+    "meridian-partition",
+]
 constraints = [
     { name = "adlfs", specifier = "==2026.2.0" },
     { name = "deltalake", specifier = "<1.3.0" },
@@ -3216,7 +3219,7 @@ wheels = [
 
 [[package]]
 name = "meridian-partition"
-source = { editable = "." }
+source = { editable = "packages/meridian-partition" }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "charset-normalizer" },

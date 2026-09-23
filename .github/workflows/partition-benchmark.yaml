@@ -81,7 +81,7 @@ jobs:
         env:
           NUM_ITERATIONS: ${{ env.NUM_ITERATIONS }}
         run: |
-          uv run --no-sync python scripts/performance/benchmark_partition.py \
+          uv run --no-sync python packages/meridian-partition/scripts/performance/benchmark_partition.py \
             benchmark_results.json
 
       - name: Save HuggingFace model cache
@@ -134,7 +134,7 @@ jobs:
       - name: Compare against rolling baseline
         id: compare
         run: |
-          uv run --no-sync python scripts/performance/compare_benchmark.py \
+          uv run --no-sync python packages/meridian-partition/scripts/performance/compare_benchmark.py \
             benchmark_results.json \
             bench_history \
             --threshold ${{ env.REGRESSION_THRESHOLD }} \

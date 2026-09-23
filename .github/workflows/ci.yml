@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Check licenses
-        run: make check-licenses
+        run: make -C packages/meridian-partition check-licenses
 
   lint:
     strategy:
@@ -112,8 +112,8 @@ jobs:
           echo "Tesseract version ${{env.TESSERACT_VERSION}} is required but found version $installed_tesseract_version"
           exit 1
         fi
-        make test CI=true MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA=true
-        make check-coverage
+        make -C packages/meridian-partition test CI=true MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA=true
+        make -C packages/meridian-partition check-coverage
 
   test_unit_no_extras:
     strategy:
@@ -135,8 +135,8 @@ jobs:
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
-        uv sync --locked --group test
-        make test-no-extras CI=true
+        uv sync --locked --package meridian_partition --group test
+        make -C packages/meridian-partition test-no-extras CI=true
 
   test_unit_dependency_extras:
     strategy:
@@ -174,7 +174,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install extra dependencies
       run: |
-        uv sync --locked ${{ matrix.uv-extras }} --group test
+        uv sync --locked --package meridian_partition ${{ matrix.uv-extras }} --group test
     - name: Install system dependencies
       run: |
         retry() {
@@ -201,7 +201,7 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
         UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-        make test-extra-${{ matrix.extra }} CI=true
+        make -C packages/meridian-partition test-extra-${{ matrix.extra }} CI=true
 
   test_ingest_src:
     strategy:
@@ -220,6 +220,7 @@ jobs:
     - name: Set up Docker Compose
       uses: docker/setup-compose-action@v1
     - name: Test (end-to-end)
+      working-directory: packages/meridian-partition
       env:
         AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
         BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
@@ -301,6 +302,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test HTML fixtures
+      working-directory: packages/meridian-partition
       env:
         OVERWRITE_FIXTURES: "false"
       run: |
@@ -319,6 +321,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test markdown fixtures
+      working-directory: packages/meridian-partition
       env:
         OVERWRITE_FIXTURES: "false"
       run: |
@@ -336,10 +339,12 @@ jobs:
       with:
         filters: |
           src:
-            - 'meridian_partition/**'
+            - 'packages/meridian-partition/meridian_partition/**'
 
     - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
       uses: dangoslen/changelog-enforcer@v3
+      with:
+        changeLogPath: packages/meridian-partition/CHANGELOG.md
 
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)

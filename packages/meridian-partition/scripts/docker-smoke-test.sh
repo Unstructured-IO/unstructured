@@ -10,7 +10,7 @@ set -eux -o pipefail
 CONTAINER_NAME=meridian_partition-smoke-test
 DOCKER_IMAGE="${DOCKER_IMAGE:-meridian_partition:dev}"
 
-# Change to the root of the repository
+# Change to the root of the meridian-partition package
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
@@ -39,9 +39,10 @@ trap stop_container EXIT
 await_container
 
 # Run the tests
-docker cp test_unstructured_ingest $CONTAINER_NAME:/app
-docker exec -u root "$CONTAINER_NAME" /bin/bash -c "chown -R notebook-user:notebook-user /app/test_unstructured_ingest"
-docker exec "$CONTAINER_NAME" /bin/bash -c "/app/test_unstructured_ingest/src/local.sh"
+CONTAINER_PACKAGE_DIR=/app/packages/meridian-partition
+docker cp test_unstructured_ingest $CONTAINER_NAME:$CONTAINER_PACKAGE_DIR
+docker exec -u root "$CONTAINER_NAME" /bin/bash -c "chown -R notebook-user:notebook-user $CONTAINER_PACKAGE_DIR/test_unstructured_ingest"
+docker exec "$CONTAINER_NAME" /bin/bash -c "$CONTAINER_PACKAGE_DIR/test_unstructured_ingest/src/local.sh"
 
 result=$?
 exit $result

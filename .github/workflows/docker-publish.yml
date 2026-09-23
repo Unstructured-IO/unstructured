@@ -102,6 +102,6 @@ jobs:
         docker manifest push $DOCKER_REPOSITORY:latest
         docker manifest create ${DOCKER_REPOSITORY}:$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
         docker manifest push $DOCKER_REPOSITORY:$SHORT_SHA
-        VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' meridian_partition/__version__.py)
+        VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' packages/meridian-partition/meridian_partition/__version__.py)
         docker manifest create ${DOCKER_REPOSITORY}:$VERSION $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
         docker manifest push $DOCKER_REPOSITORY:$VERSION

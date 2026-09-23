@@ -93,7 +93,7 @@ def _set_github_output(key: str, value: str) -> None:
 
 def main() -> None:
     output_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_OUTPUT
-    repo_root = Path(__file__).resolve().parent.parent.parent  # scripts/performance/ -> repo root
+    repo_root = Path(__file__).resolve().parent.parent.parent  # scripts/performance/ -> pkg root
 
     logger.info("=" * 60)
     logger.info(f"Partition benchmark  (NUM_ITERATIONS={NUM_ITERATIONS})")
