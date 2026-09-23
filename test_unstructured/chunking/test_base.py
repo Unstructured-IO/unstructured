@@ -4306,8 +4306,8 @@ class Describe_HtmlTableSplitter:
             '<table><tr><td/><td rowspan="2">RIGHT</td></tr><tr><td>tail</td></tr></table>',
         )
 
-    def and_it_tolerates_a_malformed_colspan_overlapping_an_active_rowspan(self):
-        """A conflicting source cell must not damage the continuation index."""
+    def and_it_places_a_wide_cell_after_a_narrow_gap(self):
+        """A wide cell must not overlap a live span beside an interior gap."""
         ledger = _ActiveSpanLedger()
         cell = HtmlCell(fragment_fromstring("<td/>"))
         placed = ledger.place([cell, cell, cell])
@@ -4320,11 +4320,11 @@ class Describe_HtmlTableSplitter:
 
         ledger.expire(1)
         crossing = HtmlCell(fragment_fromstring('<td colspan="3"/>'))
-        overlapping_col, gap, _ = ledger.place([crossing])[0]
-        assert overlapping_col == 1
-        ledger.add([(_OpenSpan(overlapping_col, 3, "CONFLICT", 4), gap)])
+        placed_col, gap, _ = ledger.place([crossing])[0]
+        assert placed_col == 3
+        ledger.add([(_OpenSpan(placed_col, 3, "WIDE", 4), gap)])
 
-        assert sorted(ledger.spans) == [0, 2]
+        assert sorted(ledger.spans) == [0, 2, 3]
         ledger.expire(4)
         assert ledger.place([cell])[0][0] == 0
 

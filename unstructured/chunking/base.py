@@ -1275,6 +1275,11 @@ class _ActiveSpanLedger:
                         skipped.append(heapq.heappop(self.gap_heap))
                         continue
                     col = max(cursor, start)
+                    if end is not None and col + cell.colspan > end:
+                        # -- A wide source cell cannot occupy a narrow interior hole
+                        # -- without overlapping a still-live rowspan. Try the next gap.
+                        skipped.append(heapq.heappop(self.gap_heap))
+                        continue
                     placed.append((col, start, cell))
                     cursor = col + cell.colspan
                     break
