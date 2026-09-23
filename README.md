@@ -139,3 +139,80 @@ make docker-start-dev
 ```
 
 This starts a docker container with your local repo mounted to `/mnt/local_unstructured`. This docker image allows you to develop without worrying about your OS's compatibility with the repo and its dependencies.
+
+## :clap: Quick Tour
+
+### Documentation
+For more comprehensive documentation, visit https://docs.unstructured.io .
+
+Here are a few pages from the [Open Source documentation page](https://docs.unstructured.io/open-source/introduction/overview)
+that are helpful for new users to review:
+
+- [Quick Start](https://docs.unstructured.io/open-source/introduction/quick-start)
+- [Using the `unstructured` open source package](https://docs.unstructured.io/open-source/core-functionality/overview)
+- [Connectors](https://docs.unstructured.io/open-source/ingest/overview)
+- [Concepts](https://docs.unstructured.io/open-source/concepts/document-elements)
+- [Integrations](https://docs.unstructured.io/open-source/integrations)
+
+### PDF Document Parsing Example
+The following examples show how to get started with the `unstructured` library. The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional dependencies per doc type.
+For example, to install docx dependencies you need to run `pip install "unstructured[docx]"`.
+See our [installation guide](https://docs.unstructured.io/open-source/installation/full-installation) for more details.
+
+```python
+from unstructured.partition.auto import partition
+
+elements = partition("example-docs/layout-parser-paper.pdf")
+```
+
+Run `print("\n\n".join([str(el) for el in elements]))` to get a string representation of the
+output, which looks like:
+
+```
+
+LayoutParser : A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis
+
+Zejiang Shen 1 ( (cid:0) ), Ruochen Zhang 2 , Melissa Dell 3 , Benjamin Charles Germain Lee 4 , Jacob Carlson 3 , and
+Weining Li 5
+
+Abstract. Recent advances in document image analysis (DIA) have been primarily driven by the application of neural
+networks. Ideally, research outcomes could be easily deployed in production and extended for further investigation.
+However, various factors like loosely organized codebases and sophisticated model conﬁgurations complicate the easy
+reuse of important innovations by a wide audience. Though there have been ongoing eﬀorts to improve reusability and
+simplify deep learning (DL) model development in disciplines like natural language processing and computer vision, none
+of them are optimized for challenges in the domain of DIA. This represents a major gap in the existing toolkit, as DIA
+is central to academic research across a wide range of disciplines in the social sciences and humanities. This paper
+introduces LayoutParser, an open-source library for streamlining the usage of DL in DIA research and applications.
+The core LayoutParser library comes with a set of simple and intuitive interfaces for applying and customizing DL models
+for layout detection, character recognition, and many other document processing tasks. To promote extensibility,
+LayoutParser also incorporates a community platform for sharing both pre-trained models and full document digitization
+pipelines. We demonstrate that LayoutParser is helpful for both lightweight and large-scale digitization pipelines in
+real-word use cases. The library is publicly available at https://layout-parser.github.io
+
+Keywords: Document Image Analysis · Deep Learning · Layout Analysis · Character Recognition · Open Source library ·
+Toolkit.
+
+Introduction
+
+Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of document image analysis (DIA) tasks
+including document image classiﬁcation [11,
+```
+
+See the [partitioning](https://docs.unstructured.io/open-source/core-functionality/partitioning)
+section in our documentation for a full list of options and instructions on how to use
+file-specific partitioning functions.
+
+## :guardsman: Security Policy
+
+See our [security policy](https://github.com/Unstructured-IO/unstructured/security/policy) for
+information on how to report security vulnerabilities.
+
+## :bug: Reporting Bugs
+
+Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstructured-IO/unstructured/issues/new/choose) and use our bug report template to describe the problem. To help us diagnose the issue, use the `python scripts/collect_env.py` command to gather your system's environment information and include it in your report. Your assistance helps us continuously improve our software - thank you!
+
+## :chart_with_upwards_trend: Analytics
+
+Unstructured sends lightweight, anonymous analytics to `https://packages.unstructured.io/python-telemetry` by default: a ping when the library is imported, and a best-effort event for each top-level partition call (package version, platform/Python/architecture, and aggregate element counts). These events never contain document or element content, filenames, paths, URLs, credentials, or persistent installation/machine/user identifiers, and telemetry never blocks, retries, or waits on partitioning.
+
+To opt out before importing or partitioning, set `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (e.g. `true`).
