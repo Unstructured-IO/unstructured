@@ -1,0 +1,42 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+  default_format:
+    "()": uvicorn.logging.DefaultFormatter
+    format: '%(asctime)s %(name)s %(levelname)s %(message)s'
+  access:
+    "()": uvicorn.logging.AccessFormatter
+    format: '%(asctime)s %(client_addr)s %(request_line)s - %(status_code)s'
+handlers:
+  access_handler:
+    formatter: access
+    class: logging.StreamHandler
+    stream: ext://sys.stderr
+  standard_handler:
+    formatter: default_format
+    class: logging.StreamHandler
+    stream: ext://sys.stderr
+loggers:
+  uvicorn.error:
+    level: INFO
+    handlers:
+      - standard_handler
+    propagate: no
+    # disable logging for uvicorn.error by not having a handler
+  uvicorn.access:
+    level: INFO
+    handlers:
+      - access_handler
+    propagate: no
+    # disable logging for uvicorn.access by not having a handler
+  unstructured:
+    level: INFO
+    handlers:
+      - standard_handler
+    propagate: no
+  unstructured_inference:
+    level: DEBUG
+    handlers:
+      - standard_handler
+    propagate: no
+

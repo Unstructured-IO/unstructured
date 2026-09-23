@@ -1,5 +1,5 @@
 [tool.uv.workspace]
-members = ["packages/*"]
+members = ["packages/meridian-partition"]
 
 # uv only honors these settings in the workspace root; they apply to every member.
 [tool.uv]

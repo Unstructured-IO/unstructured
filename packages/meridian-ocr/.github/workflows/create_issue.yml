@@ -1,0 +1,34 @@
+name: create_jira_issue
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    name: Create JIRA Issue
+    steps:
+
+    - name: Login to Jira
+      uses: atlassian/gajira-login@v3
+      env:
+        JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+    - name: Create Jira issue
+      uses: atlassian/gajira-create@v3
+      with:
+        project: CORE
+        issuetype: Task
+        summary: ${{ github.event.issue.title }}
+        description: |
+          Created from github issue: ${{ github.event.issue.html_url }}
+          ----
+          ${{ github.event.issue.body }}
+        fields: '{ "labels": ["github-issue"] }'
+
+    - name: Log created issue
+      run: echo "Issue ${{ steps.create.outputs.issue }} was created"

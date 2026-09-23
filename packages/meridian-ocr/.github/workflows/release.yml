@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write       # Required for PyPI trusted publishing / attestations
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+      with:
+        enable-cache: true
+
+    - name: Set up Python
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      with:
+        python-version: "3.12"
+
+    - name: Verify tag matches package version
+      run: |
+        PKG_VERSION=$(python -c "exec(open('unstructured_inference/__version__.py').read()); print(__version__)")
+        TAG_VERSION="${GITHUB_REF_NAME#v}"
+        if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+          echo "::error::Tag ($TAG_VERSION) does not match package version ($PKG_VERSION)"
+          exit 1
+        fi
+
+    - name: Install release dependencies
+      run: uv sync --locked --only-group release --no-install-project
+
+    - name: Build package
+      id: build
+      run: uv build
+
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1
+
+    # Best-effort: attempt Azure upload even if PyPI fails, but only if build succeeded.
+    # continue-on-error allows the workflow to pass when Azure secrets are not configured.
+    - name: Publish to Azure Artifacts
+      if: always() && steps.build.outcome == 'success'
+      continue-on-error: true
+      run: |
+        uv run --no-sync twine upload \
+          --repository-url "${{ secrets.AZURE_ARTIFACTS_FEED }}" \
+          --username "${{ secrets.AZURE_ARTIFACTS_USERNAME }}" \
+          --password "${{ secrets.AZURE_ARTIFACTS_PAT }}" \
+          dist/*

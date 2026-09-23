@@ -1,0 +1,139 @@
+[project]
+name = "unstructured_inference"
+description = "A library for performing inference using trained models."
+requires-python = ">=3.11, <3.14"
+authors = [{name = "Unstructured Technologies", email = "devops@unstructuredai.io"}]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+readme = "README.md"
+license = "Apache-2.0"
+keywords = ["NLP", "PDF", "HTML", "CV", "XML", "parsing", "preprocessing"]
+dynamic = ["version"]
+dependencies = [
+    "huggingface-hub>=0.22.0",
+    "numpy>=1.26.0",
+    "opencv-python>=4.13.0.90",
+    "onnx>=1.20.1",
+    "onnxruntime>=1.25.0",
+    "matplotlib>=3.10.8",
+    "torch>=2.10.0",
+    "timm>=1.0.24",
+    # NOTE(alan): Pinned because this is when the most recent module we import appeared
+    "transformers>=4.25.1",
+    # Required by transformers[torch] for model loading with torch
+    "accelerate>=1.12.0",
+    "rapidfuzz>=3.14.3",
+    "pandas>=1.5.0",
+    "scipy>=1.17.0",
+    "pypdfium2>=5.0.0",
+    # Used to read per-character matrices for PDF page text-orientation correction
+    "pdfminer.six>=20231228",
+]
+
+[project.urls]
+Homepage = "https://github.com/Unstructured-IO/unstructured-inference"
+
+[tool.hatch.version]
+path = "unstructured_inference/__version__.py"
+
+[dependency-groups]
+lint = [
+    "ruff>=0.15.0",
+]
+test = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "pytest-mock>=3.15.1",
+    "pytest-xdist>=3.5.0",
+    "coverage>=7.13.3",
+    "httpx>=0.28.1",
+    "pdf2image>=1.16.2",
+]
+dev = [
+    "jupyter>=1.1.1",
+    "ipython>=9.10.0",
+]
+release = [
+    "twine>=6.2.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+constraint-dependencies = [
+    # Security: CVE fix for fonttools
+    "fonttools>=4.60.2",
+    # Security: CVE fix for urllib3
+    "urllib3>=2.6.0",
+    # Security: CVE fix for Pillow (out-of-bounds write loading PSD images)
+    "pillow>=12.1.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["/unstructured_inference"]
+
+[tool.hatch.build.targets.sdist]
+packages = ["/unstructured_inference"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # flake8-comprehensions
+    "C4",
+    # flake8-commas
+    "COM",
+    # isort
+    "I",
+    # flake8-simplify
+    "SIM",
+    # pyupgrade
+    "UP015",
+    "UP018",
+    "UP032",
+    "UP034",
+    # pylint refactor
+    "PLR0402",
+    # flake8-pytest-style
+    "PT",
+]
+ignore = [
+    "COM812",
+    "PT011",
+    "PT012",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"test_*/**" = ["D"]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.codeflash]
+benchmarks-root = "benchmarks"
+
+[tool.coverage.report]
+fail_under = 90
