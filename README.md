@@ -7,31 +7,24 @@
 
 <div align="center">
 
-  <a href="https://github.com/Unstructured-IO/unstructured/blob/main/LICENSE.md">![https://pypi.python.org/pypi/unstructured/](https://img.shields.io/pypi/l/unstructured.svg)</a>
-  <a href="https://pypi.python.org/pypi/unstructured/">![https://pypi.python.org/pypi/unstructured/](https://img.shields.io/pypi/pyversions/unstructured.svg)</a>
-  <a href="https://GitHub.com/unstructured-io/unstructured/graphs/contributors">![https://GitHub.com/unstructured-io/unstructured.js/graphs/contributors](https://img.shields.io/github/contributors/unstructured-io/unstructured)</a>
-  <a href="https://github.com/Unstructured-IO/unstructured/blob/main/CODE_OF_CONDUCT.md">![code_of_conduct.md](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg) </a>
-  <a href="https://GitHub.com/unstructured-io/unstructured/releases">![https://GitHub.com/unstructured-io/unstructured.js/releases](https://img.shields.io/github/release/unstructured-io/unstructured)</a>
-  <a href="https://pypi.python.org/pypi/unstructured/">![https://github.com/Naereen/badges/](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)</a>
+  [![License](https://img.shields.io/pypi/l/unstructured.svg)](https://github.com/Unstructured-IO/unstructured/blob/main/LICENSE.md)
+  [![Python versions](https://img.shields.io/pypi/pyversions/unstructured.svg)](https://pypi.python.org/pypi/unstructured/)
+  [![Contributors](https://img.shields.io/github/contributors/unstructured-io/unstructured)](https://GitHub.com/unstructured-io/unstructured/graphs/contributors)
+  [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](https://github.com/Unstructured-IO/unstructured/blob/main/CODE_OF_CONDUCT.md)
+  [![Release](https://img.shields.io/github/release/unstructured-io/unstructured)](https://GitHub.com/unstructured-io/unstructured/releases)
   [![Downloads](https://static.pepy.tech/badge/unstructured)](https://pepy.tech/project/unstructured)
   [![Downloads](https://static.pepy.tech/badge/unstructured/month)](https://pepy.tech/project/unstructured)
-  <a
-   href="https://www.phorm.ai/query?projectId=34efc517-2201-4376-af43-40c4b9da3dc5">
-	<img src="https://img.shields.io/badge/Phorm-Ask_AI-%23F2777A.svg?&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNSIgaGVpZ2h0PSI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxwYXRoIGQ9Ik00LjQzIDEuODgyYTEuNDQgMS40NCAwIDAgMS0uMDk4LjQyNmMtLjA1LjEyMy0uMTE1LjIzLS4xOTIuMzIyLS4wNzUuMDktLjE2LjE2NS0uMjU1LjIyNmExLjM1MyAxLjM1MyAwIDAgMS0uNTk1LjIxMmMtLjA5OS4wMTItLjE5Mi4wMTQtLjI3OS4wMDZsLTEuNTkzLS4xNHYtLjQwNmgxLjY1OGMuMDkuMDAxLjE3LS4xNjkuMjQ2LS4xOTFhLjYwMy42MDMgMCAwIDAgLjItLjEwNi41MjkuNTI5IDAgMCAwIC4xMzgtLjE3LjY1NC42NTQgMCAwIDAgLjA2NS0uMjRsLjAyOC0uMzJhLjkzLjkzIDAgMCAwLS4wMzYtLjI0OS41NjcuNTY3IDAgMCAwLS4xMDMtLjIuNTAyLjUwMiAwIDAgMC0uMTY4LS4xMzguNjA4LjYwOCAwIDAgMC0uMjQtLjA2N0wyLjQzNy43MjkgMS42MjUuNjcxYS4zMjIuMzIyIDAgMCAwLS4yMzIuMDU4LjM3NS4zNzUgMCAwIDAtLjExNi4yMzJsLS4xMTYgMS40NS0uMDU4LjY5Ny0uMDU4Ljc1NEwuNzA1IDRsLS4zNTctLjA3OUwuNjAyLjkwNkMuNjE3LjcyNi42NjMuNTc0LjczOS40NTRhLjk1OC45NTggMCAwIDEgLjI3NC0uMjg1Ljk3MS45NzEgMCAwIDEgLjMzNy0uMTRjLjExOS0uMDI2LjIyNy0uMDM0LjMyNS0uMDI2TDMuMjMyLjE2Yy4xNTkuMDE0LjMzNi4wMy40NTkuMDgyYTEuMTczIDEuMTczIDAgMCAxIC41NDUuNDQ3Yy4wNi4wOTQuMTA5LjE5Mi4xNDQuMjkzYTEuMzkyIDEuMzkyIDAgMCAxIC4wNzguNThsLS4wMjkuMzJaIiBmaWxsPSIjRjI3NzdBIi8+CiAgPHBhdGggZD0iTTQuMDgyIDIuMDA3YTEuNDU1IDEuNDU1IDAgMCAxLS4wOTguNDI3Yy0uMDUuMTI0LS4xMTQuMjMyLS4xOTIuMzI0YTEuMTMgMS4xMyAwIDAgMS0uMjU0LjIyNyAxLjM1MyAxLjM1MyAwIDAgMS0uNTk1LjIxNGMtLjEuMDEyLS4xOTMuMDE0LS4yOC4wMDZsLTEuNTYtLjEwOC4wMzQtLjQwNi4wMy0uMzQ4IDEuNTU5LjE1NGMuMDkgMCAuMTczLS4wMS4yNDgtLjAzM2EuNjAzLjYwMyAwIDAgMCAuMi0uMTA2LjUzMi41MzIgMCAwIDAgLjEzOS0uMTcyLjY2LjY2IDAgMCAwIC4wNjQtLjI0MWwuMDI5LS4zMjFhLjk0Ljk0IDAgMCAwLS4wMzYtLjI1LjU3LjU3IDAgMCAwLS4xMDMtLjIwMi41MDIuNTAyIDAgMCAwLS4xNjgtLjEzOC42MDUuNjA1IDAgMCAwLS4yNC0uMDY3TDEuMjczLjgyN2MtLjA5NC0uMDA4LS4xNjguMDEtLjIyMS4wNTUtLjA1My4wNDUtLjA4NC4xMTQtLjA5Mi4yMDZMLjcwNSA0IDAgMy45MzhsLjI1NS0yLjkxMUExLjAxIDEuMDEgMCAwIDEgLjM5My41NzIuOTYyLjk2MiAwIDAgMSAuNjY2LjI4NmEuOTcuOTcgMCAwIDEgLjMzOC0uMTRDMS4xMjIuMTIgMS4yMy4xMSAxLjMyOC4xMTlsMS41OTMuMTRjLjE2LjAxNC4zLjA0Ny40MjMuMWExLjE3IDEuMTcgMCAwIDEgLjU0NS40NDhjLjA2MS4wOTUuMTA5LjE5My4xNDQuMjk1YTEuNDA2IDEuNDA2IDAgMCAxIC4wNzcuNTgzbC0uMDI4LjMyMloiIGZpbGw9IndoaXRlIi8+CiAgPHBhdGggZD0iTTQuMDgyIDIuMDA3YTEuNDU1IDEuNDU1IDAgMCAxLS4wOTguNDI3Yy0uMDUuMTI0LS4xMTQuMjMyLS4xOTIuMzI0YTEuMTMgMS4xMyAwIDAgMS0uMjU0LjIyNyAxLjM1MyAxLjM1MyAwIDAgMS0uNTk1LjIxNGMtLjEuMDEyLS4xOTMuMDE0LS4yOC4wMDZsLTEuNTYtLjEwOC4wMzQtLjQwNi4wMy0uMzQ4IDEuNTU5LjE1NGMuMDkgMCAuMTczLS4wMS4yNDgtLjAzM2EuNjAzLjYwMyAwIDAgMCAuMi0uMTA2LjUzMi41MzIgMCAwIDAgLjEzOS0uMTcyLjY2LjY2IDAgMCAwIC4wNjQtLjI0MWwuMDI5LS4zMjFhLjk0Ljk0IDAgMCAwLS4wMzYtLjI1LjU3LjU3IDAgMCAwLS4xMDMtLjIwMi41MDIuNTAyIDAgMCAwLS4xNjgtLjEzOC42MDUuNjA1IDAgMCAwLS4yNC0uMDY3TDEuMjczLjgyN2MtLjA5NC0uMDA4LS4xNjguMDEtLjIyMS4wNTUtLjA1My4wNDUtLjA4NC4xMTQtLjA5Mi4yMDZMLjcwNSA0IDAgMy45MzhsLjI1NS0yLjkxMUExLjAxIDEuMDEgMCAwIDEgLjM5My41NzIuOTYyLjk2MiAwIDAgMSAuNjY2LjI4NmEuOTcuOTcgMCAwIDEgLjMzOC0uMTRDMS4xMjIuMTIgMS4yMy4xMSAxLjMyOC4xMTlsMS41OTMuMTRjLjE2LjAxNC4zLjA0Ny40MjMuMWExLjE3IDEuMTcgMCAwIDEgLjU0NS40NDhjLjA2MS4wOTUuMTA5LjE5My4xNDQuMjk1YTEuNDA2IDEuNDA2IDAgMCAxIC4wNzcuNTgzbC0uMDI4LjMyMloiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=" />
-   </a>
 
 </div>
 
-<div>
-  <p align="center">
-  <a
-  href="https://short.unstructured.io/pzw05l7">
+<p align="center">
+  <a href="https://short.unstructured.io/pzw05l7">
     <img src="https://img.shields.io/badge/JOIN US ON SLACK-4A154B?style=for-the-badge&logo=slack&logoColor=white" />
   </a>
   <a href="https://www.linkedin.com/company/unstructuredio/">
     <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
   </a>
-</div>
+</p>
 
 <h2 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
@@ -39,36 +32,23 @@
 
 The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://docs.unstructured.io/open-source/core-functionality/partitioning). The use cases of `unstructured` revolve around streamlining and optimizing the data processing workflow for LLMs. `unstructured` modular functions and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and efficient in transforming unstructured data into structured outputs.
 
-
 ## Unstructured Transform MCP — Document Processing for your Agents
 
-Unstructured Transform brings production-grade document processing to your agents as an MCP server. It gives them the ability to turn 60+ file types into structured data that's ready for your applications, vector databases, and any downstream processes by parsing, enriching, chunking, and embedding files directly inside their current session.
-
-### Setup Steps for Your Agent
-
-1. **Pick your MCP client.** Transform works with virtually any MCP-compatible host or agent framework — Claude Code, Cursor, Codex CLI and more.
-
-2. **Add the Transform MCP server** to your client's MCP configuration (via the CLI `mcp add` command or the client's MCP settings/config file, depending on the tool).
-
-3. **Authenticate once** when your client prompts you. Sign in, and the Transform tools become available to your agent on its next message.
-
-4. **Point your agent at a file.** Drag and drop or reference a local file or URL. Transform handles 60+ formats (PDFs, emails, images, scanned files, and more).
-
-5. **Describe what you need in plain language.** Tell the agent your intent (e.g. "parse and chunk this contract for a vector store") and Transform partitions, enriches, chunks, and embeds the file, returning structured data ready to use. 
+Unstructured Transform is an MCP server that gives agents production-grade document processing: parsing, enriching, chunking, and embedding 60+ file types into structured data, directly inside the agent's session. Add it to any MCP-compatible client (Claude Code, Cursor, Codex CLI, and others), authenticate once, then point your agent at a file and describe what you need — e.g. "parse and chunk this contract for a vector store."
 
 ⚡ [Get Started for Free](https://transform.unstructured.io/?entry=cta)
 
 ## Unstructured Pipelines
 
-Ready to move your data processing pipeline to production, and take advantage of advanced features? Check out [Unstructured Pipelines](https://unstructured.io/enterprise). In addition to better processing performance, take advantage of chunking, embedding, and image and table enrichment generation, all from a low code UI or an API. [Request a demo](https://unstructured.io/?modal=contact-sales) from our sales team to learn more about how to get started.
+For production-scale processing — chunking, embedding, and image/table enrichment through a low-code UI or API — see [Unstructured Pipelines](https://unstructured.io/enterprise), or [request a demo](https://unstructured.io/?modal=contact-sales).
 
 ## :eight_pointed_black_star: Quick Start
 
 There are several ways to use the `unstructured` library:
-* [Run the library in a container](https://github.com/Unstructured-IO/unstructured#run-the-library-in-a-container) or
+* [Run the library in a container](#run-the-library-in-a-container) or
 * Install the library
-    1. [Install from PyPI](https://github.com/Unstructured-IO/unstructured#installing-the-library)
-    2. [Install for local development](https://github.com/Unstructured-IO/unstructured#installation-instructions-for-local-development)
+    1. [Install from PyPI](#installing-the-library)
+    2. [Install for local development](#installation-instructions-for-local-development)
 * For installation with `conda` on Windows system, please refer to the [documentation](https://unstructured-io.github.io/unstructured/installing.html#installation-with-conda-on-windows)
 
 ### Run the library in a container
@@ -219,11 +199,10 @@ that are helpful for new users to review:
 - [Concepts](https://docs.unstructured.io/open-source/concepts/document-elements)
 - [Integrations](https://docs.unstructured.io/open-source/integrations)
 
-
 ### PDF Document Parsing Example
 The following examples show how to get started with the `unstructured` library. The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional dependencies per doc type.
 For example, to install docx dependencies you need to run `pip install "unstructured[docx]"`.
-See our  [installation guide](https://docs.unstructured.io/open-source/installation/full-installation) for more details.
+See our [installation guide](https://docs.unstructured.io/open-source/installation/full-installation) for more details.
 
 ```python
 from unstructured.partition.auto import partition
@@ -287,6 +266,6 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 
 ## :chart_with_upwards_trend: Analytics
 
-Unstructured sends lightweight analytics to `GET https://packages.unstructured.io/python-telemetry` by default: one library-load ping when it is imported and one best-effort local attempt for each top-level public partition call. The shared endpoint supports separate startup and runtime query-parameter schemas. Runtime events contain the package version, normalized platform/Python/architecture values, fixed-enum partition characteristics, and aggregate final-element counts as URL query parameters; there is no request body. They never contain document or element content, filenames, paths, URLs supplied for partitioning, raw MIME values, exception details, credentials, proxy configuration, or persistent installation, machine, process, account, user, or developer identifiers. Runtime delivery never waits on the network from partition processing, has no redirects, retries, response-body download, or queue, and does not consult proxy or netrc environment settings. At most one telemetry daemon can remain stranded in a network operation; later events drop while that slot is occupied, and process exit does not wait for it. Connect/read timeouts limit socket operations, not total network wall-clock duration.
+Unstructured sends lightweight, anonymous analytics to `https://packages.unstructured.io/python-telemetry` by default: a ping when the library is imported, and a best-effort event for each top-level partition call (package version, platform/Python/architecture, and aggregate element counts). These events never contain document or element content, filenames, paths, URLs, credentials, or persistent installation/machine/user identifiers, and telemetry never blocks, retries, or waits on partitioning.
 
-To opt out before importing or partitioning, set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value after trimming whitespace (for example, `true`, `1`, `yes`, `false`, or `0`); either variable disables both library-load and runtime telemetry. Unset the variables or leave them empty or whitespace-only to retain the default behavior. See our [Privacy Policy](https://unstructured.io/privacy-policy).
+To opt out before importing or partitioning, set `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (e.g. `true`). See our [Privacy Policy](https://unstructured.io/privacy-policy).
