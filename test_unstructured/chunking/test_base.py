@@ -3761,11 +3761,13 @@ class Describe_HtmlTableSplitter:
         assert chunks == [
             ("Region", "<table><tr><td>Region</td></tr></table>"),
             ("xxxxxxxxxxxxx", "<table><tr><td>xxxxxxxxxxxxx</td></tr></table>"),
+            ("Region", "<table><tr><td>Region</td></tr></table>"),
             ("yyyyyyyyyyyyy", "<table><tr><td>yyyyyyyyyyyyy</td></tr></table>"),
         ]
-        # -- no cell text lost or duplicated across the whole set of chunks --
+        # -- the covering cell is deliberately repeated after the split --
         combined_text = " ".join(text for text, _ in chunks)
-        for word in ("Region", "xxxxxxxxxxxxx", "yyyyyyyyyyyyy"):
+        assert combined_text.count("Region") == 2
+        for word in ("xxxxxxxxxxxxx", "yyyyyyyyyyyyy"):
             assert combined_text.count(word) == 1
 
     def and_it_bounds_a_rowspan_0_header_to_its_own_thead_instead_of_the_whole_table(self):
@@ -4205,8 +4207,8 @@ class Describe_HtmlTableSplitter:
         assert len(chunks) > 1
         assert all(len(chunk.text) <= 60 for chunk in chunks)
 
-    def and_it_matches_main_after_cell_splitting_an_oversized_rowspan_group(self):
-        """Incoming spans are discarded after cell fallback, preserving main's limitation."""
+    def and_it_preserves_a_rowspan_after_cell_splitting_an_oversized_group(self):
+        """A cell-level fallback must keep covering columns for later rows."""
         html = (
             "<table><tbody>"
             '<tr><th rowspan="4">HHHHHHHHHHHHHHHHHHHH</th><th>x</th></tr>'
@@ -4226,7 +4228,81 @@ class Describe_HtmlTableSplitter:
         value_chunk = next(chunk for chunk in chunks if "VALUE" in chunk.text)
         value_html = fragment_fromstring(value_chunk.metadata.text_as_html or "")
         value_row = next(row for row in value_html.xpath(".//tr") if "VALUE" in row.text_content())
-        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == ["VALUE"]
+        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == [
+            "HHHHHHHHHHHHHHHHHHHH",
+            "VALUE",
+        ]
+
+    def and_it_places_cells_after_spans_expire_inside_an_oversized_group(self):
+        """A later cell reuses an expired span's column while longer spans stay active."""
+        html = (
+            '<table><tr><td rowspan="5">ANCHOR</td><td rowspan="2">SHORT</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            '<tr><td>one</td></tr><tr><td rowspan="2">NEW</td><td>two</td></tr>'
+            "<tr><td>three</td></tr><tr><td>four</td></tr></table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        continuation = fragment_fromstring(chunks[-1][1])
+        rows = continuation.xpath(".//tr")
+        assert [cell.text_content() for cell in rows[0].xpath("./td")] == [
+            "ANCHOR",
+            "SHORT",
+            "one",
+        ]
+        assert [cell.text_content() for cell in rows[1].xpath("./td")] == ["NEW", "two"]
+        assert [cell.text_content() for cell in rows[2].xpath("./td")] == ["three"]
+        assert [cell.text_content() for cell in rows[3].xpath("./td")] == ["four"]
+
+    @pytest.mark.parametrize("continuation_cell", ["", "<td/>"])
+    def and_it_keeps_many_sparse_spans_across_a_cell_split(self, continuation_cell: str):
+        """Hundreds of staggered expirations must not erase the long covering span."""
+        span_count = 250
+        continuation_rows = 500
+        html = (
+            f'<table><tr><td rowspan="{continuation_rows + 1}">ANCHOR</td>'
+            + "".join(
+                f'<td rowspan="{2 + 2 * ((i * 73) % span_count)}"/>' for i in range(span_count)
+            )
+            + f"<td>{'x' * 200}</td></tr>"
+            + f"<tr>{continuation_cell}</tr>" * continuation_rows
+            + "</table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=100)
+            )
+        )
+
+        continuation = fragment_fromstring(chunks[-1][1])
+        rows = continuation.xpath(".//tr")
+        assert len(rows) == continuation_rows
+        assert rows[0].xpath("./td")[0].text_content() == "ANCHOR"
+        assert rows[0].xpath("./td")[0].get("rowspan") == str(continuation_rows)
+
+    def and_it_preserves_a_hole_before_a_surviving_span_at_a_fragment_boundary(self):
+        """An expired left span must not move a surviving right span into its column."""
+        html = (
+            '<table><tr><td rowspan="2">LEFT</td><td rowspan="4">RIGHT</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            f"<tr><td>{'y' * 80}</td></tr><tr/><tr><td>tail</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert chunks[-1] == (
+            "RIGHT tail",
+            '<table><tr><td/><td rowspan="2">RIGHT</td></tr><tr><td>tail</td></tr></table>',
+        )
 
     def and_it_bounds_a_positive_rowspan_whose_own_row_is_oversized_even_alone(self):
         """`Region`'s `rowspan="3"` exactly reaches the table's last row, so it opens a 3-row

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import collections
 import copy
+import heapq
 import uuid
 from functools import cached_property
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, NamedTuple, Sequence, cast
@@ -1217,6 +1218,107 @@ class _OpenSpan(NamedTuple):
     """Last row-index (relative to the containing rowspan-bound group) this span still covers."""
 
 
+class _ActiveSpanLedger:
+    """Sparse source-row span geometry with expiry events and indexed free-column gaps.
+
+    Gaps are maximal half-open column intervals; `None` is the unbounded right edge. A heap
+    finds the leftmost gap while dictionaries allow an expired span to join its immediate gaps
+    without visiting other live spans. Stale heap entries are discarded lazily and compacted.
+    """
+
+    def __init__(self) -> None:
+        self.spans: dict[int, _OpenSpan] = {}
+        self.expiry: list[tuple[int, int]] = []
+        self.gaps: dict[int, int | None] = {0: None}
+        self.gaps_by_end: dict[int, int] = {}
+        self.gap_heap: list[int] = [0]
+
+    def expire(self, row_idx: int) -> None:
+        """Remove exactly the spans whose source lifetime has ended."""
+        while self.expiry and self.expiry[0][0] <= row_idx:
+            end_row, col = heapq.heappop(self.expiry)
+            span = self.spans.get(col)
+            if span is None or span.reach_idx + 1 != end_row:
+                continue
+            del self.spans[col]
+            start = span.col
+            end: int | None = span.col + span.colspan
+            left = self.gaps_by_end.get(start)
+            if left is not None:
+                self._remove_gap(left)
+                start = left
+            if end in self.gaps:
+                right_end = self.gaps[end]
+                self._remove_gap(end)
+                end = right_end
+            self._add_gap(start, end)
+        self._compact_heap()
+
+    def place(self, cells: Sequence[HtmlCell]) -> list[tuple[int, int, HtmlCell]]:
+        """Place own cells in source order, visiting only gaps passed by those cells.
+
+        The third tuple item retains the source cell; the second is the gap's initial start,
+        used when opening several spans in that same gap after the row is accepted.
+        """
+        placed: list[tuple[int, int, HtmlCell]] = []
+        cursor = 0
+        skipped: list[int] = []
+        try:
+            for cell in cells:
+                while self.gap_heap:
+                    start = self.gap_heap[0]
+                    if start not in self.gaps:
+                        heapq.heappop(self.gap_heap)
+                        continue
+                    end = self.gaps[start]
+                    if end is not None and end <= cursor:
+                        skipped.append(heapq.heappop(self.gap_heap))
+                        continue
+                    col = max(cursor, start)
+                    placed.append((col, start, cell))
+                    cursor = col + cell.colspan
+                    break
+                else:
+                    raise AssertionError("active spans must leave an unbounded final gap")
+        finally:
+            for start in skipped:
+                heapq.heappush(self.gap_heap, start)
+        return placed
+
+    def add(self, spans: Sequence[tuple[_OpenSpan, int]]) -> None:
+        """Commit new source spans once, splitting only the gaps they occupy."""
+        right_of_initial_gap: dict[int, int] = {}
+        for span, initial_gap in spans:
+            gap_start = right_of_initial_gap.get(initial_gap, initial_gap)
+            gap_end = self.gaps[gap_start]
+            self._remove_gap(gap_start)
+            if gap_start < span.col:
+                self._add_gap(gap_start, span.col)
+            span_end = span.col + span.colspan
+            if gap_end is None or span_end < gap_end:
+                self._add_gap(span_end, gap_end)
+            right_of_initial_gap[initial_gap] = span_end
+            self.spans[span.col] = span
+            heapq.heappush(self.expiry, (span.reach_idx + 1, span.col))
+        self._compact_heap()
+
+    def _add_gap(self, start: int, end: int | None) -> None:
+        self.gaps[start] = end
+        if end is not None:
+            self.gaps_by_end[end] = start
+        heapq.heappush(self.gap_heap, start)
+
+    def _remove_gap(self, start: int) -> None:
+        end = self.gaps.pop(start)
+        if end is not None:
+            del self.gaps_by_end[end]
+
+    def _compact_heap(self) -> None:
+        if len(self.gap_heap) > 2 * len(self.gaps) + 32:
+            self.gap_heap = list(self.gaps)
+            heapq.heapify(self.gap_heap)
+
+
 class _HtmlTableSplitter:
     """Produces (text, html) pairs for a `<table>` HtmlElement.
 
@@ -1397,56 +1499,72 @@ class _HtmlTableSplitter:
         across fragments, the accepted trade-off for honoring the hard size limit.
         """
         n = len(group)
-        active: list[_OpenSpan] = []
+        group_last_idx = self._group_last_idx(group)
+        active = _ActiveSpanLedger()
         fragment_cells: list[list[str]] = []
         fragment_texts: list[list[str]] = []
+        fragment_text_count = 0
+        fragment_char_len = 0
+        additive_char_measure = (
+            not self._opts.use_token_counting
+            and getattr(self._opts.measure, "__func__", None) is ChunkingOptions.measure
+        )
 
-        def build_row(
-            row: HtmlRow, idx: int, active: list[_OpenSpan], materialize: bool
-        ) -> tuple[list[str], list[str], list[_OpenSpan]]:
+        def append_row(cells: list[str], texts: list[str]) -> None:
+            nonlocal fragment_text_count, fragment_char_len
+            fragment_cells.append(cells)
+            fragment_texts.append(texts)
+            if texts:
+                fragment_char_len += sum(map(len, texts)) + len(texts) - 1
+                if fragment_text_count:
+                    fragment_char_len += 1
+                fragment_text_count += len(texts)
+
+        def materialize(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int
+        ) -> tuple[list[str], list[str]]:
+            """Merge incoming spans with own cells only at a real fragment boundary."""
+            incoming = sorted(active.spans.values(), key=lambda span: span.col)
             cells: list[str] = []
             texts: list[str] = []
-            new_active: list[_OpenSpan] = []
-            spans = iter(sorted((s for s in active if s.reach_idx >= idx), key=lambda s: s.col))
-            next_span = next(spans, None)
-            own_cells = list(row.iter_cells())
-            own_idx = 0
             col = 0
-            while True:
-                if next_span is not None and next_span.col == col:
-                    if materialize:
-                        remaining = next_span.reach_idx - idx + 1
-                        cells.append(_format_td(next_span.text, next_span.colspan, remaining))
-                        if next_span.text:
-                            texts.append(next_span.text)
-                    if next_span.reach_idx > idx:
-                        new_active.append(next_span)
-                    col += next_span.colspan
-                    next_span = next(spans, None)
-                    continue
-                if own_idx < len(own_cells):
-                    cell = own_cells[own_idx]
+            own_idx = span_idx = 0
+            while own_idx < len(placed) or span_idx < len(incoming):
+                own_col = placed[own_idx][0] if own_idx < len(placed) else None
+                span_col = incoming[span_idx].col if span_idx < len(incoming) else None
+                if span_col is not None and (own_col is None or span_col < own_col):
+                    span = incoming[span_idx]
+                    span_idx += 1
+                    if col < span.col:
+                        cells.append(_format_td("", span.col - col))
+                    cells.append(_format_td(span.text, span.colspan, span.reach_idx - idx + 1))
+                    if span.text:
+                        texts.append(span.text)
+                    col = span.col + span.colspan
+                else:
+                    assert own_col is not None
+                    cell = placed[own_idx][2]
                     own_idx += 1
+                    if col < own_col:
+                        cells.append(_format_td("", own_col - col))
                     cells.append(cell.html)
                     if cell.text:
                         texts.append(cell.text)
-                    cell_reach = (
-                        n - 1 if cell.rowspan is None else min(idx + cell.rowspan - 1, n - 1)
-                    )
-                    if cell_reach > idx:
-                        new_active.append(_OpenSpan(col, cell.colspan, cell.text, cell_reach))
-                    col += cell.colspan
-                    continue
-                break
-            return cells, texts, new_active
+                    col = own_col + cell.colspan
+            return cells, texts
 
         def fits(texts: Sequence[str]) -> bool:
-            candidate = fragment_texts + [list(texts)]
-            joined = " ".join(t for row_texts in candidate for t in row_texts)
-            return self._opts.measure(joined) <= maxlen
+            if not texts:
+                return True
+            if additive_char_measure:
+                extra = sum(map(len, texts)) + len(texts) - 1
+                return fragment_char_len + extra + bool(fragment_text_count) <= maxlen
+            joined = " ".join(t for row_texts in fragment_texts for t in row_texts)
+            candidate = f"{joined} {' '.join(texts)}" if joined else " ".join(texts)
+            return self._opts.measure(candidate) <= maxlen
 
         def flush_fragment() -> Iterator[TextAndHtml]:
-            nonlocal fragment_cells, fragment_texts
+            nonlocal fragment_cells, fragment_texts, fragment_text_count, fragment_char_len
             if not fragment_cells:
                 return
             m = len(fragment_cells)
@@ -1463,23 +1581,33 @@ class _HtmlTableSplitter:
             text = " ".join(t for row_texts in fragment_texts for t in row_texts)
             html = f"<table>{''.join(trs)}</table>"
             fragment_cells, fragment_texts = [], []
+            fragment_text_count = fragment_char_len = 0
             yield text, html
 
         for idx, row in enumerate(group):
-            active = [s for s in active if s.reach_idx >= idx]
-            cells, texts, next_active = build_row(row, idx, active, materialize=False)
+            active.expire(idx)
+            placed = active.place(list(row.iter_cells()))
+            cells = [cell.html for _col, _gap, cell in placed]
+            texts = [cell.text for _col, _gap, cell in placed if cell.text]
+            new_spans: list[tuple[_OpenSpan, int]] = []
+            for col, gap, cell in placed:
+                reach = (
+                    group_last_idx[idx]
+                    if cell.rowspan is None
+                    else min(idx + cell.rowspan - 1, n - 1)
+                )
+                if reach > idx:
+                    new_spans.append((_OpenSpan(col, cell.colspan, cell.text, reach), gap))
             if fragment_cells and fits(texts):
-                fragment_cells.append(cells)
-                fragment_texts.append(texts)
-                active = next_active
+                append_row(cells, texts)
+                active.add(new_spans)
                 continue
 
             yield from flush_fragment()
 
-            mat_cells, mat_texts, mat_active = build_row(row, idx, active, materialize=True)
+            mat_cells, mat_texts = materialize(placed, idx)
             if self._opts.measure(" ".join(mat_texts)) <= maxlen:
-                fragment_cells, fragment_texts = [mat_cells], [mat_texts]
-                active = mat_active
+                append_row(mat_cells, mat_texts)
             else:
                 # -- even this single row, with its covered columns materialized, is too big to
                 # -- fit alone; fall back to cell-level splitting, the same tolerance granted an
@@ -1487,7 +1615,7 @@ class _HtmlTableSplitter:
                 tr = _HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(mat_cells)}</tr>")
                 bounded_row = HtmlRow(tr).row_clipped_to_rows(1)
                 yield from self._iter_row_splits(bounded_row, maxlen=maxlen)
-                active = []
+            active.add(new_spans)
 
         yield from flush_fragment()
 

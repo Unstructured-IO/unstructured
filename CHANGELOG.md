@@ -1,3 +1,9 @@
+## 0.27.9
+
+### Fixes
+
+- **Keep active rowspans across oversized table-cell splits.** Continuation rows retain their covering cells and place new cells in the correct columns as shorter spans expire. Sparse tables with many span expirations are processed without repeatedly scanning every active span.
+
 ## 0.27.8
 
 ### Enhancements
