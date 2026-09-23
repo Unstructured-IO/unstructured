@@ -4284,8 +4284,13 @@ class Describe_HtmlTableSplitter:
         continuation = fragment_fromstring(chunks[-1][1])
         rows = continuation.xpath(".//tr")
         assert len(rows) == continuation_rows
-        assert rows[0].xpath("./td")[0].text_content() == "ANCHOR"
-        assert rows[0].xpath("./td")[0].get("rowspan") == str(continuation_rows)
+        cells = rows[0].xpath("./td")
+        assert len(cells) == span_count + 1 + bool(continuation_cell)
+        assert cells[0].text_content() == "ANCHOR"
+        assert cells[0].get("rowspan") == str(continuation_rows)
+        assert [int(cell.get("rowspan", "1")) for cell in cells[1 : span_count + 1]] == [
+            1 + 2 * ((i * 73) % span_count) for i in range(span_count)
+        ]
 
     def and_it_preserves_a_hole_before_a_surviving_span_at_a_fragment_boundary(self):
         """An expired left span must not move a surviving right span into its column."""
