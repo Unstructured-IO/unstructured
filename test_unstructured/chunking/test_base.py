@@ -19,9 +19,11 @@ from unstructured.chunking.base import (
     PreChunkCombiner,
     PreChunker,
     TokenCounter,
+    _ActiveSpanLedger,
     _CellAccumulator,
     _Chunker,
     _HtmlTableSplitter,
+    _OpenSpan,
     _PreChunkAccumulator,
     _RowAccumulator,
     _TableChunker,
@@ -4302,6 +4304,49 @@ class Describe_HtmlTableSplitter:
         assert chunks[-1] == (
             "RIGHT tail",
             '<table><tr><td/><td rowspan="2">RIGHT</td></tr><tr><td>tail</td></tr></table>',
+        )
+
+    def and_it_tolerates_a_malformed_colspan_overlapping_an_active_rowspan(self):
+        """A conflicting source cell must not damage the continuation index."""
+        ledger = _ActiveSpanLedger()
+        cell = HtmlCell(fragment_fromstring("<td/>"))
+        placed = ledger.place([cell, cell, cell])
+        ledger.add(
+            [
+                (_OpenSpan(0, 1, "LEFT", 3), placed[0][1]),
+                (_OpenSpan(2, 1, "RIGHT", 3), placed[2][1]),
+            ]
+        )
+
+        ledger.expire(1)
+        crossing = HtmlCell(fragment_fromstring('<td colspan="3"/>'))
+        overlapping_col, gap, _ = ledger.place([crossing])[0]
+        assert overlapping_col == 1
+        ledger.add([(_OpenSpan(overlapping_col, 3, "CONFLICT", 4), gap)])
+
+        assert sorted(ledger.spans) == [0, 2]
+        ledger.expire(4)
+        assert ledger.place([cell])[0][0] == 0
+
+    def and_it_scopes_a_zero_rowspan_to_its_section_during_cell_fallback(self):
+        """A positive span may continue into tfoot after a tbody zero span expires."""
+        html = (
+            '<table><tbody><tr><td rowspan="0">ZERO</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            '<tr><td rowspan="2">LONG</td><td>body</td></tr></tbody>'
+            "<tfoot><tr><td>TAIL</td></tr></tfoot></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert chunks[-1] == (
+            "ZERO LONG body TAIL",
+            '<table><tr><td>ZERO</td><td rowspan="2">LONG</td><td>body</td></tr>'
+            "<tr><td>TAIL</td></tr></table>",
         )
 
     def and_it_bounds_a_positive_rowspan_whose_own_row_is_oversized_even_alone(self):

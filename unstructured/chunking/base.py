@@ -1290,11 +1290,20 @@ class _ActiveSpanLedger:
         right_of_initial_gap: dict[int, int] = {}
         for span, initial_gap in spans:
             gap_start = right_of_initial_gap.get(initial_gap, initial_gap)
+            if gap_start not in self.gaps:
+                # -- Conflicting source colspans can consume this gap before a later cell
+                # -- opens its rowspan. Its original HTML was already emitted; omit only
+                # -- the impossible continuation geometry. --
+                continue
             gap_end = self.gaps[gap_start]
+            span_end = span.col + span.colspan
+            if span.col < gap_start or (gap_end is not None and span_end > gap_end):
+                # -- OCR/VLM HTML can overlap a live span. Never corrupt the sparse index
+                # -- trying to retain an interval that is not wholly free. --
+                continue
             self._remove_gap(gap_start)
             if gap_start < span.col:
                 self._add_gap(gap_start, span.col)
-            span_end = span.col + span.colspan
             if gap_end is None or span_end < gap_end:
                 self._add_gap(span_end, gap_end)
             right_of_initial_gap[initial_gap] = span_end
