@@ -1,5 +1,4 @@
-PACKAGE_NAME := unstructured_inference
-CURRENT_DIR := $(shell pwd)
+PACKAGE_NAME := meridian_ocr
 
 
 .PHONY: help
@@ -11,7 +10,7 @@ help: Makefile
 # Install #
 ###########
 
-## install:                 install all dependencies via uv
+## install:                 install this package with all dependency groups via uv
 .PHONY: install
 install:
 	@uv sync --locked --all-groups
@@ -21,7 +20,7 @@ install:
 install-lint:
 	@uv sync --locked --only-group lint
 
-## lock:                    update and lock all dependencies
+## lock:                    update and lock all workspace dependencies
 .PHONY: lock
 lock:
 	@uv lock --upgrade
@@ -82,21 +81,3 @@ version-sync:
 .PHONY: check-coverage
 check-coverage:
 	uv run --locked --no-sync coverage report --fail-under=90
-
-##########
-# Docker #
-##########
-
-DOCKER_IMAGE ?= unstructured-inference:dev
-
-.PHONY: docker-build
-docker-build:
-	DOCKER_IMAGE=${DOCKER_IMAGE} ./scripts/docker-build.sh
-
-.PHONY: docker-test
-docker-test: docker-build
-	docker run --rm \
-	-v ${CURRENT_DIR}/test_unstructured_inference:/home/test_unstructured_inference \
-	-v ${CURRENT_DIR}/sample-docs:/home/sample-docs \
-	$(DOCKER_IMAGE) \
-	bash -c "pytest -n auto $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured_inference"

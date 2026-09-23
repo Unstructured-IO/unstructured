@@ -1,5 +1,5 @@
-from unstructured_inference.inference.elements import TextRegion, TextRegions
-from unstructured_inference.inference.layoutelement import LayoutElement, LayoutElements
+from meridian_ocr.inference.elements import TextRegion, TextRegions
+from meridian_ocr.inference.layoutelement import LayoutElement, LayoutElements
 
 from meridian_partition.documents.elements import ElementType
 from meridian_partition.partition.pdf_image.inference_utils import (

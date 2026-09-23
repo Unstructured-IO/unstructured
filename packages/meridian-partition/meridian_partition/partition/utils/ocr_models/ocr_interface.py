@@ -16,9 +16,9 @@ from meridian_partition.partition.utils.constants import (
 )
 
 if TYPE_CHECKING:
+    from meridian_ocr.inference.elements import TextRegions
+    from meridian_ocr.inference.layoutelement import LayoutElements
     from PIL import Image as PILImage
-    from unstructured_inference.inference.elements import TextRegions
-    from unstructured_inference.inference.layoutelement import LayoutElements
 
 
 class OCRAgent(ABC):

@@ -11,6 +11,8 @@ COPY packages/meridian-partition/pyproject.toml packages/meridian-partition/READ
 COPY packages/meridian-partition/meridian_partition packages/meridian-partition/meridian_partition
 COPY packages/meridian-partition/test_meridian_partition packages/meridian-partition/test_meridian_partition
 COPY packages/meridian-partition/example-docs packages/meridian-partition/example-docs
+COPY packages/meridian-ocr/pyproject.toml packages/meridian-ocr/README.md packages/meridian-ocr/LICENSE packages/meridian-ocr/
+COPY packages/meridian-ocr/meridian_ocr packages/meridian-ocr/meridian_ocr
 
 RUN apk_ok=false; \
     for attempt in 1 2 3; do \
@@ -76,7 +78,7 @@ ENV UV_PYTHON_DOWNLOADS=never
 RUN uv sync --locked --all-packages --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
     uv run --no-sync $PYTHON -c "from meridian_partition.nlp.tokenize import _get_nlp; print('spaCy model loaded:', _get_nlp().meta['name'])" && \
     uv run --no-sync $PYTHON -c "from meridian_partition.partition.model_init import initialize; initialize()" && \
-    uv run --no-sync $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
+    uv run --no-sync $PYTHON -c "from meridian_ocr.models.tables import MeridianOCRTableTransformerModel; model = MeridianOCRTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
 # Replace PyPI opencv wheels (which bundle vulnerable ffmpeg 5.1.x with 14 CVEs)
 # with a source-built opencv-contrib-python-headless wheel compiled with
@@ -84,8 +86,8 @@ RUN uv sync --locked --all-packages --all-extras --no-group dev --no-group lint 
 #
 # The contrib-headless variant is a strict superset of the cv2 API exposed by
 # opencv-python, opencv-python-headless, and opencv-contrib-python (all of
-# which are pulled in transitively by unstructured-paddleocr / unstructured-
-# inference). One wheel can therefore replace all three. Because the wheel's
+# which are pulled in transitively by unstructured-paddleocr / meridian_ocr).
+# One wheel can therefore replace all three. Because the wheel's
 # metadata name only matches opencv-contrib-python-headless, we have to
 # uninstall the other variants first - `uv pip install --reinstall-package`
 # would silently no-op for the non-matching names.

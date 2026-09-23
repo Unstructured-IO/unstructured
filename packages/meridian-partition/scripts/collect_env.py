@@ -182,13 +182,13 @@ def main():
     else:
         print("meridian_partition is not installed")
 
-    if dependency_exists("unstructured_inference"):
+    if dependency_exists("meridian_ocr"):
         print(
-            "unstructured-inference version: ",
-            get_python_package_version("unstructured-inference"),
+            "meridian_ocr version: ",
+            get_python_package_version("meridian_ocr"),
         )
     else:
-        print("unstructured-inference is not installed")
+        print("meridian_ocr is not installed")
 
     if dependency_exists("pytesseract"):
         print(

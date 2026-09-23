@@ -4,16 +4,16 @@ from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
 
-from unstructured_inference.inference.elements import ImageTextRegion, TextRegion
-from unstructured_inference.inference.layout import DocumentLayout
-from unstructured_inference.models.base import get_model
-from unstructured_inference.models.detectron2onnx import (
+from meridian_ocr.inference.elements import ImageTextRegion, TextRegion
+from meridian_ocr.inference.layout import DocumentLayout
+from meridian_ocr.models.base import get_model
+from meridian_ocr.models.detectron2onnx import (
     DEFAULT_LABEL_MAP as DETECTRON_LABEL_MAP,
 )
-from unstructured_inference.models.detectron2onnx import (
-    UnstructuredDetectronONNXModel,
+from meridian_ocr.models.detectron2onnx import (
+    MeridianOCRDetectronONNXModel,
 )
-from unstructured_inference.models.yolox import YOLOX_LABEL_MAP, UnstructuredYoloXModel
+from meridian_ocr.models.yolox import YOLOX_LABEL_MAP, MeridianOCRYoloXModel
 
 from meridian_partition.documents.elements import Element, Text
 from meridian_partition.partition.pdf_image.analysis.processor import AnalysisProcessor
@@ -52,9 +52,9 @@ def extract_document_layout_info(layout: DocumentLayout) -> dict:
 
 def object_detection_classes(model_name) -> List[str]:
     model = get_model(model_name)
-    if isinstance(model, UnstructuredYoloXModel):
+    if isinstance(model, MeridianOCRYoloXModel):
         return list(YOLOX_LABEL_MAP.values())
-    if isinstance(model, UnstructuredDetectronONNXModel):
+    if isinstance(model, MeridianOCRDetectronONNXModel):
         return list(DETECTRON_LABEL_MAP.values())
     else:
         raise ValueError(f"Cannot get OD model classes - unknown model type: {model_name}")

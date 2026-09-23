@@ -32,7 +32,7 @@ def determine_pdf_or_image_strategy(
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
     pytesseract_installed = dependency_exists("unstructured_pytesseract")
-    unstructured_inference_installed = dependency_exists("unstructured_inference")
+    meridian_ocr_installed = dependency_exists("meridian_ocr")
 
     if strategy == PartitionStrategy.AUTO:
         extract_element = extract_images_in_pdf or bool(extract_image_block_types)
@@ -46,18 +46,18 @@ def determine_pdf_or_image_strategy(
             )
 
     if all(
-        [not unstructured_inference_installed, not pytesseract_installed, not pdf_text_extractable],
+        [not meridian_ocr_installed, not pytesseract_installed, not pdf_text_extractable],
     ):
         raise ValueError(
-            "unstructured_inference is not installed, pytesseract is not installed "
+            "meridian_ocr is not installed, pytesseract is not installed "
             "and the text of the PDF is not extractable. "
-            "To process this file, install unstructured_inference, install pytesseract, "
+            "To process this file, install meridian_ocr, install pytesseract, "
             "or remove copy protection from the PDF.",
         )
 
-    if strategy == PartitionStrategy.HI_RES and not unstructured_inference_installed:
+    if strategy == PartitionStrategy.HI_RES and not meridian_ocr_installed:
         logger.warning(
-            "unstructured_inference is not installed. Cannot use the hi_res partitioning "
+            "meridian_ocr is not installed. Cannot use the hi_res partitioning "
             "strategy. Falling back to partitioning with another strategy.",
         )
         # NOTE(robinson) - fallback to ocr_only if possible because it is the most

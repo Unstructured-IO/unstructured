@@ -1,9 +1,9 @@
 import numpy as np
 import pytest
+from meridian_ocr.inference.elements import Rectangle
+from meridian_ocr.inference.layout import DocumentLayout, PageLayout
+from meridian_ocr.inference.layoutelement import LayoutElement
 from PIL import Image
-from unstructured_inference.inference.elements import Rectangle
-from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-from unstructured_inference.inference.layoutelement import LayoutElement
 
 from meridian_partition.partition.pdf_image.analysis.bbox_visualisation import (
     TextAlignment,

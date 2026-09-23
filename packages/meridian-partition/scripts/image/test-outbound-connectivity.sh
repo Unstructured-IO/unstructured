@@ -2,7 +2,7 @@
 #
 # test-outbound-connectivity.sh
 #
-# Capture every external packet an MeridianPartition Docker image emits while
+# Capture every external packet a MeridianPartition Docker image emits while
 # partition()‑ing a test PNG, *inside the same container* (works on macOS).
 #
 # In addition **also capture the Python workload's stdout / stderr** and save it

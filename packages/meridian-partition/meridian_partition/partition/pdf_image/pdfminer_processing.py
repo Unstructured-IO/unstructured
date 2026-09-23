@@ -5,12 +5,12 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
+from meridian_ocr.config import inference_config
+from meridian_ocr.constants import FULL_PAGE_REGION_THRESHOLD, IsExtracted
+from meridian_ocr.inference.elements import Rectangle
 from pdfminer.layout import LAParams, LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import decode_text, open_filename
-from unstructured_inference.config import inference_config
-from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD, IsExtracted
-from unstructured_inference.inference.elements import Rectangle
 
 from meridian_partition.documents.coordinates import PixelSpace, PointSpace
 from meridian_partition.documents.elements import CoordinatesMetadata, ElementType
@@ -30,9 +30,9 @@ from meridian_partition.partition.utils.sorting import sort_text_regions
 from meridian_partition.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion, TextRegions
-    from unstructured_inference.inference.layout import DocumentLayout
-    from unstructured_inference.inference.layoutelement import LayoutElements
+    from meridian_ocr.inference.elements import TextRegion, TextRegions
+    from meridian_ocr.inference.layout import DocumentLayout
+    from meridian_ocr.inference.layoutelement import LayoutElements
 
 
 EPSILON_AREA = 0.01
@@ -64,7 +64,7 @@ def _rotate_bboxes(coords: np.ndarray, angle: int, width: float, height: float) 
     degrees counter-clockwise (PIL convention) with ``expand=True``.
 
     ``width``/``height`` are the page-image dimensions in the un-rotated (display) frame.
-    unstructured-inference may rotate a page image to make its dominant text upright;
+    meridian_ocr may rotate a page image to make its dominant text upright;
     applying the same rotation here keeps the pdfminer layer aligned with the
     object-detection layer so the two merge correctly.
     """
@@ -246,7 +246,7 @@ def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
     return inferred_to_keep
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def array_merge_inferred_layout_with_extracted_layout(
     inferred_layout: LayoutElements,
     extracted_layout: LayoutElements,
@@ -257,7 +257,7 @@ def array_merge_inferred_layout_with_extracted_layout(
 ) -> LayoutElements:
     """merge elements using array data structures; it also returns LayoutElements instead of
     collection of LayoutElement"""
-    from unstructured_inference.inference.layoutelement import LayoutElements
+    from meridian_ocr.inference.layoutelement import LayoutElements
 
     if len(extracted_layout) == 0:
         return inferred_layout
@@ -463,7 +463,7 @@ def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_LOW_FIDELITY_TEXT_R
     return True
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def process_page_layout_from_pdfminer(
     annotation_list: list,
     page_layout,
@@ -473,7 +473,7 @@ def process_page_layout_from_pdfminer(
     pdfminer_config: Optional[PDFMinerConfig] = None,
     widget_list: Optional[list[dict[str, Any]]] = None,
 ) -> tuple[LayoutElements, list]:
-    from unstructured_inference.inference.layoutelement import LayoutElements
+    from meridian_ocr.inference.layoutelement import LayoutElements
 
     urls_metadata: list[dict[str, Any]] = []
     element_coords, texts, element_class = [], [], []
@@ -564,7 +564,7 @@ def process_page_layout_from_pdfminer(
     )
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = env_config.PDF_RENDER_DPI,
@@ -576,12 +576,12 @@ def process_data_with_pdfminer(
     pdf pages using pdf2image
 
     ``rotation_corrections`` is an optional per-page list of extra rotations (degrees,
-    counter-clockwise) that unstructured-inference applied to the rendered page images to
+    counter-clockwise) that meridian_ocr applied to the rendered page images to
     make their text upright. Mirroring those rotations onto the extracted coordinates keeps
     the pdfminer layer aligned with the object-detection layer.
     """
 
-    from unstructured_inference.inference.layoutelement import LayoutElements
+    from meridian_ocr.inference.layoutelement import LayoutElements
 
     layouts = []
     layouts_links = []
@@ -606,7 +606,7 @@ def process_data_with_pdfminer(
             annotation_list, page_layout, height, page_number, coef, pdfminer_config, widget_list
         )
 
-        # Mirror any image rotation unstructured-inference applied for this page so the
+        # Mirror any image rotation meridian_ocr applied for this page so the
         # extracted coordinates share the object-detection layer's frame (see _rotate_bboxes).
         angle = (
             rotation_corrections[page_number]
@@ -745,12 +745,12 @@ def boxes_iou(
     return inter_area > (threshold * denom)
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def pdfminer_elements_to_text_regions(layout_elements: LayoutElements) -> list[TextRegions]:
     """a temporary solution to convert layout elements to a list of either EmbeddedTextRegion or
     ImageTextRegion; this should be made obsolete after we refactor the merging logic in inference
     library"""
-    from unstructured_inference.inference.elements import (
+    from meridian_ocr.inference.elements import (
         EmbeddedTextRegion,
         ImageTextRegion,
     )
@@ -768,7 +768,7 @@ def pdfminer_elements_to_text_regions(layout_elements: LayoutElements) -> list[T
     return regions
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def merge_inferred_with_extracted_layout(
     inferred_document_layout: "DocumentLayout",
     extracted_layout: List[TextRegions],
@@ -776,7 +776,7 @@ def merge_inferred_with_extracted_layout(
 ) -> "DocumentLayout":
     """Merge an inferred layout with an extracted layout"""
 
-    from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
+    from meridian_ocr.models.detectron2onnx import MeridianOCRDetectronONNXModel
 
     inferred_pages = inferred_document_layout.pages
     for i, (inferred_page, extracted_page_layout) in enumerate(
@@ -791,7 +791,7 @@ def merge_inferred_with_extracted_layout(
         # NOTE(Benjamin): With this the thresholds are only changed for detextron2_mask_rcnn
         # In other case the default values for the functions are used
         if (
-            isinstance(inferred_page.detection_model, UnstructuredDetectronONNXModel)
+            isinstance(inferred_page.detection_model, MeridianOCRDetectronONNXModel)
             and "R_50" not in inferred_page.detection_model.model_path
         ):
             threshold_kwargs = {"same_region_threshold": 0.5, "subregion_threshold": 0.5}
@@ -859,7 +859,7 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
     return document
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def remove_duplicate_elements(
     elements: TextRegions,
     threshold: float = 0.5,

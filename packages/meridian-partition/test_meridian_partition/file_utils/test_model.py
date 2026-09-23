@@ -90,7 +90,7 @@ class DescribeFileType:
     @pytest.mark.parametrize(
         ("file_type", "expected_value"),
         [
-            (FileType.BMP, ("unstructured_inference",)),
+            (FileType.BMP, ("meridian_ocr",)),
             (FileType.CSV, ("pandas",)),
             (FileType.DOC, ("docx",)),
             (FileType.EMPTY, ()),

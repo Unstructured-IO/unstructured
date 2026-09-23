@@ -23,8 +23,8 @@ from meridian_partition.partition.utils.ocr_models.ocr_interface import OCRAgent
 from meridian_partition.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegions
-    from unstructured_inference.inference.layoutelement import LayoutElements
+    from meridian_ocr.inference.elements import TextRegions
+    from meridian_ocr.inference.layoutelement import LayoutElements
 
 _RE_X_CONF = re.compile(r"x_conf (\d+\.\d+)")
 
@@ -171,7 +171,7 @@ class OCRAgentTesseract(OCRAgent):
 
         return "".join(chars)
 
-    @requires_dependencies("unstructured_inference")
+    @requires_dependencies("meridian_ocr")
     def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
         from meridian_partition.partition.pdf_image.inference_utils import (
             build_layout_elements_from_ocr_regions,
@@ -194,7 +194,7 @@ class OCRAgentTesseract(OCRAgent):
             group_by_ocr_text=True,
         )
 
-    @requires_dependencies("unstructured_inference")
+    @requires_dependencies("meridian_ocr")
     def parse_data(self, ocr_data: pd.DataFrame, zoom: float = 1) -> TextRegions:
         """Parse the OCR result data to extract a list of TextRegion objects from tesseract.
 
@@ -221,7 +221,7 @@ class OCRAgentTesseract(OCRAgent):
           data frame will result in its associated bounding box being ignored.
         """
 
-        from unstructured_inference.inference.elements import TextRegions
+        from meridian_ocr.inference.elements import TextRegions
 
         if zoom <= 0:
             zoom = 1

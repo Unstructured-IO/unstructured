@@ -1,26 +1,21 @@
-<h3 align="center">
-  <img
-    src="https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/img/unstructured_logo.png"
-    height="200"
-  >
+# meridian_ocr
 
-</h3>
-
-<h3 align="center">
-  <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
-</h3>
-
-The `unstructured-inference` repo contains hosted model inference code for layout parsing models. 
-These models are invoked via API as part of the partitioning bricks in the `unstructured` package.
+Model inference for document layout parsing: layout detection (YOLOX, Detectron2 ONNX), table structure
+recognition (Table Transformer), PDF rendering, and the layout element types consumed by
+[`meridian_partition`](../meridian-partition) for its `hi_res` strategy.
 
 **Requires Python >=3.11, <3.14.**
+
+Ported from [`unstructured-inference`](https://github.com/Unstructured-IO/unstructured-inference) 1.6.13
+(commit `fc64017`, Apache-2.0) and renamed to `meridian_ocr`. Model weights are still downloaded from the
+upstream Hugging Face repositories (`unstructuredio/*`).
 
 ## Installation
 
 ### Package
 
 ```shell
-pip install unstructured-inference
+pip install meridian_ocr
 ```
 
 ### Detectron2
@@ -40,23 +35,23 @@ tips on installing Detectron2 on Windows.
 
 ### Development Setup
 
-This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
+This package is part of a [uv workspace](https://docs.astral.sh/uv/concepts/projects/workspaces/); the lockfile
+and virtual environment live at the repository root. From `packages/meridian-ocr`:
 
 ```shell
-# Clone and install all dependencies (including dev/test/lint groups)
-git clone https://github.com/Unstructured-IO/unstructured-inference.git
-cd unstructured-inference
+# Install the package with all dependency groups (dev/test/lint)
 make install
 ```
 
-Run `make help` for a full list of available targets.
+Run `make help` for a full list of available targets. Tests resolve `sample-docs/` relative to the package
+directory, so run them from here (`make test`).
 
 ## Getting Started
 
 To get started with the layout parsing model, use the following commands:
 
 ```python
-from unstructured_inference.inference.layout import DocumentLayout
+from meridian_ocr.inference.layout import DocumentLayout
 
 layout = DocumentLayout.from_file("sample-docs/loremipsum.pdf")
 
@@ -77,8 +72,8 @@ We offer several detection models including [Detectron2](https://github.com/face
 
 When doing inference, an alternate model can be used by passing the model object to the ingestion method via the `model` parameter. The `get_model` function can be used to construct one of our out-of-the-box models from a keyword, e.g.:
 ```python
-from unstructured_inference.models.base import get_model
-from unstructured_inference.inference.layout import DocumentLayout
+from meridian_ocr.models.base import get_model
+from meridian_ocr.inference.layout import DocumentLayout
 
 model = get_model("yolox")
 layout = DocumentLayout.from_file("sample-docs/layout-parser-paper.pdf", detection_model=model)
@@ -86,17 +81,13 @@ layout = DocumentLayout.from_file("sample-docs/layout-parser-paper.pdf", detecti
 
 ### Using your own model
 
-Any detection model can be used for in the `unstructured_inference` pipeline by wrapping the model in the `UnstructuredObjectDetectionModel` class. To integrate with the `DocumentLayout` class, a subclass of `UnstructuredObjectDetectionModel` must have a `predict` method that accepts a `PIL.Image.Image` and returns a list of `LayoutElement`s, and an `initialize` method, which loads the model and prepares it for inference.
+Any detection model can be used for in the `meridian_ocr` pipeline by wrapping the model in the `MeridianOCRObjectDetectionModel` class. To integrate with the `DocumentLayout` class, a subclass of `MeridianOCRObjectDetectionModel` must have a `predict` method that accepts a `PIL.Image.Image` and returns a list of `LayoutElement`s, and an `initialize` method, which loads the model and prepares it for inference.
+
+The default model can also be selected with the `MERIDIAN_OCR_DEFAULT_MODEL_NAME` environment variable, and
+its initialization parameters loaded from the JSON file named by
+`MERIDIAN_OCR_DEFAULT_MODEL_INITIALIZE_PARAMS_JSON_PATH`.
 
 ## Security Policy
 
-See our [security policy](https://github.com/Unstructured-IO/unstructured-inference/security/policy) for
+See the upstream [security policy](https://github.com/Unstructured-IO/unstructured-inference/security/policy) for
 information on how to report security vulnerabilities.
-
-## Learn more
-
-| Section | Description |
-|-|-|
-| [Unstructured Community Github](https://github.com/Unstructured-IO/community) | Information about Unstructured.io community projects  |
-| [Unstructured Github](https://github.com/Unstructured-IO) | Unstructured.io open source repositories |
-| [Company Website](https://unstructured.io) | Unstructured.io product and company info |

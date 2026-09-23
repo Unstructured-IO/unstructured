@@ -1,5 +1,5 @@
 [tool.uv.workspace]
-members = ["packages/meridian-partition"]
+members = ["packages/meridian-partition", "packages/meridian-ocr"]
 
 # uv only honors these settings in the workspace root; they apply to every member.
 [tool.uv]
@@ -15,9 +15,12 @@ constraint-dependencies = [
     # deltalake 1.3.0 is missing Linux ARM64 wheels, causing Docker ARM64 builds to fail
     "deltalake<1.3.0",
     "fonttools>=4.60.2",
+    # Security: CVE fix for Pillow (out-of-bounds write loading PSD images)
+    "pillow>=12.1.1",
     "protobuf>=6.30.0",
     "pykx>=3.1.6",  # 3.1.2 is missing macOS wheels (transitive dep of kdbai-client)
     "tokenizers>=0.21",
-    "urllib3>=2.0.0",
+    # Security: CVE fix for urllib3
+    "urllib3>=2.6.0",
     "weaviate-client>=4.20.1",
 ]

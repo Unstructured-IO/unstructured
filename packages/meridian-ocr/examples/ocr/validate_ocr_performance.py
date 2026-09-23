@@ -7,7 +7,7 @@ from difflib import SequenceMatcher
 import nltk
 import pdf2image
 
-from unstructured_inference.inference.layout import (
+from meridian_ocr.inference.layout import (
     DocumentLayout,
     create_image_output_dir,
     process_file_with_model,

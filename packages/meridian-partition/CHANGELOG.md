@@ -1,3 +1,22 @@
+## 0.28.0-dev0
+
+### BREAKING CHANGES
+
+- **Renamed to `meridian_partition`.** The package, import name, console script, environment variables
+  (`UNSTRUCTURED_*` -> `MERIDIAN_PARTITION_*`), and element-class prefixes (`Unstructured*` ->
+  `MeridianPartition*`) were renamed from `unstructured`.
+- **Removed `partition_via_api()` and `partition_multiple_via_api()`** along with the
+  `unstructured-client` dependency; they only called the hosted Unstructured API.
+- **`hi_res` inference now comes from `meridian_ocr`.** Layout detection and table structure models are
+  provided by the `meridian_ocr` package in this monorepo (a port of `unstructured-inference` 1.6.13)
+  instead of `unstructured-inference`. Model classes are named `MeridianOCR*` (for example
+  `MeridianOCRTableTransformerModel`).
+
+### Enhancements
+
+- **Monorepo layout.** The package lives in `packages/meridian-partition` of a uv workspace alongside
+  `meridian_ocr`; the workspace root holds the shared lockfile, Makefile, Dockerfile, and CI.
+
 ## 0.27.8
 
 ### Enhancements

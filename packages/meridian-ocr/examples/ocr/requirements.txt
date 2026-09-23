@@ -1,2 +1,2 @@
-unstructured[local-inference]
+meridian_partition[local-inference]
 nltk

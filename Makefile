@@ -1,4 +1,5 @@
 PARTITION_DIR := packages/meridian-partition
+OCR_DIR := packages/meridian-ocr
 CURRENT_DIR := $(shell pwd)
 
 .PHONY: help
@@ -27,26 +28,37 @@ lock:
 
 ## test:                    run the test suites of all packages
 .PHONY: test
-test: test-partition
+test: test-partition test-ocr
 
 ## test-partition:          run the meridian_partition test suite
 .PHONY: test-partition
 test-partition:
 	$(MAKE) -C $(PARTITION_DIR) test
 
+## test-ocr:                run the meridian_ocr test suite
+.PHONY: test-ocr
+test-ocr:
+	$(MAKE) -C $(OCR_DIR) test
+
 ## check:                   run linters and version checks for all packages
 .PHONY: check
-check: check-partition
+check: check-partition check-ocr
 
 ## check-partition:         run linters and version checks for meridian_partition
 .PHONY: check-partition
 check-partition:
 	$(MAKE) -C $(PARTITION_DIR) check
 
+## check-ocr:               run linters and version checks for meridian_ocr
+.PHONY: check-ocr
+check-ocr:
+	$(MAKE) -C $(OCR_DIR) check
+
 ## tidy:                    auto-format and fix lint issues in all packages
 .PHONY: tidy
 tidy:
 	$(MAKE) -C $(PARTITION_DIR) tidy
+	$(MAKE) -C $(OCR_DIR) tidy
 
 ## tidy-shell:              format all shell scripts in the repository
 .PHONY: tidy-shell

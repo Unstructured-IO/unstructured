@@ -94,8 +94,8 @@ from meridian_partition.telemetry import (
 from meridian_partition.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from meridian_ocr.inference.layout import DocumentLayout
+    from meridian_ocr.inference.layoutelement import LayoutElement
 
 
 # Correct a bug that was introduced by a previous patch to
@@ -134,13 +134,13 @@ DEFAULT_MAX_TOTAL_ARRAY_ENTRIES = 1_000_000  # array entries decoded per documen
 PILImage.MAX_IMAGE_PIXELS = 5e8
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def default_hi_res_model() -> str:
     # a light config for the hi res model; this is not defined as a constant so that no setting of
     # the default hi res model name is done on importing of this submodule; this allows (if user
     # prefers) for setting env after importing the sub module and changing the default model name
 
-    from unstructured_inference.models.base import DEFAULT_MODEL
+    from meridian_ocr.models.base import DEFAULT_MODEL
 
     return os.environ.get("MERIDIAN_PARTITION_HI_RES_MODEL_NAME", DEFAULT_MODEL)
 
@@ -895,7 +895,7 @@ def _enable_detect_vertical_if_rotated(
 
 
 def _rotation_corrections_from_layout(inferred_document_layout) -> list[int]:
-    """Per-page rotations unstructured-inference applied to the page images to make their
+    """Per-page rotations meridian_ocr applied to the page images to make their
     text upright. Mirrored onto the pdfminer coordinates so both layers share one frame."""
     return [
         int((p.image_metadata or {}).get("pdf_rotation_correction", 0))
@@ -903,7 +903,7 @@ def _rotation_corrections_from_layout(inferred_document_layout) -> list[int]:
     ]
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def _partition_pdf_or_image_local(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
@@ -936,11 +936,11 @@ def _partition_pdf_or_image_local(
 ) -> list[Element]:
     """Partition using package installed locally"""
 
-    from unstructured_inference.inference.layout import (
+    from meridian_ocr.inference.layout import (
         process_data_with_model,
         process_file_with_model,
     )
-    from unstructured_inference.inference.pdf_image import PdfRenderTooLargeError
+    from meridian_ocr.inference.pdf_image import PdfRenderTooLargeError
 
     from meridian_partition.partition.pdf_image.analysis.layout_dump import (
         ExtractedLayoutDumper,

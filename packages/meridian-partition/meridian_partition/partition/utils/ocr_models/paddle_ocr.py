@@ -12,8 +12,8 @@ from meridian_partition.partition.utils.ocr_models.ocr_interface import OCRAgent
 from meridian_partition.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion, TextRegions
-    from unstructured_inference.inference.layoutelement import LayoutElements
+    from meridian_ocr.inference.elements import TextRegion, TextRegions
+    from meridian_ocr.inference.layoutelement import LayoutElements
 
 
 class OCRAgentPaddle(OCRAgent):
@@ -81,7 +81,7 @@ class OCRAgentPaddle(OCRAgent):
 
         return ocr_regions
 
-    @requires_dependencies("unstructured_inference")
+    @requires_dependencies("meridian_ocr")
     def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
         ocr_regions = self.get_layout_from_image(image)
 
@@ -95,7 +95,7 @@ class OCRAgentPaddle(OCRAgent):
             element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT},
         )
 
-    @requires_dependencies("unstructured_inference")
+    @requires_dependencies("meridian_ocr")
     def parse_data(self, ocr_data: list[Any]) -> TextRegions:
         """Parse the OCR result data to extract a list of TextRegion objects from paddle.
 
@@ -116,7 +116,7 @@ class OCRAgentPaddle(OCRAgent):
           dictionary will result in its associated bounding box being ignored.
         """
 
-        from unstructured_inference.inference.elements import TextRegions
+        from meridian_ocr.inference.elements import TextRegions
 
         from meridian_partition.partition.pdf_image.inference_utils import (
             build_text_region_from_coords,

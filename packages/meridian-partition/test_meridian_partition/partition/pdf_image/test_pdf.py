@@ -16,16 +16,16 @@ from types import SimpleNamespace
 from unittest import mock
 
 import pytest
+from meridian_ocr.inference import layout, pdf_image
+from meridian_ocr.inference.elements import Rectangle
+from meridian_ocr.inference.layout import DocumentLayout, PageLayout
+from meridian_ocr.inference.layoutelement import LayoutElement
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from pypdf import PdfWriter
 from pypdf.errors import LimitReachedError
 from pypdf.generic import ArrayObject, DecodedStreamObject, NameObject, NullObject
 from pytest_mock import MockFixture
-from unstructured_inference.inference import layout, pdf_image
-from unstructured_inference.inference.elements import Rectangle
-from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-from unstructured_inference.inference.layoutelement import LayoutElement
 
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.coordinates import PixelSpace
@@ -223,7 +223,7 @@ def _layout_with_rotation_corrections(corrections):
 
 
 def test_rotation_corrections_from_layout_reads_metadata():
-    """The main path: per-page corrections recorded by unstructured-inference are surfaced."""
+    """The main path: per-page corrections recorded by meridian_ocr are surfaced."""
     document_layout = _layout_with_rotation_corrections(
         [{"pdf_rotation_correction": 90}, {"pdf_rotation_correction": 270}]
     )
@@ -555,7 +555,7 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(caplog):
     assert len(elements) > 10
     assert "PageBreak" in [elem.category for elem in elements]
 
-    assert "unstructured_inference is not installed" not in caplog.text
+    assert "meridian_ocr is not installed" not in caplog.text
     for element in elements:
         assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 
@@ -643,7 +643,7 @@ def test_partition_pdf_falls_back_to_fast(monkeypatch, caplog):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
     def mock_exists(dep):
-        return dep not in ["unstructured_inference", "unstructured_pytesseract"]
+        return dep not in ["meridian_ocr", "unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -656,7 +656,7 @@ def test_partition_pdf_falls_back_to_fast(monkeypatch, caplog):
         pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.HI_RES)
 
     mock_partition.assert_called_once()
-    assert "unstructured_inference is not installed" in caplog.text
+    assert "meridian_ocr is not installed" in caplog.text
 
 
 def test_partition_pdf_falls_back_to_fast_from_ocr_only(monkeypatch, caplog):
@@ -711,7 +711,7 @@ def test_partition_pdf_falls_back_to_ocr_only(monkeypatch, caplog):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
     def mock_exists(dep):
-        return dep not in ["unstructured_inference"]
+        return dep not in ["meridian_ocr"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -724,7 +724,7 @@ def test_partition_pdf_falls_back_to_ocr_only(monkeypatch, caplog):
         pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.HI_RES)
 
     mock_partition.assert_called_once()
-    assert "unstructured_inference is not installed" in caplog.text
+    assert "meridian_ocr is not installed" in caplog.text
 
 
 def test_partition_pdf_uses_table_extraction():
@@ -886,7 +886,7 @@ def test_partition_pdf_fails_if_pdf_not_processable(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
     def mock_exists(dep):
-        return dep not in ["unstructured_inference", "unstructured_pytesseract"]
+        return dep not in ["meridian_ocr", "unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])

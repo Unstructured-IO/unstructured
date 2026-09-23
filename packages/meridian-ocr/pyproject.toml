@@ -1,5 +1,5 @@
 [project]
-name = "unstructured_inference"
+name = "meridian_ocr"
 description = "A library for performing inference using trained models."
 requires-python = ">=3.11, <3.14"
 authors = [{name = "Unstructured Technologies", email = "devops@unstructuredai.io"}]
@@ -42,10 +42,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Unstructured-IO/unstructured-inference"
+Homepage = "https://github.com/Anacreonsystems/meridian"
 
 [tool.hatch.version]
-path = "unstructured_inference/__version__.py"
+path = "meridian_ocr/__version__.py"
 
 [dependency-groups]
 lint = [
@@ -72,21 +72,11 @@ release = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-constraint-dependencies = [
-    # Security: CVE fix for fonttools
-    "fonttools>=4.60.2",
-    # Security: CVE fix for urllib3
-    "urllib3>=2.6.0",
-    # Security: CVE fix for Pillow (out-of-bounds write loading PSD images)
-    "pillow>=12.1.1",
-]
-
 [tool.hatch.build.targets.wheel]
-packages = ["/unstructured_inference"]
+packages = ["/meridian_ocr"]
 
 [tool.hatch.build.targets.sdist]
-packages = ["/unstructured_inference"]
+packages = ["/meridian_ocr"]
 
 [tool.ruff]
 line-length = 100

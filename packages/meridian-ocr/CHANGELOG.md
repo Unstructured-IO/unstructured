@@ -1,3 +1,15 @@
+## 1.6.14-dev0
+
+### BREAKING CHANGES
+- **Ported into the Meridian monorepo as `meridian_ocr`**: the package is `unstructured-inference` 1.6.13
+  renamed. Import from `meridian_ocr` instead of `unstructured_inference`; model classes are prefixed
+  `MeridianOCR` instead of `Unstructured` (e.g. `MeridianOCRYoloXModel`,
+  `MeridianOCRTableTransformerModel`, `MeridianOCRObjectDetectionModel`); the
+  `models.unstructuredmodel` module is now `models.meridian_ocr_model`; the environment variables
+  `UNSTRUCTURED_DEFAULT_MODEL_NAME` and `UNSTRUCTURED_DEFAULT_MODEL_INITIALIZE_PARAMS_JSON_PATH` are now
+  `MERIDIAN_OCR_DEFAULT_MODEL_NAME` and `MERIDIAN_OCR_DEFAULT_MODEL_INITIALIZE_PARAMS_JSON_PATH`. Model
+  weights are still downloaded from the upstream `unstructuredio/*` Hugging Face repositories.
+
 ## 1.6.13
 
 ### Fixes

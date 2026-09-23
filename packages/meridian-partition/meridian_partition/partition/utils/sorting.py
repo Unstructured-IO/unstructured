@@ -11,7 +11,7 @@ from meridian_partition.partition.utils.constants import SORT_MODE_BASIC, SORT_M
 from meridian_partition.partition.utils.xycut import recursive_xy_cut, recursive_xy_cut_swapped
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegions
+    from meridian_ocr.inference.elements import TextRegions
 
 
 def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> tuple[int, int, int, int]:

@@ -7,14 +7,14 @@ import pandas as pd
 import pytest
 import unstructured_pytesseract
 from lxml import etree
-from PIL import Image, UnidentifiedImageError
-from pypdfium2 import PdfiumError
-from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion, TextRegions
-from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-from unstructured_inference.inference.layoutelement import (
+from meridian_ocr.inference.elements import EmbeddedTextRegion, TextRegion, TextRegions
+from meridian_ocr.inference.layout import DocumentLayout, PageLayout
+from meridian_ocr.inference.layoutelement import (
     LayoutElement,
     LayoutElements,
 )
+from PIL import Image, UnidentifiedImageError
+from pypdfium2 import PdfiumError
 
 from meridian_partition.documents.elements import ElementType
 from meridian_partition.partition.pdf_image import ocr
@@ -441,7 +441,7 @@ def mock_ocr_layout():
 
 
 def test_supplement_element_with_table_extraction():
-    from unstructured_inference.models import tables
+    from meridian_ocr.models import tables
 
     tables.load_agent()
 

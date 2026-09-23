@@ -6,8 +6,8 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
+from meridian_ocr.inference import pdf_image
 from PIL import Image as PILImg
-from unstructured_inference.inference import pdf_image
 
 from meridian_partition.documents.coordinates import PixelSpace
 from meridian_partition.documents.elements import ElementMetadata, ElementType, Image, Table

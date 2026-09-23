@@ -241,7 +241,7 @@ class FileType(enum.Enum):
     BMP = (
         "bmp",  # -- value for this Enum member, like BMP = "bmp" in a simple enum --
         "image",  # -- partitioner_shortname --
-        ["unstructured_inference"],  # -- importable_package_dependencies --
+        ["meridian_ocr"],  # -- importable_package_dependencies --
         "image",  # -- extra_name - like `pip install "meridian_partition[image]"` in this case --
         [".bmp"],  # -- extensions - filename extensions that map to this file-type --
         "image/bmp",  # -- canonical_mime_type -  MIME-type written to `.metadata.filetype` --
@@ -305,7 +305,7 @@ class FileType(enum.Enum):
     HEIC = (
         "heic",
         "image",
-        ["unstructured_inference"],
+        ["meridian_ocr"],
         "image",
         [".heic"],
         "image/heic",
@@ -323,7 +323,7 @@ class FileType(enum.Enum):
     JPG = (
         "jpg",
         "image",
-        ["unstructured_inference"],
+        ["meridian_ocr"],
         "image",
         [".jpeg", ".jpg"],
         "image/jpeg",
@@ -415,7 +415,7 @@ class FileType(enum.Enum):
     PNG = (
         "png",
         "image",
-        ["unstructured_inference"],
+        ["meridian_ocr"],
         "image",
         [".png"],
         "image/png",
@@ -444,7 +444,7 @@ class FileType(enum.Enum):
     TIFF = (
         "tiff",
         "image",
-        ["unstructured_inference"],
+        ["meridian_ocr"],
         "image",
         [".tiff"],
         "image/tiff",

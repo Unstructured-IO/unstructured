@@ -1,5 +1,5 @@
 import pytest
-from unstructured_inference.inference.elements import EmbeddedTextRegion
+from meridian_ocr.inference.elements import EmbeddedTextRegion
 
 
 @pytest.fixture()

@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
-from unstructured_inference.constants import Source
-from unstructured_inference.inference.elements import TextRegion, TextRegions
-from unstructured_inference.inference.layoutelement import (
+from meridian_ocr.constants import Source
+from meridian_ocr.inference.elements import TextRegion, TextRegions
+from meridian_ocr.inference.layoutelement import (
     LayoutElement,
     LayoutElements,
     partition_groups_from_regions,
@@ -14,7 +14,7 @@ from unstructured_inference.inference.layoutelement import (
 from meridian_partition.documents.elements import ElementType
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import Rectangle
+    from meridian_ocr.inference.elements import Rectangle
 
 
 def build_text_region_from_coords(

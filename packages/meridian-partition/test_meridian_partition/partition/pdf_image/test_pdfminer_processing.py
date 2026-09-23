@@ -4,18 +4,18 @@ from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
-from pdfminer.layout import LAParams, LTChar, LTContainer
-from PIL import Image
-from unstructured_inference.constants import IsExtracted
-from unstructured_inference.constants import Source as InferenceSource
-from unstructured_inference.inference.elements import (
+from meridian_ocr.constants import IsExtracted
+from meridian_ocr.constants import Source as InferenceSource
+from meridian_ocr.inference.elements import (
     EmbeddedTextRegion,
     Rectangle,
     TextRegion,
     TextRegions,
 )
-from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
-from unstructured_inference.inference.layoutelement import LayoutElements
+from meridian_ocr.inference.layout import DocumentLayout, LayoutElement, PageLayout
+from meridian_ocr.inference.layoutelement import LayoutElements
+from pdfminer.layout import LAParams, LTChar, LTContainer
+from PIL import Image
 
 from meridian_partition.partition.auto import partition
 from meridian_partition.partition.pdf_image.pdfminer_processing import (

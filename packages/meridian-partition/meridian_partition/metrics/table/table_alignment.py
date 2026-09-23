@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
-from unstructured_inference.models.eval import compare_contents_as_df
+from meridian_ocr.models.eval import compare_contents_as_df
 
 
 class TableAlignment:

@@ -8,8 +8,8 @@ import numpy as np
 import pytesseract
 from pytesseract import Output
 
-from unstructured_inference.inference import layout
-from unstructured_inference.inference.elements import Rectangle, TextRegion
+from meridian_ocr.inference import layout
+from meridian_ocr.inference.elements import Rectangle, TextRegion
 
 
 def remove_non_printable(s):

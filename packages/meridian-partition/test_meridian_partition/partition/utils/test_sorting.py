@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from unstructured_inference.inference.elements import TextRegions
+from meridian_ocr.inference.elements import TextRegions
 
 from meridian_partition.documents.coordinates import PixelSpace
 from meridian_partition.documents.elements import CoordinatesMetadata, Element, Text

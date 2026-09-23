@@ -4,11 +4,11 @@ from multiprocessing import Pool
 
 import numpy as np
 import pytest
+from meridian_ocr.constants import IsExtracted
+from meridian_ocr.inference import layout
+from meridian_ocr.inference.elements import TextRegion
+from meridian_ocr.inference.layoutelement import LayoutElement
 from PIL import Image
-from unstructured_inference.constants import IsExtracted
-from unstructured_inference.inference import layout
-from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layoutelement import LayoutElement
 
 from meridian_partition.documents.coordinates import PixelSpace
 from meridian_partition.documents.elements import (

@@ -10,9 +10,9 @@ from typing import Any, Generator, List, Optional, TypeVar, Union
 
 import numpy as np
 from matplotlib import colors, font_manager
+from meridian_ocr.constants import ElementType
 from numba import njit
 from PIL import Image, ImageDraw, ImageFont
-from unstructured_inference.constants import ElementType
 
 from meridian_partition.partition.pdf_image.analysis.processor import AnalysisProcessor
 from meridian_partition.partition.pdf_image.pdf_image_utils import convert_pdf_to_image

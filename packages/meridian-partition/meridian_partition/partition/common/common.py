@@ -27,8 +27,8 @@ from meridian_partition.logger import logger
 from meridian_partition.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import PageLayout
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from meridian_ocr.inference.layout import PageLayout
+    from meridian_ocr.inference.layoutelement import LayoutElement
 
 
 def normalize_layout_element(
@@ -37,7 +37,7 @@ def normalize_layout_element(
     infer_list_items: bool = True,
     source_format: Optional[str] = "html",
 ) -> Element | list[Element]:
-    """Converts an unstructured_inference LayoutElement object to an meridian_partition Element."""
+    """Converts a meridian_ocr LayoutElement object to a meridian_partition Element."""
 
     if isinstance(layout_element, Element) and source_format == "html":
         return layout_element

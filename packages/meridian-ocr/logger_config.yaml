@@ -29,12 +29,12 @@ loggers:
       - access_handler
     propagate: no
     # disable logging for uvicorn.access by not having a handler
-  unstructured:
+  meridian_partition:
     level: INFO
     handlers:
       - standard_handler
     propagate: no
-  unstructured_inference:
+  meridian_ocr:
     level: DEBUG
     handlers:
       - standard_handler

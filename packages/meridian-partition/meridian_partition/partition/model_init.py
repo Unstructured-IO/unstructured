@@ -1,6 +1,6 @@
 import os
 
-from unstructured_inference.models.base import get_model
+from meridian_ocr.models.base import get_model
 
 
 def initialize():

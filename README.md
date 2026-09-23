@@ -5,6 +5,7 @@ Monorepo for the Meridian document-processing libraries.
 | Package | Directory | Description |
 |-|-|-|
 | `meridian_partition` | [`packages/meridian-partition`](packages/meridian-partition) | Partitions documents (PDF, HTML, Office, email, images, ...) into structured elements. |
+| `meridian_ocr` | [`packages/meridian-ocr`](packages/meridian-ocr) | Layout detection, table structure recognition, and PDF rendering models used by the `hi_res` strategy of `meridian_partition`. Port of `unstructured-inference` 1.6.13. |
 
 ## Development
 

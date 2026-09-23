@@ -31,10 +31,10 @@ from meridian_partition.telemetry import mark_partition_ocr_used, mark_partition
 from meridian_partition.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion, TextRegions
-    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-    from unstructured_inference.inference.layoutelement import LayoutElement, LayoutElements
-    from unstructured_inference.models.tables import UnstructuredTableTransformerModel
+    from meridian_ocr.inference.elements import TextRegion, TextRegions
+    from meridian_ocr.inference.layout import DocumentLayout, PageLayout
+    from meridian_ocr.inference.layoutelement import LayoutElement, LayoutElements
+    from meridian_ocr.models.tables import MeridianOCRTableTransformerModel
 
 
 def process_data_with_ocr(
@@ -53,13 +53,13 @@ def process_data_with_ocr(
 ) -> "DocumentLayout":
     """
     Process OCR data from a given data and supplement the output DocumentLayout
-    from unstructured_inference with ocr.
+    from meridian_ocr with ocr.
 
     Parameters:
     - data (Union[bytes, BinaryIO]): The input file data,
         which can be either bytes or a BinaryIO object.
 
-    - out_layout (DocumentLayout): The output layout from unstructured-inference.
+    - out_layout (DocumentLayout): The output layout from meridian_ocr.
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
@@ -106,7 +106,7 @@ def process_data_with_ocr(
     return merged_layouts
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def process_file_with_ocr(
     filename: str,
     out_layout: "DocumentLayout",
@@ -123,12 +123,12 @@ def process_file_with_ocr(
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
-    from unstructured-inference with ocr.
+    from meridian_ocr with ocr.
 
     Parameters:
     - filename (str): The path to the input file, which can be an image or a PDF.
 
-    - out_layout (DocumentLayout): The output layout from unstructured-inference.
+    - out_layout (DocumentLayout): The output layout from meridian_ocr.
 
     - extracted_layout (List[TextRegions]): a list of text regions extracted by pdfminer, one for
       each page
@@ -152,7 +152,7 @@ def process_file_with_ocr(
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
 
-    from unstructured_inference.inference.layout import DocumentLayout
+    from meridian_ocr.inference.layout import DocumentLayout
 
     merged_page_layouts: list[PageLayout] = []
     try:
@@ -211,7 +211,7 @@ def process_file_with_ocr(
             raise FileNotFoundError(f'File "{filename}" not found!') from e
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def supplement_page_layout_with_ocr(
     page_layout: "PageLayout",
     image: PILImage.Image,
@@ -278,7 +278,7 @@ def supplement_page_layout_with_ocr(
         _table_ocr_agent = OCRAgent.get_instance(
             ocr_agent_module=table_ocr_agent, language=language
         )
-        from unstructured_inference.models import tables
+        from meridian_ocr.models import tables
 
         tables.load_agent()
         if tables.tables_agent is None:
@@ -295,11 +295,11 @@ def supplement_page_layout_with_ocr(
     return page_layout
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def supplement_element_with_table_extraction(
     elements: LayoutElements,
     image: PILImage.Image,
-    tables_agent: "UnstructuredTableTransformerModel",
+    tables_agent: "MeridianOCRTableTransformerModel",
     ocr_agent,
     extracted_regions: Optional[TextRegions] = None,
 ) -> List["LayoutElement"]:
@@ -308,7 +308,7 @@ def supplement_element_with_table_extraction(
     the table's text content is rendered into a html string and "table_as_cells"
     with the raw table cells output from table agent if env_config.EXTRACT_TABLE_AS_CELLS is True
     """
-    from unstructured_inference.models.tables import cells_to_html
+    from meridian_ocr.models.tables import cells_to_html
 
     table_id = {v: k for k, v in elements.element_class_id_map.items()}.get(ElementType.TABLE)
     if table_id is None:
@@ -441,7 +441,7 @@ def aggregate_ocr_text_by_block(
     return " ".join(extracted_texts) if extracted_texts else ""
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies("meridian_ocr")
 def supplement_layout_with_ocr_elements(
     layout: LayoutElements,
     ocr_layout: TextRegions,
@@ -472,7 +472,7 @@ def supplement_layout_with_ocr_elements(
      threshold.
     """
 
-    from unstructured_inference.inference.layoutelement import LayoutElements
+    from meridian_ocr.inference.layoutelement import LayoutElements
 
     from meridian_partition.partition.pdf_image.inference_utils import (
         build_layout_elements_from_ocr_regions,

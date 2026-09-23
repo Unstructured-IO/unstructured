@@ -13,9 +13,9 @@ from typing import IO, TYPE_CHECKING, BinaryIO, Iterator, List, Optional, Tuple,
 import cv2
 import numpy as np
 import pdf2image
+from meridian_ocr.inference.layout import convert_pdf_to_image as render_pdf_to_image
+from meridian_ocr.inference.pdf_image import PdfRenderTooLargeError
 from PIL import Image
-from unstructured_inference.inference.layout import convert_pdf_to_image as render_pdf_to_image
-from unstructured_inference.inference.pdf_image import PdfRenderTooLargeError
 
 from meridian_partition.documents.elements import ElementType
 from meridian_partition.errors import UnprocessableEntityError
@@ -24,9 +24,9 @@ from meridian_partition.partition.common.common import convert_to_bytes, exactly
 from meridian_partition.partition.utils.config import env_config
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion
-    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from meridian_ocr.inference.elements import TextRegion
+    from meridian_ocr.inference.layout import DocumentLayout, PageLayout
+    from meridian_ocr.inference.layoutelement import LayoutElement
 
     from meridian_partition.documents.elements import Element
 
@@ -327,7 +327,7 @@ def annotate_layout_elements(
     into an image, whereas for image files, it processes the single image.
     """
 
-    from unstructured_inference.inference.layout import PageLayout
+    from meridian_ocr.inference.layout import PageLayout
 
     output_f_basename = os.path.splitext(os.path.basename(filename))[0]
     images = []

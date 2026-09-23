@@ -11,9 +11,9 @@ from meridian_partition.partition.utils.constants import Source
 from meridian_partition.partition.utils.ocr_models.ocr_interface import OCRAgent
 
 if TYPE_CHECKING:
+    from meridian_ocr.inference.elements import TextRegion, TextRegions
+    from meridian_ocr.inference.layoutelement import LayoutElements
     from PIL import Image as PILImage
-    from unstructured_inference.inference.elements import TextRegion, TextRegions
-    from unstructured_inference.inference.layoutelement import LayoutElements
 
 
 class OCRAgentGoogleVision(OCRAgent):
@@ -75,7 +75,7 @@ class OCRAgentGoogleVision(OCRAgent):
         )
 
     def _parse_regions(self, ocr_data: TextAnnotation) -> TextRegions:
-        from unstructured_inference.inference.elements import TextRegions
+        from meridian_ocr.inference.elements import TextRegions
 
         from meridian_partition.partition.pdf_image.inference_utils import (
             build_text_region_from_coords,

@@ -8,7 +8,7 @@ without requiring the real model weights. The fake session allocates a realistic
 import numpy as np
 from PIL import Image as PILImage
 
-from unstructured_inference.models.yolox import UnstructuredYoloXModel
+from meridian_ocr.models.yolox import MeridianOCRYoloXModel
 
 
 class _FakeInput:
@@ -28,8 +28,8 @@ class _FakeSession:
         return [np.random.randn(1, 16128, 16).astype(np.float32)]
 
 
-def make_model() -> UnstructuredYoloXModel:
-    model = object.__new__(UnstructuredYoloXModel)
+def make_model() -> MeridianOCRYoloXModel:
+    model = object.__new__(MeridianOCRYoloXModel)
     model.model = _FakeSession()
     model.model_path = "yolox_fake"
     model.layout_classes = {

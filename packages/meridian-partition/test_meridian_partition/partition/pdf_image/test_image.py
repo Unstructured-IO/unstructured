@@ -6,9 +6,9 @@ import tempfile
 from unittest import mock
 
 import pytest
+from meridian_ocr.inference import layout
 from PIL import Image
 from pytest_mock import MockFixture
-from unstructured_inference.inference import layout
 from unstructured_pytesseract import TesseractError
 
 from meridian_partition.chunking.title import chunk_by_title
@@ -128,7 +128,7 @@ def test_partition_image_local(monkeypatch, filename, file):
     assert partition_image_response[0].text == "Charlie Brown and the Great Pumpkin"
 
 
-@pytest.mark.skip("Needs to be fixed upstream in unstructured-inference")
+@pytest.mark.skip("Needs to be fixed upstream in meridian_ocr")
 def test_partition_image_local_raises_with_no_filename():
     with pytest.raises(FileNotFoundError):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=True)
@@ -290,7 +290,7 @@ def test_partition_image_default_strategy_hi_res():
     assert elements[idx].metadata.detection_class_prob is not None
     assert isinstance(elements[idx].metadata.detection_class_prob, float)
     if MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA:
-        # A bug in partition_groups_from_regions in unstructured-inference losses some sources
+        # A bug in partition_groups_from_regions in meridian_ocr losses some sources
         assert {element.metadata.detection_origin for element in elements} == {
             "yolox",
             "ocr_tesseract",
@@ -587,7 +587,7 @@ def test_partition_image_has_filename(inference_results):
     filename = "layout-parser-paper-fast.jpg"
     # Mock inference call with known return results
     with mock.patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
+        "meridian_ocr.inference.layout.process_file_with_model",
         return_value=inference_results,
     ) as mock_inference_func:
         elements = image.partition_image(

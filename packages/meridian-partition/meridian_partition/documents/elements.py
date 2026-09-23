@@ -164,7 +164,7 @@ class ElementMetadata:
     category_depth: Optional[int]
     coordinates: Optional[CoordinatesMetadata]
     data_source: Optional[DataSourceMetadata]
-    # -- Detection Model Class Probabilities from MeridianPartition-Inference Hi-Res --
+    # -- Detection Model Class Probabilities from meridian_ocr Hi-Res --
     detection_class_prob: Optional[float]
     # -- DEBUG field, the detection mechanism that emitted this element --
     detection_origin: Optional[str]

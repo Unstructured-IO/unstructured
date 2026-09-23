@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from bs4 import BeautifulSoup
-from unstructured_inference.models.tables import cells_to_html
+from meridian_ocr.models.tables import cells_to_html
 
 EMPTY_CELL = {
     "row_index": "",

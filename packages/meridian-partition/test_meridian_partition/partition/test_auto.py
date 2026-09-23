@@ -370,7 +370,7 @@ def test_auto_partition_image_element_extraction(extract_image_block_to_payload:
 # The following test `test_auto_partition_json_from_file_preserves_original_elements` will be the
 # replacement for this test.
 def test_auto_partitioned_json_output_maintains_consistency_with_fixture_elements():
-    """Test auto-processing an meridian_partition json output file by filename."""
+    """Test auto-processing a meridian_partition json output file by filename."""
     json_file_path = example_doc_path("spring-weather.html.json")
     original_file_name = "spring-weather.html"
     with open(json_file_path) as json_f:
