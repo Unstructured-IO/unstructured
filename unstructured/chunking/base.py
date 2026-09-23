@@ -1507,10 +1507,10 @@ class _HtmlTableSplitter:
         Rows are packed in order like an ordinary sequence, falling back to `_iter_row_splits`
         for a single row still too big alone. A column covered only by an earlier row's
         `rowspan` -- and so absent from a later row's own `<tr>` -- is re-materialized as a fresh
-        cell repeating the covering cell's text whenever a fragment boundary separates that row
-        from the row declaring the span, with the copy's `rowspan` set to only the rows of that
-        span actually present in the fragment. This unavoidably repeats the covering cell's text
-        across fragments, the accepted trade-off for honoring the hard size limit.
+        cell at a fragment boundary, with the copy's `rowspan` limited to the rows in that
+        fragment. The covering text repeats when it fits with the row. When it would force a
+        cell-level fallback, a blank covering cell keeps the column geometry without re-splitting
+        the same long text on every covered row.
         """
         n = len(group)
         group_last_idx = self._group_last_idx(group)
