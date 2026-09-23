@@ -4230,9 +4230,10 @@ class Describe_HtmlTableSplitter:
         value_chunk = next(chunk for chunk in chunks if "VALUE" in chunk.text)
         value_html = fragment_fromstring(value_chunk.metadata.text_as_html or "")
         value_row = next(row for row in value_html.xpath(".//tr") if "VALUE" in row.text_content())
-        body_rows = value_html.xpath("./tr")
-        assert body_rows[0].xpath("./td")[0].get("rowspan") == "2"
-        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == ["VALUE"]
+        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == [
+            "HHHHHHHHHHHHHHHHHHHH",
+            "VALUE",
+        ]
 
     def and_it_places_cells_after_spans_expire_inside_an_oversized_group(self):
         """A later cell reuses an expired span's column while longer spans stay active."""

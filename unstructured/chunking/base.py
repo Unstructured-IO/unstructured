@@ -1634,6 +1634,17 @@ class _HtmlTableSplitter:
                 fallback_cells, fallback_texts = materialize(placed, idx, carry_text=False)
                 if self._opts.measure(" ".join(fallback_texts)) <= maxlen:
                     append_row(fallback_cells, fallback_texts)
+                    # -- If the carry text could fit with a later, smaller row, let that row
+                    # -- start a fresh fragment and recover its covering context. A carry too
+                    # -- long to fit even alone stays blank while ordinary rows accumulate;
+                    # -- otherwise it would be split again on every covered source row. --
+                    carry_text = " ".join(
+                        span.text
+                        for span in sorted(active.spans.values(), key=lambda span: span.col)
+                        if span.text
+                    )
+                    if self._opts.measure(carry_text) <= maxlen:
+                        yield from flush_fragment()
                 else:
                     tr = _HtmlTableSplitter._parse_row_fragment(
                         f"<tr>{''.join(fallback_cells)}</tr>"
