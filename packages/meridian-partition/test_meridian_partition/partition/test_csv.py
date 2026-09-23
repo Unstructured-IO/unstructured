@@ -7,6 +7,11 @@ import io
 import pytest
 from pytest_mock import MockFixture
 
+from meridian_partition.chunking.title import chunk_by_title
+from meridian_partition.cleaners.core import clean_extra_whitespace
+from meridian_partition.documents.elements import Table
+from meridian_partition.partition.csv import _CsvPartitioningContext, partition_csv
+from meridian_partition.partition.utils.constants import MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA
 from test_meridian_partition.partition.test_constants import (
     EXPECTED_TABLE,
     EXPECTED_TABLE_SEMICOLON_DELIMITER,
@@ -25,11 +30,6 @@ from test_meridian_partition.unit_utils import (
     example_doc_path,
     function_mock,
 )
-from meridian_partition.chunking.title import chunk_by_title
-from meridian_partition.cleaners.core import clean_extra_whitespace
-from meridian_partition.documents.elements import Table
-from meridian_partition.partition.csv import _CsvPartitioningContext, partition_csv
-from meridian_partition.partition.utils.constants import MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA
 
 EXPECTED_FILETYPE = "text/csv"
 
@@ -134,7 +134,8 @@ def test_partition_csv_from_file_path_prefers_metadata_last_modified(mocker: Moc
     metadata_last_modified = "2020-07-05T09:24:28"
 
     mocker.patch(
-        "meridian_partition.partition.csv.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.csv.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_csv(

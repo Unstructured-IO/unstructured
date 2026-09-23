@@ -10,7 +10,6 @@ from unittest.mock import mock_open, patch
 import pandas as pd
 import pytest
 
-from test_meridian_partition.unit_utils import assign_hash_ids, input_path
 from meridian_partition.documents.elements import (
     Address,
     CheckBox,
@@ -37,6 +36,7 @@ from meridian_partition.errors import DecompressedSizeExceededError
 from meridian_partition.partition.email import partition_email
 from meridian_partition.partition.text import partition_text
 from meridian_partition.staging import base
+from test_meridian_partition.unit_utils import assign_hash_ids, input_path
 
 
 def test_base64_gzipped_json_to_elements_can_deserialize_compressed_elements_from_a_JSON_string():

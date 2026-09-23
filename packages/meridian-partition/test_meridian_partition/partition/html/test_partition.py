@@ -13,14 +13,6 @@ from typing import Any, Optional
 import pytest
 from lxml import etree
 
-from test_meridian_partition.unit_utils import (
-    FixtureRequest,
-    Mock,
-    assert_round_trips_through_JSON,
-    example_doc_path,
-    example_doc_text,
-    function_mock,
-)
 from meridian_partition.chunking.dispatch import reconstruct_table_from_chunks
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.cleaners.core import clean_extra_whitespace
@@ -39,6 +31,14 @@ from meridian_partition.documents.elements import (
 from meridian_partition.file_utils.encoding import read_txt_file
 from meridian_partition.partition.html import partition_html
 from meridian_partition.partition.html.partition import HtmlPartitionerOptions, _HtmlPartitioner
+from test_meridian_partition.unit_utils import (
+    FixtureRequest,
+    Mock,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    example_doc_text,
+    function_mock,
+)
 
 # ================================================================================================
 # SOURCE HTML LOADING BEHAVIORS

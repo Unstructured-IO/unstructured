@@ -15,21 +15,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 from PIL import Image
 
-from test_meridian_partition.partition.pdf_image.test_pdf import assert_element_extraction
-from test_meridian_partition.partition.test_constants import (
-    EXPECTED_TABLE,
-    EXPECTED_TABLE_XLSX,
-    EXPECTED_TEXT,
-    EXPECTED_XLS_TABLE,
-)
-from test_meridian_partition.unit_utils import (
-    ANY,
-    FixtureRequest,
-    LogCaptureFixture,
-    example_doc_path,
-    function_mock,
-    method_mock,
-)
 from meridian_partition.cleaners.core import clean_extra_whitespace
 from meridian_partition.documents.elements import (
     Address,
@@ -51,6 +36,21 @@ from meridian_partition.partition.common import UnsupportedFileFormatError
 from meridian_partition.partition.common.metadata import is_attachment_element
 from meridian_partition.partition.utils.constants import PartitionStrategy
 from meridian_partition.staging.base import elements_from_json, elements_to_dicts, elements_to_json
+from test_meridian_partition.partition.pdf_image.test_pdf import assert_element_extraction
+from test_meridian_partition.partition.test_constants import (
+    EXPECTED_TABLE,
+    EXPECTED_TABLE_XLSX,
+    EXPECTED_TEXT,
+    EXPECTED_XLS_TABLE,
+)
+from test_meridian_partition.unit_utils import (
+    ANY,
+    FixtureRequest,
+    LogCaptureFixture,
+    example_doc_path,
+    function_mock,
+    method_mock,
+)
 
 is_in_docker = os.path.exists("/.dockerenv")
 

@@ -17,7 +17,6 @@ from unstructured_inference.inference.elements import (
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElements
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.partition.auto import partition
 from meridian_partition.partition.pdf_image.pdfminer_processing import (
     _deduplicate_ltchars,
@@ -33,6 +32,7 @@ from meridian_partition.partition.pdf_image.pdfminer_processing import (
     text_is_embedded,
 )
 from meridian_partition.partition.utils.constants import Source
+from test_meridian_partition.unit_utils import example_doc_path
 
 # A set of elements with pdfminer elements inside tables
 deletable_elements_inside_table = [

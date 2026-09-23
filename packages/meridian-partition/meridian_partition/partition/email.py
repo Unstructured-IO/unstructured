@@ -254,8 +254,8 @@ class EmailPartitioningContext:
     def process_attachments(self) -> bool:
         """When True, partition attachments in addition to the email message body.
 
-        Any attachment having file-format that cannot be partitioned by meridian_partition is silently
-        skipped.
+        Any attachment having file-format that cannot be partitioned by meridian_partition is
+        silently skipped.
         """
         return self._process_attachments
 

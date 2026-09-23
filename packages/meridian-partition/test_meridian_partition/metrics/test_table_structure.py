@@ -3,13 +3,13 @@ from unittest import mock
 import numpy as np
 import pytest
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.metrics.table.table_alignment import TableAlignment
 from meridian_partition.metrics.table.table_eval import TableEvalProcessor
 from meridian_partition.metrics.table_structure import (
     eval_table_transformer_for_file,
     image_or_pdf_to_dataframe,
 )
+from test_meridian_partition.unit_utils import example_doc_path
 
 
 @pytest.mark.parametrize(

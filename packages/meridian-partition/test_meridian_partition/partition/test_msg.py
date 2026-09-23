@@ -8,15 +8,6 @@ from typing import Any
 import pytest
 from oxmsg import Message
 
-from test_meridian_partition.unit_utils import (
-    FixtureRequest,
-    LogCaptureFixture,
-    Mock,
-    assert_round_trips_through_JSON,
-    example_doc_path,
-    function_mock,
-    property_mock,
-)
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.elements import (
     ElementMetadata,
@@ -26,6 +17,15 @@ from meridian_partition.documents.elements import (
 )
 from meridian_partition.partition.common import UnsupportedFileFormatError
 from meridian_partition.partition.msg import MsgPartitionerOptions, partition_msg
+from test_meridian_partition.unit_utils import (
+    FixtureRequest,
+    LogCaptureFixture,
+    Mock,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    function_mock,
+    property_mock,
+)
 
 EXPECTED_MSG_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
@@ -162,7 +162,9 @@ def test_partition_msg_can_process_attachments():
 
 def test_partition_msg_silently_skips_attachments_it_cannot_partition(request: FixtureRequest):
     function_mock(
-        request, "meridian_partition.partition.auto.partition", side_effect=UnsupportedFileFormatError()
+        request,
+        "meridian_partition.partition.auto.partition",
+        side_effect=UnsupportedFileFormatError(),
     )
 
     elements = partition_msg(

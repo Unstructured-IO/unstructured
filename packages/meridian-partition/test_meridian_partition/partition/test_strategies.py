@@ -1,9 +1,9 @@
 import pytest
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.documents.elements import Text
 from meridian_partition.partition import pdf, strategies
 from meridian_partition.partition.utils.constants import PartitionStrategy
+from test_meridian_partition.unit_utils import example_doc_path
 
 
 @pytest.mark.parametrize(

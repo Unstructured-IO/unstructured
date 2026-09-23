@@ -9,13 +9,13 @@ from typing import Optional, Type
 import pytest
 from pytest_mock import MockerFixture
 
-from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.cleaners.core import group_broken_paragraphs
 from meridian_partition.documents.elements import Address, ListItem, NarrativeText, Title
 from meridian_partition.file_utils.model import FileType
 from meridian_partition.partition.text import partition_text
 from meridian_partition.partition.utils.constants import MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA
+from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 
 EXPECTED_OUTPUT = [
     NarrativeText(text="This is a test document to use for unit tests."),
@@ -438,7 +438,8 @@ def test_partition_text_prefers_metadata_file_type():
 def test_partition_text_from_file_path_gets_last_modified_from_filesystem(mocker: MockerFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.text.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.text.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_text(example_doc_path("fake-text.txt"))
@@ -466,7 +467,8 @@ def test_partition_text_from_file_path_prefers_metadata_last_modified(mocker: Mo
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.text.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.text.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_text(

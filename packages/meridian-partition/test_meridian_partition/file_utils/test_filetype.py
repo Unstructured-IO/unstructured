@@ -10,15 +10,6 @@ import os
 
 import pytest
 
-from test_meridian_partition.unit_utils import (
-    FixtureRequest,
-    LogCaptureFixture,
-    Mock,
-    example_doc_path,
-    input_path,
-    patch,
-    property_mock,
-)
 from meridian_partition.file_utils.filetype import (
     _FileTypeDetectionContext,
     _OleFileDetector,
@@ -29,6 +20,15 @@ from meridian_partition.file_utils.filetype import (
     is_ndjson_processable,
 )
 from meridian_partition.file_utils.model import FileType, create_file_type
+from test_meridian_partition.unit_utils import (
+    FixtureRequest,
+    LogCaptureFixture,
+    Mock,
+    example_doc_path,
+    input_path,
+    patch,
+    property_mock,
+)
 
 is_in_docker = os.path.exists("/.dockerenv")
 
@@ -716,7 +716,9 @@ def it_detects_a_file_type_for_a_deeply_nested_payload_without_RecursionError():
 def it_reads_only_a_bounded_prefix_and_classifies_oversized_ndjson_as_NDJSON(
     monkeypatch: pytest.MonkeyPatch,
 ):
-    monkeypatch.setattr("meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    monkeypatch.setattr(
+        "meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128
+    )
     payload = b'{"sku": "GRD-8842", "qty": 3}\n' * 100
 
     file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
@@ -729,7 +731,9 @@ def and_it_classifies_ndjson_whose_second_record_spans_the_bound_as_NDJSON(
 ):
     # -- a single complete line within the bound is enough to classify NDJSON, even when the
     # -- next record runs past the read bound --
-    monkeypatch.setattr("meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    monkeypatch.setattr(
+        "meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128
+    )
     payload = b'{"sku": "GRD-8842", "qty": 3}\n' + json.dumps({"description": "x" * 500}).encode()
 
     file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
@@ -743,7 +747,9 @@ def and_it_classifies_two_record_ndjson_of_exactly_the_bound_plus_one_as_NDJSON(
 ):
     # -- a payload of exactly MAX+1 chars is fully in hand, not truncated, so it classifies on
     # -- its whole content rather than dropping the (complete) final line as a partial tail --
-    monkeypatch.setattr("meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    monkeypatch.setattr(
+        "meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128
+    )
     second_record = b'{"sku": "B-200"}' + (b"\n" if trailing_newline else b"")
     pad_len = 129 - len(second_record) - len(b'{"sku": ""}\n')
     payload = b'{"sku": "' + b"A" * pad_len + b'"}\n' + second_record
@@ -761,7 +767,9 @@ def and_it_classifies_a_single_record_of_exactly_the_bound_plus_one_ending_in_ne
     # -- fully in hand, so the whole-payload parse wins and classifies JSON. A length-only probe
     # -- (`truncated = len(head) > MAX`) would falsely flag truncation, classify on the complete
     # -- first line, and flip this payload to NDJSON --
-    monkeypatch.setattr("meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    monkeypatch.setattr(
+        "meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128
+    )
     pad_len = 129 - len(b'{"note": ""}\n')
     payload = b'{"note": "' + b"A" * pad_len + b'"}\n'
     assert len(payload) == 129
@@ -776,7 +784,9 @@ def and_it_classifies_oversized_compact_single_line_json_as_JSON_from_its_bounde
     monkeypatch: pytest.MonkeyPatch,
 ):
     # -- no complete line fits within the bound, so classification falls back to JSON --
-    monkeypatch.setattr("meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    monkeypatch.setattr(
+        "meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128
+    )
     payload = json.dumps({"description": "x" * 500}).encode()
 
     file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
@@ -788,7 +798,9 @@ def and_it_classifies_oversized_pretty_printed_json_as_JSON_from_its_bounded_pre
     monkeypatch: pytest.MonkeyPatch,
 ):
     # -- complete lines fit within the bound but do not individually parse, so JSON --
-    monkeypatch.setattr("meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    monkeypatch.setattr(
+        "meridian_partition.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128
+    )
     payload = json.dumps({f"key-{i}": i for i in range(100)}, indent=2).encode()
 
     file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")

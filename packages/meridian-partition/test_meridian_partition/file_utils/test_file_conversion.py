@@ -6,11 +6,11 @@ from unittest.mock import patch
 import pypandoc
 import pytest
 
-from test_meridian_partition.unit_utils import FixtureRequest, example_doc_path, stdlib_fn_mock
 from meridian_partition.file_utils.file_conversion import (
     convert_file_to_html_text_using_pandoc,
     convert_file_to_text,
 )
+from test_meridian_partition.unit_utils import FixtureRequest, example_doc_path, stdlib_fn_mock
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 

@@ -7,11 +7,11 @@ import pytest
 from markdown.extensions.fenced_code import FencedCodeExtension
 from pytest_mock import MockFixture
 
-from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.elements import ElementType, Title
 from meridian_partition.partition.md import partition_md
 from meridian_partition.partition.utils.constants import MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA
+from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 
 
 @pytest.mark.parametrize("marker", ["1.", "-"])
@@ -177,7 +177,8 @@ def test_partition_md_gets_the_MD_MIME_type_in_metadata_filetype():
 def test_partition_md_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.md.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.md.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_md(example_doc_path("README.md"))
@@ -205,7 +206,8 @@ def test_partition_md_from_file_path_prefers_metadata_last_modified(mocker: Mock
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.md.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.md.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_md(
@@ -363,16 +365,16 @@ def test_partition_fenced_code():
 
 def test_partition_md_custom_extensions_parameter():
     """User can override markdown extensions via `extensions` kwarg (fixes #4006)."""
-    text = """```bash
-# create the container
-docker run -dt --name meridian_partition downloads.meridian_partition.io/meridian_partition-io/meridian_partition:latest
-```"""
-
-    expected_body = (
-        "# create the container\n"
+    docker_command = (
         "docker run -dt --name meridian_partition "
         "downloads.meridian_partition.io/meridian_partition-io/meridian_partition:latest"
     )
+    text = f"""```bash
+# create the container
+{docker_command}
+```"""
+
+    expected_body = f"# create the container\n{docker_command}"
 
     # Without fenced_code, ``#`` inside the fence is parsed as a heading (undesired).
     elements_tables_only = partition_md(text=text, extensions=["tables"])

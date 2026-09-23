@@ -4,14 +4,14 @@ from pathlib import Path
 
 from pytest_mock import MockFixture
 
+from meridian_partition.chunking.title import chunk_by_title
+from meridian_partition.documents.elements import Title
+from meridian_partition.partition.org import partition_org
 from test_meridian_partition.unit_utils import (
     assert_round_trips_through_JSON,
     example_doc_path,
     find_text_in_elements,
 )
-from meridian_partition.chunking.title import chunk_by_title
-from meridian_partition.documents.elements import Title
-from meridian_partition.partition.org import partition_org
 
 
 def test_partition_org_from_filename():
@@ -78,7 +78,8 @@ def test_partition_org_gets_the_ORG_MIME_type_in_metadata_filetype():
 def test_partition_org_from_filename_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-06-14T16:01:29"
     mocker.patch(
-        "meridian_partition.partition.org.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.org.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_org(example_doc_path("README.org"))
@@ -97,7 +98,8 @@ def test_partition_org_from_filename_prefers_metadata_last_modified(mocker: Mock
     filesystem_last_modified = "2020-08-04T06:11:47"
     metadata_last_modified = "2024-06-14T16:01:29"
     mocker.patch(
-        "meridian_partition.partition.org.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.org.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_org(

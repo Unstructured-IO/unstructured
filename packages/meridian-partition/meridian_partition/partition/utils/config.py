@@ -241,7 +241,9 @@ class ENVConfig:
     @property
     def GLOBAL_WORKING_DIR(self) -> str:
         """Path to MeridianPartition cache directory."""
-        return self._get_string("GLOBAL_WORKING_DIR", str(Path.home() / ".cache/meridian_partition"))
+        return self._get_string(
+            "GLOBAL_WORKING_DIR", str(Path.home() / ".cache/meridian_partition")
+        )
 
     @property
     def GLOBAL_WORKING_PROCESS_DIR(self) -> str:

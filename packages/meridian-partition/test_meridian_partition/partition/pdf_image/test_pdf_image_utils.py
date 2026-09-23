@@ -9,11 +9,11 @@ import pytest
 from PIL import Image as PILImg
 from unstructured_inference.inference import pdf_image
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.documents.coordinates import PixelSpace
 from meridian_partition.documents.elements import ElementMetadata, ElementType, Image, Table
 from meridian_partition.errors import UnprocessableEntityError
 from meridian_partition.partition.pdf_image import pdf_image_utils
+from test_meridian_partition.unit_utils import example_doc_path
 
 
 @pytest.mark.parametrize("image_type", ["pil", "numpy_array"])
@@ -372,7 +372,9 @@ def test_annotate_layout_elements_with_image():
     # Check if images for both layouts were saved
     with (
         tempfile.TemporaryDirectory() as tmpdir,
-        patch("meridian_partition.partition.pdf_image.pdf_image_utils.write_image") as mock_write_image,
+        patch(
+            "meridian_partition.partition.pdf_image.pdf_image_utils.write_image"
+        ) as mock_write_image,
     ):
         pdf_image_utils.annotate_layout_elements_with_image(
             inferred_page_layout=inferred_layout,
@@ -393,7 +395,9 @@ def test_annotate_layout_elements_with_image():
     # Check if only the inferred layout image was saved if extracted layout is None
     with (
         tempfile.TemporaryDirectory() as tmpdir,
-        patch("meridian_partition.partition.pdf_image.pdf_image_utils.write_image") as mock_write_image,
+        patch(
+            "meridian_partition.partition.pdf_image.pdf_image_utils.write_image"
+        ) as mock_write_image,
     ):
         pdf_image_utils.annotate_layout_elements_with_image(
             inferred_page_layout=inferred_layout,

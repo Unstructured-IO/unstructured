@@ -586,7 +586,9 @@ def test_stuck_transport_never_waits_and_capacity_is_bounded(runtime_session):
     # The sole slot is occupied: another event is dropped without another worker or request.
     assert partition_text()[0].text == "ok"
     assert session.get.call_count == 1
-    assert session.get.call_args.args[0] == "https://packages.meridian_partition.io/python-telemetry"
+    assert (
+        session.get.call_args.args[0] == "https://packages.meridian_partition.io/python-telemetry"
+    )
     assert session.get.call_args.kwargs == {
         "params": session.get.call_args.kwargs["params"],
         "timeout": (0.5, 0.5),
@@ -686,7 +688,9 @@ def test_all_public_entrypoints_have_the_outermost_runtime_decorator():
 
     decorated: set[str] = set()
     for relative_path, function_names in modules.items():
-        tree = ast.parse((project_root / "meridian_partition/partition" / relative_path).read_text())
+        tree = ast.parse(
+            (project_root / "meridian_partition/partition" / relative_path).read_text()
+        )
         for node in tree.body:
             if not isinstance(node, ast.FunctionDef) or node.name not in function_names:
                 continue

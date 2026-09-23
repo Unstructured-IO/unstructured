@@ -33,8 +33,8 @@ if dependency_exists("pandas"):
 # ================================================================================================
 # SERIALIZATION/DESERIALIZATION (SERDE) RELATED FUNCTIONS
 # ================================================================================================
-# These serde functions will likely relocate to `meridian_partition.documents.elements` since they are
-# so closely related to elements and this staging "brick" is deprecated.
+# These serde functions will likely relocate to `meridian_partition.documents.elements` since they
+# are so closely related to elements and this staging "brick" is deprecated.
 # ================================================================================================
 
 # == DESERIALIZERS ===============================

@@ -13,7 +13,10 @@ from meridian_partition.documents.ontology import (
     RadioButton,
 )
 from meridian_partition.partition.html.html_utils import indent_html
-from meridian_partition.partition.html.transformations import RECURSION_LIMIT, parse_html_to_ontology
+from meridian_partition.partition.html.transformations import (
+    RECURSION_LIMIT,
+    parse_html_to_ontology,
+)
 
 
 def _wrap_with_body(html: str) -> str:

@@ -9,13 +9,6 @@ from typing import Any
 
 import pytest
 
-from test_meridian_partition.unit_utils import (
-    FixtureRequest,
-    Mock,
-    assert_round_trips_through_JSON,
-    example_doc_path,
-    function_mock,
-)
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.elements import (
     CompositeElement,
@@ -27,6 +20,13 @@ from meridian_partition.documents.elements import (
     Title,
 )
 from meridian_partition.partition.email import EmailPartitioningContext, partition_email
+from test_meridian_partition.unit_utils import (
+    FixtureRequest,
+    Mock,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    function_mock,
+)
 
 EXPECTED_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),

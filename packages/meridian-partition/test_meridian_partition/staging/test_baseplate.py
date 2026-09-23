@@ -1,4 +1,3 @@
-from test_meridian_partition.unit_utils import assign_hash_ids
 from meridian_partition.documents.coordinates import PixelSpace
 from meridian_partition.documents.elements import (
     CoordinatesMetadata,
@@ -7,6 +6,7 @@ from meridian_partition.documents.elements import (
     Title,
 )
 from meridian_partition.staging.baseplate import stage_for_baseplate
+from test_meridian_partition.unit_utils import assign_hash_ids
 
 
 def test_stage_for_baseplate():

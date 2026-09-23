@@ -16,14 +16,6 @@ from pptx.shapes.picture import Picture
 from pptx.util import Inches
 from pytest_mock import MockFixture
 
-from test_meridian_partition.unit_utils import (
-    FixtureRequest,
-    Mock,
-    assert_round_trips_through_JSON,
-    example_doc_path,
-    function_mock,
-    property_mock,
-)
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.elements import (
     Element,
@@ -40,6 +32,14 @@ from meridian_partition.partition.pptx import (
     _PptxPartitioner,
     partition_pptx,
     register_picture_partitioner,
+)
+from test_meridian_partition.unit_utils import (
+    FixtureRequest,
+    Mock,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    function_mock,
+    property_mock,
 )
 
 EXPECTED_PPTX_OUTPUT = [
@@ -313,7 +313,8 @@ def test_partition_pptx_uses_registered_picture_partitioner():
 def test_partition_pptx_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-05-01T15:37:28"
     mocker.patch(
-        "meridian_partition.partition.pptx.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.pptx.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_pptx(example_doc_path("simple.pptx"))
@@ -332,7 +333,8 @@ def test_partition_pptx_from_file_path_prefers_metadata_last_modified(mocker: Mo
     filesystem_last_modified = "2024-05-01T15:37:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.pptx.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.pptx.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_pptx(

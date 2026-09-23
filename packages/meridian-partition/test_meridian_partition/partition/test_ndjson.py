@@ -11,7 +11,6 @@ import tempfile
 import pytest
 from pytest_mock import MockFixture
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.documents.elements import CompositeElement, TableChunk, Text, Title
 from meridian_partition.file_utils.model import FileType
 from meridian_partition.partition.email import partition_email
@@ -20,6 +19,7 @@ from meridian_partition.partition.ndjson import partition_ndjson
 from meridian_partition.partition.text import partition_text
 from meridian_partition.partition.xml import partition_xml
 from meridian_partition.staging.base import elements_to_ndjson
+from test_meridian_partition.unit_utils import example_doc_path
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 

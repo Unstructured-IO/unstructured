@@ -9,13 +9,6 @@ from typing import Any, Iterator
 import pytest
 from pytest_mock import MockFixture
 
-from test_meridian_partition.unit_utils import (
-    ANY,
-    FixtureRequest,
-    assert_round_trips_through_JSON,
-    example_doc_path,
-    method_mock,
-)
 from meridian_partition.chunking.basic import chunk_elements
 from meridian_partition.documents.elements import (
     CompositeElement,
@@ -28,6 +21,13 @@ from meridian_partition.documents.elements import (
 from meridian_partition.partition.docx import partition_docx
 from meridian_partition.partition.odt import partition_odt
 from meridian_partition.partition.utils.constants import MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA
+from test_meridian_partition.unit_utils import (
+    ANY,
+    FixtureRequest,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    method_mock,
+)
 
 
 def test_partition_odt_matches_partition_docx():
@@ -132,7 +132,8 @@ def test_partition_odt_suppresses_text_as_html_when_infer_table_structure_is_Fal
 def test_partition_odt_pulls_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.odt.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.odt.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_odt(example_doc_path("fake.odt"))
@@ -144,7 +145,8 @@ def test_partition_odt_prefers_metadata_last_modified_when_provided(mocker: Mock
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.odt.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.odt.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_odt(

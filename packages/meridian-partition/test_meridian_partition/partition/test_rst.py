@@ -4,14 +4,14 @@ from pathlib import Path
 
 from pytest_mock import MockFixture
 
+from meridian_partition.chunking.title import chunk_by_title
+from meridian_partition.documents.elements import Title
+from meridian_partition.partition.rst import partition_rst
 from test_meridian_partition.unit_utils import (
     assert_round_trips_through_JSON,
     example_doc_path,
     find_text_in_elements,
 )
-from meridian_partition.chunking.title import chunk_by_title
-from meridian_partition.documents.elements import Title
-from meridian_partition.partition.rst import partition_rst
 
 
 def test_partition_rst_from_filename():
@@ -76,7 +76,8 @@ def test_partition_rst_gets_the_RST_MIME_type_in_metadata_filetype():
 def test_partition_rst_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-06-14T16:01:29"
     mocker.patch(
-        "meridian_partition.partition.rst.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.rst.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_rst(example_doc_path("README.rst"))
@@ -88,7 +89,8 @@ def test_partition_rst_from_file_path_prefers_metadata_last_modified(mocker: Moc
     filesystem_last_modified = "2024-06-14T16:01:29"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.rst.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.rst.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_rst(

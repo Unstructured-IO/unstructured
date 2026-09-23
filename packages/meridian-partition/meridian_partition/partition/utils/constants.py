@@ -28,7 +28,9 @@ SORT_MODE_DONT = "dont"
 OCR_AGENT_TESSERACT_OLD = "tesseract"
 OCR_AGENT_PADDLE_OLD = "paddle"
 
-OCR_AGENT_TESSERACT = "meridian_partition.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
+OCR_AGENT_TESSERACT = (
+    "meridian_partition.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
+)
 OCR_AGENT_PADDLE = "meridian_partition.partition.utils.ocr_models.paddle_ocr.OCRAgentPaddle"
 OCR_AGENT_GOOGLEVISION = (
     "meridian_partition.partition.utils.ocr_models.google_vision_ocr.OCRAgentGoogleVision"
@@ -50,7 +52,9 @@ STT_AGENT_MODULES_WHITELIST = os.getenv(
     "meridian_partition.partition.utils.speech_to_text.whisper_stt",
 ).split(",")
 
-MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA = os.getenv("MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA", False)
+MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA = os.getenv(
+    "MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA", False
+)
 
 # this field is defined by unstructured_pytesseract
 TESSERACT_TEXT_HEIGHT = "height"

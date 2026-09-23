@@ -10,14 +10,6 @@ from typing import Any, Iterator
 import pytest
 from pytest_mock import MockFixture
 
-from test_meridian_partition.unit_utils import (
-    ANY,
-    CaptureFixture,
-    FixtureRequest,
-    assert_round_trips_through_JSON,
-    example_doc_path,
-    method_mock,
-)
 from meridian_partition.chunking.basic import chunk_elements
 from meridian_partition.documents.elements import (
     Address,
@@ -32,6 +24,14 @@ from meridian_partition.documents.elements import (
 )
 from meridian_partition.partition.doc import partition_doc
 from meridian_partition.partition.docx import partition_docx
+from test_meridian_partition.unit_utils import (
+    ANY,
+    CaptureFixture,
+    FixtureRequest,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    method_mock,
+)
 
 
 def test_partition_doc_matches_partition_docx(request: FixtureRequest):
@@ -146,7 +146,8 @@ def test_partition_doc_gets_the_DOC_MIME_type_in_metadata_filetype():
 def test_partition_doc_pulls_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.doc.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.doc.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_doc(example_doc_path("fake.doc"))
@@ -160,7 +161,8 @@ def test_partition_doc_prefers_metadata_last_modified_when_provided(
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.doc.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.doc.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_doc(

@@ -27,7 +27,6 @@ from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
 
-from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.coordinates import PixelSpace
 from meridian_partition.documents.elements import (
@@ -48,14 +47,15 @@ from meridian_partition.partition.pdf_image import ocr, pdfminer_processing
 from meridian_partition.partition.pdf_image.pdfminer_processing import get_uris_from_annots
 from meridian_partition.partition.utils import config as partition_config
 from meridian_partition.partition.utils.constants import (
+    MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA,
     OCR_AGENT_PADDLE,
     OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
-    MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
 )
+from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 
 
 class MockResponse:

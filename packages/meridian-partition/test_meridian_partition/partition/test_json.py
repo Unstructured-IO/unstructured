@@ -11,7 +11,6 @@ import tempfile
 import pytest
 from pytest_mock import MockFixture
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.chunking.dispatch import reconstruct_table_from_chunks
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.elements import (
@@ -30,6 +29,7 @@ from meridian_partition.partition.json import partition_json
 from meridian_partition.partition.text import partition_text
 from meridian_partition.partition.xml import partition_xml
 from meridian_partition.staging.base import elements_to_json
+from test_meridian_partition.unit_utils import example_doc_path
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -251,7 +251,8 @@ def test_partition_json_raises_with_too_many_specified():
 def test_partition_json_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.json.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.json.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_json(example_doc_path("spring-weather.html.json"))
@@ -279,7 +280,8 @@ def test_partition_json_from_file_path_prefers_metadata_last_modified(mocker: Mo
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.json.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.json.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_json(

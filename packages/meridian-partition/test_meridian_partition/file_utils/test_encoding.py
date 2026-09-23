@@ -23,7 +23,9 @@ def test_charset_detection_failure():
     try:
         detect_result = {"encoding": None, "confidence": None}
         with patch("meridian_partition.file_utils.encoding.detect", return_value=detect_result):
-            with patch("meridian_partition.file_utils.encoding.COMMON_ENCODINGS", ["utf_8"]):  # Will fail
+            with patch(
+                "meridian_partition.file_utils.encoding.COMMON_ENCODINGS", ["utf_8"]
+            ):  # Will fail
                 with pytest.raises(UnprocessableEntityError) as exc_info:
                     detect_file_encoding(filename=temp_file_path)
 

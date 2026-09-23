@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from test_meridian_partition.unit_utils import assign_hash_ids
 from meridian_partition.documents.elements import Element, NarrativeText, Title
 from meridian_partition.staging import label_studio
+from test_meridian_partition.unit_utils import assign_hash_ids
 
 
 @pytest.fixture()

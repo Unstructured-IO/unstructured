@@ -14,6 +14,15 @@ import pandas.testing as pdt
 import pytest
 from pytest_mock import MockerFixture
 
+from meridian_partition.cleaners.core import clean_extra_whitespace
+from meridian_partition.documents.elements import ListItem, Table, Text, Title
+from meridian_partition.errors import UnprocessableEntityError
+from meridian_partition.partition.xlsx import (
+    _ConnectedComponent,
+    _SubtableParser,
+    _XlsxPartitionerOptions,
+    partition_xlsx,
+)
 from test_meridian_partition.partition.test_constants import (
     EXPECTED_TABLE_XLSX,
     EXPECTED_TEXT_XLSX,
@@ -25,15 +34,6 @@ from test_meridian_partition.unit_utils import (
     assert_round_trips_through_JSON,
     example_doc_path,
     function_mock,
-)
-from meridian_partition.cleaners.core import clean_extra_whitespace
-from meridian_partition.documents.elements import ListItem, Table, Text, Title
-from meridian_partition.errors import UnprocessableEntityError
-from meridian_partition.partition.xlsx import (
-    _ConnectedComponent,
-    _SubtableParser,
-    _XlsxPartitionerOptions,
-    partition_xlsx,
 )
 
 EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -180,7 +180,8 @@ def test_partition_xlsx_password_protected_raises_exception():
 def test_partition_xlsx_from_file_path_gets_last_modified_from_filesystem(mocker: MockerFixture):
     filesystem_last_modified = "2024-05-01T15:37:28"
     mocker.patch(
-        "meridian_partition.partition.xlsx.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.xlsx.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_xlsx(example_doc_path("stanley-cups.xlsx"))
@@ -199,7 +200,8 @@ def test_partition_xlsx_from_file_path_prefers_metadata_last_modified(mocker: Mo
     filesystem_last_modified = "2024-05-01T15:37:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.xlsx.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.xlsx.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_xlsx(

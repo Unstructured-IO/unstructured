@@ -10,7 +10,6 @@ from unstructured_inference.inference import layout
 from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layoutelement import LayoutElement
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.documents.coordinates import PixelSpace
 from meridian_partition.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
@@ -28,6 +27,7 @@ from meridian_partition.documents.elements import (
     Image as ImageElement,
 )
 from meridian_partition.partition.common import common
+from test_meridian_partition.unit_utils import example_doc_path
 
 
 class MockPageLayout(layout.PageLayout):

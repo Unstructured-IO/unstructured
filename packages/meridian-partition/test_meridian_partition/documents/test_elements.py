@@ -12,7 +12,6 @@ from functools import partial
 
 import pytest
 
-from test_meridian_partition.unit_utils import assign_hash_ids, example_doc_path
 from meridian_partition.cleaners.core import clean_bullets, clean_prefix
 from meridian_partition.documents.coordinates import (
     CoordinateSystem,
@@ -33,6 +32,7 @@ from meridian_partition.documents.elements import (
 )
 from meridian_partition.partition.json import partition_json
 from meridian_partition.staging.base import elements_from_base64_gzipped_json
+from test_meridian_partition.unit_utils import assign_hash_ids, example_doc_path
 
 
 @pytest.mark.parametrize("element", [Element(), Text(text=""), CheckBox()])

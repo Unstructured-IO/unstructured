@@ -5,6 +5,9 @@ from __future__ import annotations
 import pytest
 from pytest_mock import MockFixture
 
+from meridian_partition.chunking.title import chunk_by_title
+from meridian_partition.documents.elements import Table
+from meridian_partition.partition.tsv import partition_tsv
 from test_meridian_partition.partition.test_constants import (
     EXPECTED_TABLE,
     EXPECTED_TABLE_WITH_EMOJI,
@@ -13,9 +16,6 @@ from test_meridian_partition.partition.test_constants import (
     EXPECTED_TEXT_XLSX,
 )
 from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
-from meridian_partition.chunking.title import chunk_by_title
-from meridian_partition.documents.elements import Table
-from meridian_partition.partition.tsv import partition_tsv
 
 EXPECTED_FILETYPE = "text/tsv"
 
@@ -79,7 +79,8 @@ def test_partition_tsv_from_file_with_metadata_filename():
 def test_partition_tsv_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-05-01T15:37:28"
     mocker.patch(
-        "meridian_partition.partition.tsv.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.tsv.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_tsv(example_doc_path("stanley-cups.tsv"))
@@ -98,7 +99,8 @@ def test_partition_tsv_from_file_path_prefers_metadata_last_modified(mocker: Moc
     filesystem_last_modified = "2024-05-01T15:37:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.tsv.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.tsv.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_tsv(

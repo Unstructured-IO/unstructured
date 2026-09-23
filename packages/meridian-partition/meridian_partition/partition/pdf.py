@@ -51,7 +51,10 @@ from meridian_partition.partition.common.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from meridian_partition.partition.common.lang import check_language_args, prepare_languages_for_tesseract
+from meridian_partition.partition.common.lang import (
+    check_language_args,
+    prepare_languages_for_tesseract,
+)
 from meridian_partition.partition.common.metadata import apply_metadata, get_last_modified_date
 from meridian_partition.partition.pdf_image.pdfminer_processing import (
     check_annotations_within_element,
@@ -66,7 +69,10 @@ from meridian_partition.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
-from meridian_partition.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
+from meridian_partition.partition.strategies import (
+    determine_pdf_or_image_strategy,
+    validate_strategy,
+)
 from meridian_partition.partition.text import element_from_text
 from meridian_partition.partition.utils.config import env_config
 from meridian_partition.partition.utils.constants import (
@@ -944,7 +950,10 @@ def _partition_pdf_or_image_local(
     )
     from meridian_partition.partition.pdf_image.analysis.tools import save_analysis_artifiacts
     from meridian_partition.partition.pdf_image.form_extraction import run_form_extraction
-    from meridian_partition.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
+    from meridian_partition.partition.pdf_image.ocr import (
+        process_data_with_ocr,
+        process_file_with_ocr,
+    )
     from meridian_partition.partition.pdf_image.pdf_image_utils import (
         check_element_types_to_extract,
         save_elements,
@@ -1126,7 +1135,8 @@ def _partition_pdf_or_image_local(
         last_modification_date=metadata_last_modified,
         # NOTE(crag): do not attempt to derive ListItem's from a layout-recognized "list"
         # block with NLP rules. Otherwise, the assumptions in
-        # meridian_partition.partition.common::layout_list_to_list_items often result in weird chunking.
+        # meridian_partition.partition.common::layout_list_to_list_items often result in weird
+        # chunking.
         infer_list_items=False,
         languages=languages,
         starting_page_number=starting_page_number,

@@ -188,7 +188,8 @@ def combine_inline_elements(
 
     Each element is paired with its DOM-nesting depth; merging is only allowed between elements at
     the same depth. Depth equality is checked here; the HTML content rule is
-    `_element_html_is_inline_mergeable` (both combined are `can_meridian_partition_elements_be_merged`).
+    `_element_html_is_inline_mergeable` (both combined are
+    `can_meridian_partition_elements_be_merged`).
     The depth travels with the element rather than being stored on it.
 
     Args:
@@ -344,7 +345,8 @@ def meridian_partition_elements_to_ontology(
         - The parent element has to be in the list before the child element
 
     Args:
-        meridian_partition_elements (Sequence[Element]): The sequence of meridian_partition Element objects.
+        meridian_partition_elements (Sequence[Element]): The sequence of meridian_partition
+            Element objects.
 
     Returns:
         OntologyElement: The converted OntologyElement object.

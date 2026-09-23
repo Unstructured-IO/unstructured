@@ -21,8 +21,8 @@ rather than exploding into one element per array item.
 
 `loads_strict_json()` is the shared parser both partitioners use so that non-standard JSON
 constants (`NaN`, `Infinity`, `-Infinity`), which `json.loads` accepts by default, are rejected
-as malformed rather than partitioned. It lives in the low-level `meridian_partition.utils` module (so
-`file_utils.filetype` can share it without an import cycle) and is re-exported here for the
+as malformed rather than partitioned. It lives in the low-level `meridian_partition.utils` module
+(so `file_utils.filetype` can share it without an import cycle) and is re-exported here for the
 callers that already import it from this module.
 """
 

@@ -97,7 +97,7 @@ def test_normalize_text_produces_normalized_text(text: str, expected_value: str)
 
 
 class Describe_PhraseAccumulator:
-    """Isolated unit-test suite for `meridian_partition.partition.html.parser._PhraseAccumulator`."""
+    """Unit-test suite for `meridian_partition.partition.html.parser._PhraseAccumulator`."""
 
     def it_is_empty_on_construction(self):
         accum = _PhraseAccumulator()
@@ -137,7 +137,7 @@ class Describe_PhraseAccumulator:
 
 
 class Describe_ElementAccumulator:
-    """Isolated unit-test suite for `meridian_partition.partition.html.parser._ElementAccumulator`."""
+    """Unit-test suite for `meridian_partition.partition.html.parser._ElementAccumulator`."""
 
     def it_is_empty_on_construction(self, html_element: etree.ElementBase):
         accum = _ElementAccumulator(html_element)
@@ -352,7 +352,7 @@ class Describe_ElementAccumulator:
 
 
 class Describe_PreElementAccumulator:
-    """Isolated unit-test suite for `meridian_partition.partition.html.parser._PreElementAccumulator`."""
+    """Unit-test suite for `meridian_partition.partition.html.parser._PreElementAccumulator`."""
 
     def it_computes_the_normalized_text_of_its_text_segments_to_help(self):
         html_element = etree.fromstring("<p/>", html_parser).xpath(".//p")[0]

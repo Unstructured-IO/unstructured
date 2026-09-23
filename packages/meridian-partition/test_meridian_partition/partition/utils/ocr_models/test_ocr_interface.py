@@ -8,14 +8,6 @@ from unittest.mock import patch
 
 import pytest
 
-from test_meridian_partition.unit_utils import (
-    FixtureRequest,
-    LogCaptureFixture,
-    Mock,
-    instance_mock,
-    method_mock,
-    property_mock,
-)
 from meridian_partition.partition.utils.config import ENVConfig
 from meridian_partition.partition.utils.constants import (
     OCR_AGENT_PADDLE,
@@ -24,6 +16,14 @@ from meridian_partition.partition.utils.constants import (
     OCR_AGENT_TESSERACT_OLD,
 )
 from meridian_partition.partition.utils.ocr_models.ocr_interface import OCRAgent
+from test_meridian_partition.unit_utils import (
+    FixtureRequest,
+    LogCaptureFixture,
+    Mock,
+    instance_mock,
+    method_mock,
+    property_mock,
+)
 
 
 class DescribeOCRAgent:

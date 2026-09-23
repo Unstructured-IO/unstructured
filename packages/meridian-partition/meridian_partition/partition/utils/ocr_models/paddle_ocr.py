@@ -118,7 +118,9 @@ class OCRAgentPaddle(OCRAgent):
 
         from unstructured_inference.inference.elements import TextRegions
 
-        from meridian_partition.partition.pdf_image.inference_utils import build_text_region_from_coords
+        from meridian_partition.partition.pdf_image.inference_utils import (
+            build_text_region_from_coords,
+        )
 
         text_regions: list[TextRegion] = []
         for idx in range(len(ocr_data)):

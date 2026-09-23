@@ -1,6 +1,8 @@
 from meridian_partition.documents.elements import ElementMetadata, NarrativeText, Text
 from meridian_partition.documents.ontology import Column, Document, Page, Paragraph
-from meridian_partition.partition.html.transformations import meridian_partition_elements_to_ontology
+from meridian_partition.partition.html.transformations import (
+    meridian_partition_elements_to_ontology,
+)
 
 
 def test_when_first_elements_does_not_have_id():
@@ -56,7 +58,9 @@ def test_elements_without_text_as_html_are_skipped_not_fatal():
         ),
     ]
 
-    ontology = meridian_partition_elements_to_ontology(meridian_partition_elements)  # must not raise
+    ontology = meridian_partition_elements_to_ontology(
+        meridian_partition_elements
+    )  # must not raise
 
     assert isinstance(ontology, Document)
     page = ontology.children[0]

@@ -8,7 +8,6 @@ from typing import Any, Optional
 
 import pytest
 
-from test_meridian_partition.unit_utils import FixtureRequest, Mock, function_mock, input_path
 from meridian_partition.chunking.base import CHUNK_MULTI_PAGE_DEFAULT
 from meridian_partition.chunking.title import _ByTitleChunkingOptions, chunk_by_title
 from meridian_partition.documents.coordinates import CoordinateSystem
@@ -26,6 +25,7 @@ from meridian_partition.documents.elements import (
 )
 from meridian_partition.partition.html import partition_html
 from meridian_partition.staging.base import elements_from_json
+from test_meridian_partition.unit_utils import FixtureRequest, Mock, function_mock, input_path
 
 # ================================================================================================
 # INTEGRATION-TESTS

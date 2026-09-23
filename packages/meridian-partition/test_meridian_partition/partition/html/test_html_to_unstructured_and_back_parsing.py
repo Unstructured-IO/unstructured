@@ -12,9 +12,9 @@ from meridian_partition.documents.ontology import Address, Paragraph
 from meridian_partition.partition.html.html_utils import indent_html
 from meridian_partition.partition.html.partition import partition_html
 from meridian_partition.partition.html.transformations import (
+    meridian_partition_elements_to_ontology,
     ontology_to_meridian_partition_elements,
     parse_html_to_ontology,
-    meridian_partition_elements_to_ontology,
 )
 
 
@@ -56,8 +56,8 @@ def test_simple_narrative_text_with_id():
     </p>
     """)
 
-    meridian_partition_elements, parsed_ontology = _parse_to_meridian_partition_elements_and_back_to_html(
-        html_as_str
+    meridian_partition_elements, parsed_ontology = (
+        _parse_to_meridian_partition_elements_and_back_to_html(html_as_str)
     )
 
     expected_html = indent_html(html_as_str, html_parser="html.parser")
@@ -82,8 +82,8 @@ def test_input_with_radio_button_checked():
        <input class="RadioButton" name="health-comparison" type="radio" checked/>
     """)
 
-    meridian_partition_elements, parsed_ontology = _parse_to_meridian_partition_elements_and_back_to_html(
-        html_as_str
+    meridian_partition_elements, parsed_ontology = (
+        _parse_to_meridian_partition_elements_and_back_to_html(html_as_str)
     )
 
     expected_html = indent_html(html_as_str, html_parser="html.parser")
@@ -115,8 +115,8 @@ def test_multiple_elements():
     </p>
     """)
 
-    meridian_partition_elements, parsed_ontology = _parse_to_meridian_partition_elements_and_back_to_html(
-        html_as_str
+    meridian_partition_elements, parsed_ontology = (
+        _parse_to_meridian_partition_elements_and_back_to_html(html_as_str)
     )
 
     expected_html = indent_html(html_as_str, html_parser="html.parser")
@@ -163,8 +163,8 @@ def test_multiple_pages():
     </body>
     """
 
-    meridian_partition_elements, parsed_ontology = _parse_to_meridian_partition_elements_and_back_to_html(
-        html_as_str
+    meridian_partition_elements, parsed_ontology = (
+        _parse_to_meridian_partition_elements_and_back_to_html(html_as_str)
     )
 
     expected_html = indent_html(html_as_str, html_parser="html.parser")
@@ -207,8 +207,8 @@ def test_forms():
         </form>
     """)
 
-    meridian_partition_elements, parsed_ontology = _parse_to_meridian_partition_elements_and_back_to_html(
-        html_as_str
+    meridian_partition_elements, parsed_ontology = (
+        _parse_to_meridian_partition_elements_and_back_to_html(html_as_str)
     )
 
     expected_html = indent_html(html_as_str, html_parser="html.parser")
@@ -250,8 +250,8 @@ def test_table():
     </table>
     """)
 
-    meridian_partition_elements, parsed_ontology = _parse_to_meridian_partition_elements_and_back_to_html(
-        html_as_str
+    meridian_partition_elements, parsed_ontology = (
+        _parse_to_meridian_partition_elements_and_back_to_html(html_as_str)
     )
 
     expected_elements = _page_elements + [
@@ -302,8 +302,8 @@ def test_very_nested_structure_is_preserved():
     </div>
     """)
 
-    meridian_partition_elements, parsed_ontology = _parse_to_meridian_partition_elements_and_back_to_html(
-        html_as_str
+    meridian_partition_elements, parsed_ontology = (
+        _parse_to_meridian_partition_elements_and_back_to_html(html_as_str)
     )
     expected_html = indent_html(html_as_str, html_parser="html.parser")
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
@@ -372,8 +372,8 @@ def test_ordered_list():
     </ul>
     """)
 
-    meridian_partition_elements, parsed_ontology = _parse_to_meridian_partition_elements_and_back_to_html(
-        html_as_str
+    meridian_partition_elements, parsed_ontology = (
+        _parse_to_meridian_partition_elements_and_back_to_html(html_as_str)
     )
     expected_html = indent_html(html_as_str, html_parser="html.parser")
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
@@ -412,8 +412,8 @@ def test_squeezed_elements_are_parsed_back():
        </a>
     """)
 
-    meridian_partition_elements, parsed_ontology = _parse_to_meridian_partition_elements_and_back_to_html(
-        html_as_str
+    meridian_partition_elements, parsed_ontology = (
+        _parse_to_meridian_partition_elements_and_back_to_html(html_as_str)
     )
     expected_html = indent_html(html_as_str, html_parser="html.parser")
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")

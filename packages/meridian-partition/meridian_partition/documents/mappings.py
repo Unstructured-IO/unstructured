@@ -52,7 +52,9 @@ def get_ontology_to_meridian_partition_type_mapping() -> dict[
     dict: A dictionary where keys are ontology element classes
           and values are meridian_partition types.
     """
-    ontology_to_meridian_partition_class_mapping: Dict[Type[ontology.OntologyElement], Type[Element]] = {
+    ontology_to_meridian_partition_class_mapping: Dict[
+        Type[ontology.OntologyElement], Type[Element]
+    ] = {
         ontology.Document: elements.Text,
         ontology.Section: elements.Text,
         ontology.Page: elements.Text,
@@ -192,4 +194,6 @@ HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP: Dict[str, Type[ontology.OntologyElement]] 
 }
 
 
-ONTOLOGY_CLASS_TO_MERIDIAN_PARTITION_ELEMENT_TYPE = get_ontology_to_meridian_partition_type_mapping()
+ONTOLOGY_CLASS_TO_MERIDIAN_PARTITION_ELEMENT_TYPE = (
+    get_ontology_to_meridian_partition_type_mapping()
+)

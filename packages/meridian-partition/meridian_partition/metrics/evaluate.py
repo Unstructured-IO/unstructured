@@ -24,7 +24,10 @@ from meridian_partition.metrics.object_detection import (
     ObjectDetectionEvalProcessor,
 )
 from meridian_partition.metrics.table.table_eval import TableEvalProcessor
-from meridian_partition.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
+from meridian_partition.metrics.text_extraction import (
+    calculate_accuracy,
+    calculate_percent_missing_text,
+)
 from meridian_partition.metrics.utils import (
     _count,
     _display,

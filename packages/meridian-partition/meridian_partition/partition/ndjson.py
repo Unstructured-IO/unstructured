@@ -1,7 +1,7 @@
 """Provides `partition_ndjson()`.
 
-Partitions any valid NDJSON document. Serialized MeridianPartition output (one element-dict per line)
-is "rehydrated" back into its constituent elements, essentially the same function as
+Partitions any valid NDJSON document. Serialized MeridianPartition output (one element-dict per
+line) is "rehydrated" back into its constituent elements, essentially the same function as
 `elements_from_json()`; this allows a document of already-partitioned elements to be combined
 transparently with other documents in a partitioning run and allows multiple (low-cost) chunking
 runs to be performed on a document while only incurring partitioning cost once. Any other valid

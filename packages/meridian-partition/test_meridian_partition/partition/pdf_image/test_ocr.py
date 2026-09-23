@@ -16,7 +16,6 @@ from unstructured_inference.inference.layoutelement import (
     LayoutElements,
 )
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.documents.elements import ElementType
 from meridian_partition.partition.pdf_image import ocr
 from meridian_partition.partition.pdf_image.pdf_image_utils import (
@@ -36,6 +35,7 @@ from meridian_partition.partition.utils.ocr_models.tesseract_ocr import (
     OCRAgentTesseract,
     zoom_image,
 )
+from test_meridian_partition.unit_utils import example_doc_path
 
 
 @pytest.mark.parametrize(

@@ -16,7 +16,9 @@ import os
 import select
 import sys
 
-from meridian_partition.partition.html.transformations import meridian_partition_elements_to_ontology
+from meridian_partition.partition.html.transformations import (
+    meridian_partition_elements_to_ontology,
+)
 from meridian_partition.staging.base import elements_from_json
 
 # Configure logging
@@ -63,7 +65,9 @@ def _main():
             sys.exit(1)
     else:
         logger.info("Processing from command line arguments")
-        parser = argparse.ArgumentParser(description="Render HTML from meridian_partition elements.")
+        parser = argparse.ArgumentParser(
+            description="Render HTML from meridian_partition elements."
+        )
         parser.add_argument(
             "filepath", help="Path to JSON file with meridian_partition elements.", type=str
         )

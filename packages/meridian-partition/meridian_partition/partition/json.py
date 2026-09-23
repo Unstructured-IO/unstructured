@@ -43,8 +43,8 @@ def partition_json(
 
     Operates in two modes:
 
-    - Rehydration: a JSON array of serialized MeridianPartition elements is converted back into those
-      elements.
+    - Rehydration: a JSON array of serialized MeridianPartition elements is converted back into
+      those elements.
     - Arbitrary JSON: any other valid JSON value is converted to `Text` elements containing the
       pretty-printed JSON. An object or a top-level scalar yields one `Text`; an array of objects
       yields one `Text` per object; any other array (scalars or mixed types) yields a single

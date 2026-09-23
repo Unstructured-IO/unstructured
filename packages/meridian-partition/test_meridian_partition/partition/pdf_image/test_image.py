@@ -11,8 +11,6 @@ from pytest_mock import MockFixture
 from unstructured_inference.inference import layout
 from unstructured_pytesseract import TesseractError
 
-from test_meridian_partition.partition.pdf_image.test_pdf import assert_element_extraction
-from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.elements import ElementType
 from meridian_partition.partition import image, pdf
@@ -22,6 +20,8 @@ from meridian_partition.partition.utils.constants import (
     PartitionStrategy,
 )
 from meridian_partition.utils import only
+from test_meridian_partition.partition.pdf_image.test_pdf import assert_element_extraction
+from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 

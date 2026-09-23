@@ -19,15 +19,6 @@ from docx.section import Section
 from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
 
-from test_meridian_partition.unit_utils import (
-    FixtureRequest,
-    Mock,
-    assert_round_trips_through_JSON,
-    example_doc_path,
-    function_mock,
-    instance_mock,
-    property_mock,
-)
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.elements import (
     Address,
@@ -53,6 +44,15 @@ from meridian_partition.partition.docx import (
 from meridian_partition.partition.utils.constants import (
     MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
+)
+from test_meridian_partition.unit_utils import (
+    FixtureRequest,
+    Mock,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    function_mock,
+    instance_mock,
+    property_mock,
 )
 
 # -- docx-file loading behaviors -----------------------------------------------------------------
@@ -361,7 +361,8 @@ def test_partition_docx_from_file_prefers_metadata_filename_when_provided():
 def test_partition_docx_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.docx.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.docx.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_docx(example_doc_path("fake.docx"))
@@ -380,7 +381,8 @@ def test_partition_docx_from_file_path_prefers_metadata_last_modified(mocker: Mo
     filesystem_last_modified = "2023-11-01T14:13:07"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.docx.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.docx.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_docx(

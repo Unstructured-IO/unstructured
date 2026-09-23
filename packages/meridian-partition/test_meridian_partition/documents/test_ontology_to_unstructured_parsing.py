@@ -332,7 +332,10 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
     ("html_file_path", "json_file_path"),
     [
         ("html_files/example.html", "meridian_partition_json_output/example.json"),
-        ("html_files/example_full_doc.html", "meridian_partition_json_output/example_full_doc.json"),
+        (
+            "html_files/example_full_doc.html",
+            "meridian_partition_json_output/example_full_doc.json",
+        ),
         (
             "html_files/example_with_alternative_text.html",
             "meridian_partition_json_output/example_with_alternative_text.json",
@@ -501,7 +504,10 @@ def test_inline_elements_at_the_same_nesting_depth_can_be_merged():
     # elements sitting at the same depth are eligible to be merged into one element.
     first, second = _inline_element("a"), _inline_element("b")
 
-    assert can_meridian_partition_elements_be_merged(first, second, current_depth=2, next_depth=2) is True
+    assert (
+        can_meridian_partition_elements_be_merged(first, second, current_depth=2, next_depth=2)
+        is True
+    )
 
 
 def test_inline_elements_at_different_nesting_depths_are_not_merged():
@@ -510,7 +516,8 @@ def test_inline_elements_at_different_nesting_depths_are_not_merged():
     first, second = _inline_element("a"), _inline_element("b")
 
     assert (
-        can_meridian_partition_elements_be_merged(first, second, current_depth=1, next_depth=2) is False
+        can_meridian_partition_elements_be_merged(first, second, current_depth=1, next_depth=2)
+        is False
     )
 
 

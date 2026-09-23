@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.metrics.element_type import (
     FrequencyDict,
     calculate_element_type_percent_match,
@@ -10,6 +9,7 @@ from meridian_partition.metrics.element_type import (
 )
 from meridian_partition.partition.auto import partition
 from meridian_partition.staging.base import elements_to_json
+from test_meridian_partition.unit_utils import example_doc_path
 
 
 @pytest.mark.parametrize(

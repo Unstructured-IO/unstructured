@@ -21,7 +21,11 @@ from meridian_partition.partition.pdf_image.pdfminer_processing import (
     bboxes1_is_almost_subregion_of_bboxes2,
 )
 from meridian_partition.partition.utils.config import env_config
-from meridian_partition.partition.utils.constants import OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT, OCRMode
+from meridian_partition.partition.utils.constants import (
+    OCR_AGENT_PADDLE,
+    OCR_AGENT_TESSERACT,
+    OCRMode,
+)
 from meridian_partition.partition.utils.ocr_models.ocr_interface import OCRAgent
 from meridian_partition.telemetry import mark_partition_ocr_used, mark_partition_table_extraction
 from meridian_partition.utils import requires_dependencies

@@ -176,7 +176,9 @@ def test_partition_audio_from_file_uses_temp_path_and_cleans_up(mock_get_agent):
 
     with _tmp_audio() as path:
         with open(path, "rb") as f:
-            with patch("meridian_partition.partition.audio.tempfile.NamedTemporaryFile", spy_named_temp):
+            with patch(
+                "meridian_partition.partition.audio.tempfile.NamedTemporaryFile", spy_named_temp
+            ):
                 elements = partition_audio(file=f, metadata_filename="recording.wav")
 
     assert len(elements) == 1
@@ -201,7 +203,9 @@ def test_partition_audio_cleans_up_temp_file_when_transcription_raises(mock_get_
 
     with _tmp_audio() as path:
         with open(path, "rb") as f:
-            with patch("meridian_partition.partition.audio.tempfile.NamedTemporaryFile", spy_named_temp):
+            with patch(
+                "meridian_partition.partition.audio.tempfile.NamedTemporaryFile", spy_named_temp
+            ):
                 with pytest.raises(RuntimeError, match="transcription failed"):
                     partition_audio(file=f)
 
@@ -364,7 +368,9 @@ class TestSpeechToTextAgentInterface:
             SpeechToTextAgent,
         )
 
-        custom = "meridian_partition.partition.utils.speech_to_text.whisper_stt.SpeechToTextAgentWhisper"
+        custom = (
+            "meridian_partition.partition.utils.speech_to_text.whisper_stt.SpeechToTextAgentWhisper"
+        )
         with _patch.object(SpeechToTextAgent, "get_instance") as mock_get_instance:
             SpeechToTextAgent.get_agent(custom)
             mock_get_instance.assert_called_once_with(custom)

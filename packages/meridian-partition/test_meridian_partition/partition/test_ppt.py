@@ -5,11 +5,11 @@ from __future__ import annotations
 import pytest
 from pytest_mock import MockFixture
 
-from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.elements import ListItem, NarrativeText, PageBreak, Title
 from meridian_partition.partition.ppt import partition_ppt
 from meridian_partition.partition.utils.constants import MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA
+from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 
 EXPECTED_PPT_OUTPUT = [
     Title(text="Adding a Bullet Slide"),
@@ -100,7 +100,8 @@ def test_partition_ppt_from_file_prefers_metadata_filename():
 def test_partition_ppt_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-05-01T15:37:28"
     mocker.patch(
-        "meridian_partition.partition.ppt.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.ppt.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_ppt(example_doc_path("fake-power-point.ppt"))
@@ -119,7 +120,8 @@ def test_partition_ppt_from_file_path_prefers_metadata_last_modified(mocker: Moc
     filesystem_last_modified = "2024-05-01T15:37:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "meridian_partition.partition.ppt.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.ppt.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_ppt(

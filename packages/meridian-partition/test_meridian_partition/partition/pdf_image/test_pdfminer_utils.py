@@ -4,7 +4,6 @@ from unittest.mock import MagicMock, patch
 from pdfminer.layout import LTChar, LTContainer, LTFigure, LTLayoutContainer, LTTextLine
 from pdfminer.pdftypes import PDFStream
 
-from test_meridian_partition.unit_utils import example_doc_path
 from meridian_partition.partition.pdf import partition_pdf
 from meridian_partition.partition.pdf_image.pdfminer_utils import (
     CustomPDFPageInterpreter,
@@ -14,6 +13,7 @@ from meridian_partition.partition.pdf_image.pdfminer_utils import (
     get_text_with_deduplication,
 )
 from meridian_partition.partition.utils import config as partition_config
+from test_meridian_partition.unit_utils import example_doc_path
 
 
 def _make_char():
@@ -425,7 +425,9 @@ class TestParseEmbeddedCmapStream:
 
     @staticmethod
     def _parse(data: bytes):
-        from meridian_partition.partition.pdf_image.pdfminer_utils import _parse_embedded_cmap_stream
+        from meridian_partition.partition.pdf_image.pdfminer_utils import (
+            _parse_embedded_cmap_stream,
+        )
 
         return _parse_embedded_cmap_stream(data)
 
@@ -491,7 +493,9 @@ endcodespacerange
 endcidrange
 """
         # Use a small cap to verify bounding without allocating huge dicts
-        with patch("meridian_partition.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 100):
+        with patch(
+            "meridian_partition.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 100
+        ):
             cmap = self._parse(data)
             assert not cmap.code2cid  # 65536 > 100: entire CMap discarded, not partial
 
@@ -508,7 +512,9 @@ endcodespacerange
 <0A> <19> 10
 endcidrange
 """
-        with patch("meridian_partition.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 15):
+        with patch(
+            "meridian_partition.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 15
+        ):
             cmap = self._parse(data)
             assert not cmap.code2cid
 

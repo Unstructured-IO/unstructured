@@ -10,7 +10,6 @@ from typing import Any
 
 import pytest
 
-from test_meridian_partition.unit_utils import FixtureRequest, Mock, function_mock
 from meridian_partition.chunking.basic import chunk_elements
 from meridian_partition.documents.elements import (
     CompositeElement,
@@ -21,6 +20,7 @@ from meridian_partition.documents.elements import (
     Title,
 )
 from meridian_partition.partition.docx import partition_docx
+from test_meridian_partition.unit_utils import FixtureRequest, Mock, function_mock
 
 
 def test_it_chunks_a_document_when_basic_chunking_strategy_is_specified_on_partition_function():

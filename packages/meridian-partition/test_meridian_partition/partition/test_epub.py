@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from pytest_mock import MockFixture
 
-from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from meridian_partition.chunking.title import chunk_by_title
 from meridian_partition.documents.elements import Table, Text
 from meridian_partition.partition.epub import partition_epub
 from meridian_partition.partition.utils.constants import MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA
+from test_meridian_partition.unit_utils import assert_round_trips_through_JSON, example_doc_path
 
 
 def test_partition_epub_from_filename():
@@ -85,7 +85,8 @@ def test_partition_epub_gets_the_EPUB_MIME_type_in_metadata_filetype():
 def test_partition_epub_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-06-14T16:01:29"
     mocker.patch(
-        "meridian_partition.partition.epub.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.epub.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_epub(example_doc_path("winter-sports.epub"))
@@ -104,7 +105,8 @@ def test_partition_epub_from_file_path_prefers_metadata_last_modified(mocker: Mo
     filesystem_last_modified = "2024-06-14T16:01:29"
     metadata_last_modified = "2020-03-08T06:10:23"
     mocker.patch(
-        "meridian_partition.partition.epub.get_last_modified_date", return_value=filesystem_last_modified
+        "meridian_partition.partition.epub.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_epub(

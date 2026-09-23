@@ -208,7 +208,7 @@ class Describe_set_element_hierarchy:
 
 
 class Describe_apply_metadata:
-    """Unit-test suite for `meridian_partition.partition.common.metadata.apply_metadata()` decorator."""
+    """Unit-test suite for `meridian_partition.partition.common.metadata.apply_metadata()`."""
 
     # -- unique-ify elements and metadata ---------------------------------
 

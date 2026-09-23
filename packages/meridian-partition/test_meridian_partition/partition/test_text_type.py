@@ -2,12 +2,12 @@ from unittest.mock import patch
 
 import pytest
 
+from meridian_partition.partition import text_type
 from test_meridian_partition.nlp.mock_nlp import (
     mock_pos_tag,
     mock_sent_tokenize,
     mock_word_tokenize,
 )
-from meridian_partition.partition import text_type
 
 
 @pytest.mark.parametrize(

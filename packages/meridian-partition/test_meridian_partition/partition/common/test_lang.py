@@ -9,7 +9,6 @@ import pathlib
 
 import pytest
 
-from test_meridian_partition.unit_utils import LogCaptureFixture
 from meridian_partition.documents.elements import (
     NarrativeText,
     PageBreak,
@@ -23,6 +22,7 @@ from meridian_partition.partition.common.lang import (
     prepare_languages_for_tesseract,
     tesseract_to_paddle_language,
 )
+from test_meridian_partition.unit_utils import LogCaptureFixture
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
