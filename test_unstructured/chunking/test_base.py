@@ -7,6 +7,7 @@ from __future__ import annotations
 import html as html_stdlib
 import io
 import logging
+import random
 from typing import Any, Sequence
 
 import pytest
@@ -3763,12 +3764,11 @@ class Describe_HtmlTableSplitter:
         assert chunks == [
             ("Region", "<table><tr><td>Region</td></tr></table>"),
             ("xxxxxxxxxxxxx", "<table><tr><td>xxxxxxxxxxxxx</td></tr></table>"),
-            ("Region", "<table><tr><td>Region</td></tr></table>"),
-            ("yyyyyyyyyyyyy", "<table><tr><td>yyyyyyyyyyyyy</td></tr></table>"),
+            ("yyyyyyyyyyyyy", "<table><tr><td/><td>yyyyyyyyyyyyy</td></tr></table>"),
         ]
-        # -- the covering cell is deliberately repeated after the split --
+        # -- the covering cell supplies geometry without re-splitting its text --
         combined_text = " ".join(text for text, _ in chunks)
-        assert combined_text.count("Region") == 2
+        assert combined_text.count("Region") == 1
         for word in ("xxxxxxxxxxxxx", "yyyyyyyyyyyyy"):
             assert combined_text.count(word) == 1
 
@@ -4230,10 +4230,9 @@ class Describe_HtmlTableSplitter:
         value_chunk = next(chunk for chunk in chunks if "VALUE" in chunk.text)
         value_html = fragment_fromstring(value_chunk.metadata.text_as_html or "")
         value_row = next(row for row in value_html.xpath(".//tr") if "VALUE" in row.text_content())
-        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == [
-            "HHHHHHHHHHHHHHHHHHHH",
-            "VALUE",
-        ]
+        body_rows = value_html.xpath("./tr")
+        assert body_rows[0].xpath("./td")[0].get("rowspan") == "2"
+        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == ["VALUE"]
 
     def and_it_places_cells_after_spans_expire_inside_an_oversized_group(self):
         """A later cell reuses an expired span's column while longer spans stay active."""
@@ -4332,6 +4331,77 @@ class Describe_HtmlTableSplitter:
         assert sorted(ledger.spans) == [0, 2, 3]
         ledger.expire(4)
         assert ledger.place([cell])[0][0] == 0
+
+    def and_it_does_not_resplit_a_long_covering_cell_on_every_row(self):
+        """An oversized carry supplies blank geometry after its text was already split."""
+        html = (
+            f'<table><tr><td rowspan="301">{"z" * 700}</td><td>q</td></tr>'
+            + "<tr><td>ab</td></tr>" * 300
+            + "</table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+
+        assert len(chunks) <= 20
+        assert sum(text.count("z") for text, _html in chunks) == 700
+        assert sum(text.count("ab") for text, _html in chunks) == 300
+        assert all(len(text) <= 200 for text, _html in chunks)
+        assert all(fragment_fromstring(chunk_html) is not None for _text, chunk_html in chunks)
+        first_continuation = next(chunk_html for text, chunk_html in chunks if "ab" in text)
+        assert (
+            fragment_fromstring(first_continuation).xpath(".//tr[1]/td[1]")[0].text_content() == ""
+        )
+
+    def and_it_measures_joined_text_when_row_fitting_uses_a_custom_measure(self, monkeypatch):
+        """A non-additive measurement override still sees the full candidate text."""
+        opts = ChunkingOptions(max_characters=3)
+        measured: list[str] = []
+
+        def count_words(text: str) -> int:
+            measured.append(text)
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", count_words)
+        table = HtmlTable.from_html_text(
+            '<table><tr><td rowspan="3">anchor</td><td>one two</td></tr>'
+            "<tr><td>three</td></tr><tr><td>four</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter(table, opts)._iter_oversized_group_splits(
+                tuple(table.iter_rows()), 3
+            )
+        )
+
+        assert [text for text, _html in chunks] == ["anchor one two", "anchor three four"]
+        assert "anchor three four" in measured
+        assert all(len(text.split()) <= 3 for text, _html in chunks)
+
+    def and_it_tolerates_seeded_malformed_span_combinations(self):
+        """Overlapping source spans must not crash table chunking or emit broken HTML."""
+        for seed in range(100):
+            rng = random.Random(seed)
+            n_rows = rng.randint(2, 7)
+            rows = [f'<tr><td rowspan="{n_rows}">ANCHOR</td><td>{"x" * 100}</td></tr>']
+            for row_idx in range(1, n_rows):
+                cells = [
+                    f'<td colspan="{rng.choice((1, 2, 3, 5))}" '
+                    f'rowspan="{rng.choice((0, 1, 2, 3, 9))}">v{row_idx}{cell_idx}</td>'
+                    for cell_idx in range(rng.randint(0, 4))
+                ]
+                rows.append(f"<tr>{''.join(cells)}</tr>")
+            table = HtmlTable.from_html_text(f"<table>{''.join(rows)}</table>")
+
+            chunks = list(
+                _HtmlTableSplitter.iter_subtables(table, ChunkingOptions(max_characters=60))
+            )
+
+            assert all(len(text) <= 60 for text, _html in chunks), seed
+            assert all(fragment_fromstring(chunk_html) is not None for _text, chunk_html in chunks)
 
     def and_it_scopes_a_zero_rowspan_to_its_section_during_cell_fallback(self):
         """A positive span may continue into tfoot after a tbody zero span expires."""

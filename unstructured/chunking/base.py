@@ -1535,7 +1535,7 @@ class _HtmlTableSplitter:
                 fragment_text_count += len(texts)
 
         def materialize(
-            placed: Sequence[tuple[int, int, HtmlCell]], idx: int
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int, carry_text: bool = True
         ) -> tuple[list[str], list[str]]:
             """Merge incoming spans with own cells only at a real fragment boundary."""
             incoming = sorted(active.spans.values(), key=lambda span: span.col)
@@ -1551,8 +1551,12 @@ class _HtmlTableSplitter:
                     span_idx += 1
                     if col < span.col:
                         cells.append(_format_td("", span.col - col))
-                    cells.append(_format_td(span.text, span.colspan, span.reach_idx - idx + 1))
-                    if span.text:
+                    cells.append(
+                        _format_td(
+                            span.text if carry_text else "", span.colspan, span.reach_idx - idx + 1
+                        )
+                    )
+                    if carry_text and span.text:
                         texts.append(span.text)
                     col = span.col + span.colspan
                 else:
@@ -1624,11 +1628,18 @@ class _HtmlTableSplitter:
                 append_row(mat_cells, mat_texts)
             else:
                 # -- even this single row, with its covered columns materialized, is too big to
-                # -- fit alone; fall back to cell-level splitting, the same tolerance granted an
-                # -- ordinary oversized row -- it can't span beyond itself, so bound it to 1 --
-                tr = _HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(mat_cells)}</tr>")
-                bounded_row = HtmlRow(tr).row_clipped_to_rows(1)
-                yield from self._iter_row_splits(bounded_row, maxlen=maxlen)
+                # -- fit alone. Keep incoming spans as blank geometry in its cell-level
+                # -- fragments: their text was emitted earlier and repeating a long covering
+                # -- cell on every source row would multiply both output size and work. --
+                fallback_cells, fallback_texts = materialize(placed, idx, carry_text=False)
+                if self._opts.measure(" ".join(fallback_texts)) <= maxlen:
+                    append_row(fallback_cells, fallback_texts)
+                else:
+                    tr = _HtmlTableSplitter._parse_row_fragment(
+                        f"<tr>{''.join(fallback_cells)}</tr>"
+                    )
+                    bounded_row = HtmlRow(tr).row_clipped_to_rows(1)
+                    yield from self._iter_row_splits(bounded_row, maxlen=maxlen)
             active.add(new_spans)
 
         yield from flush_fragment()

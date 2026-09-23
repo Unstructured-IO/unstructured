@@ -2,7 +2,7 @@
 
 ### Fixes
 
-- **Keep active rowspans across oversized table-cell splits.** Continuation rows retain their covering cells and place new cells in the correct columns as shorter spans expire. A `rowspan="0"` remains scoped to its original table section. Sparse tables with many span expirations are processed without repeatedly scanning every active span.
+- **Keep active rowspans across oversized table-cell splits.** Continuation rows retain their covering columns and place new cells correctly as shorter spans expire. When a covering cell cannot fit beside an oversized row, its text is not split again for every covered row. A `rowspan="0"` remains scoped to its original table section. Sparse tables with many span expirations are processed without repeatedly scanning every active span.
 
 ## 0.27.8
 
