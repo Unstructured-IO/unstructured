@@ -2,7 +2,7 @@
 #
 # test-outbound-connectivity.sh
 #
-# Capture every external packet an Unstructured Docker image emits while
+# Capture every external packet an MeridianPartition Docker image emits while
 # partition()‑ing a test PNG, *inside the same container* (works on macOS).
 #
 # In addition **also capture the Python workload's stdout / stderr** and save it
@@ -22,8 +22,8 @@
 set -euo pipefail
 
 ######################## user‑tunable constants ########################
-IMAGE="downloads.unstructured.io/unstructured-io/unstructured:e42884a"
-NET="unstructured_test_net"
+IMAGE="downloads.meridian_partition.io/meridian_partition-io/meridian_partition:e42884a"
+NET="meridian_partition_test_net"
 CAPTURE_IFACE="${CAPTURE_IFACE:-eth0}"
 PCAP_DIR="$(pwd)/pcaps"
 PY_LOG_DIR="$(pwd)/python-output" # where Python logs go
@@ -130,7 +130,7 @@ fi
 docker exec -i -e PYTHONUNBUFFERED=1 "$CID" python - <<PY |& tee "${PY_LOG_DIR}/${SCENARIO}.log"
 import logging
 # Startup and per-partition runtime telemetry run unless the scenario sets DO_NOT_TRACK.
-from unstructured.partition.auto import partition
+from meridian_partition.partition.auto import partition
 import urllib.request, time, os, sys
 
 # Configure detailed logging

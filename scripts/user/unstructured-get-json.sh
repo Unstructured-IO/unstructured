@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # TODO's
-# * ability to set file type so that is not inferred by the unstructured api service
+# * ability to set file type so that is not inferred by the meridian_partition api service
 #     e.g. "-F 'files=@foo.pdf;type=application/pdf'
 #
 
@@ -18,9 +18,9 @@ Options:
   --ocr-only      ocr_only strategy: Perform OCR (Optical Character Recognition) only. No layout segmentation.
   --vlm           vlm strategy: Use Vision Language Model for processing
   --vlm-provider  Specify the VLM model provider
-                  (see: https://docs.unstructured.io/api-reference/workflow/workflows#vlm-strategy)
+                  (see: https://docs.meridian_partition.io/api-reference/workflow/workflows#vlm-strategy)
   --vlm-model     Specify the VLM model when using
-                  (see: https://docs.unstructured.io/api-reference/workflow/workflows#vlm-strategy)
+                  (see: https://docs.meridian_partition.io/api-reference/workflow/workflows#vlm-strategy)
   --tables        Enable table extraction: tables are represented as html in metadata
   --images        Include base64images in json
   --coordinates   Include coordinates in the output
@@ -36,10 +36,10 @@ Options:
 Arguments:
   <file>          File to send to the API.
 
-If running against an API instance other than hosted Unstructured paid API (or --freemium),
+If running against an API instance other than hosted MeridianPartition paid API (or --freemium),
 set the enviornment variable UNST_API_ENDPOINT.
 
-The script requires a <file>, the document to post to the Unstructured API.
+The script requires a <file>, the document to post to the MeridianPartition API.
 The .json result is written to ~/tmp/unst-outputs/ -- this path is echoed and copied to your clipboard.
 '
 
@@ -217,9 +217,9 @@ else
 fi
 
 if $FREEMIUM; then
-  API_ENDPOINT="https://api.unstructured.io/general/v0/general"
+  API_ENDPOINT="https://api.meridian_partition.io/general/v0/general"
 else
-  API_ENDPOINT=${UNST_API_ENDPOINT:-"https://api.unstructuredapp.io/general/v0/general"}
+  API_ENDPOINT=${UNST_API_ENDPOINT:-"https://api.meridian_partitionapp.io/general/v0/general"}
 fi
 
 if $HI_RES; then
@@ -262,7 +262,7 @@ else
 fi
 
 CURL_API_KEY=()
-[[ -n "$API_KEY" ]] && CURL_API_KEY=(-H "unstructured-api-key: $API_KEY")
+[[ -n "$API_KEY" ]] && CURL_API_KEY=(-H "meridian_partition-api-key: $API_KEY")
 CURL_COORDINATES=()
 [[ "$COORDINATES" == "true" ]] && CURL_COORDINATES=(-F "coordinates=true")
 CURL_TABLES=()
@@ -319,7 +319,7 @@ if [ "$WRITE_HTML" = true ]; then
     echo "HTML written directly from metadata.text_as_html fields to: ${HTML_OUTPUT_FILEPATH}"
   else
     # most elements will not have metadata.text_as_html defined (by design on Table elements do),
-    # so use the unstructured library's python script for the conversion.
+    # so use the meridian_partition library's python script for the conversion.
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../convert/elements_json_to_format.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
     echo "HTML written using Python script to: ${HTML_OUTPUT_FILEPATH}"

@@ -14,12 +14,12 @@ def number_of_rows(file_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Read Unstructured Ingest output file and print the number of rows",
+        description="Read MeridianPartition Ingest output file and print the number of rows",
     )
 
     parser.add_argument(
         "--structured-output-file-path",
-        help="Path to Unstructured Ingest output file",
+        help="Path to MeridianPartition Ingest output file",
     )
 
     args = parser.parse_args()

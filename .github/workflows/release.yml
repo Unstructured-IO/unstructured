@@ -64,7 +64,7 @@ jobs:
           # requires-python = ">=3.11"
           # dependencies = ["typing-extensions", "requests"]
           # ///
-          from unstructured.__version__ import __version__
+          from meridian_partition.__version__ import __version__
           print(__version__)
           PYEOF
           )

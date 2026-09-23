@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-quay.io/unstructured-io/unstructured}"
-DOCKER_IMAGE="${DOCKER_IMAGE:-unstructured:dev}"
+DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-quay.io/meridian_partition-io/meridian_partition}"
+DOCKER_IMAGE="${DOCKER_IMAGE:-meridian_partition:dev}"
 
 DOCKER_BUILD_CMD=(docker buildx build --load -f Dockerfile
   --build-arg BUILDKIT_INLINE_CACHE=1

@@ -7,8 +7,8 @@ USER root
 WORKDIR /app
 
 COPY pyproject.toml uv.lock README.md ./
-COPY unstructured unstructured
-COPY test_unstructured test_unstructured
+COPY meridian_partition meridian_partition
+COPY test_meridian_partition test_meridian_partition
 COPY example-docs example-docs
 
 RUN apk_ok=false; \
@@ -73,8 +73,8 @@ ENV UV_PYTHON_DOWNLOADS=never
 
 # Install Python dependencies via uv, then trigger spaCy model self-install while network is available
 RUN uv sync --locked --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
-    uv run --no-sync $PYTHON -c "from unstructured.nlp.tokenize import _get_nlp; print('spaCy model loaded:', _get_nlp().meta['name'])" && \
-    uv run --no-sync $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
+    uv run --no-sync $PYTHON -c "from meridian_partition.nlp.tokenize import _get_nlp; print('spaCy model loaded:', _get_nlp().meta['name'])" && \
+    uv run --no-sync $PYTHON -c "from meridian_partition.partition.model_init import initialize; initialize()" && \
     uv run --no-sync $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
 # Replace PyPI opencv wheels (which bundle vulnerable ffmpeg 5.1.x with 14 CVEs)

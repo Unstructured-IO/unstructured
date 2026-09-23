@@ -2,7 +2,7 @@
 set +u
 
 if [ -z "$1" ]; then
-  echo "When running this script, please supply the name of the user account for which to set up unstructured dependencies."
+  echo "When running this script, please supply the name of the user account for which to set up meridian_partition dependencies."
   echo "Ex: ${0} abertl"
   exit 1
 fi

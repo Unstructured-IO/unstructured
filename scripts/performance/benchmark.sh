@@ -33,10 +33,10 @@ function read_benchmark_logs_for_results() {
 }
 
 if [[ "$DOCKER_TEST" == "true" ]]; then
-  DOCKER_IMAGE=unstructured:perf-test make docker-build
-  docker rm -f unstructured-perf-test >/dev/null 2>&1
+  DOCKER_IMAGE=meridian_partition:perf-test make docker-build
+  docker rm -f meridian_partition-perf-test >/dev/null 2>&1
   docker run \
-    --name unstructured-perf-test \
+    --name meridian_partition-perf-test \
     --rm \
     -e NUM_ITERATIONS="$NUM_ITERATIONS" \
     -e INSTANCE_TYPE="$INSTANCE_TYPE" \
@@ -44,7 +44,7 @@ if [[ "$DOCKER_TEST" == "true" ]]; then
     -e SLOW_FILES="${SLOW_FILES[*]}" \
     -e HI_RES_STRATEGY_FILES="${HI_RES_STRATEGY_FILES[*]}" \
     -v "${SCRIPT_DIR}":/home/notebook-user/scripts/performance \
-    unstructured:perf-test \
+    meridian_partition:perf-test \
     bash /home/notebook-user/scripts/performance/benchmark-local.sh 2>&1 | tee >(while IFS= read -r line; do
       read_benchmark_logs_for_results
     done)

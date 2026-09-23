@@ -9,7 +9,7 @@
 #      * installs python dependencies via uv
 #   * runs each test ingest script with OVERWRITE_FIXTURES=true
 #      * so updates are written to test_unstructured_ingest/expected-structured-output/
-#      * using local unstructured/ directory (i.e. from local git branch)
+#      * using local meridian_partition/ directory (i.e. from local git branch)
 #
 # It is recommended to run this script on x86_64 hardware.
 
@@ -28,7 +28,7 @@ fi
 ./scripts/docker-build-ubuntu.sh
 
 # Warn the user if they have an old image
-IMAGE_NAME="unstructured-ubuntu:latest"
+IMAGE_NAME="meridian_partition-ubuntu:latest"
 CREATION_TIMESTAMP=$(docker inspect --format='{{.Created}}' "$IMAGE_NAME")
 CREATION_DATE=$(date -d "$CREATION_TIMESTAMP" +%s)
 CURRENT_DATE=$(date +%s)
@@ -38,7 +38,7 @@ if [ "$AGE_DAYS" -gt 6 ]; then
   echo "You may want to 'docker rmi $IMAGE_NAME' and rerun this script if it is not current."
 fi
 
-docker run --rm -v "$SCRIPT_DIR"/../unstructured:/root/unstructured \
+docker run --rm -v "$SCRIPT_DIR"/../meridian_partition:/root/meridian_partition \
   -v "$SCRIPT_DIR"/../test_unstructured_ingest:/root/test_unstructured_ingest \
   ${DISCORD_TOKEN:+-e DISCORD_TOKEN="$DISCORD_TOKEN"} \
   ${SLACK_TOKEN:+-e SLACK_TOKEN="$SLACK_TOKEN"} \
@@ -46,7 +46,7 @@ docker run --rm -v "$SCRIPT_DIR"/../unstructured:/root/unstructured \
   ${CONFLUENCE_API_TOKEN:+-e CONFLUENCE_API_TOKEN="$CONFLUENCE_API_TOKEN"} \
   ${GH_READ_ONLY_ACCESS_TOKEN:+-e GH_READ_ONLY_ACCESS_TOKEN="$GH_READ_ONLY_ACCESS_TOKEN"} \
   -w /root "$IMAGE_NAME" \
-  bash -c "export OVERWRITE_FIXTURES=true && source ~/.bashrc && pyenv activate unstructured && tesseract --version &&
+  bash -c "export OVERWRITE_FIXTURES=true && source ~/.bashrc && pyenv activate meridian_partition && tesseract --version &&
                ./test_unstructured_ingest/test-ingest-azure.sh &&
                ./test_unstructured_ingest/test-ingest-discord.sh &&
                ./test_unstructured_ingest/test-ingest-github.sh &&

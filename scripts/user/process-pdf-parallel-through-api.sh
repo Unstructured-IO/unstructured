@@ -5,7 +5,7 @@
 set -eu -o pipefail
 
 if [ $# -ne 1 ]; then
-  echo "Processes a single PDF through the Unstructured API by breaking it into smaller splits that are processed concurrently."
+  echo "Processes a single PDF through the MeridianPartition API by breaking it into smaller splits that are processed concurrently."
   echo
   echo "Usage: $0 <pdf_filename>"
   echo "Please provide a PDF filename as the first argument."
@@ -67,8 +67,8 @@ process_file_part() {
     return
   fi
 
-  curl -q -X POST https://api.unstructuredapp.io/general/v0/general \
-    -H "unstructured-api-key: $UNST_API_KEY" \
+  curl -q -X POST https://api.meridian_partitionapp.io/general/v0/general \
+    -H "meridian_partition-api-key: $UNST_API_KEY" \
     -H 'accept: application/json' \
     -H 'Content-Type: multipart/form-data' \
     -F strategy="${STRATEGY:-hi_res}" \

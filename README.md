@@ -1,15 +1,15 @@
 ## :eight_pointed_black_star: Quick Start
 
-There are several ways to use the `unstructured` library:
+There are several ways to use the `meridian_partition` library:
 * [Run the library in a container](#run-the-library-in-a-container) or
 * Install the library
     1. [Install from PyPI](#installing-the-library)
     2. [Install for local development](#installation-instructions-for-local-development)
-* For installation with `conda` on Windows system, please refer to the [documentation](https://unstructured-io.github.io/unstructured/installing.html#installation-with-conda-on-windows)
+* For installation with `conda` on Windows system, please refer to the [documentation](https://meridian_partition-io.github.io/meridian_partition/installing.html#installation-with-conda-on-windows)
 
 ### Run the library in a container
 
-The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
+The following instructions are intended to help you get up and running using Docker to interact with `meridian_partition`.
 See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
 
 NOTE: we build multi-platform images to support both x86_64 and Apple silicon hardware. `docker pull` should download the corresponding image for your architecture, but you can specify with `--platform` (e.g. `--platform linux/amd64`) if needed.
@@ -17,17 +17,17 @@ NOTE: we build multi-platform images to support both x86_64 and Apple silicon ha
 We build Docker images for all pushes to `main`. We tag each image with the corresponding short commit hash (e.g. `fbc7a69`) and the application version (e.g. `0.5.5-dev1`). We also tag the most recent image with `latest`. To leverage this, `docker pull` from our image repository.
 
 ```bash
-docker pull downloads.unstructured.io/unstructured-io/unstructured:latest
+docker pull downloads.meridian_partition.io/meridian_partition-io/meridian_partition:latest
 ```
 
 Once pulled, you can create a container from this image and shell to it.
 
 ```bash
 # create the container
-docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/unstructured:latest
+docker run -dt --name meridian_partition downloads.meridian_partition.io/meridian_partition-io/meridian_partition:latest
 
 # this will drop you into a bash shell where the Docker image is running
-docker exec -it unstructured bash
+docker exec -it meridian_partition bash
 ```
 
 You can also build your own Docker image. Note that the base image is `wolfi-base`, which is
@@ -50,20 +50,20 @@ Once in the running container, you can try things directly in Python interpreter
 # this will drop you into a python console so you can run the below partition functions
 python3
 
->>> from unstructured.partition.pdf import partition_pdf
+>>> from meridian_partition.partition.pdf import partition_pdf
 >>> elements = partition_pdf(filename="example-docs/layout-parser-paper-fast.pdf")
 
->>> from unstructured.partition.text import partition_text
+>>> from meridian_partition.partition.text import partition_text
 >>> elements = partition_text(filename="example-docs/fake-text.txt")
 ```
 
 ### Installing the library
-Use the following instructions to get up and running with `unstructured` and test your
+Use the following instructions to get up and running with `meridian_partition` and test your
 installation.
 
-- Install the Python SDK to support all document types with `pip install "unstructured[all-docs]"`
-  - For plain text files, HTML, XML, JSON and Emails that do not require any extra dependencies, you can run `pip install unstructured`
-  - To process other doc types, you can install the extras required for those documents, such as `pip install "unstructured[docx,pptx]"`
+- Install the Python SDK to support all document types with `pip install "meridian_partition[all-docs]"`
+  - For plain text files, HTML, XML, JSON and Emails that do not require any extra dependencies, you can run `pip install meridian_partition`
+  - To process other doc types, you can install the extras required for those documents, such as `pip install "meridian_partition[docx,pptx]"`
 - Install the following system dependencies if they are not already available on your system.
   Depending on what document types you're parsing, you may not need all of these.
     - `libmagic-dev` (filetype detection)
@@ -73,12 +73,12 @@ installation.
     - `pandoc` is bundled automatically via the `pypandoc-binary` Python package (no system install needed)
 
 - For suggestions on how to install on the Windows and to learn about dependencies for other features, see the
-  installation documentation [here](https://unstructured-io.github.io/unstructured/installing.html).
+  installation documentation [here](https://meridian_partition-io.github.io/meridian_partition/installing.html).
 
 At this point, you should be able to run the following code:
 
 ```python
-from unstructured.partition.auto import partition
+from meridian_partition.partition.auto import partition
 
 elements = partition(filename="example-docs/eml/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
@@ -86,7 +86,7 @@ print("\n\n".join([str(el) for el in elements]))
 
 ### Installation Instructions for Local Development
 
-The following instructions are intended to help you get up and running with `unstructured`
+The following instructions are intended to help you get up and running with `meridian_partition`
 locally if you are planning to contribute to the project.
 
 This project uses [uv](https://docs.astral.sh/uv/) for dependency management. Install it first:
@@ -123,8 +123,8 @@ make lock
   * For processing image files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
   * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
 
-Additionally, if you're planning to contribute to `unstructured`, we provide you an optional `pre-commit` configuration
-file to ensure your code matches the formatting and linting standards used in `unstructured`.
+Additionally, if you're planning to contribute to `meridian_partition`, we provide you an optional `pre-commit` configuration
+file to ensure your code matches the formatting and linting standards used in `meridian_partition`.
 If you'd prefer not to have code changes auto-tidied before every commit, you can use  `make check` to see
 whether any linting or formatting changes should be applied, and `make tidy` to apply them.
 
@@ -138,29 +138,29 @@ In addition to develop in your local OS we also provide a helper to use docker p
 make docker-start-dev
 ```
 
-This starts a docker container with your local repo mounted to `/mnt/local_unstructured`. This docker image allows you to develop without worrying about your OS's compatibility with the repo and its dependencies.
+This starts a docker container with your local repo mounted to `/mnt/local_meridian_partition`. This docker image allows you to develop without worrying about your OS's compatibility with the repo and its dependencies.
 
 ## :clap: Quick Tour
 
 ### Documentation
-For more comprehensive documentation, visit https://docs.unstructured.io .
+For more comprehensive documentation, visit https://docs.meridian_partition.io .
 
-Here are a few pages from the [Open Source documentation page](https://docs.unstructured.io/open-source/introduction/overview)
+Here are a few pages from the [Open Source documentation page](https://docs.meridian_partition.io/open-source/introduction/overview)
 that are helpful for new users to review:
 
-- [Quick Start](https://docs.unstructured.io/open-source/introduction/quick-start)
-- [Using the `unstructured` open source package](https://docs.unstructured.io/open-source/core-functionality/overview)
-- [Connectors](https://docs.unstructured.io/open-source/ingest/overview)
-- [Concepts](https://docs.unstructured.io/open-source/concepts/document-elements)
-- [Integrations](https://docs.unstructured.io/open-source/integrations)
+- [Quick Start](https://docs.meridian_partition.io/open-source/introduction/quick-start)
+- [Using the `meridian_partition` open source package](https://docs.meridian_partition.io/open-source/core-functionality/overview)
+- [Connectors](https://docs.meridian_partition.io/open-source/ingest/overview)
+- [Concepts](https://docs.meridian_partition.io/open-source/concepts/document-elements)
+- [Integrations](https://docs.meridian_partition.io/open-source/integrations)
 
 ### PDF Document Parsing Example
-The following examples show how to get started with the `unstructured` library. The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional dependencies per doc type.
-For example, to install docx dependencies you need to run `pip install "unstructured[docx]"`.
-See our [installation guide](https://docs.unstructured.io/open-source/installation/full-installation) for more details.
+The following examples show how to get started with the `meridian_partition` library. The easiest way to parse a document in meridian_partition is to use the `partition` function. If you use `partition` function, `meridian_partition` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional dependencies per doc type.
+For example, to install docx dependencies you need to run `pip install "meridian_partition[docx]"`.
+See our [installation guide](https://docs.meridian_partition.io/open-source/installation/full-installation) for more details.
 
 ```python
-from unstructured.partition.auto import partition
+from meridian_partition.partition.auto import partition
 
 elements = partition("example-docs/layout-parser-paper.pdf")
 ```
@@ -198,7 +198,7 @@ Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of 
 including document image classiﬁcation [11,
 ```
 
-See the [partitioning](https://docs.unstructured.io/open-source/core-functionality/partitioning)
+See the [partitioning](https://docs.meridian_partition.io/open-source/core-functionality/partitioning)
 section in our documentation for a full list of options and instructions on how to use
 file-specific partitioning functions.
 
@@ -213,6 +213,6 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 
 ## :chart_with_upwards_trend: Analytics
 
-Unstructured sends lightweight, anonymous analytics to `https://packages.unstructured.io/python-telemetry` by default: a ping when the library is imported, and a best-effort event for each top-level partition call (package version, platform/Python/architecture, and aggregate element counts). These events never contain document or element content, filenames, paths, URLs, credentials, or persistent installation/machine/user identifiers, and telemetry never blocks, retries, or waits on partitioning.
+MeridianPartition sends lightweight, anonymous analytics to `https://packages.meridian_partition.io/python-telemetry` by default: a ping when the library is imported, and a best-effort event for each top-level partition call (package version, platform/Python/architecture, and aggregate element counts). These events never contain document or element content, filenames, paths, URLs, credentials, or persistent installation/machine/user identifiers, and telemetry never blocks, retries, or waits on partitioning.
 
 To opt out before importing or partitioning, set `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (e.g. `true`).

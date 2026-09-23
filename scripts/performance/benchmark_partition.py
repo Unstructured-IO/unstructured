@@ -29,7 +29,7 @@ import sys
 import time
 from pathlib import Path
 
-from unstructured.partition.auto import partition
+from meridian_partition.partition.auto import partition
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)

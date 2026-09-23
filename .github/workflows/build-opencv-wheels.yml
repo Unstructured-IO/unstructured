@@ -6,8 +6,8 @@ name: Build OpenCV Wheels (No FFmpeg)
 # opencv-python-headless, and opencv-contrib-python: same cv2 module with
 # core + contrib modules and no GUI / no X11. One wheel can therefore
 # satisfy all four opencv-* package names in downstream Dockerfiles.
-# Wheels are uploaded as a GitHub release so both unstructured and
-# unstructured-api Dockerfiles can download them at build time.
+# Wheels are uploaded as a GitHub release so both meridian_partition and
+# meridian_partition-api Dockerfiles can download them at build time.
 
 on:
   workflow_dispatch:
@@ -61,7 +61,7 @@ jobs:
             cgr.dev/chainguard/wolfi-base:latest sh -c '
               set -euo pipefail
               # Retry apk install: the chainguard mirror occasionally returns
-              # transient errors mid-install (matches the pattern in unstructured/Dockerfile).
+              # transient errors mid-install (matches the pattern in meridian_partition/Dockerfile).
               apk_ok=false
               for attempt in 1 2 3; do
                 apk update && \

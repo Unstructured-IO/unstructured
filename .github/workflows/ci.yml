@@ -112,7 +112,7 @@ jobs:
           echo "Tesseract version ${{env.TESSERACT_VERSION}} is required but found version $installed_tesseract_version"
           exit 1
         fi
-        make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
+        make test CI=true MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
   test_unit_no_extras:
@@ -263,7 +263,7 @@ jobs:
         ASTRA_DB_APPLICATION_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
         ASTRA_DB_API_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
         MXBAI_API_KEY: ${{secrets.MXBAI_API_KEY}}
-        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
+        OCR_AGENT: "meridian_partition.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
         retry() {
@@ -336,7 +336,7 @@ jobs:
       with:
         filters: |
           src:
-            - 'unstructured/**'
+            - 'meridian_partition/**'
 
     - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
       uses: dangoslen/changelog-enforcer@v3
@@ -352,11 +352,11 @@ jobs:
         run: |
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
-          make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
+          make docker-test CI=true MERIDIAN_PARTITION_INCLUDE_DEBUG_METADATA=true
       - name: Scan image
         uses: anchore/scan-action@v3
         with:
-          image: "unstructured:dev"
+          image: "meridian_partition:dev"
           severity-cutoff: critical
           fail-build: false
           only-fixed: true

@@ -8,7 +8,7 @@ set -e
 
 USAGE_MESSAGE="Usage: $0 <file>
 
-Requires an unstructured output .json file as the only argument.
+Requires an meridian_partition output .json file as the only argument.
 
 Each table in the file is saved as an individual html file and
 opened in Safari (if running on mac), providing a quick and easy

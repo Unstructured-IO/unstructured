@@ -7,8 +7,8 @@
 
 set -eux -o pipefail
 
-CONTAINER_NAME=unstructured-smoke-test
-DOCKER_IMAGE="${DOCKER_IMAGE:-unstructured:dev}"
+CONTAINER_NAME=meridian_partition-smoke-test
+DOCKER_IMAGE="${DOCKER_IMAGE:-meridian_partition:dev}"
 
 # Change to the root of the repository
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)

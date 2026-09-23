@@ -4,7 +4,7 @@ import subprocess
 
 import pkg_resources
 
-from unstructured.utils import dependency_exists
+from meridian_partition.utils import dependency_exists
 
 
 def command_exists(command):
@@ -177,10 +177,10 @@ def main():
     print("OS version: ", get_os_version())
     print("Python version: ", get_python_version())
 
-    if dependency_exists("unstructured"):
-        print("unstructured version: ", get_python_package_version("unstructured"))
+    if dependency_exists("meridian_partition"):
+        print("meridian_partition version: ", get_python_package_version("meridian_partition"))
     else:
-        print("unstructured is not installed")
+        print("meridian_partition is not installed")
 
     if dependency_exists("unstructured_inference"):
         print(

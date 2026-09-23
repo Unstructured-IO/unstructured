@@ -12,7 +12,7 @@ from es_cluster_config import (
     USER,
 )
 
-from unstructured.embed.huggingface import HuggingFaceEmbeddingConfig, HuggingFaceEmbeddingEncoder
+from meridian_partition.embed.huggingface import HuggingFaceEmbeddingConfig, HuggingFaceEmbeddingEncoder
 
 
 def embeddings_for_text(text: str) -> List[float]:

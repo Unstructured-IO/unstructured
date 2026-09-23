@@ -1,7 +1,7 @@
 import os
 import sys
 
-from unstructured.partition.auto import partition
+from meridian_partition.partition.auto import partition
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:

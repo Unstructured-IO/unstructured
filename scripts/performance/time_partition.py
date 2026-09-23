@@ -2,7 +2,7 @@ import os
 import sys
 import time
 
-from unstructured.partition.auto import partition
+from meridian_partition.partition.auto import partition
 
 
 def warm_up_process(filename):

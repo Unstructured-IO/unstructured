@@ -3,7 +3,7 @@ name: Codeflash Optimization
 on:
   pull_request:
     paths:
-      - 'unstructured/**' 
+      - 'meridian_partition/**' 
 
   workflow_dispatch:
 

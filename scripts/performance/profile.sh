@@ -57,11 +57,11 @@ mkdir -p "$PROFILE_RESULTS_DIR"
 
 if [[ "$DOCKER_TEST" == "true" ]]; then
   SCRIPT_PARENT_DIR=$(dirname "$(dirname "$(realpath "$0")")")
-  docker run -it --rm -v "$SCRIPT_PARENT_DIR:/home/unstructured/scripts" unstructured:dev /bin/bash -c "
-  cd unstructured/
+  docker run -it --rm -v "$SCRIPT_PARENT_DIR:/home/meridian_partition/scripts" meridian_partition:dev /bin/bash -c "
+  cd meridian_partition/
   uv pip install -r scripts/performance/requirements.txt
   echo \"Warming the Docker container by running a small partitioning job..\"
-  python3 -c 'from unstructured.partition.auto import partition; partition(\"'""$SCRIPT_DIR/warmup_docs/warmup.pdf'\", strategy=\"hi_res\")[1]'
+  python3 -c 'from meridian_partition.partition.auto import partition; partition(\"'""$SCRIPT_DIR/warmup_docs/warmup.pdf'\", strategy=\"hi_res\")[1]'
   ./scripts/performance/profile.sh
   "
   exit 0

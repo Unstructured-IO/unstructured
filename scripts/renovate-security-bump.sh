@@ -9,7 +9,7 @@ set -euo pipefail
 # Use current working directory as repo root (where Renovate executes the script)
 # Override these via environment variables if your repo has different paths
 REPO_ROOT="${REPO_ROOT:-$(pwd)}"
-VERSION_FILE="${VERSION_FILE:-$REPO_ROOT/unstructured/__version__.py}"
+VERSION_FILE="${VERSION_FILE:-$REPO_ROOT/meridian_partition/__version__.py}"
 CHANGELOG_FILE="${CHANGELOG_FILE:-$REPO_ROOT/CHANGELOG.md}"
 
 echo "=== Renovate Security Version Bump ==="

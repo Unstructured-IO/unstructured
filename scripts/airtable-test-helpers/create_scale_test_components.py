@@ -3,7 +3,7 @@ import os
 # import pyairtable as pyair
 from pyairtable import Api
 
-from unstructured.logger import logger
+from meridian_partition.logger import logger
 
 SCALE_TEST_NUMBER_OF_RECORDS = 20_000
 

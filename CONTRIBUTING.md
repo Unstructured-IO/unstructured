@@ -1,4 +1,4 @@
-## Contributing to Unstructured
+## Contributing to MeridianPartition
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 
@@ -12,7 +12,7 @@ In some cases it's convenient to put up a PR that's not ready for final review. 
 
 ### How to Contribute?
 
-If you want to contribute, start working through the Unstructured codebase, navigate to the Github "issues" tab and start looking through interesting issues. If you are not sure of where to start, then start by trying one of the smaller/easier issues here i.e. issues with the "good first issue" label and then take a look at the issues with the "contributions welcome" label. These are issues that we believe are particularly well suited for outside contributions, often because we probably won't get to them right now. If you decide to start on an issue, leave a comment so that other people know that you're working on it. If you want to help out, but not alone, use the issue comment thread to coordinate.
+If you want to contribute, start working through the MeridianPartition codebase, navigate to the Github "issues" tab and start looking through interesting issues. If you are not sure of where to start, then start by trying one of the smaller/easier issues here i.e. issues with the "good first issue" label and then take a look at the issues with the "contributions welcome" label. These are issues that we believe are particularly well suited for outside contributions, often because we probably won't get to them right now. If you decide to start on an issue, leave a comment so that other people know that you're working on it. If you want to help out, but not alone, use the issue comment thread to coordinate.
 
 
 ## Pull-Request Checklist
@@ -53,7 +53,7 @@ The following is a list of tasks to be completed before submitting a pull reques
 
 ### License
 
-Unstructured open source projects are licensed under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).
+MeridianPartition open source projects are licensed under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).
 
 Include a license at the top of new `setup.py` files:
 
@@ -101,21 +101,21 @@ In the interest of fostering an open and welcoming environment, we as contributo
 
 ### Enforcement
 
-Please report unacceptable behavior to support@unstructured.io. All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances. The project team is obligated to maintain confidentiality with regard to the reporter of an incident. Further details of specific enforcement policies may be posted separately.
+Please report unacceptable behavior to support@meridian_partition.io. All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances. The project team is obligated to maintain confidentiality with regard to the reporter of an incident. Further details of specific enforcement policies may be posted separately.
 
 Project maintainers who do not follow or enforce the Code of Conduct in good faith may face temporary or permanent repercussions as determined by other members of the project's leadership.
 
 Thank you! 🤗
 
-The Unstructured Team
+The MeridianPartition Team
 
 
 ## Learn more
 
 | Section | Description |
 |-|-|
-| [Company Website](https://unstructured.io) | Unstructured.io product and company info |
-| [Documentation](https://docs.unstructured.io/) | Full API documentation |
+| [Company Website](https://meridian_partition.io) | MeridianPartition.io product and company info |
+| [Documentation](https://docs.meridian_partition.io/) | Full API documentation |
 | [Working with Pull Requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) | About pull requests |
 | [Code of Conduct](https://www.contributor-covenant.org/version/1/4/code-of-conduct/) | Contributor Covenant Code Of Conduct |
 | [Conventional Commits](https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/) | How to write better git commit messages |

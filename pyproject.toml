@@ -1,5 +1,5 @@
 [project]
-name = "unstructured"
+name = "meridian_partition"
 description = "A library that prepares raw documents for downstream ML tasks."
 requires-python = ">=3.11, <3.14"
 authors = [{name = "Unstructured Technologies", email = "devops@unstructuredai.io"}]
@@ -42,7 +42,6 @@ dependencies = [
     "requests>=2.32.5, <3.0.0",
     "tqdm>=4.67.3, <5.0.0",
     "typing-extensions>=4.15.0, <5.0.0",
-    "unstructured-client>=0.25.9, <1.0.0",
     "wrapt>=2.1.1, <3.0.0",
     "filelock>=3.12.0,<4.0.0",
 ]
@@ -53,7 +52,7 @@ csv = [
     "pandas>=2.0.0, <3.0.0",
 ]
 doc = [
-    "unstructured[docx]",
+    "meridian_partition[docx]",
 ]
 docx = [
     "python-docx>=1.2.0, <2.0.0",
@@ -86,10 +85,10 @@ org = [
     "pypandoc-binary>=1.16.2, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
 ]
 pdf = [
-    "unstructured[image]",
+    "meridian_partition[image]",
 ]
 ppt = [
-    "unstructured[pptx]",
+    "meridian_partition[pptx]",
 ]
 pptx = [
     "python-pptx>=1.0.2, <2.0.0",
@@ -103,7 +102,7 @@ rst = [
     "pypandoc-binary>=1.16.2, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
 ]
 tsv = [
-    "unstructured[csv]",
+    "meridian_partition[csv]",
 ]
 xlsx = [
     "msoffcrypto-tool>=6.0.0, <7.0.0",
@@ -117,7 +116,7 @@ audio = [
     "openai-whisper>=20231117, <20270000",
 ]
 all-docs = [
-    "unstructured[audio,csv,doc,docx,epub,image,md,odt,org,pdf,ppt,pptx,rtf,rst,tsv,xlsx]",
+    "meridian_partition[audio,csv,doc,docx,epub,image,md,odt,org,pdf,ppt,pptx,rtf,rst,tsv,xlsx]",
 ]
 # Feature extras
 chunking-tokens = [
@@ -130,7 +129,7 @@ huggingface = [
     "transformers>=5.2.0, <6.0.0",
 ]
 local-inference = [
-    "unstructured[all-docs]",
+    "meridian_partition[all-docs]",
 ]
 paddleocr = [
     "paddlepaddle>=3.3.0, <4.0.0; platform_machine != 'aarch64' and platform_system != 'Windows'",
@@ -143,7 +142,7 @@ ingest = [
 ]
 
 [project.scripts]
-unstructured = "unstructured.cli:main"
+meridian_partition = "meridian_partition.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/Unstructured-IO/unstructured"
@@ -153,13 +152,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-path = "unstructured/__version__.py"
+path = "meridian_partition/__version__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["/unstructured"]
+packages = ["/meridian_partition"]
 
 [tool.hatch.build.targets.sdist]
-packages = ["/unstructured"]
+packages = ["/meridian_partition"]
 
 [dependency-groups]
 test = [
@@ -207,7 +206,6 @@ constraint-dependencies = [
     "protobuf>=6.30.0",
     "pykx>=3.1.6",  # 3.1.2 is missing macOS wheels (transitive dep of kdbai-client)
     "tokenizers>=0.21",
-    "unstructured-client>=0.25.9",
     "urllib3>=2.0.0",
     "weaviate-client>=4.20.1",
 ]
@@ -259,23 +257,23 @@ filterwarnings = [
 python_classes = ["Test", "Describe"]
 python_functions = ["test_", "it_", "they_", "but_", "and_"]
 testpaths = [
-    "test_unstructured",
+    "test_meridian_partition",
     "test_unstructured_ingest",
 ]
 
 [tool.coverage.run]
 omit = [
-    # Entrypoint only; exercised via `unstructured` console script, not imports in tests.
-    "unstructured/__main__.py",
+    # Entrypoint only; exercised via `meridian_partition` console script, not imports in tests.
+    "meridian_partition/__main__.py",
 ]
 
 [tool.coverage.report]
 fail_under = 90
 
 [tool.codeflash]
-module-root = "unstructured"
-tests-root = "test_unstructured"
+module-root = "meridian_partition"
+tests-root = "test_meridian_partition"
 test-framework = "pytest"
 ignore-paths = []
 formatter-cmds = ["ruff check --exit-zero --fix-only $file", "ruff format $file"]
-benchmarks-root = "test_unstructured/benchmarks"
+benchmarks-root = "test_meridian_partition/benchmarks"

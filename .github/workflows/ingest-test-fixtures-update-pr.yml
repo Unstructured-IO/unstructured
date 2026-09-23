@@ -74,7 +74,7 @@ jobs:
           ASTRA_DB_API_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
           PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
           MXBAI_API_KEY: ${{secrets.MXBAI_API_KEY}}
-          OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
+          OCR_AGENT: "meridian_partition.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
           OVERWRITE_FIXTURES: "true"
           CI: "true"
         run: |

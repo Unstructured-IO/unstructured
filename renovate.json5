@@ -13,7 +13,7 @@
         "bash scripts/renovate-security-bump.sh"
       ],
       "fileFilters": [
-        "unstructured/__version__.py",
+        "meridian_partition/__version__.py",
         "CHANGELOG.md"
       ],
       "executionMode": "branch"

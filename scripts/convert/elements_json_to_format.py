@@ -3,8 +3,8 @@ import logging
 import os
 from pathlib import Path
 
-from unstructured.partition.html.convert import elements_to_html
-from unstructured.staging.base import elements_from_json, elements_to_md
+from meridian_partition.partition.html.convert import elements_to_html
+from meridian_partition.staging.base import elements_from_json, elements_to_md
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)

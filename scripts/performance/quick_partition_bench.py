@@ -29,7 +29,7 @@ def _partition_once(pdf: str, strategy: str) -> dict[str, object]:
     sink_err = io.StringIO()
     start = time.perf_counter()
     try:
-        from unstructured.partition.auto import partition
+        from meridian_partition.partition.auto import partition
 
         with redirect_stdout(sink_out), redirect_stderr(sink_err):
             elements = partition(filename=pdf, strategy=strategy)

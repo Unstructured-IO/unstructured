@@ -1,5 +1,5 @@
 # Performance
-This is a collection of tools helpful for inspecting and tracking performance of the Unstructured library.
+This is a collection of tools helpful for inspecting and tracking performance of the MeridianPartition library.
 
 The benchmarking script allows a user to track performance time to partitioning results against a fixed set of test documents and store those results with indication of architecture, instance type, and git hash, in S3.
 

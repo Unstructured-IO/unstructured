@@ -7,7 +7,7 @@ services:
      - 5433:5432
     environment:
       POSTGRES_DB: elements
-      POSTGRES_USER: unstructured
+      POSTGRES_USER: meridian_partition
       POSTGRES_PASSWORD: test
     volumes:
       - ./create-pgvector-schema.sql:/docker-entrypoint-initdb.d/init.sql
