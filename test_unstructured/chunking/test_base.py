@@ -4394,6 +4394,25 @@ class Describe_HtmlTableSplitter:
             fragment_fromstring(first_continuation).xpath(".//tr[1]/td[1]")[0].text_content() == ""
         )
 
+    def and_it_attaches_blank_carry_to_an_oversized_own_cell_fragment(self):
+        """A blank covering cell must not become its own empty TableChunk."""
+        html = (
+            f'<table><tr><td rowspan="2">{"z" * 700}</td><td>q</td></tr>'
+            f"<tr><td>{'a' * 300}</td></tr></table>"
+        )
+        table = Table(f"{'z' * 700} q {'a' * 300}", metadata=ElementMetadata(text_as_html=html))
+
+        chunks = chunk_by_title([table], max_characters=200, repeat_table_headers=False)
+
+        assert all(chunk.text for chunk in chunks)
+        assert all(len(chunk.metadata.text_as_html or "") <= 200 for chunk in chunks)
+        first_own_chunk = next(chunk for chunk in chunks if "a" in chunk.text)
+        own_cells = fragment_fromstring(first_own_chunk.metadata.text_as_html or "").xpath(
+            ".//tr/td"
+        )
+        assert own_cells[0].text_content() == ""
+        assert own_cells[1].text_content()
+
     def and_it_measures_joined_text_when_row_fitting_uses_a_custom_measure(self, monkeypatch):
         """A non-additive measurement override still sees the full candidate text."""
         opts = ChunkingOptions(max_characters=3)

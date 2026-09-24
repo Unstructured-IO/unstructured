@@ -1765,7 +1765,34 @@ class _HtmlTableSplitter:
                         f"<tr>{''.join(fallback_cells)}</tr>"
                     )
                     bounded_row = HtmlRow(tr).row_clipped_to_rows(1)
-                    yield from self._iter_row_splits(bounded_row, maxlen=maxlen)
+                    empty_markup_len = sum(
+                        len(cell.html) for cell in bounded_row.iter_cells() if not cell.text
+                    )
+                    split_maxlen = max(1, maxlen - empty_markup_len)
+                    pending_empty_cells = ""
+                    pending_output: TextAndHtml | None = None
+                    for text, html in self._iter_row_splits(bounded_row, maxlen=split_maxlen):
+                        if not text:
+                            # -- The cell accumulator can flush a blank carry by itself
+                            # -- before splitting an oversized own cell. Keep its geometry
+                            # -- with the next text-bearing fragment, not as an empty chunk.
+                            pending_empty_cells += html[len("<table><tr>") : -len("</tr></table>")]
+                            continue
+                        if pending_output is not None:
+                            yield pending_output
+                        if pending_empty_cells:
+                            html = html.replace(
+                                "<table><tr>", f"<table><tr>{pending_empty_cells}", 1
+                            )
+                            pending_empty_cells = ""
+                        pending_output = text, html
+                    if pending_output is not None:
+                        text, html = pending_output
+                        if pending_empty_cells:
+                            html = html.replace(
+                                "</tr></table>", f"{pending_empty_cells}</tr></table>", 1
+                            )
+                        yield text, html
             active.add(new_spans)
 
         yield from flush_fragment()
