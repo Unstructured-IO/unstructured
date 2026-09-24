@@ -1352,6 +1352,21 @@ class _GapIndex:
         assert node.end is None
         return node.start
 
+    def covering_or_next(self, cursor: int) -> tuple[int, int] | None:
+        """Find the first finite interval ending after cursor."""
+        node = self.root
+        match: _GapNode | None = None
+        while node is not None:
+            if node.end is not None and node.end <= cursor:
+                node = node.right
+            else:
+                match = node
+                node = node.left
+        if match is None:
+            return None
+        assert match.end is not None
+        return match.start, match.end
+
 
 class _ActiveSpanLedger:
     """Sparse source-row span geometry with expiry events and indexed free-column gaps.
@@ -1364,6 +1379,9 @@ class _ActiveSpanLedger:
     def __init__(self) -> None:
         self.spans: dict[int, _OpenSpan] = {}
         self.text_spans: dict[int, _OpenSpan] = {}
+        self.text_runs: dict[int, int] = {}
+        self.text_runs_by_end: dict[int, int] = {}
+        self.text_run_index = _GapIndex()
         self.reach_counts: dict[int, int] = {}
         self.text_len = 0
         self.text_count = 0
@@ -1392,6 +1410,15 @@ class _ActiveSpanLedger:
                 del self.text_spans[col]
                 self.text_len -= len(span.text)
                 self.text_count -= 1
+                run = self.text_run_index.covering_or_next(span.col)
+                assert run is not None
+                assert run[0] <= span.col
+                self._remove_text_run(run[0])
+                if run[0] < span.col:
+                    self._add_text_run(run[0], span.col)
+                span_end = span.col + span.colspan
+                if span_end < run[1]:
+                    self._add_text_run(span_end, run[1])
             start = span.col
             end: int | None = span.col + span.colspan
             left = self.gaps_by_end.get(start)
@@ -1449,6 +1476,17 @@ class _ActiveSpanLedger:
                 self.text_spans[span.col] = span
                 self.text_len += len(span.text)
                 self.text_count += 1
+                start = span.col
+                end = span.col + span.colspan
+                left = self.text_runs_by_end.get(start)
+                if left is not None:
+                    self._remove_text_run(left)
+                    start = left
+                right = self.text_runs.get(end)
+                if right is not None:
+                    self._remove_text_run(end)
+                    end = right
+                self._add_text_run(start, end)
             heapq.heappush(self.expiry, (span.reach_idx + 1, span.col))
 
     def uniform_cover(self) -> tuple[int, int] | None:
@@ -1465,6 +1503,16 @@ class _ActiveSpanLedger:
         if end is not None:
             self.gaps_by_end[end] = start
         self.gap_index.insert(start, end)
+
+    def _add_text_run(self, start: int, end: int) -> None:
+        self.text_runs[start] = end
+        self.text_runs_by_end[end] = start
+        self.text_run_index.insert(start, end)
+
+    def _remove_text_run(self, start: int) -> None:
+        end = self.text_runs.pop(start)
+        del self.text_runs_by_end[end]
+        self.text_run_index.delete(start)
 
     def _remove_gap(self, start: int) -> None:
         end = self.gaps.pop(start)
@@ -1763,9 +1811,35 @@ class _HtmlTableSplitter:
             Text spans are emitted only at a fragment boundary. On later rows their
             already emitted rowspans occupy those columns, so omit them entirely.
             """
-            incoming = sorted(active.text_spans.values(), key=lambda span: span.col)
             cells: list[str] = []
             texts: list[str] = []
+            if not emit_text:
+                col = own_idx = 0
+                trailing_col = active.gap_index.trailing_gap_start()
+                while own_idx < len(placed) or col < trailing_col:
+                    own_col = placed[own_idx][0] if own_idx < len(placed) else None
+                    run = active.text_run_index.covering_or_next(col)
+                    if run is not None and run[0] < (
+                        own_col if own_col is not None else trailing_col
+                    ):
+                        if col < run[0]:
+                            cells.append(_format_td("", run[0] - col))
+                        col = run[1]
+                    elif own_col is not None:
+                        cell = placed[own_idx][2]
+                        own_idx += 1
+                        if col < own_col:
+                            cells.append(_format_td("", own_col - col))
+                        cells.append(own_cell_html(cell, idx))
+                        if cell.text:
+                            texts.append(cell.text)
+                        col = own_col + cell.colspan
+                    else:
+                        cells.append(_format_td("", trailing_col - col))
+                        break
+                return cells, texts
+
+            incoming = sorted(active.text_spans.values(), key=lambda span: span.col)
             col = own_idx = span_idx = 0
             while own_idx < len(placed) or span_idx < len(incoming):
                 own_col = placed[own_idx][0] if own_idx < len(placed) else None

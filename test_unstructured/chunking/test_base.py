@@ -4655,6 +4655,39 @@ class Describe_HtmlTableSplitter:
         assert grid[1][3] == "TWO"
         assert grid[2][2] == "THREE"
 
+    @pytest.mark.parametrize("continuation_cell", ["", "<td/>"])
+    def and_it_skips_adjacent_labels_already_covering_packed_rows(
+        self, monkeypatch, continuation_cell
+    ):
+        """Packed blank scaffolds must not revisit each retained label per row."""
+        span_count = 200
+        continuation_rows = 400
+        label_cells = "".join(
+            f'<td rowspan="{continuation_rows + 1 - i % 2}">A</td>' for i in range(span_count)
+        )
+        html = (
+            f"<table><tr>{label_cells}<td>{'x' * 501}</td></tr>"
+            + f"<tr>{continuation_cell}</tr>" * continuation_rows
+            + "</table>"
+        )
+        original_col = chunking_base._OpenSpan.col
+        col_reads = 0
+
+        def counted_col(span):
+            nonlocal col_reads
+            col_reads += 1
+            return original_col.__get__(span, chunking_base._OpenSpan)
+
+        monkeypatch.setattr(chunking_base._OpenSpan, "col", property(counted_col))
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert col_reads < 5000
+        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 1500
+
     def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
         """A new own rowspan is clipped before later rows get compact blank geometry."""
         pd = pytest.importorskip("pandas")
