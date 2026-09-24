@@ -4260,7 +4260,7 @@ class Describe_HtmlTableSplitter:
         ]
         assert [cell.text_content() for cell in rows[1].xpath("./td")] == ["NEW", "two"]
         assert [cell.text_content() for cell in rows[2].xpath("./td")] == ["three"]
-        assert [cell.text_content() for cell in rows[3].xpath("./td")] == ["four"]
+        assert [cell.text_content() for cell in rows[3].xpath("./td")] == ["four", ""]
 
     @pytest.mark.parametrize("continuation_cell", ["", "<td/>"])
     def and_it_keeps_many_sparse_spans_across_a_cell_split(self, continuation_cell: str):
@@ -4705,6 +4705,39 @@ class Describe_HtmlTableSplitter:
         assert sum(text.count("L") for text, _html in chunks) < 1000
         own_copies = sum(text.count("v") for text, _html in chunks)
         assert continuation_rows * bool(own_text) <= own_copies < continuation_rows + 10
+
+    @pytest.mark.parametrize("variant", ["early_expiry", "persistent_gaps"])
+    @pytest.mark.parametrize("own_cell", ["", '<td rowspan="2"/>', '<td rowspan="2">v</td>'])
+    def and_it_avoids_padding_each_sparse_row_between_label_runs(self, variant, own_cell):
+        """Stable interior blank intervals occupy one bounded output rowspan."""
+        span_count = 100
+        continuation_rows = 200
+        limit = 2 * span_count + 20
+        labels = "".join(
+            (
+                f'<td rowspan="{2 if i % 2 == 0 else continuation_rows + 1}">L</td>'
+                if variant == "early_expiry"
+                else f'<td rowspan="{continuation_rows + 1}">L</td>'
+                + ("<td/>" if i % 2 == 0 else "")
+            )
+            for i in range(span_count)
+        )
+        html = (
+            f"<table><tr>{labels}<td>{'x' * (limit + 1)}</td></tr>"
+            + f"<tr>{own_cell}</tr>" * continuation_rows
+            + "</table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=limit)
+            )
+        )
+
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 1000
+        assert sum(text.count("x") for text, _html in chunks) == limit + 1
+        assert sum(text.count("v") for text, _html in chunks) >= continuation_rows * (
+            "v" in own_cell
+        )
 
     def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
         """A new own rowspan is clipped before later rows get compact blank geometry."""

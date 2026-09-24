@@ -1521,6 +1521,18 @@ class _ActiveSpanLedger:
         self.gap_index.delete(start)
 
 
+class _FragmentCell:
+    """A fragment cell whose blank rowspan is finalized when its interval closes."""
+
+    __slots__ = ("col", "width", "start_row", "html")
+
+    def __init__(self, col: int, width: int, start_row: int, html: str) -> None:
+        self.col = col
+        self.width = width
+        self.start_row = start_row
+        self.html = html
+
+
 class _HtmlTableSplitter:
     """Produces (text, html) pairs for a `<table>` HtmlElement.
 
@@ -1704,12 +1716,16 @@ class _HtmlTableSplitter:
         group_last_idx = self._group_last_idx(group)
         active = _ActiveSpanLedger()
         oversized_carry_cols: set[int] = set()
-        fragment_cells: list[list[str]] = []
+        fragment_cells: list[list[str | _FragmentCell]] = []
         fragment_texts: list[list[str]] = []
         fragment_text_count = 0
         fragment_char_len = 0
         fragment_blank_per_row = False
         fragment_text_cover_per_row = False
+        fragment_blank_runs: dict[int, tuple[int, _FragmentCell]] = {}
+        fragment_blank_index = _GapIndex()
+        fragment_text_expiry: list[tuple[int, int, int]] = []
+        fragment_width = 0
         additive_char_measure = (
             not self._opts.use_token_counting
             and getattr(self._opts.measure, "__func__", None) is ChunkingOptions.measure
@@ -1726,15 +1742,105 @@ class _HtmlTableSplitter:
                 ):
                     oversized_carry_cols.add(span.col)
 
-        def append_row(cells: list[str], texts: list[str]) -> None:
+        def append_row(cells: Sequence[str | _FragmentCell], texts: list[str]) -> None:
             nonlocal fragment_text_count, fragment_char_len
-            fragment_cells.append(cells)
+            fragment_cells.append(list(cells))
             fragment_texts.append(texts)
             if texts:
                 fragment_char_len += sum(map(len, texts)) + len(texts) - 1
                 if fragment_text_count:
                     fragment_char_len += 1
                 fragment_text_count += len(texts)
+
+        def open_fragment_blank(start: int, end: int, row_cells: list[_FragmentCell]) -> None:
+            if start >= end:
+                return
+            cell = _FragmentCell(
+                start, end - start, len(fragment_cells), _format_td("", end - start)
+            )
+            fragment_blank_runs[start] = end, cell
+            fragment_blank_index.insert(start, end)
+            row_cells.append(cell)
+
+        def close_fragment_blank(
+            start: int, row_cells: list[_FragmentCell] | None = None
+        ) -> tuple[int, _FragmentCell]:
+            end, cell = fragment_blank_runs.pop(start)
+            fragment_blank_index.delete(start)
+            if cell.start_row == len(fragment_cells):
+                assert row_cells is not None
+                row_cells.remove(cell)
+            else:
+                cell.html = _format_td("", cell.width, len(fragment_cells) - cell.start_row)
+            return end, cell
+
+        def cut_fragment_blanks(start: int, end: int, row_cells: list[_FragmentCell]) -> None:
+            cursor = start
+            while (run := fragment_blank_index.covering_or_next(cursor)) is not None:
+                run_start, run_end = run
+                if run_start >= end:
+                    break
+                close_fragment_blank(run_start, row_cells)
+                if run_start < start:
+                    open_fragment_blank(run_start, start, row_cells)
+                if end < run_end:
+                    open_fragment_blank(end, run_end, row_cells)
+                cursor = run_end
+
+        def start_fragment_text_cover(cells: list[str]) -> None:
+            """Index initial blank intervals and label expiry without later row scans."""
+            nonlocal fragment_width
+            row = HtmlRow(_HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(cells)}</tr>"))
+            col = 0
+            for offset, cell in enumerate(row.iter_cells()):
+                end = col + cell.colspan
+                if cell.text:
+                    heapq.heappush(
+                        fragment_text_expiry,
+                        (len(fragment_cells) - 1 + (cell.rowspan or 1), col, end),
+                    )
+                else:
+                    output = _FragmentCell(
+                        col, cell.colspan, len(fragment_cells) - 1, cells[offset]
+                    )
+                    fragment_cells[-1][offset] = output
+                    fragment_blank_runs[col] = end, output
+                    fragment_blank_index.insert(col, end)
+                col = end
+            fragment_width = col
+
+        def append_fragment_text_cover_row(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int, texts: list[str]
+        ) -> None:
+            """Process only labels that expire and own cells that open on this row."""
+            nonlocal fragment_width
+            row_cells: list[_FragmentCell] = []
+            while fragment_text_expiry and fragment_text_expiry[0][0] <= len(fragment_cells):
+                _expiry, start, end = heapq.heappop(fragment_text_expiry)
+                open_fragment_blank(start, end, row_cells)
+            own_end = max((col + cell.colspan for col, _gap, cell in placed), default=0)
+            width = max(fragment_width, active.gap_index.trailing_gap_start(), own_end)
+            if fragment_width < width:
+                open_fragment_blank(fragment_width, width, row_cells)
+                fragment_width = width
+            for col, _gap, cell in placed:
+                if not cell.text:
+                    continue
+                end = col + cell.colspan
+                cut_fragment_blanks(col, end, row_cells)
+                row_cells.append(
+                    _FragmentCell(col, cell.colspan, len(fragment_cells), own_cell_html(cell, idx))
+                )
+                reach = (
+                    group_last_idx[idx]
+                    if cell.rowspan is None
+                    else min(idx + cell.rowspan - 1, n - 1)
+                )
+                heapq.heappush(
+                    fragment_text_expiry, (len(fragment_cells) + reach - idx + 1, col, end)
+                )
+            row_cells.sort(key=lambda cell: cell.col)
+            append_row(row_cells, texts)
 
         def own_cell_html(cell: HtmlCell, idx: int) -> str:
             """Resolve a zero rowspan against its source section, before fragment clipping."""
@@ -1914,13 +2020,17 @@ class _HtmlTableSplitter:
             nonlocal fragment_cells, fragment_texts, fragment_text_count, fragment_char_len
             nonlocal fragment_blank_per_row
             nonlocal fragment_text_cover_per_row
+            nonlocal fragment_blank_runs, fragment_blank_index, fragment_text_expiry, fragment_width
             if not fragment_cells:
                 return
+            for start in list(fragment_blank_runs):
+                close_fragment_blank(start)
             m = len(fragment_cells)
             trs: list[str] = []
             for k, cells in enumerate(fragment_cells):
                 bound = m - k
-                tr = _HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(cells)}</tr>")
+                html_cells = "".join(cell if isinstance(cell, str) else cell.html for cell in cells)
+                tr = _HtmlTableSplitter._parse_row_fragment(f"<tr>{html_cells}</tr>")
                 row = HtmlRow(tr)
                 trs.append(
                     row.html_clipped_to_rows(bound)
@@ -1933,6 +2043,10 @@ class _HtmlTableSplitter:
             fragment_text_count = fragment_char_len = 0
             fragment_blank_per_row = False
             fragment_text_cover_per_row = False
+            fragment_blank_runs = {}
+            fragment_blank_index = _GapIndex()
+            fragment_text_expiry = []
+            fragment_width = 0
             yield text, html
 
         for idx, row in enumerate(group):
@@ -1951,17 +2065,13 @@ class _HtmlTableSplitter:
                 if reach > idx:
                     new_spans.append((_OpenSpan(col, cell.colspan, cell.text, reach), gap))
             if fragment_cells and fits(texts):
-                packed_cells = (
-                    materialize_compact_text_cover(placed, idx, False)[0]
-                    if fragment_text_cover_per_row
-                    else materialize_blank_compact(placed, idx)
-                    if fragment_blank_per_row
-                    else cells
-                )
-                append_row(
-                    packed_cells,
-                    texts,
-                )
+                if fragment_text_cover_per_row:
+                    append_fragment_text_cover_row(placed, idx, texts)
+                else:
+                    packed_cells = (
+                        materialize_blank_compact(placed, idx) if fragment_blank_per_row else cells
+                    )
+                    append_row(packed_cells, texts)
                 commit_spans(new_spans)
                 if fragment_blank_per_row and not fragment_text_cover_per_row and new_spans:
                     yield from flush_fragment()
@@ -1984,6 +2094,17 @@ class _HtmlTableSplitter:
                     else None
                 )
             )
+            strategic_blank_carry = False
+            if carry_fits and additive_char_measure and texts and active.text_count >= 16:
+                # -- Repeating a large fitting label set on many tiny fragments can
+                # -- multiply output by labels × rows. Its text is already present
+                # -- in the source row; retain blank geometry when the window cannot
+                # -- amortize that context over at least one row per label. --
+                carry_chars = active.text_len + active.text_count - 1
+                own_step = sum(map(len, texts)) + len(texts)
+                if (maxlen - carry_chars) // max(1, own_step) < active.text_count:
+                    carry_fits = False
+                    strategic_blank_carry = True
             if carry_fits is False:
                 mat_cells: list[str] = []
                 mat_texts: list[str] = []
@@ -2007,6 +2128,8 @@ class _HtmlTableSplitter:
                     carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
             if carry_fits:
                 append_row(mat_cells, mat_texts)
+                if fragment_text_cover_per_row:
+                    start_fragment_text_cover(mat_cells)
             else:
                 # -- even this single row, with its covered columns materialized, is too big to
                 # -- fit alone. Keep incoming spans as blank geometry in its cell-level
@@ -2018,7 +2141,9 @@ class _HtmlTableSplitter:
                     fallback_cells = materialize_blank_compact(placed, idx)
                     append_row(fallback_cells, texts)
                     fragment_blank_per_row = True
-                    fragment_text_cover_per_row = False
+                    fragment_text_cover_per_row = strategic_blank_carry
+                    if strategic_blank_carry:
+                        start_fragment_text_cover(fallback_cells)
                     # -- If the carry text could fit with a later, smaller row, let that row
                     # -- start a fresh fragment and recover its covering context. A carry too
                     # -- long to fit even alone stays blank while ordinary rows accumulate;
@@ -2035,7 +2160,7 @@ class _HtmlTableSplitter:
                         )
                         <= maxlen
                     )
-                    if carry_alone_fits:
+                    if carry_alone_fits and not strategic_blank_carry:
                         yield from flush_fragment()
                 else:
                     # -- Cell splits are singleton rows, so compact their blank geometry
