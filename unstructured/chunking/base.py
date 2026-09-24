@@ -1657,6 +1657,7 @@ class _HtmlTableSplitter:
         fragment_texts: list[list[str]] = []
         fragment_text_count = 0
         fragment_char_len = 0
+        fragment_blank_per_row = False
         additive_char_measure = (
             not self._opts.use_token_counting
             and getattr(self._opts.measure, "__func__", None) is ChunkingOptions.measure
@@ -1775,6 +1776,7 @@ class _HtmlTableSplitter:
 
         def flush_fragment() -> Iterator[TextAndHtml]:
             nonlocal fragment_cells, fragment_texts, fragment_text_count, fragment_char_len
+            nonlocal fragment_blank_per_row
             if not fragment_cells:
                 return
             m = len(fragment_cells)
@@ -1792,6 +1794,7 @@ class _HtmlTableSplitter:
             html = f"<table>{''.join(trs)}</table>"
             fragment_cells, fragment_texts = [], []
             fragment_text_count = fragment_char_len = 0
+            fragment_blank_per_row = False
             yield text, html
 
         for idx, row in enumerate(group):
@@ -1810,8 +1813,13 @@ class _HtmlTableSplitter:
                 if reach > idx:
                     new_spans.append((_OpenSpan(col, cell.colspan, cell.text, reach), gap))
             if fragment_cells and fits(texts):
-                append_row(cells, texts)
+                append_row(
+                    materialize_blank_compact(placed, idx) if fragment_blank_per_row else cells,
+                    texts,
+                )
                 commit_spans(new_spans)
+                if fragment_blank_per_row and new_spans:
+                    yield from flush_fragment()
                 continue
 
             yield from flush_fragment()
@@ -1841,6 +1849,13 @@ class _HtmlTableSplitter:
                     mat_cells = materialize_uniform_blank(placed, idx, width, reach)
                     mat_texts = texts
                     carry_fits = own_fits
+                elif active.spans and not active.text_count:
+                    # -- Mixed blank expiries can be represented per source row; each
+                    # -- row gets its own compact blank columns instead of S cells. --
+                    mat_cells = materialize_blank_compact(placed, idx)
+                    mat_texts = texts
+                    carry_fits = own_fits
+                    fragment_blank_per_row = True
                 else:
                     mat_cells, mat_texts = materialize(placed, idx)
                     carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
@@ -1852,10 +1867,11 @@ class _HtmlTableSplitter:
                 # -- fragments: their text was emitted earlier and repeating a long covering
                 # -- cell on every source row would multiply both output size and work. --
                 if own_fits:
-                    # -- A packed fragment needs each blank carry's remaining rowspan;
-                    # -- later rows in this fragment emit only their own cells. --
-                    fallback_cells, _fallback_texts = materialize(placed, idx, carry_text=False)
+                    # -- Blank every active cover in this row; later packed rows will
+                    # -- receive their own compact blank columns. --
+                    fallback_cells = materialize_blank_compact(placed, idx)
                     append_row(fallback_cells, texts)
+                    fragment_blank_per_row = True
                     # -- If the carry text could fit with a later, smaller row, let that row
                     # -- start a fresh fragment and recover its covering context. A carry too
                     # -- long to fit even alone stays blank while ordinary rows accumulate;
@@ -1943,6 +1959,8 @@ class _HtmlTableSplitter:
                             )
                         yield text, html
             commit_spans(new_spans)
+            if fragment_blank_per_row and new_spans:
+                yield from flush_fragment()
 
         yield from flush_fragment()
 

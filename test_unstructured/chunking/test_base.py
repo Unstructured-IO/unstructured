@@ -4566,6 +4566,86 @@ class Describe_HtmlTableSplitter:
         assert sum(text.count("x") for text, _html in chunks) == 501
         assert sum(text.count("y") for text, _html in chunks) == n_rows * own_len
 
+    @pytest.mark.parametrize("variant", ["label", "two_expiries"])
+    def and_it_compacts_mixed_blank_covers_on_near_limit_rows(self, monkeypatch, variant):
+        """A label or staggered expiries cannot restore per-span output growth."""
+        n_spans = n_rows = 100
+        label = f'<td rowspan="{n_rows + 1}">A</td>' if variant == "label" else ""
+        blanks = "".join(
+            f'<td rowspan="{n_rows if variant == "two_expiries" and i % 2 else n_rows + 1}"/>'
+            for i in range(n_spans)
+        )
+        html = (
+            f"<table><tr>{label}{blanks}<td>{'x' * 501}</td></tr>"
+            + (f"<tr><td>{'y' * 499}</td></tr>") * n_rows
+            + "</table>"
+        )
+        original_format_td = chunking_base._format_td
+        blank_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal blank_format_calls
+            if not text:
+                blank_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert blank_format_calls < 1000
+        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 1000
+        assert sum(text.count("x") for text, _html in chunks) == 501
+        assert sum(text.count("y") for text, _html in chunks) == n_rows * 499
+
+    def and_it_preserves_columns_when_packed_blank_spans_expire_at_different_rows(self):
+        """Per-row blank geometry follows source expiry inside a packed fragment."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            '<table><tr><td rowspan="4"/><td rowspan="3"/><td>'
+            + "x" * 201
+            + "</td></tr><tr><td>ONE</td></tr><tr><td>TWO</td></tr>"
+            + "<tr><td>THREE</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+        continuation = next(chunk_html for text, chunk_html in chunks if "ONE" in text)
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+
+        assert grid[0][2] == "ONE"
+        assert grid[1][2] == "TWO"
+        assert grid[2][1] == "THREE"
+
+    def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
+        """A new own rowspan is clipped before later rows get compact blank geometry."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            f'<table><tr><td rowspan="4">{"z" * 201}</td><td>q</td></tr>'
+            '<tr><td rowspan="2">NEW</td><td>ONE</td></tr>'
+            "<tr><td>TWO</td></tr><tr><td>THREE</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+        positions = {}
+        for _text, chunk_html in chunks:
+            for row in pd.read_html(io.StringIO(chunk_html))[0].to_numpy().tolist():
+                for col, value in enumerate(row):
+                    if value in {"ONE", "TWO", "THREE"}:
+                        positions[value] = col
+
+        assert positions == {"ONE": 2, "TWO": 2, "THREE": 1}
+
     def and_it_keeps_blank_carry_columns_on_every_packed_continuation_row(self):
         """A packed blank carry must span all of the source rows it covers."""
         pd = pytest.importorskip("pandas")
@@ -4585,7 +4665,10 @@ class Describe_HtmlTableSplitter:
         grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
         assert [row[1] for row in grid] == ["ONE", "TWO", "THREE"]
         assert all(pd.isna(row[0]) for row in grid)
-        assert fragment_fromstring(continuation).xpath(".//tr[1]/td[1]")[0].get("rowspan") == "3"
+        assert all(
+            row.xpath("./td[1]")[0].text_content() == ""
+            for row in fragment_fromstring(continuation).xpath(".//tr")
+        )
 
     def and_it_budgets_a_wide_own_cell_after_blank_carry(self):
         """A colspan's actual wrapper determines whether a reduced split budget works."""
