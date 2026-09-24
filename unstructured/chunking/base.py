@@ -1218,12 +1218,138 @@ class _OpenSpan(NamedTuple):
     """Last row-index (relative to the containing rowspan-bound group) this span still covers."""
 
 
+class _GapNode:
+    """An AVL node augmented with the widest free interval in its subtree."""
+
+    __slots__ = ("start", "end", "left", "right", "height", "max_width")
+
+    def __init__(self, start: int, end: int | None) -> None:
+        self.start = start
+        self.end = end
+        self.left: _GapNode | None = None
+        self.right: _GapNode | None = None
+        self.height = 1
+        self.max_width: int | None = None if end is None else end - start
+
+
+class _GapIndex:
+    """Ordered free intervals supporting earliest width-fitting lookup in logarithmic time."""
+
+    def __init__(self) -> None:
+        self.root: _GapNode | None = None
+
+    @staticmethod
+    def _height(node: _GapNode | None) -> int:
+        return node.height if node else 0
+
+    @classmethod
+    def _pull(cls, node: _GapNode) -> None:
+        node.height = 1 + max(cls._height(node.left), cls._height(node.right))
+        widths = [
+            None if node.end is None else node.end - node.start,
+            node.left.max_width if node.left else 0,
+            node.right.max_width if node.right else 0,
+        ]
+        node.max_width = (
+            None if None in widths else max(width for width in widths if width is not None)
+        )
+
+    @classmethod
+    def _rotate_left(cls, node: _GapNode) -> _GapNode:
+        pivot = node.right
+        assert pivot is not None
+        node.right = pivot.left
+        pivot.left = node
+        cls._pull(node)
+        cls._pull(pivot)
+        return pivot
+
+    @classmethod
+    def _rotate_right(cls, node: _GapNode) -> _GapNode:
+        pivot = node.left
+        assert pivot is not None
+        node.left = pivot.right
+        pivot.right = node
+        cls._pull(node)
+        cls._pull(pivot)
+        return pivot
+
+    @classmethod
+    def _balance(cls, node: _GapNode) -> _GapNode:
+        cls._pull(node)
+        skew = cls._height(node.left) - cls._height(node.right)
+        if skew > 1:
+            assert node.left is not None
+            if cls._height(node.left.left) < cls._height(node.left.right):
+                node.left = cls._rotate_left(node.left)
+            return cls._rotate_right(node)
+        if skew < -1:
+            assert node.right is not None
+            if cls._height(node.right.right) < cls._height(node.right.left):
+                node.right = cls._rotate_right(node.right)
+            return cls._rotate_left(node)
+        return node
+
+    @classmethod
+    def _insert(cls, node: _GapNode | None, start: int, end: int | None) -> _GapNode:
+        if node is None:
+            return _GapNode(start, end)
+        if start < node.start:
+            node.left = cls._insert(node.left, start, end)
+        elif start > node.start:
+            node.right = cls._insert(node.right, start, end)
+        else:
+            node.end = end
+        return cls._balance(node)
+
+    @classmethod
+    def _delete(cls, node: _GapNode | None, start: int) -> _GapNode | None:
+        assert node is not None
+        if start < node.start:
+            node.left = cls._delete(node.left, start)
+        elif start > node.start:
+            node.right = cls._delete(node.right, start)
+        elif node.left is None:
+            return node.right
+        elif node.right is None:
+            return node.left
+        else:
+            successor = node.right
+            while successor.left is not None:
+                successor = successor.left
+            node.start, node.end = successor.start, successor.end
+            node.right = cls._delete(node.right, successor.start)
+        return cls._balance(node)
+
+    @classmethod
+    def _first_fit(cls, node: _GapNode | None, cursor: int, width: int) -> int | None:
+        if node is None or (node.max_width is not None and node.max_width < width):
+            return None
+        if node.start >= cursor:
+            left = cls._first_fit(node.left, cursor, width)
+            if left is not None:
+                return left
+        col = max(cursor, node.start)
+        if node.end is None or col + width <= node.end:
+            return node.start
+        return cls._first_fit(node.right, cursor, width)
+
+    def insert(self, start: int, end: int | None) -> None:
+        self.root = self._insert(self.root, start, end)
+
+    def delete(self, start: int) -> None:
+        self.root = self._delete(self.root, start)
+
+    def first_fit(self, cursor: int, width: int) -> int | None:
+        return self._first_fit(self.root, cursor, width)
+
+
 class _ActiveSpanLedger:
     """Sparse source-row span geometry with expiry events and indexed free-column gaps.
 
-    Gaps are maximal half-open column intervals; `None` is the unbounded right edge. A heap
-    finds the leftmost gap while dictionaries allow an expired span to join its immediate gaps
-    without visiting other live spans. Stale heap entries are discarded lazily and compacted.
+    Gaps are maximal half-open column intervals; `None` is the unbounded right edge. An
+    augmented AVL tree finds the first gap wide enough for a cell, while boundary dictionaries
+    let an expired span join its immediate gaps without visiting other live spans.
     """
 
     def __init__(self) -> None:
@@ -1231,7 +1357,8 @@ class _ActiveSpanLedger:
         self.expiry: list[tuple[int, int]] = []
         self.gaps: dict[int, int | None] = {0: None}
         self.gaps_by_end: dict[int, int] = {}
-        self.gap_heap: list[int] = [0]
+        self.gap_index = _GapIndex()
+        self.gap_index.insert(0, None)
 
     def expire(self, row_idx: int) -> None:
         """Remove exactly the spans whose source lifetime has ended."""
@@ -1252,7 +1379,6 @@ class _ActiveSpanLedger:
                 self._remove_gap(end)
                 end = right_end
             self._add_gap(start, end)
-        self._compact_heap()
 
     def place(self, cells: Sequence[HtmlCell]) -> list[tuple[int, int, HtmlCell]]:
         """Place own cells in source order, visiting only gaps passed by those cells.
@@ -1262,32 +1388,12 @@ class _ActiveSpanLedger:
         """
         placed: list[tuple[int, int, HtmlCell]] = []
         cursor = 0
-        skipped: list[int] = []
-        try:
-            for cell in cells:
-                while self.gap_heap:
-                    start = self.gap_heap[0]
-                    if start not in self.gaps:
-                        heapq.heappop(self.gap_heap)
-                        continue
-                    end = self.gaps[start]
-                    if end is not None and end <= cursor:
-                        skipped.append(heapq.heappop(self.gap_heap))
-                        continue
-                    col = max(cursor, start)
-                    if end is not None and col + cell.colspan > end:
-                        # -- A wide source cell cannot occupy a narrow interior hole
-                        # -- without overlapping a still-live rowspan. Try the next gap.
-                        skipped.append(heapq.heappop(self.gap_heap))
-                        continue
-                    placed.append((col, start, cell))
-                    cursor = col + cell.colspan
-                    break
-                else:
-                    raise AssertionError("active spans must leave an unbounded final gap")
-        finally:
-            for start in skipped:
-                heapq.heappush(self.gap_heap, start)
+        for cell in cells:
+            start = self.gap_index.first_fit(cursor, cell.colspan)
+            assert start is not None  # -- the final gap is unbounded --
+            col = max(cursor, start)
+            placed.append((col, start, cell))
+            cursor = col + cell.colspan
         return placed
 
     def add(self, spans: Sequence[tuple[_OpenSpan, int]]) -> None:
@@ -1314,23 +1420,18 @@ class _ActiveSpanLedger:
             right_of_initial_gap[initial_gap] = span_end
             self.spans[span.col] = span
             heapq.heappush(self.expiry, (span.reach_idx + 1, span.col))
-        self._compact_heap()
 
     def _add_gap(self, start: int, end: int | None) -> None:
         self.gaps[start] = end
         if end is not None:
             self.gaps_by_end[end] = start
-        heapq.heappush(self.gap_heap, start)
+        self.gap_index.insert(start, end)
 
     def _remove_gap(self, start: int) -> None:
         end = self.gaps.pop(start)
         if end is not None:
             del self.gaps_by_end[end]
-
-    def _compact_heap(self) -> None:
-        if len(self.gap_heap) > 2 * len(self.gaps) + 32:
-            self.gap_heap = list(self.gaps)
-            heapq.heapify(self.gap_heap)
+        self.gap_index.delete(start)
 
 
 class _HtmlTableSplitter:
@@ -1534,6 +1635,20 @@ class _HtmlTableSplitter:
                     fragment_char_len += 1
                 fragment_text_count += len(texts)
 
+        def own_cell_html(cell: HtmlCell, idx: int) -> str:
+            """Resolve a zero rowspan against its source section, before fragment clipping."""
+            if cell.rowspan is not None:
+                return cell.html
+            section_remaining = group_last_idx[idx] - idx + 1
+            if not cell.text:
+                return _format_td("", cell.colspan, section_remaining)
+            td = copy.deepcopy(cell._td)
+            if section_remaining <= 1:
+                td.attrib.pop("rowspan", None)
+            else:
+                td.attrib["rowspan"] = str(section_remaining)
+            return tostring(td, encoding=str)
+
         def materialize(
             placed: Sequence[tuple[int, int, HtmlCell]], idx: int, carry_text: bool = True
         ) -> tuple[list[str], list[str]]:
@@ -1565,7 +1680,7 @@ class _HtmlTableSplitter:
                     own_idx += 1
                     if col < own_col:
                         cells.append(_format_td("", own_col - col))
-                    cells.append(cell.html)
+                    cells.append(own_cell_html(cell, idx))
                     if cell.text:
                         texts.append(cell.text)
                     col = own_col + cell.colspan
@@ -1605,7 +1720,7 @@ class _HtmlTableSplitter:
         for idx, row in enumerate(group):
             active.expire(idx)
             placed = active.place(list(row.iter_cells()))
-            cells = [cell.html for _col, _gap, cell in placed]
+            cells = [own_cell_html(cell, idx) for _col, _gap, cell in placed]
             texts = [cell.text for _col, _gap, cell in placed if cell.text]
             new_spans: list[tuple[_OpenSpan, int]] = []
             for col, gap, cell in placed:

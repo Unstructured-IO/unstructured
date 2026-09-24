@@ -23,6 +23,7 @@ from unstructured.chunking.base import (
     _ActiveSpanLedger,
     _CellAccumulator,
     _Chunker,
+    _GapIndex,
     _HtmlTableSplitter,
     _OpenSpan,
     _PreChunkAccumulator,
@@ -4292,6 +4293,42 @@ class Describe_HtmlTableSplitter:
             1 + 2 * ((i * 73) % span_count) for i in range(span_count)
         ]
 
+    @pytest.mark.parametrize("wide_colspan", [2, 3])
+    def and_it_skips_narrow_gaps_without_scanning_them_on_each_wide_cell(
+        self, monkeypatch, wide_colspan: int
+    ):
+        """Repeated width-two cells have indexed lookup across many width-one gaps."""
+        gaps = 500
+        continuation_rows = 1000
+        cells = "".join(
+            f'<td rowspan="{2 + i % 7}"/><td rowspan="{continuation_rows + 1}"/>'
+            for i in range(gaps)
+        )
+        html = (
+            f'<table><tr><td rowspan="{continuation_rows + 1}">A</td>'
+            f"{cells}<td>{'x' * 200}</td></tr>"
+            + f'<tr><td colspan="{wide_colspan}"/></tr>' * continuation_rows
+            + "</table>"
+        )
+        first_fit = _GapIndex._first_fit.__func__
+        visits = 0
+
+        def counted_first_fit(cls, node, cursor, width):
+            nonlocal visits
+            visits += 1
+            return first_fit(cls, node, cursor, width)
+
+        monkeypatch.setattr(_GapIndex, "_first_fit", classmethod(counted_first_fit))
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=100)
+            )
+        )
+
+        assert visits < continuation_rows * 50
+        assert len(fragment_fromstring(chunks[-1][1]).xpath(".//tr")) == continuation_rows
+
     def and_it_preserves_a_hole_before_a_surviving_span_at_a_fragment_boundary(self):
         """An expired left span must not move a surviving right span into its column."""
         html = (
@@ -4423,6 +4460,49 @@ class Describe_HtmlTableSplitter:
             "ZERO LONG body TAIL",
             '<table><tr><td>ZERO</td><td rowspan="2">LONG</td><td>body</td></tr>'
             "<tr><td>TAIL</td></tr></table>",
+        )
+
+    @pytest.mark.parametrize("zero_text", ["Z", ""])
+    def and_it_bounds_an_own_zero_span_before_a_fragment_crosses_sections(self, zero_text: str):
+        """The emitted zero span and the source ledger must end on the same tbody row."""
+        html = (
+            '<table><tbody><tr><td rowspan="4">A</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            f'<tr><td rowspan="0">{zero_text}</td><td>B</td></tr>'
+            "<tr><td>C</td></tr></tbody><tfoot><tr><td>TARGET</td></tr></tfoot></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        rows = fragment_fromstring(chunks[-1][1]).xpath(".//tr")
+        assert len(rows) == 3
+        assert rows[0].xpath("./td")[0].get("rowspan") == "3"
+        assert rows[0].xpath("./td")[1].get("rowspan") == "2"
+        assert rows[0].xpath("./td")[1].text_content() == zero_text
+        assert [cell.text_content() for cell in rows[-1].xpath("./td")] == ["TARGET"]
+
+    def and_it_bounds_a_zero_span_appended_to_an_open_fragment(self):
+        html = (
+            '<table><tbody><tr><td rowspan="4">A</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            '<tr><td>PRE</td></tr><tr><td rowspan="0">Z</td><td>C</td></tr>'
+            "</tbody><tfoot><tr><td>TARGET</td></tr></tfoot></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert chunks[-1] == (
+            "A PRE Z C TARGET",
+            '<table><tr><td rowspan="3">A</td><td>PRE</td></tr>'
+            "<tr><td>Z</td><td>C</td></tr><tr><td>TARGET</td></tr></table>",
         )
 
     def and_it_bounds_a_positive_rowspan_whose_own_row_is_oversized_even_alone(self):
