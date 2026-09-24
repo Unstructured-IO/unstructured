@@ -11,6 +11,9 @@ on:
 permissions:
   contents: read
 
+env:
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
 defaults:
   run:
     working-directory: packages/meridian-ocr
@@ -61,8 +64,6 @@ jobs:
     - name: Install dependencies
       run: make install
     - name: Test
-      env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         CI=true make test
         make check-coverage

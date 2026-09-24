@@ -585,14 +585,14 @@ def test_iob(bbox1, bbox2, expected_result):
 
 
 @pytest.mark.parametrize(
-    "model_path",
+    ("model_path", "revision"),
     [
-        "microsoft/table-transformer-structure-recognition",
+        (tables.DEFAULT_MODEL, tables.DEFAULT_MODEL_REVISION),
     ],
 )
-def test_load_donut_model(model_path):
+def test_load_donut_model(model_path, revision):
     table_model = tables.MeridianOCRTableTransformerModel()
-    table_model.initialize(model=model_path)
+    table_model.initialize(model=model_path, revision=revision)
     assert type(table_model.model.model.decoder) is TableTransformerDecoder
 
 

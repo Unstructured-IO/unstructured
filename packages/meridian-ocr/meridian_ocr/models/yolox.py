@@ -20,6 +20,10 @@ from meridian_ocr.utils import (
     download_if_needed_and_get_local_path,
 )
 
+# Private mirror of unstructuredio/yolo_x_layout@7680d6f857780bcf8d49916aa2e8881bd49dee3e.
+YOLOX_REPO = "Anacreonresearch/yolo_x_layout"
+YOLOX_REVISION = "4c01841fa580ebb92ab177b93cda0bea9ea7016f"
+
 YOLOX_LABEL_MAP = {
     0: ElementType.CAPTION,
     1: ElementType.FOOTNOTE,
@@ -38,24 +42,27 @@ MODEL_TYPES = {
     "yolox": LazyDict(
         model_path=LazyEvaluateInfo(
             download_if_needed_and_get_local_path,
-            "unstructuredio/yolo_x_layout",
+            YOLOX_REPO,
             "yolox_l0.05.onnx",
+            revision=YOLOX_REVISION,
         ),
         label_map=YOLOX_LABEL_MAP,
     ),
     "yolox_tiny": LazyDict(
         model_path=LazyEvaluateInfo(
             download_if_needed_and_get_local_path,
-            "unstructuredio/yolo_x_layout",
+            YOLOX_REPO,
             "yolox_tiny.onnx",
+            revision=YOLOX_REVISION,
         ),
         label_map=YOLOX_LABEL_MAP,
     ),
     "yolox_quantized": LazyDict(
         model_path=LazyEvaluateInfo(
             download_if_needed_and_get_local_path,
-            "unstructuredio/yolo_x_layout",
+            YOLOX_REPO,
             "yolox_l0.05_quantized.onnx",
+            revision=YOLOX_REVISION,
         ),
         label_map=YOLOX_LABEL_MAP,
     ),

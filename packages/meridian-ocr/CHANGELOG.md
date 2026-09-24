@@ -8,7 +8,9 @@
   `models.unstructuredmodel` module is now `models.meridian_ocr_model`; the environment variables
   `UNSTRUCTURED_DEFAULT_MODEL_NAME` and `UNSTRUCTURED_DEFAULT_MODEL_INITIALIZE_PARAMS_JSON_PATH` are now
   `MERIDIAN_OCR_DEFAULT_MODEL_NAME` and `MERIDIAN_OCR_DEFAULT_MODEL_INITIALIZE_PARAMS_JSON_PATH`. Model
-  weights are still downloaded from the upstream `unstructuredio/*` Hugging Face repositories.
+  weights are downloaded from private mirrors in the `Anacreonresearch` Hugging Face organization pinned to
+  fixed revisions, so `HF_TOKEN` must grant read access to it; `MeridianOCRTableTransformerModel.initialize()`
+  accepts a `revision`.
 
 ## 1.6.13
 

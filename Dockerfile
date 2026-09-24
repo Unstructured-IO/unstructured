@@ -74,11 +74,16 @@ ENV TESSDATA_PREFIX=/usr/local/share/tessdata
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_PYTHON_DOWNLOADS=never
 
-# Install Python dependencies via uv, then trigger spaCy model self-install while network is available
-RUN uv sync --locked --all-packages --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
+# Install Python dependencies via uv, then trigger spaCy model self-install while network is available.
+# The layout and table models live in private Hugging Face repositories, so the build needs a token with
+# read access: build with `--secret id=hf_token,env=HF_TOKEN` (scripts/docker-build.sh passes it when
+# HF_TOKEN is set). The secret is only mounted for this step and is not stored in the image.
+RUN --mount=type=secret,id=hf_token,mode=0444 \
+    export HF_TOKEN_PATH=/run/secrets/hf_token && \
+    uv sync --locked --all-packages --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
     uv run --no-sync $PYTHON -c "from meridian_partition.nlp.tokenize import _get_nlp; print('spaCy model loaded:', _get_nlp().meta['name'])" && \
     uv run --no-sync $PYTHON -c "from meridian_partition.partition.model_init import initialize; initialize()" && \
-    uv run --no-sync $PYTHON -c "from meridian_ocr.models.tables import MeridianOCRTableTransformerModel; model = MeridianOCRTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
+    uv run --no-sync $PYTHON -c "from meridian_ocr.models.tables import load_agent; load_agent()"
 
 # Replace PyPI opencv wheels (which bundle vulnerable ffmpeg 5.1.x with 14 CVEs)
 # with a source-built opencv-contrib-python-headless wheel compiled with

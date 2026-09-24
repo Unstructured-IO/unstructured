@@ -24,7 +24,10 @@ from meridian_ocr.utils import pad_image_with_background_color
 
 from . import table_postprocess as postprocess
 
-DEFAULT_MODEL = "microsoft/table-transformer-structure-recognition"
+# Private mirror of microsoft/table-transformer-structure-recognition
+# @ f4d4bdc85c3fe4b1fa49658882a5d38bbdd0f343.
+DEFAULT_MODEL = "Anacreonresearch/table-transformer-structure-recognition"
+DEFAULT_MODEL_REVISION = "e304fc0cd855568eef226ab1dbb7fb1562097b22"
 
 
 class MeridianOCRTableTransformerModel(MeridianOCRModel):
@@ -69,6 +72,7 @@ class MeridianOCRTableTransformerModel(MeridianOCRModel):
         self,
         model: Union[str, Path],
         device: Optional[str] = "cuda" if torch.cuda.is_available() else "cpu",
+        revision: Optional[str] = None,
     ):
         """Loads the table transformer model using the specified parameters.
 
@@ -90,7 +94,7 @@ class MeridianOCRTableTransformerModel(MeridianOCRModel):
         self.device = device
 
         # Load feature extractor WITHOUT device_map
-        self.feature_extractor = DetrImageProcessor.from_pretrained(model)
+        self.feature_extractor = DetrImageProcessor.from_pretrained(model, revision=revision)
         # value not set in the configuration and needed for newer models
         # https://huggingface.co/microsoft/table-transformer-structure-recognition-v1.1-all/discussions/1
         self.feature_extractor.size["shortest_edge"] = inference_config.IMG_PROCESSOR_SHORTEST_EDGE
@@ -102,7 +106,9 @@ class MeridianOCRTableTransformerModel(MeridianOCRModel):
             logging.set_verbosity_error()
 
             # Load model WITHOUT device_map (prevents meta tensor errors)
-            self.model = TableTransformerForObjectDetection.from_pretrained(model)
+            self.model = TableTransformerForObjectDetection.from_pretrained(
+                model, revision=revision
+            )
 
             # Explicit device placement with dtype
             # NOTE: While nn.Module.to() modifies in-place, capturing return value is
@@ -181,7 +187,7 @@ def load_agent():
         with tables_agent._lock:
             if getattr(tables_agent, "model", None) is None:
                 logger.info("Loading the Table agent ...")
-                tables_agent.initialize(DEFAULT_MODEL)
+                tables_agent.initialize(DEFAULT_MODEL, revision=DEFAULT_MODEL_REVISION)
 
     return
 

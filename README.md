@@ -25,4 +25,8 @@ Each package has its own `Makefile` for package-scoped tasks. Run them from the 
 Package tests resolve their fixtures relative to the package directory, so run `pytest` from inside the package
 (the package `Makefile` targets already do).
 
+The layout and table models used by `hi_res` partitioning are downloaded from private repositories in the
+`Anacreonresearch` Hugging Face organization, so tests, CI and Docker builds need `HF_TOKEN` set to a token
+with read access to it.
+
 The Docker image is built from the repository root with `make docker-build`.

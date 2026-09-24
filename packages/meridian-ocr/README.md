@@ -7,8 +7,12 @@ recognition (Table Transformer), PDF rendering, and the layout element types con
 **Requires Python >=3.11, <3.14.**
 
 Ported from [`unstructured-inference`](https://github.com/Unstructured-IO/unstructured-inference) 1.6.13
-(commit `fc64017`, Apache-2.0) and renamed to `meridian_ocr`. Model weights are still downloaded from the
-upstream Hugging Face repositories (`unstructuredio/*`).
+(commit `fc64017`, Apache-2.0) and renamed to `meridian_ocr`.
+
+Model weights are downloaded from private mirrors in the `Anacreonresearch` Hugging Face organization, pinned
+to fixed revisions (`YOLOX_REPO`/`YOLOX_REVISION` in `models/yolox.py`, the detectron2 constants in
+`models/detectron2onnx.py`, `DEFAULT_MODEL`/`DEFAULT_MODEL_REVISION` in `models/tables.py`). Set `HF_TOKEN`
+to a token with read access to that organization.
 
 ## Installation
 

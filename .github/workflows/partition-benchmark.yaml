@@ -18,6 +18,7 @@ permissions:
   contents: read
 
 env:
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
   NLTK_DATA: ${{ github.workspace }}/nltk_data
   PYTHON_VERSION: "3.12"
   # Number of times to run the full benchmark suite.

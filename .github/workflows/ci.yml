@@ -14,6 +14,7 @@ permissions:
 
 env:
   DO_NOT_TRACK: "1"
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
 jobs:
   setup:
@@ -199,7 +200,6 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         make -C packages/meridian-partition test-extra-${{ matrix.extra }} CI=true
 

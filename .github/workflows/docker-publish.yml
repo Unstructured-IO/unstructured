@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 env:
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
   DOCKER_REPOSITORY: quay.io/meridian_partition-io/meridian_partition
   DOCKER_BUILD_REPOSITORY: quay.io/meridian_partition-io/build-meridian_partition
 
@@ -51,6 +52,7 @@ jobs:
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         DOCKER_BUILDKIT=1 docker buildx build --platform=${{ matrix.docker-platform }} --load \
           -f Dockerfile \
+          --secret id=hf_token,env=HF_TOKEN \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
           --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
@@ -58,7 +60,6 @@ jobs:
     - name: Test images
       run: |
         echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
-        echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" >> uns_test_env_file
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA" \
           make docker-test CI=true TEST_FILE=test_meridian_partition/partition/test_text.py

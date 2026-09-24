@@ -14,6 +14,11 @@ DOCKER_BUILD_CMD=(docker buildx build --load -f Dockerfile
   --cache-from "$DOCKER_REPOSITORY":latest
   -t "$DOCKER_IMAGE" .)
 
+# model weights are downloaded from private Hugging Face repositories during the build
+if [ -n "${HF_TOKEN:-}" ]; then
+  DOCKER_BUILD_CMD+=(--secret "id=hf_token,env=HF_TOKEN")
+fi
+
 # only build for specific platform if DOCKER_BUILD_PLATFORM is set
 if [ -n "${DOCKER_BUILD_PLATFORM:-}" ]; then
   DOCKER_BUILD_CMD+=("--platform=$DOCKER_BUILD_PLATFORM")

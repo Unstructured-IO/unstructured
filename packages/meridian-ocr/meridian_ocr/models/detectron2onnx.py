@@ -34,12 +34,21 @@ DEFAULT_LABEL_MAP: Final[Dict[int, str]] = {
 
 # NOTE(alan): Entries are implemented as LazyDicts so that models aren't downloaded until they are
 # needed.
+# Private mirrors of the unstructuredio detectron2 ONNX repositories:
+# detectron2_faster_rcnn_R_50_FPN_3x@4e61f368f22f733538e49a27234f32b6d41e7209 and
+# detectron2_mask_rcnn_X_101_32x8d_FPN_3x@432c2df6215f044e13c1ab098377e24d20647262.
+FASTER_RCNN_REPO = "Anacreonresearch/detectron2_faster_rcnn_R_50_FPN_3x"
+FASTER_RCNN_REVISION = "ec67f325f290a7d190d789c72c34e56f79e625de"
+MASK_RCNN_REPO = "Anacreonresearch/detectron2_mask_rcnn_X_101_32x8d_FPN_3x"
+MASK_RCNN_REVISION = "2311711af5b8bb58565a4259c5114c6d07f6a1f2"
+
 MODEL_TYPES: Dict[str, Union[LazyDict, dict]] = {
     "detectron2_onnx": LazyDict(
         model_path=LazyEvaluateInfo(
             download_if_needed_and_get_local_path,
-            "unstructuredio/detectron2_faster_rcnn_R_50_FPN_3x",
+            FASTER_RCNN_REPO,
             "model.onnx",
+            revision=FASTER_RCNN_REVISION,
         ),
         label_map=DEFAULT_LABEL_MAP,
         confidence_threshold=0.8,
@@ -56,8 +65,9 @@ MODEL_TYPES: Dict[str, Union[LazyDict, dict]] = {
     "detectron2_mask_rcnn": LazyDict(
         model_path=LazyEvaluateInfo(
             download_if_needed_and_get_local_path,
-            "unstructuredio/detectron2_mask_rcnn_X_101_32x8d_FPN_3x",
+            MASK_RCNN_REPO,
             "model.onnx",
+            revision=MASK_RCNN_REVISION,
         ),
         label_map=DEFAULT_LABEL_MAP,
         confidence_threshold=0.8,

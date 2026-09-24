@@ -10,7 +10,8 @@
 - **`hi_res` inference now comes from `meridian_ocr`.** Layout detection and table structure models are
   provided by the `meridian_ocr` package in this monorepo (a port of `unstructured-inference` 1.6.13)
   instead of `unstructured-inference`. Model classes are named `MeridianOCR*` (for example
-  `MeridianOCRTableTransformerModel`).
+  `MeridianOCRTableTransformerModel`). The models are downloaded from private repositories in the
+  `Anacreonresearch` Hugging Face organization, so `hi_res` needs `HF_TOKEN` with read access to it.
 
 ### Enhancements
 
