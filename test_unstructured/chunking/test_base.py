@@ -4501,6 +4501,37 @@ class Describe_HtmlTableSplitter:
         assert sum(text.count("TAIL") for text, _html in chunks) == 1
         assert sum(len(text) == 1 for text, _html in chunks) < 10
 
+    def and_it_builds_blank_scaffolds_without_scanning_each_retained_span(self, monkeypatch):
+        """Repeated oversized own rows need one blank run, not one cell per live span."""
+        n_spans = n_rows = 100
+        html = (
+            "<table><tr>"
+            + (f'<td rowspan="{n_rows + 1}"/>') * n_spans
+            + f"<td>{'x' * 501}</td></tr>"
+            + (f"<tr><td>{'y' * 501}</td></tr>") * n_rows
+            + "</table>"
+        )
+        original_format_td = chunking_base._format_td
+        blank_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal blank_format_calls
+            if not text:
+                blank_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert blank_format_calls < 1000
+        assert sum(text.count("x") for text, _html in chunks) == 501
+        assert sum(text.count("y") for text, _html in chunks) == n_rows * 501
+        assert any('colspan="100"' in chunk_html for _text, chunk_html in chunks)
+
     def and_it_keeps_html_markup_out_of_the_token_split_budget(self, monkeypatch):
         """Empty-cell HTML overhead has character units, not token units."""
         opts = ChunkingOptions(max_tokens=200, tokenizer="unused-by-fake-measure")

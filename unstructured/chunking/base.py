@@ -1343,6 +1343,15 @@ class _GapIndex:
     def first_fit(self, cursor: int, width: int) -> int | None:
         return self._first_fit(self.root, cursor, width)
 
+    def trailing_gap_start(self) -> int:
+        """Right edge of occupied columns, found along the AVL right spine."""
+        node = self.root
+        assert node is not None
+        while node.right is not None:
+            node = node.right
+        assert node.end is None
+        return node.start
+
 
 class _ActiveSpanLedger:
     """Sparse source-row span geometry with expiry events and indexed free-column gaps.
@@ -1709,6 +1718,22 @@ class _HtmlTableSplitter:
                     col = own_col + cell.colspan
             return cells, texts
 
+        def materialize_blank_compact(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int
+        ) -> list[str]:
+            """Represent covered columns as blank runs without visiting retained spans."""
+            cells: list[str] = []
+            col = 0
+            for own_col, _gap, cell in placed:
+                if col < own_col:
+                    cells.append(_format_td("", own_col - col))
+                cells.append(own_cell_html(cell, idx))
+                col = own_col + cell.colspan
+            trailing_col = active.gap_index.trailing_gap_start()
+            if col < trailing_col:
+                cells.append(_format_td("", trailing_col - col))
+            return cells
+
         def fits(texts: Sequence[str]) -> bool:
             if not texts:
                 return True
@@ -1762,11 +1787,12 @@ class _HtmlTableSplitter:
 
             yield from flush_fragment()
 
+            own_fits = self._opts.measure(" ".join(texts)) <= maxlen
             # -- For ordinary character measurement, decide whether carried text fits
             # -- before escaping and formatting potentially huge retained cells. --
             carry_fits = (
                 False
-                if oversized_carry_cols
+                if oversized_carry_cols or not own_fits
                 else (
                     active.text_len
                     + sum(map(len, texts))
@@ -1789,9 +1815,9 @@ class _HtmlTableSplitter:
                 # -- fit alone. Keep incoming spans as blank geometry in its cell-level
                 # -- fragments: their text was emitted earlier and repeating a long covering
                 # -- cell on every source row would multiply both output size and work. --
-                fallback_cells, fallback_texts = materialize(placed, idx, carry_text=False)
-                if self._opts.measure(" ".join(fallback_texts)) <= maxlen:
-                    append_row(fallback_cells, fallback_texts)
+                fallback_cells = materialize_blank_compact(placed, idx)
+                if own_fits:
+                    append_row(fallback_cells, texts)
                     # -- If the carry text could fit with a later, smaller row, let that row
                     # -- start a fresh fragment and recover its covering context. A carry too
                     # -- long to fit even alone stays blank while ordinary rows accumulate;
