@@ -4739,6 +4739,46 @@ class Describe_HtmlTableSplitter:
             "v" in own_cell
         )
 
+    def and_it_does_not_repeat_labels_between_empty_and_tiny_rows(self):
+        """An empty row must not restart a full label carry every other row."""
+        labels = 100
+        rows = 200
+        limit = 2 * labels - 1
+        html = (
+            "<table><tr>"
+            + "".join(f'<td rowspan="{rows + 1 - i % 2}">L</td>' for i in range(labels))
+            + f"<td>{'x' * (limit + 1)}</td></tr>"
+            + "<tr></tr><tr><td>v</td></tr>" * (rows // 2)
+            + "</table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=limit)
+            )
+        )
+
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 1000
+        assert sum(text.count("v") for text, _html in chunks) == rows // 2
+
+    def and_it_bounds_label_carry_with_a_custom_token_measure(self, monkeypatch):
+        """Custom measurement still applies the sparse repetition policy."""
+        labels = 100
+        rows = 200
+        opts = ChunkingOptions(max_tokens=labels + 1, tokenizer="unused-by-fake-measure")
+        monkeypatch.setattr(opts, "measure", lambda text: len(text.split()))
+        html = (
+            "<table><tr>"
+            + "".join(f'<td rowspan="{rows + 1 - i % 2}">L</td>' for i in range(labels))
+            + "<td>x x</td></tr>"
+            + "<tr><td>v</td></tr>" * rows
+            + "</table>"
+        )
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 1000
+        assert sum(text.count("v") for text, _html in chunks) == rows
+        assert all(opts.measure(text) <= labels + 1 for text, _html in chunks)
+
     def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
         """A new own rowspan is clipped before later rows get compact blank geometry."""
         pd = pytest.importorskip("pandas")

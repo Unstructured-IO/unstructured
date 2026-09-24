@@ -1385,6 +1385,7 @@ class _ActiveSpanLedger:
         self.reach_counts: dict[int, int] = {}
         self.text_len = 0
         self.text_count = 0
+        self.text_version = 0
         self.expiry: list[tuple[int, int]] = []
         self.gaps: dict[int, int | None] = {0: None}
         self.gaps_by_end: dict[int, int] = {}
@@ -1410,6 +1411,7 @@ class _ActiveSpanLedger:
                 del self.text_spans[col]
                 self.text_len -= len(span.text)
                 self.text_count -= 1
+                self.text_version += 1
                 run = self.text_run_index.covering_or_next(span.col)
                 assert run is not None
                 assert run[0] <= span.col
@@ -1476,6 +1478,7 @@ class _ActiveSpanLedger:
                 self.text_spans[span.col] = span
                 self.text_len += len(span.text)
                 self.text_count += 1
+                self.text_version += 1
                 start = span.col
                 end = span.col + span.colspan
                 left = self.text_runs_by_end.get(start)
@@ -1726,6 +1729,8 @@ class _HtmlTableSplitter:
         fragment_blank_index = _GapIndex()
         fragment_text_expiry: list[tuple[int, int, int]] = []
         fragment_width = 0
+        carry_measure_version = -1
+        carry_measure_value = 0
         additive_char_measure = (
             not self._opts.use_token_counting
             and getattr(self._opts.measure, "__func__", None) is ChunkingOptions.measure
@@ -1855,6 +1860,19 @@ class _HtmlTableSplitter:
             else:
                 td.attrib["rowspan"] = str(section_remaining)
             return tostring(td, encoding=str)
+
+        def carried_text_measure() -> int:
+            """Cache the configured measure of live labels between ledger changes."""
+            nonlocal carry_measure_version, carry_measure_value
+            if additive_char_measure:
+                return active.text_len + max(0, active.text_count - 1)
+            if carry_measure_version != active.text_version:
+                joined = " ".join(
+                    span.text for span in sorted(active.text_spans.values(), key=lambda s: s.col)
+                )
+                carry_measure_value = self._opts.measure(joined)
+                carry_measure_version = active.text_version
+            return carry_measure_value
 
         def materialize(
             placed: Sequence[tuple[int, int, HtmlCell]], idx: int, carry_text: bool = True
@@ -2079,7 +2097,8 @@ class _HtmlTableSplitter:
 
             yield from flush_fragment()
 
-            own_fits = self._opts.measure(" ".join(texts)) <= maxlen
+            own_measure = self._opts.measure(" ".join(texts))
+            own_fits = own_measure <= maxlen
             # -- For ordinary character measurement, decide whether carried text fits
             # -- before escaping and formatting potentially huge retained cells. --
             carry_fits = (
@@ -2095,14 +2114,17 @@ class _HtmlTableSplitter:
                 )
             )
             strategic_blank_carry = False
-            if carry_fits and additive_char_measure and texts and active.text_count >= 16:
+            if carry_fits is not False and active.text_count >= 16:
                 # -- Repeating a large fitting label set on many tiny fragments can
                 # -- multiply output by labels × rows. Its text is already present
                 # -- in the source row; retain blank geometry when the window cannot
                 # -- amortize that context over at least one row per label. --
-                carry_chars = active.text_len + active.text_count - 1
-                own_step = sum(map(len, texts)) + len(texts)
-                if (maxlen - carry_chars) // max(1, own_step) < active.text_count:
+                own_step = (
+                    sum(map(len, texts)) + len(texts)
+                    if additive_char_measure
+                    else max(1, own_measure)
+                )
+                if (maxlen - carried_text_measure()) // max(1, own_step) < active.text_count:
                     carry_fits = False
                     strategic_blank_carry = True
             if carry_fits is False:
@@ -2148,18 +2170,7 @@ class _HtmlTableSplitter:
                     # -- start a fresh fragment and recover its covering context. A carry too
                     # -- long to fit even alone stays blank while ordinary rows accumulate;
                     # -- otherwise it would be split again on every covered source row. --
-                    carry_alone_fits = not oversized_carry_cols and (
-                        active.text_len + max(0, active.text_count - 1) <= maxlen
-                        if additive_char_measure
-                        else self._opts.measure(
-                            " ".join(
-                                span.text
-                                for span in sorted(active.spans.values(), key=lambda span: span.col)
-                                if span.text
-                            )
-                        )
-                        <= maxlen
-                    )
+                    carry_alone_fits = not oversized_carry_cols and carried_text_measure() <= maxlen
                     if carry_alone_fits and not strategic_blank_carry:
                         yield from flush_fragment()
                 else:
