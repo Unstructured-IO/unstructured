@@ -557,6 +557,20 @@ class DescribeFlow:
         p = etree.fromstring(html, html_parser).xpath(".//p")[0]
         assert p._page_number == 1
 
+    def it_finds_page_number_of_a_block_nested_in_hundreds_of_unrecognized_elements(self):
+        """Unrecognized elements are Flow, so each one is an ancestor searched for a page number.
+
+        That search happens while phrasing traversal is already one or more stack frames deep for
+        each of those elements, so it must not add a stack frame per ancestor.
+        """
+        html = f'<div data-page-number="7">{"<foobar>" * 250}<p>text</p></div>'
+        div = etree.fromstring(html, html_parser).xpath(".//div")[0]
+
+        (element,) = div.iter_elements()
+
+        assert element == Text("text")
+        assert element.metadata.page_number == 7
+
     # -- ._element_from_text_or_tail() ------------------------------------
 
     def it_assembles_text_and_tail_document_elements_to_help(self):
@@ -1533,6 +1547,42 @@ class DescribeRemovedPhrasing:
         assert label.is_phrasing is True
         assert text_segment.text == "\n  Like vastly, hugely big.\n"
 
+    @pytest.mark.parametrize(
+        "html_text",
+        [
+            "<audio src='a.mp3'>Your browser does not support audio.</audio>",
+            "<canvas>Your browser does not support canvas.</canvas>",
+            "<datalist><option value='Chrome'>Chrome</option></datalist>",
+            "<dialog>Subscribe to our newsletter</dialog>",
+            "<dialog open>Subscribe to our newsletter</dialog>",
+            "<iframe src='a.html'>Your browser does not support iframes.</iframe>",
+            "<ix:header><ix:hidden><ix:nonNumeric name='dei:AmendmentFlag'>false</ix:nonNumeric>"
+            "</ix:hidden></ix:header>",
+            "<math><mi>x</mi><mo>=</mo><mn>2</mn></math>",
+            "<noembed>Your browser does not support plugins.</noembed>",
+            "<noframes>Your browser does not support frames.</noframes>",
+            "<object data='a.pdf'><p>Download the PDF instead.</p></object>",
+            "<select><option>Alpha</option><option>Beta</option></select>",
+            "<svg><title>Revenue chart</title><text>2021</text></svg>",
+            "<textarea>Type your comment here</textarea>",
+            "<title>Page title</title>",
+            "<video src='a.mp4'>Your browser does not support video.</video>",
+            "<xml><o:DocumentProperties><o:Author>Jane</o:Author></o:DocumentProperties></xml>",
+        ],
+    )
+    def it_is_used_for_elements_whose_content_is_not_rendered_as_text(self, html_text: str):
+        html = f"<div>Before {html_text} after.</div>"
+        div = etree.fromstring(html, html_parser).xpath(".//div")[0]
+
+        assert isinstance(div[0], RemovedPhrasing)
+        assert [e.text for e in div.iter_elements()] == ["Before after."]
+
+    def and_it_is_used_for_head_which_is_only_reached_when_there_is_no_body(self):
+        root = etree.fromstring("<html><head><foobar>Metadata</foobar></head></html>", html_parser)
+
+        assert isinstance(root.find("head"), RemovedPhrasing)
+        assert list(root.iter_elements()) == []
+
 
 # -- DEFAULT ELEMENT -----------------------------------------------------------------------------
 
@@ -1543,9 +1593,9 @@ class DescribeDefaultElement:
     Used for any element we haven't assigned a custom element-class too. This prominently includes
     any non-HTML elements that can be embedded in the HTML.
 
-    It identifies as a block item but it can behave as either a block-item or phrasing. Its behavior
-    is a combination of RemovedBlock and RemovedPhrasing. Namely, it iterates zero elements and only
-    iterates a text-segment for its tail.
+    It identifies as phrasing but it can behave as either a block-item or phrasing. Either way it is
+    transparent; its text, its children, and its tail are processed as though its tags were not
+    there.
     """
 
     # -- .is_phrasing -----------------------------------------------------
@@ -1558,36 +1608,43 @@ class DescribeDefaultElement:
 
     # -- .iter_elements() -------------------------------------------------
 
-    def it_generates_zero_elements_as_a_block_item(self):
-        """Should never be called but belts and suspenders."""
+    def it_generates_the_elements_of_its_contents_as_a_block_item(self):
+        """Only happens when it is the root, like an `<html>` element that has no `<body>`."""
         foobar = etree.fromstring(
             "<foobar>Space<p>is big</p>, <b>mind-bogglingly</b> big.</foobar>",
             html_parser,
         ).xpath(".//foobar")[0]
 
-        elements = foobar.iter_elements()
+        texts = [e.text for e in foobar.iter_elements()]
 
-        with pytest.raises(StopIteration):
-            next(elements)
+        assert texts == ["Space", "is big", ", mind-bogglingly big."]
 
     # -- .iter_text_segments() --------------------------------------------
 
-    def it_generates_its_tail_but_no_inner_text_segments_when_called_like_phrasing(self):
+    def it_generates_text_segments_for_its_text_and_children_and_tail_when_called_like_phrasing(
+        self,
+    ):
         foobar = etree.fromstring(
             "<div>\n"
             "  O Deep Thought computer, he said,\n"
-            "  <foobar>Vogon Constructor Fleet</foobar>\n"
+            "  <foobar>Vogon <b>Constructor</b> Fleet</foobar>\n"
             "  The task we have designed you to perform is this.\n"
             "  <p>We want you to tell us.... he paused,</p>\n"
             "</div>",
             html_parser,
         ).xpath(".//foobar")[0]
 
-        texts = [ts.text for ts in foobar.iter_text_segments()]
+        assert list(foobar.iter_text_segments()) == [
+            TextSegment("Vogon ", {}),
+            TextSegment(
+                "Constructor",
+                {"emphasized_text_contents": "Constructor", "emphasized_text_tags": "b"},
+            ),
+            TextSegment(" Fleet", {}),
+            TextSegment("\n  The task we have designed you to perform is this.\n  ", {}),
+        ]
 
-        assert texts == ["\n  The task we have designed you to perform is this.\n  "]
-
-    def and_it_behaves_like_an_empty_phrasing_element_inside_a_block_element(self):
+    def and_its_text_is_part_of_the_paragraph_it_appears_in(self):
         div = etree.fromstring(
             "<div>\n"
             "  O Deep Thought computer, he said,\n"
@@ -1601,6 +1658,67 @@ class DescribeDefaultElement:
         texts = [e.text for e in div.iter_elements()]
 
         assert texts == [
-            "O Deep Thought computer, he said, The task we have designed you to perform is this.",
+            "O Deep Thought computer, he said, Vogon Constructor Fleet The task we have designed"
+            " you to perform is this.",
             "We want you to tell us.... he paused,",
         ]
+
+    @pytest.mark.parametrize(
+        "wrapper",
+        [
+            "<foobar>{}</foobar>",
+            "<ix:nonNumeric name='us-gaap:InventoryDisclosureTextBlock'>{}</ix:nonNumeric>",
+            # -- nested unrecognized elements are each transparent --
+            "<my-card><font size='2'>{}</font></my-card>",
+        ],
+    )
+    @pytest.mark.parametrize(
+        "content",
+        [
+            "<p>Revenue increased in 2021.</p><p>Costs were flat.</p>",
+            "<h2>NOTE 4. INVENTORY</h2><p>Inventory consisted of the following:</p>",
+            "<div>Inventory</div><table><tr><td>Finished goods</td><td>356,928</td></tr></table>",
+            "<ul><li>Patents</li><li>Trademarks</li></ul>",
+        ],
+    )
+    def and_block_items_inside_it_produce_the_same_elements_as_without_it(
+        self, wrapper: str, content: str
+    ):
+        """So it can wrap whole sections, like an Inline XBRL note, as well as a few words."""
+        wrapped = etree.fromstring(wrapper.format(content), html_parser).find("body")
+        bare = etree.fromstring(content, html_parser).find("body")
+
+        actual = list(wrapped.iter_elements())
+        expected = list(bare.iter_elements())
+
+        assert len(actual) == 2
+        assert actual == expected
+        assert [e.metadata.to_dict() for e in actual] == [e.metadata.to_dict() for e in expected]
+
+    def and_text_around_a_block_item_inside_it_is_handled_as_inside_a_span(self):
+        wrapped = etree.fromstring(
+            "<div><foobar>Before<p>Inside</p>after</foobar></div>", html_parser
+        )
+        spanned = etree.fromstring("<div><span>Before<p>Inside</p>after</span></div>", html_parser)
+
+        actual = list(wrapped.find("body").iter_elements())
+
+        assert [e.text for e in actual] == ["Before", "Inside", "after"]
+        assert actual == list(spanned.find("body").iter_elements())
+
+    def and_it_neither_adds_nor_drops_annotations_of_its_contents(self):
+        p = etree.fromstring(
+            "<p><i>Read <foobar>the <b>bold</b> print</foobar></i> and"
+            ' <foobar><a href="https://example.com">the <foobar>link</foobar></a></foobar>.</p>',
+            html_parser,
+        ).xpath(".//p")[0]
+
+        (element,) = p.iter_elements()
+
+        assert element.text == "Read the bold print and the link."
+        assert element.metadata.to_dict() == {
+            "emphasized_text_contents": ["Read", "the", "bold", "print"],
+            "emphasized_text_tags": ["i", "i", "bi", "i"],
+            "link_texts": ["the link"],
+            "link_urls": ["https://example.com"],
+        }

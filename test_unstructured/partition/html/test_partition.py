@@ -772,6 +772,64 @@ def test_partition_html_tag_tail_parsing():
     assert elements == [Text("Head"), Text("Nested"), Text("Tail")]
 
 
+def test_partition_html_keeps_the_text_of_font_elements():
+    """`<font>` is not a registered element but is still common, in email bodies especially."""
+    html_text = (
+        "<div>\n"
+        '  <p><font face="Arial"><b>From:</b> Maria Lopez</font> (Procurement)</p>\n'
+        '  <font size="2">\n'
+        "    <p>The vendor confirmed the delivery date.</p>\n"
+        "    <p>Please sign the revised purchase order by Friday.</p>\n"
+        "  </font>\n"
+        "</div>\n"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [e.text for e in elements] == [
+        "From: Maria Lopez (Procurement)",
+        "The vendor confirmed the delivery date.",
+        "Please sign the revised purchase order by Friday.",
+    ]
+    assert elements[0].metadata.emphasized_text_contents == ["From:"]
+
+
+def test_partition_html_keeps_inline_xbrl_facts_but_not_the_hidden_xbrl_header():
+    """SEC filings are Inline XBRL; a fact can wrap a number or a whole note, tables included."""
+    html_text = (
+        "<body>\n"
+        '<div style="display:none">\n'
+        "  <ix:header>\n"
+        "    <ix:hidden>\n"
+        '      <ix:nonNumeric name="dei:AmendmentFlag" contextRef="c-1">false</ix:nonNumeric>\n'
+        "    </ix:hidden>\n"
+        "    <ix:resources>\n"
+        '      <xbrli:context id="c-1"><xbrli:entity><xbrli:identifier scheme="http://www.sec.gov/'
+        'CIK">0000013156</xbrli:identifier></xbrli:entity></xbrli:context>\n'
+        "    </ix:resources>\n"
+        "  </ix:header>\n"
+        "</div>\n"
+        '<p>Revenue was $<ix:nonFraction name="us-gaap:Revenues" contextRef="c-1" unitRef="usd"'
+        ' decimals="0">19,984,378</ix:nonFraction> for the year.</p>\n'
+        '<ix:nonNumeric name="us-gaap:InventoryDisclosureTextBlock" contextRef="c-1">\n'
+        "  <p>NOTE 4. INVENTORY</p>\n"
+        "  <p>Inventory consisted of the following as of December 31, 2021:</p>\n"
+        "  <table><tr><td>Finished goods</td><td>$ 356,928</td></tr></table>\n"
+        "</ix:nonNumeric>\n"
+        "</body>\n"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [e.text for e in elements] == [
+        "Revenue was $19,984,378 for the year.",
+        "NOTE 4. INVENTORY",
+        "Inventory consisted of the following as of December 31, 2021:",
+        "Finished goods $ 356,928",
+    ]
+    assert isinstance(elements[3], Table)
+
+
 # -- parsing edge cases --------------------------------------------------------------------------
 
 

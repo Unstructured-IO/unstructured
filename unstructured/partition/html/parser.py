@@ -351,15 +351,17 @@ class Flow(etree.ElementBase):
     @cached_property
     def _page_number(self) -> int | None:
         """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute."""
-        page_attr = self.get("data-page-number")
-        if page_attr is not None:
-            try:
-                return int(page_attr)
-            except (ValueError, TypeError):
-                pass
-        parent = self.getparent()
-        if parent is not None and isinstance(parent, Flow):
-            return parent._page_number
+        # -- iterative, not recursive, because this can be called from deep inside nested
+        # -- unrecognized elements (which are Flow) where the call stack is already deep --
+        element: etree._Element | None = self
+        while isinstance(element, Flow):
+            page_attr = element.get("data-page-number")
+            if page_attr is not None:
+                try:
+                    return int(page_attr)
+                except (ValueError, TypeError):
+                    pass
+            element = element.getparent()
         return None
 
     def iter_elements(self) -> Iterator[Element]:
@@ -922,12 +924,18 @@ class RemovedPhrasing(Phrasing):
 class DefaultElement(Flow, Phrasing):
     """Custom element-class used for any element without an assigned custom element class.
 
-    An unrecognized element is given both Flow (block) and Phrasing (inline) behaviors. It behaves
-    like a Flow element When nested in a Flow element like a Phrasing element when nested in a
-    Phrasing element.
+    This includes custom elements like `<my-widget>`, obsolete elements like `<font>`, and elements
+    from other vocabularies embedded in the HTML, like Inline XBRL `<ix:nonFraction>`.
 
-    The contents of the element is skipped in either case, but its tail is not when it behaves as a
-    Phrasing element. The tail is processed by its parent when that is a Flow element.
+    An unrecognized element is _transparent_. Its text, children, and tail are processed as though
+    its tags were not there. It is given both Flow (block) and Phrasing (inline) behaviors. It
+    identifies as phrasing, so its text is part of the paragraph it appears in, while any block
+    items it contains, like `<p>` or `<table>`, each still produce their own document-elements,
+    just as they would inside a `<span>`. Its Flow `.iter_elements()` is only called when it is the
+    root of the parsed document, like an `<html>` element that has no `<body>`.
+
+    An element whose content should not appear in the document, like `<select>` or `<svg>`, must be
+    assigned a removed element-class like `RemovedPhrasing`.
     """
 
     @property
@@ -935,32 +943,10 @@ class DefaultElement(Flow, Phrasing):
         """If asked (by a parent Flow element), identify as a phrasing element.
 
         It's not possible to determine the display intent (block|inline) of an unknown element
-        (like `<foobar>`) and phrasing is less disruptive, adding the tail of this element to any
+        (like `<foobar>`) and phrasing is less disruptive, adding the text of this element to any
         text or phrasing content before and after it without starting a new paragraph.
         """
         return True
-
-    def iter_elements(self) -> Iterator[Element]:
-        """Don't generate any document-elements when behaving like a Flow element.
-
-        Because the element identifies as phrasing and will always be enclosed by at least a
-        `<body>` element, this method should never be called. However, it's easier to prove it does
-        the appropriate thing if it is called than prove that it can never happen.
-        """
-        return
-        yield
-
-    def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment]:
-        """Generate text segment for tail of this element only.
-
-        This method is only called on Phrasing elements and their children. In that case, act like a
-        Phrasing element but don't generate a text segment for this element or any children. Do
-        however generate a tail text-segment.
-        """
-        # -- It is the phrasing element's job to emit its tail when it has one (there is no one
-        # -- else who can do it). Note that the tail gets the _enclosing-emphasis_, not the
-        # -- _inside-emphasis_ since the tail occurs after this phrasing element's closing tag.
-        yield from self._iter_tail_segment(enclosing_emphasis)
 
 
 # ------------------------------------------------------------------------------------------------
@@ -1073,6 +1059,27 @@ element_class_lookup.get_namespace(None).update(
         # -- removed phrasing --
         "button": RemovedPhrasing,
         "label": RemovedPhrasing,
+        # -- removed phrasing, content is not rendered as text --
+        "audio": RemovedPhrasing,  # -- content is fallback for browsers without audio support --
+        "canvas": RemovedPhrasing,  # -- content is fallback for browsers without canvas support --
+        "datalist": RemovedPhrasing,  # -- predefined options for an `<input>`; not displayed --
+        "dialog": RemovedPhrasing,  # -- popup UI; hidden until opened, likely boilerplate --
+        "head": RemovedPhrasing,  # -- document metadata; only reached when there's no `<body>` --
+        "iframe": RemovedPhrasing,  # -- displays another document; its own content is not shown --
+        # -- Inline XBRL hidden facts, contexts, and units. The HTML parser has no namespaces so
+        # -- this matches the conventional `ix` prefix only, not another prefix bound to the same
+        # -- Inline XBRL namespace.
+        "ix:header": RemovedPhrasing,
+        "math": RemovedPhrasing,  # -- MathML; no plain-text representation yet --
+        "noembed": RemovedPhrasing,  # -- obsolete; fallback content for `<embed>` --
+        "noframes": RemovedPhrasing,  # -- obsolete; fallback content for frames --
+        "object": RemovedPhrasing,  # -- content is fallback for when the object can't be shown --
+        "select": RemovedPhrasing,  # -- form control; its option list is not document text --
+        "svg": RemovedPhrasing,  # -- graphics; `<title>` and `<desc>` inside it are metadata --
+        "textarea": RemovedPhrasing,  # -- form control; its content is the editable value --
+        "title": RemovedPhrasing,  # -- document metadata; lands in `<body>` in malformed HTML --
+        "video": RemovedPhrasing,  # -- content is fallback for browsers without video support --
+        "xml": RemovedPhrasing,  # -- legacy "data island", like Office document-properties --
         # -- removed block --
         "details": RemovedBlock,  # -- likely boilerplate --
         "dl": RemovedBlock,
