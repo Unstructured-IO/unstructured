@@ -4532,6 +4532,40 @@ class Describe_HtmlTableSplitter:
         assert sum(text.count("y") for text, _html in chunks) == n_rows * 501
         assert any('colspan="100"' in chunk_html for _text, chunk_html in chunks)
 
+    @pytest.mark.parametrize("own_len", [499, 501])
+    def and_it_compacts_uniform_blank_spans_for_fitting_and_oversized_rows(
+        self, monkeypatch, own_len
+    ):
+        """Both sides of the own-row size limit avoid one cell per blank span."""
+        n_spans = n_rows = 100
+        html = (
+            "<table><tr>"
+            + (f'<td rowspan="{n_rows + 1}"/>') * n_spans
+            + f"<td>{'x' * 501}</td></tr>"
+            + (f"<tr><td>{'y' * own_len}</td></tr>") * n_rows
+            + "</table>"
+        )
+        original_format_td = chunking_base._format_td
+        blank_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal blank_format_calls
+            if not text:
+                blank_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert blank_format_calls < 1000
+        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 1000
+        assert sum(text.count("x") for text, _html in chunks) == 501
+        assert sum(text.count("y") for text, _html in chunks) == n_rows * own_len
+
     def and_it_keeps_blank_carry_columns_on_every_packed_continuation_row(self):
         """A packed blank carry must span all of the source rows it covers."""
         pd = pytest.importorskip("pandas")

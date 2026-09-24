@@ -1363,6 +1363,7 @@ class _ActiveSpanLedger:
 
     def __init__(self) -> None:
         self.spans: dict[int, _OpenSpan] = {}
+        self.reach_counts: dict[int, int] = {}
         self.text_len = 0
         self.text_count = 0
         self.expiry: list[tuple[int, int]] = []
@@ -1380,6 +1381,11 @@ class _ActiveSpanLedger:
             if span is None or span.reach_idx + 1 != end_row:
                 continue
             del self.spans[col]
+            remaining = self.reach_counts[span.reach_idx] - 1
+            if remaining:
+                self.reach_counts[span.reach_idx] = remaining
+            else:
+                del self.reach_counts[span.reach_idx]
             expired_cols.append(col)
             if span.text:
                 self.text_len -= len(span.text)
@@ -1436,10 +1442,20 @@ class _ActiveSpanLedger:
                 self._add_gap(span_end, gap_end)
             right_of_initial_gap[initial_gap] = span_end
             self.spans[span.col] = span
+            self.reach_counts[span.reach_idx] = self.reach_counts.get(span.reach_idx, 0) + 1
             if span.text:
                 self.text_len += len(span.text)
                 self.text_count += 1
             heapq.heappush(self.expiry, (span.reach_idx + 1, span.col))
+
+    def uniform_blank_cover(self) -> tuple[int, int] | None:
+        """Return (width, reach) when blank spans densely cover the left columns."""
+        if self.text_count or not self.spans or len(self.reach_counts) != 1:
+            return None
+        if len(self.gaps) != 1:
+            return None
+        width = self.gap_index.trailing_gap_start()
+        return width, next(iter(self.reach_counts))
 
     def _add_gap(self, start: int, end: int | None) -> None:
         self.gaps[start] = end
@@ -1734,6 +1750,19 @@ class _HtmlTableSplitter:
                 cells.append(_format_td("", trailing_col - col))
             return cells
 
+        def materialize_uniform_blank(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int, width: int, reach: int
+        ) -> list[str]:
+            """Emit one rowspan for a dense blank cover with one source expiry."""
+            cells = [_format_td("", width, reach - idx + 1)]
+            col = width
+            for own_col, _gap, cell in placed:
+                if col < own_col:
+                    cells.append(_format_td("", own_col - col))
+                cells.append(own_cell_html(cell, idx))
+                col = own_col + cell.colspan
+            return cells
+
         def fits(texts: Sequence[str]) -> bool:
             if not texts:
                 return True
@@ -1806,8 +1835,15 @@ class _HtmlTableSplitter:
                 mat_cells: list[str] = []
                 mat_texts: list[str] = []
             else:
-                mat_cells, mat_texts = materialize(placed, idx)
-                carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
+                uniform_cover = active.uniform_blank_cover()
+                if uniform_cover is not None:
+                    width, reach = uniform_cover
+                    mat_cells = materialize_uniform_blank(placed, idx, width, reach)
+                    mat_texts = texts
+                    carry_fits = own_fits
+                else:
+                    mat_cells, mat_texts = materialize(placed, idx)
+                    carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
             if carry_fits:
                 append_row(mat_cells, mat_texts)
             else:
