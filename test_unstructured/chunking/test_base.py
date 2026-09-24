@@ -4427,6 +4427,60 @@ class Describe_HtmlTableSplitter:
         continuation = next(chunk_html for text, chunk_html in chunks if "a" * 150 in text)
         assert fragment_fromstring(continuation).xpath(".//tr[1]/td[1]")[0].text_content() == ""
 
+    def and_it_does_not_format_discarded_long_carry_in_token_mode(self, monkeypatch):
+        """An oversized token-mode carry has a one-time fit decision."""
+        long_text = "&" * 10_000
+        html = (
+            f'<table><tr><td rowspan="32">{html_stdlib.escape(long_text)}</td><td>x</td></tr>'
+            + ("<tr><td>" + "abcdef" * 25 + "</td></tr>") * 30
+            + "<tr><td>end</td></tr></table>"
+        )
+        original_format_td = chunking_base._format_td
+        long_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal long_format_calls
+            if len(text) >= len(long_text):
+                long_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        monkeypatch.setattr(ChunkingOptions, "measure", lambda _self, text: len(text))
+        monkeypatch.setattr(_TextSplitter, "__call__", lambda _self, text: (text[:100], text[100:]))
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html),
+                ChunkingOptions(max_tokens=200, tokenizer="unused-by-fake-measure"),
+            )
+        )
+
+        assert long_format_calls == 0
+        assert sum(text.count("&") for text, _html in chunks) == len(long_text)
+        assert sum(text.count("abcdef" * 25) for text, _html in chunks) == 30
+        assert all(fragment_fromstring(chunk_html) is not None for _text, chunk_html in chunks)
+
+    def and_it_compacts_many_blank_cells_before_splitting_a_long_cell(self):
+        """A wide empty scaffold must not reduce every text fragment to one character."""
+        html = (
+            "<table><tr>"
+            + '<td rowspan="2"/>' * 100
+            + f"<td>{'x' * 10_000}</td></tr>"
+            + "<tr><td>TAIL</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert len(chunks) < 100
+        assert sum(text.count("x") for text, _html in chunks) == 10_000
+        assert sum(text.count("TAIL") for text, _html in chunks) == 1
+        assert all(len(text) <= 500 for text, _html in chunks)
+        first_cells = fragment_fromstring(chunks[0][1]).xpath(".//tr[1]/td")
+        assert first_cells[0].get("colspan") == "100"
+
     def and_it_attaches_blank_carry_to_an_oversized_own_cell_fragment(self):
         """A blank covering cell must not become its own empty TableChunk."""
         html = (

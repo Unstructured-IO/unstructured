@@ -1624,6 +1624,7 @@ class _HtmlTableSplitter:
         n = len(group)
         group_last_idx = self._group_last_idx(group)
         active = _ActiveSpanLedger()
+        oversized_carry_cols: set[int] = set()
         fragment_cells: list[list[str]] = []
         fragment_texts: list[list[str]] = []
         fragment_text_count = 0
@@ -1632,6 +1633,17 @@ class _HtmlTableSplitter:
             not self._opts.use_token_counting
             and getattr(self._opts.measure, "__func__", None) is ChunkingOptions.measure
         )
+
+        def commit_spans(new_spans: list[tuple[_OpenSpan, int]]) -> None:
+            active.add(new_spans)
+            for span, _gap in new_spans:
+                if (
+                    active.spans.get(span.col) is span
+                    and span.text
+                    and (len(span.text) if additive_char_measure else self._opts.measure(span.text))
+                    > maxlen
+                ):
+                    oversized_carry_cols.add(span.col)
 
         def append_row(cells: list[str], texts: list[str]) -> None:
             nonlocal fragment_text_count, fragment_char_len
@@ -1727,6 +1739,7 @@ class _HtmlTableSplitter:
 
         for idx, row in enumerate(group):
             active.expire(idx)
+            oversized_carry_cols.intersection_update(active.spans)
             placed = active.place(list(row.iter_cells()))
             cells = [own_cell_html(cell, idx) for _col, _gap, cell in placed]
             texts = [cell.text for _col, _gap, cell in placed if cell.text]
@@ -1741,7 +1754,7 @@ class _HtmlTableSplitter:
                     new_spans.append((_OpenSpan(col, cell.colspan, cell.text, reach), gap))
             if fragment_cells and fits(texts):
                 append_row(cells, texts)
-                active.add(new_spans)
+                commit_spans(new_spans)
                 continue
 
             yield from flush_fragment()
@@ -1749,10 +1762,16 @@ class _HtmlTableSplitter:
             # -- For ordinary character measurement, decide whether carried text fits
             # -- before escaping and formatting potentially huge retained cells. --
             carry_fits = (
-                active.text_len + sum(map(len, texts)) + max(0, active.text_count + len(texts) - 1)
-                <= maxlen
-                if additive_char_measure
-                else None
+                False
+                if oversized_carry_cols
+                else (
+                    active.text_len
+                    + sum(map(len, texts))
+                    + max(0, active.text_count + len(texts) - 1)
+                    <= maxlen
+                    if additive_char_measure
+                    else None
+                )
             )
             if carry_fits is False:
                 mat_cells: list[str] = []
@@ -1774,7 +1793,7 @@ class _HtmlTableSplitter:
                     # -- start a fresh fragment and recover its covering context. A carry too
                     # -- long to fit even alone stays blank while ordinary rows accumulate;
                     # -- otherwise it would be split again on every covered source row. --
-                    carry_alone_fits = (
+                    carry_alone_fits = not oversized_carry_cols and (
                         active.text_len + max(0, active.text_count - 1) <= maxlen
                         if additive_char_measure
                         else self._opts.measure(
@@ -1793,10 +1812,29 @@ class _HtmlTableSplitter:
                         f"<tr>{''.join(fallback_cells)}</tr>"
                     )
                     bounded_row = HtmlRow(tr).row_clipped_to_rows(1)
+                    # -- One colspan represents a run of plain blank cells, preserving
+                    # -- column geometry without hundreds of repeated empty tags. --
+                    compact_cells: list[str] = []
+                    blank_cols = 0
+                    for cell in bounded_row.iter_cells():
+                        if cell.html == _format_td("", cell.colspan):
+                            blank_cols += cell.colspan
+                            continue
+                        if blank_cols:
+                            compact_cells.append(_format_td("", blank_cols))
+                            blank_cols = 0
+                        compact_cells.append(cell.html)
+                    if blank_cols:
+                        compact_cells.append(_format_td("", blank_cols))
+                    bounded_row = HtmlRow(
+                        _HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(compact_cells)}</tr>")
+                    )
                     empty_markup_len = sum(
                         len(cell.html) for cell in bounded_row.iter_cells() if not cell.text
                     )
-                    split_maxlen = max(1, maxlen - empty_markup_len)
+                    # -- An infeasible blank scaffold must not force one-character text
+                    # -- fragments for the entire oversized cell. --
+                    split_maxlen = max(maxlen // 2, maxlen - empty_markup_len, 1)
                     pending_empty_cells = ""
                     pending_output: TextAndHtml | None = None
                     for text, html in self._iter_row_splits(bounded_row, maxlen=split_maxlen):
@@ -1821,7 +1859,7 @@ class _HtmlTableSplitter:
                                 "</tr></table>", f"{pending_empty_cells}</tr></table>", 1
                             )
                         yield text, html
-            active.add(new_spans)
+            commit_spans(new_spans)
 
         yield from flush_fragment()
 
