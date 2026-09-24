@@ -4368,7 +4368,7 @@ class Describe_HtmlTableSplitter:
         ledger.add([(_OpenSpan(placed_col, 3, "WIDE", 4), gap)])
 
         assert sorted(ledger.spans) == [0, 2, 3]
-        ledger.expire(4)
+        assert ledger.expire(4) == [0, 2]
         assert ledger.place([cell])[0][0] == 0
 
     def and_it_does_not_resplit_a_long_covering_cell_on_every_row(self):
@@ -4480,6 +4480,26 @@ class Describe_HtmlTableSplitter:
         assert all(len(text) <= 500 for text, _html in chunks)
         first_cells = fragment_fromstring(chunks[0][1]).xpath(".//tr[1]/td")
         assert first_cells[0].get("colspan") == "100"
+
+    def and_it_avoids_one_character_chunks_at_a_small_blank_scaffold_budget(self):
+        """An infeasible blank scaffold must not govern every text continuation."""
+        html = (
+            "<table><tr>"
+            + '<td rowspan="2"/>' * 100
+            + f"<td>{'x' * 10_000}</td></tr>"
+            + "<tr><td>TAIL</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert len(chunks) < 1000
+        assert sum(text.count("x") for text, _html in chunks) == 10_000
+        assert sum(text.count("TAIL") for text, _html in chunks) == 1
+        assert sum(len(text) == 1 for text, _html in chunks) < 10
 
     def and_it_keeps_html_markup_out_of_the_token_split_budget(self, monkeypatch):
         """Empty-cell HTML overhead has character units, not token units."""

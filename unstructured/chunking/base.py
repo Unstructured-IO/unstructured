@@ -1362,14 +1362,16 @@ class _ActiveSpanLedger:
         self.gap_index = _GapIndex()
         self.gap_index.insert(0, None)
 
-    def expire(self, row_idx: int) -> None:
-        """Remove exactly the spans whose source lifetime has ended."""
+    def expire(self, row_idx: int) -> list[int]:
+        """Remove expired spans and return only the columns actually released."""
+        expired_cols: list[int] = []
         while self.expiry and self.expiry[0][0] <= row_idx:
             end_row, col = heapq.heappop(self.expiry)
             span = self.spans.get(col)
             if span is None or span.reach_idx + 1 != end_row:
                 continue
             del self.spans[col]
+            expired_cols.append(col)
             if span.text:
                 self.text_len -= len(span.text)
                 self.text_count -= 1
@@ -1384,6 +1386,7 @@ class _ActiveSpanLedger:
                 self._remove_gap(end)
                 end = right_end
             self._add_gap(start, end)
+        return expired_cols
 
     def place(self, cells: Sequence[HtmlCell]) -> list[tuple[int, int, HtmlCell]]:
         """Place own cells in source order, visiting only gaps passed by those cells.
@@ -1738,8 +1741,8 @@ class _HtmlTableSplitter:
             yield text, html
 
         for idx, row in enumerate(group):
-            active.expire(idx)
-            oversized_carry_cols.intersection_update(active.spans)
+            for expired_col in active.expire(idx):
+                oversized_carry_cols.discard(expired_col)
             placed = active.place(list(row.iter_cells()))
             cells = [own_cell_html(cell, idx) for _col, _gap, cell in placed]
             texts = [cell.text for _col, _gap, cell in placed if cell.text]
@@ -1835,10 +1838,15 @@ class _HtmlTableSplitter:
                     # -- An infeasible blank scaffold must not force one-character text
                     # -- fragments for the entire oversized cell. --
                     split_maxlen = (
-                        maxlen
-                        if self._opts.use_token_counting
-                        else max(maxlen // 2, maxlen - empty_markup_len, 1)
+                        maxlen if self._opts.use_token_counting else maxlen - empty_markup_len
                     )
+                    min_text_fragment_len = len(f"<table><tr>{_format_td('x', 1)}</tr></table>")
+                    useful_text_budget = max(1, (maxlen - min_text_fragment_len) // 2)
+                    if split_maxlen < min_text_fragment_len + useful_text_budget:
+                        # -- The blank scaffold leaves less than half the normal text
+                        # -- capacity. Keep the ordinary budget rather than imposing
+                        # -- this tiny allowance on every subsequent fragment. --
+                        split_maxlen = maxlen
                     pending_empty_cells = ""
                     pending_output: TextAndHtml | None = None
                     for text, html in self._iter_row_splits(bounded_row, maxlen=split_maxlen):
