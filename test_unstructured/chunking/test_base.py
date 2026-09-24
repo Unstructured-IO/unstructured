@@ -4567,7 +4567,8 @@ class Describe_HtmlTableSplitter:
         assert sum(text.count("y") for text, _html in chunks) == n_rows * own_len
 
     @pytest.mark.parametrize("variant", ["label", "two_expiries"])
-    def and_it_compacts_mixed_blank_covers_on_near_limit_rows(self, monkeypatch, variant):
+    @pytest.mark.parametrize("own_len", [498, 499, 400, 249])
+    def and_it_compacts_mixed_blank_covers_on_near_limit_rows(self, monkeypatch, variant, own_len):
         """A label or staggered expiries cannot restore per-span output growth."""
         n_spans = n_rows = 100
         label = f'<td rowspan="{n_rows + 1}">A</td>' if variant == "label" else ""
@@ -4577,7 +4578,7 @@ class Describe_HtmlTableSplitter:
         )
         html = (
             f"<table><tr>{label}{blanks}<td>{'x' * 501}</td></tr>"
-            + (f"<tr><td>{'y' * 499}</td></tr>") * n_rows
+            + (f"<tr><td>{'y' * own_len}</td></tr>") * n_rows
             + "</table>"
         )
         original_format_td = chunking_base._format_td
@@ -4599,7 +4600,7 @@ class Describe_HtmlTableSplitter:
         assert blank_format_calls < 1000
         assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 1000
         assert sum(text.count("x") for text, _html in chunks) == 501
-        assert sum(text.count("y") for text, _html in chunks) == n_rows * 499
+        assert sum(text.count("y") for text, _html in chunks) == n_rows * own_len
 
     def and_it_preserves_columns_when_packed_blank_spans_expire_at_different_rows(self):
         """Per-row blank geometry follows source expiry inside a packed fragment."""
@@ -4645,6 +4646,28 @@ class Describe_HtmlTableSplitter:
                         positions[value] = col
 
         assert positions == {"ONE": 2, "TWO": 2, "THREE": 1}
+
+    def and_it_compacts_blank_runs_between_fitting_retained_labels(self):
+        """Text-bearing spans retain their columns while nearby blanks coalesce."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            '<table><tr><td rowspan="3">A</td><td rowspan="3"/>'
+            '<td rowspan="3">B</td><td rowspan="3"/><td>'
+            + "x" * 501
+            + "</td></tr><tr><td>ONE</td></tr><tr><td>TWO</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+        continuation = next(chunk_html for text, chunk_html in chunks if "ONE" in text)
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+
+        assert [row[0] for row in grid] == ["A", "A"]
+        assert [row[2] for row in grid] == ["B", "B"]
+        assert [row[4] for row in grid] == ["ONE", "TWO"]
 
     def and_it_keeps_blank_carry_columns_on_every_packed_continuation_row(self):
         """A packed blank carry must span all of the source rows it covers."""

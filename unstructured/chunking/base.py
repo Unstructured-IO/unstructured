@@ -1363,6 +1363,7 @@ class _ActiveSpanLedger:
 
     def __init__(self) -> None:
         self.spans: dict[int, _OpenSpan] = {}
+        self.text_spans: dict[int, _OpenSpan] = {}
         self.reach_counts: dict[int, int] = {}
         self.text_len = 0
         self.text_count = 0
@@ -1388,6 +1389,7 @@ class _ActiveSpanLedger:
                 del self.reach_counts[span.reach_idx]
             expired_cols.append(col)
             if span.text:
+                del self.text_spans[col]
                 self.text_len -= len(span.text)
                 self.text_count -= 1
             start = span.col
@@ -1444,13 +1446,14 @@ class _ActiveSpanLedger:
             self.spans[span.col] = span
             self.reach_counts[span.reach_idx] = self.reach_counts.get(span.reach_idx, 0) + 1
             if span.text:
+                self.text_spans[span.col] = span
                 self.text_len += len(span.text)
                 self.text_count += 1
             heapq.heappush(self.expiry, (span.reach_idx + 1, span.col))
 
-    def uniform_blank_cover(self) -> tuple[int, int] | None:
-        """Return (width, reach) when blank spans densely cover the left columns."""
-        if self.text_count or not self.spans or len(self.reach_counts) != 1:
+    def uniform_cover(self) -> tuple[int, int] | None:
+        """Return (width, reach) when spans densely cover the left columns."""
+        if not self.spans or len(self.reach_counts) != 1:
             return None
         if len(self.gaps) != 1:
             return None
@@ -1751,18 +1754,31 @@ class _HtmlTableSplitter:
                 cells.append(_format_td("", trailing_col - col))
             return cells
 
-        def materialize_uniform_blank(
+        def materialize_uniform_cover(
             placed: Sequence[tuple[int, int, HtmlCell]], idx: int, width: int, reach: int
-        ) -> list[str]:
-            """Emit one rowspan for a dense blank cover with one source expiry."""
-            cells = [_format_td("", width, reach - idx + 1)]
+        ) -> tuple[list[str], list[str]]:
+            """Emit text cells and blank runs for a dense single-expiry cover."""
+            cells: list[str] = []
+            texts: list[str] = []
+            col = 0
+            remaining_rows = reach - idx + 1
+            for span in sorted(active.text_spans.values(), key=lambda span: span.col):
+                if col < span.col:
+                    cells.append(_format_td("", span.col - col, remaining_rows))
+                cells.append(_format_td(span.text, span.colspan, remaining_rows))
+                texts.append(span.text)
+                col = span.col + span.colspan
+            if col < width:
+                cells.append(_format_td("", width - col, remaining_rows))
             col = width
             for own_col, _gap, cell in placed:
                 if col < own_col:
                     cells.append(_format_td("", own_col - col))
                 cells.append(own_cell_html(cell, idx))
+                if cell.text:
+                    texts.append(cell.text)
                 col = own_col + cell.colspan
-            return cells
+            return cells, texts
 
         def fits(texts: Sequence[str]) -> bool:
             if not texts:
@@ -1843,12 +1859,11 @@ class _HtmlTableSplitter:
                 mat_cells: list[str] = []
                 mat_texts: list[str] = []
             else:
-                uniform_cover = active.uniform_blank_cover()
+                uniform_cover = active.uniform_cover()
                 if uniform_cover is not None:
                     width, reach = uniform_cover
-                    mat_cells = materialize_uniform_blank(placed, idx, width, reach)
-                    mat_texts = texts
-                    carry_fits = own_fits
+                    mat_cells, mat_texts = materialize_uniform_cover(placed, idx, width, reach)
+                    carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
                 elif active.spans and not active.text_count:
                     # -- Mixed blank expiries can be represented per source row; each
                     # -- row gets its own compact blank columns instead of S cells. --
