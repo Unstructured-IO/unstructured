@@ -4760,6 +4760,26 @@ class Describe_HtmlTableSplitter:
         assert sum(fragment.count("<td") for _text, fragment in chunks) < 1000
         assert sum(text.count("v") for text, _html in chunks) == rows // 2
 
+    def and_it_does_not_repeat_one_window_filling_label(self):
+        """One long label must not multiply across alternating empty and tiny rows."""
+        rows = 600
+        limit = 300
+        html = (
+            f'<table><tr><td rowspan="{rows + 1}">{"L" * limit}</td>'
+            f"<td>{'x' * (limit + 1)}</td></tr>"
+            + "<tr></tr><tr><td>v</td></tr>" * (rows // 2)
+            + "</table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=limit)
+            )
+        )
+
+        assert sum(text.count("L") for text, _html in chunks) == limit
+        assert sum(text.count("v") for text, _html in chunks) == rows // 2
+        assert sum(len(fragment) for _text, fragment in chunks) < 20_000
+
     def and_it_bounds_label_carry_with_a_custom_token_measure(self, monkeypatch):
         """Custom measurement still applies the sparse repetition policy."""
         labels = 100
@@ -4778,6 +4798,31 @@ class Describe_HtmlTableSplitter:
         assert sum(fragment.count("<td") for _text, fragment in chunks) < 1000
         assert sum(text.count("v") for text, _html in chunks) == rows
         assert all(opts.measure(text) <= labels + 1 for text, _html in chunks)
+
+    def and_it_avoids_remeasuring_stable_labels_when_short_labels_change(self, monkeypatch):
+        """New two-row labels must not invalidate a full-cover measurement per row."""
+        labels = 100
+        rows = 200
+        opts = ChunkingOptions(max_tokens=50, tokenizer="unused-by-fake-measure")
+        measured_label_chars = 0
+
+        def measured(text):
+            nonlocal measured_label_chars
+            measured_label_chars += text.count("L")
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", measured)
+        html = (
+            "<table><tr>"
+            + "".join(f'<td rowspan="{rows + 1}">L</td>' for _ in range(labels))
+            + "<td>x x</td></tr>"
+            + f'<tr><td rowspan="2">{"v " * 48}v</td></tr>' * rows
+            + "</table>"
+        )
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert measured_label_chars < 5000
+        assert sum(text.count("v") for text, _html in chunks) == rows * 49
 
     def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
         """A new own rowspan is clipped before later rows get compact blank geometry."""

@@ -2114,17 +2114,28 @@ class _HtmlTableSplitter:
                 )
             )
             strategic_blank_carry = False
-            if carry_fits is not False and active.text_count >= 16:
-                # -- Repeating a large fitting label set on many tiny fragments can
-                # -- multiply output by labels × rows. Its text is already present
-                # -- in the source row; retain blank geometry when the window cannot
-                # -- amortize that context over at least one row per label. --
+            if carry_fits is not False and active.text_count:
+                # -- Bound optional repeated context by its serialized size per row.
+                # -- In token mode use the label count as a lower bound on token cost:
+                # -- rejected carry must not sort and remeasure the entire live set. --
                 own_step = (
                     sum(map(len, texts)) + len(texts)
                     if additive_char_measure
                     else max(1, own_measure)
                 )
-                if (maxlen - carried_text_measure()) // max(1, own_step) < active.text_count:
+                carry_lower_bound = (
+                    active.text_len + active.text_count - 1
+                    if additive_char_measure
+                    else active.text_count
+                )
+                optimistic_rows = max(1, (maxlen - carry_lower_bound) // max(1, own_step))
+                repeat_cost = carry_lower_bound if additive_char_measure else active.text_len
+                allowed_cost = 16 if additive_char_measure else 4
+                if repeat_cost > allowed_cost * optimistic_rows and (
+                    active.text_count >= 16
+                    or repeat_cost >= 256
+                    or 4 * carry_lower_bound >= 3 * maxlen
+                ):
                     carry_fits = False
                     strategic_blank_carry = True
             if carry_fits is False:
@@ -2170,8 +2181,11 @@ class _HtmlTableSplitter:
                     # -- start a fresh fragment and recover its covering context. A carry too
                     # -- long to fit even alone stays blank while ordinary rows accumulate;
                     # -- otherwise it would be split again on every covered source row. --
-                    carry_alone_fits = not oversized_carry_cols and carried_text_measure() <= maxlen
-                    if carry_alone_fits and not strategic_blank_carry:
+                    if (
+                        not strategic_blank_carry
+                        and not oversized_carry_cols
+                        and carried_text_measure() <= maxlen
+                    ):
                         yield from flush_fragment()
                 else:
                     # -- Cell splits are singleton rows, so compact their blank geometry
