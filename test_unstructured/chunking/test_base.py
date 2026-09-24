@@ -4875,6 +4875,36 @@ class Describe_HtmlTableSplitter:
         assert new_cell.get("rowspan") == "2"
         assert sum(fragment.count("<td") for _text, fragment in chunks) < 3 * labels
 
+    @pytest.mark.parametrize("own_cell", ["<td>v</td>", '<td rowspan="2">v</td>'])
+    def and_it_budgets_packed_row_measurement_of_a_partial_label(self, monkeypatch, own_cell):
+        """Successful packed fits cannot remeasure a carried prefix on every row."""
+        label_words = 100
+        rows = 200
+        limit = 400
+        opts = ChunkingOptions(max_tokens=limit, tokenizer="unused-by-fake-measure")
+        measured_label_chars = 0
+
+        def measured(text):
+            nonlocal measured_label_chars
+            measured_label_chars += text.count("L")
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", measured)
+        html = (
+            f'<table><tr><td rowspan="{rows + 1}">'
+            + " ".join(["L"] * label_words)
+            + "</td><td>"
+            + " ".join(["x"] * limit)
+            + "</td></tr>"
+            + f"<tr>{own_cell}</tr>" * rows
+            + "</table>"
+        )
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert measured_label_chars < 5000
+        assert sum(text.count("v") for text, _html in chunks) >= rows
+        assert all(opts.measure(text) <= limit for text, _html in chunks)
+
     def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
         """A new own rowspan is clipped before later rows get compact blank geometry."""
         pd = pytest.importorskip("pandas")

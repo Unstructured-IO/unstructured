@@ -1723,6 +1723,7 @@ class _HtmlTableSplitter:
         fragment_texts: list[list[str]] = []
         fragment_text_count = 0
         fragment_char_len = 0
+        fragment_carry_cost = 0
         fragment_blank_per_row = False
         fragment_text_cover_per_row = False
         fragment_blank_runs: dict[int, tuple[int, _FragmentCell]] = {}
@@ -2026,11 +2027,16 @@ class _HtmlTableSplitter:
             return cells, texts
 
         def fits(texts: Sequence[str]) -> bool:
+            nonlocal carry_probe_budget
             if not texts:
                 return True
             if additive_char_measure:
                 extra = sum(map(len, texts)) + len(texts) - 1
                 return fragment_char_len + extra + bool(fragment_text_count) <= maxlen
+            if fragment_carry_cost:
+                if fragment_carry_cost > carry_probe_budget:
+                    return False
+                carry_probe_budget -= fragment_carry_cost
             joined = " ".join(t for row_texts in fragment_texts for t in row_texts)
             candidate = f"{joined} {' '.join(texts)}" if joined else " ".join(texts)
             return self._opts.measure(candidate) <= maxlen
@@ -2040,6 +2046,7 @@ class _HtmlTableSplitter:
             nonlocal fragment_blank_per_row
             nonlocal fragment_text_cover_per_row
             nonlocal fragment_blank_runs, fragment_blank_index, fragment_text_expiry, fragment_width
+            nonlocal fragment_carry_cost
             if not fragment_cells:
                 return
             for start in list(fragment_blank_runs):
@@ -2060,6 +2067,7 @@ class _HtmlTableSplitter:
             html = f"<table>{''.join(trs)}</table>"
             fragment_cells, fragment_texts = [], []
             fragment_text_count = fragment_char_len = 0
+            fragment_carry_cost = 0
             fragment_blank_per_row = False
             fragment_text_cover_per_row = False
             fragment_blank_runs = {}
@@ -2177,6 +2185,9 @@ class _HtmlTableSplitter:
                     carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
             if carry_fits:
                 append_row(mat_cells, mat_texts)
+                fragment_carry_cost = (
+                    active.text_len + active.text_count if active.text_count else 0
+                )
                 if fragment_text_cover_per_row:
                     start_fragment_text_cover(mat_cells)
             else:
