@@ -1830,7 +1830,11 @@ class _HtmlTableSplitter:
                         own_idx += 1
                         if col < own_col:
                             cells.append(_format_td("", own_col - col))
-                        cells.append(own_cell_html(cell, idx))
+                        cells.append(
+                            _format_td("", cell.colspan)
+                            if not cell.text
+                            else own_cell_html(cell, idx)
+                        )
                         if cell.text:
                             texts.append(cell.text)
                         col = own_col + cell.colspan
@@ -1859,7 +1863,9 @@ class _HtmlTableSplitter:
                     own_idx += 1
                     if col < own_col:
                         cells.append(_format_td("", own_col - col))
-                    cells.append(own_cell_html(cell, idx))
+                    cells.append(
+                        _format_td("", cell.colspan) if not cell.text else own_cell_html(cell, idx)
+                    )
                     if cell.text:
                         texts.append(cell.text)
                     col = own_col + cell.colspan
@@ -1957,7 +1963,7 @@ class _HtmlTableSplitter:
                     texts,
                 )
                 commit_spans(new_spans)
-                if fragment_blank_per_row and new_spans:
+                if fragment_blank_per_row and not fragment_text_cover_per_row and new_spans:
                     yield from flush_fragment()
                 continue
 
@@ -2100,7 +2106,7 @@ class _HtmlTableSplitter:
                             )
                         yield text, html
             commit_spans(new_spans)
-            if fragment_blank_per_row and new_spans:
+            if fragment_blank_per_row and not fragment_text_cover_per_row and new_spans:
                 yield from flush_fragment()
 
         yield from flush_fragment()

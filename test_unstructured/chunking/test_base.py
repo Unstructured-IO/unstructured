@@ -4259,14 +4259,8 @@ class Describe_HtmlTableSplitter:
             "one",
         ]
         assert [cell.text_content() for cell in rows[1].xpath("./td")] == ["NEW", "two"]
-        later_continuation = next(html for text, html in chunks if "three" in text)
-        later_rows = fragment_fromstring(later_continuation).xpath(".//tr")
-        assert [cell.text_content() for cell in later_rows[0].xpath("./td")] == [
-            "ANCHOR",
-            "NEW",
-            "three",
-        ]
-        assert [cell.text_content() for cell in later_rows[1].xpath("./td")] == ["four"]
+        assert [cell.text_content() for cell in rows[2].xpath("./td")] == ["three"]
+        assert [cell.text_content() for cell in rows[3].xpath("./td")] == ["four"]
 
     @pytest.mark.parametrize("continuation_cell", ["", "<td/>"])
     def and_it_keeps_many_sparse_spans_across_a_cell_split(self, continuation_cell: str):
@@ -4687,6 +4681,30 @@ class Describe_HtmlTableSplitter:
 
         assert col_reads < 5000
         assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 1500
+
+    @pytest.mark.parametrize("own_text", ["", "v"])
+    def and_it_packs_new_spans_under_mixed_expiry_labels(self, own_text):
+        """Opening a short span per row must not re-emit every retained label."""
+        span_count = 200
+        continuation_rows = 400
+        labels = "".join(
+            f'<td rowspan="{continuation_rows + 1 - i % 2}">L</td>' for i in range(span_count)
+        )
+        html = (
+            f"<table><tr>{labels}<td>{'x' * 801}</td></tr>"
+            + f'<tr><td rowspan="2">{own_text}</td></tr>' * continuation_rows
+            + "</table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=800)
+            )
+        )
+
+        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 2000
+        assert sum(text.count("L") for text, _html in chunks) < 1000
+        own_copies = sum(text.count("v") for text, _html in chunks)
+        assert continuation_rows * bool(own_text) <= own_copies < continuation_rows + 10
 
     def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
         """A new own rowspan is clipped before later rows get compact blank geometry."""
