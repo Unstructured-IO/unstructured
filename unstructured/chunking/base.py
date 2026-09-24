@@ -1834,7 +1834,11 @@ class _HtmlTableSplitter:
                     )
                     # -- An infeasible blank scaffold must not force one-character text
                     # -- fragments for the entire oversized cell. --
-                    split_maxlen = max(maxlen // 2, maxlen - empty_markup_len, 1)
+                    split_maxlen = (
+                        maxlen
+                        if self._opts.use_token_counting
+                        else max(maxlen // 2, maxlen - empty_markup_len, 1)
+                    )
                     pending_empty_cells = ""
                     pending_output: TextAndHtml | None = None
                     for text, html in self._iter_row_splits(bounded_row, maxlen=split_maxlen):

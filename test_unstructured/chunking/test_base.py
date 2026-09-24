@@ -4481,6 +4481,33 @@ class Describe_HtmlTableSplitter:
         first_cells = fragment_fromstring(chunks[0][1]).xpath(".//tr[1]/td")
         assert first_cells[0].get("colspan") == "100"
 
+    def and_it_keeps_html_markup_out_of_the_token_split_budget(self, monkeypatch):
+        """Empty-cell HTML overhead has character units, not token units."""
+        opts = ChunkingOptions(max_tokens=200, tokenizer="unused-by-fake-measure")
+        monkeypatch.setattr(ChunkingOptions, "measure", lambda _self, text: len(text))
+        monkeypatch.setattr(_TextSplitter, "__call__", lambda _self, text: (text[:100], text[100:]))
+        original_row_splits = _HtmlTableSplitter._iter_row_splits
+        budgets: list[int] = []
+
+        def recorded_row_splits(self, row, maxlen):
+            budgets.append(maxlen)
+            yield from original_row_splits(self, row, maxlen)
+
+        monkeypatch.setattr(_HtmlTableSplitter, "_iter_row_splits", recorded_row_splits)
+        html = (
+            "<table><tr>"
+            + '<td rowspan="2"/>' * 20
+            + f"<td>{'x' * 1000}</td></tr>"
+            + "<tr><td>TAIL</td></tr></table>"
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert budgets
+        assert all(budget == 200 for budget in budgets)
+        assert sum(text.count("x") for text, _html in chunks) == 1000
+        assert sum(text.count("TAIL") for text, _html in chunks) == 1
+
     def and_it_attaches_blank_carry_to_an_oversized_own_cell_fragment(self):
         """A blank covering cell must not become its own empty TableChunk."""
         html = (
