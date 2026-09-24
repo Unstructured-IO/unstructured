@@ -2185,6 +2185,8 @@ class _HtmlTableSplitter:
                     carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
             if carry_fits:
                 append_row(mat_cells, mat_texts)
+                # -- Charge only copied cover text; the current row's own text was
+                # -- already part of row fitting before this follow-up. --
                 fragment_carry_cost = (
                     active.text_len + active.text_count if active.text_count else 0
                 )

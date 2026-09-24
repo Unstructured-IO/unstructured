@@ -4239,6 +4239,7 @@ class Describe_HtmlTableSplitter:
 
     def and_it_places_cells_after_spans_expire_inside_an_oversized_group(self):
         """A later cell reuses an expired span's column while longer spans stay active."""
+        pd = pytest.importorskip("pandas")
         html = (
             '<table><tr><td rowspan="5">ANCHOR</td><td rowspan="2">SHORT</td>'
             f"<td>{'x' * 80}</td></tr>"
@@ -4261,6 +4262,9 @@ class Describe_HtmlTableSplitter:
         assert [cell.text_content() for cell in rows[1].xpath("./td")] == ["NEW", "two"]
         assert [cell.text_content() for cell in rows[2].xpath("./td")] == ["three"]
         assert [cell.text_content() for cell in rows[3].xpath("./td")] == ["four", ""]
+        grid = pd.read_html(io.StringIO(first_continuation))[0].to_numpy().tolist()
+        assert grid[2][2] == "three"
+        assert grid[3][1] == "four"
 
     @pytest.mark.parametrize("continuation_cell", ["", "<td/>"])
     def and_it_keeps_many_sparse_spans_across_a_cell_split(self, continuation_cell: str):
@@ -4848,6 +4852,7 @@ class Describe_HtmlTableSplitter:
 
         assert sum(len(fragment) for _text, fragment in chunks) < 10_000
         assert measured_label_chars < 1500
+        assert words <= sum(text.count("L") for text, _html in chunks) < 3 * words
         assert sum(text.count("v") for text, _html in chunks) >= words
 
     def and_it_cancels_many_new_blanks_before_one_wide_cell(self):
@@ -4871,8 +4876,13 @@ class Describe_HtmlTableSplitter:
         continuation = next(fragment for text, fragment in chunks if "NEW" in text)
         rows = fragment_fromstring(continuation).xpath(".//tr")
         new_cell = next(cell for cell in rows[1].xpath("./td") if cell.text_content() == "NEW")
+        assert rows[1].xpath("./td[1]")[0] is new_cell
         assert new_cell.get("colspan") == str(labels)
         assert new_cell.get("rowspan") == "2"
+        pd = pytest.importorskip("pandas")
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+        assert grid[1][0] == "NEW"
+        assert grid[1][labels] == "R"
         assert sum(fragment.count("<td") for _text, fragment in chunks) < 3 * labels
 
     @pytest.mark.parametrize("own_cell", ["<td>v</td>", '<td rowspan="2">v</td>'])
@@ -4902,6 +4912,8 @@ class Describe_HtmlTableSplitter:
         chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
 
         assert measured_label_chars < 5000
+        assert any(text.count("L") == label_words and "v" in text for text, _html in chunks)
+        assert any("L" not in text and "v" in text for text, _html in chunks)
         assert sum(text.count("v") for text, _html in chunks) >= rows
         assert all(opts.measure(text) <= limit for text, _html in chunks)
 
