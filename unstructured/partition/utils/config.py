@@ -16,9 +16,17 @@ from typing import Optional
 from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, STT_AGENT_WHISPER
 
 
+def _tempdir_process_key() -> int:
+    """Process-group id on POSIX so children share one temp dir; process id on Windows."""
+    getpgid = getattr(os, "getpgid", None)
+    if getpgid is not None:
+        return getpgid(0)
+    return os.getpid()
+
+
 @lru_cache(maxsize=1)
 def get_tempdir(dir: str) -> str:
-    tempdir = Path(dir) / f"tmp/{os.getpgid(0)}"
+    tempdir = Path(dir) / f"tmp/{_tempdir_process_key()}"
     return str(tempdir)
 
 
