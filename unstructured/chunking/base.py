@@ -1731,6 +1731,7 @@ class _HtmlTableSplitter:
         fragment_width = 0
         carry_measure_version = -1
         carry_measure_value = 0
+        carry_probe_budget = 2 * max(maxlen, 256)
         additive_char_measure = (
             not self._opts.use_token_counting
             and getattr(self._opts.measure, "__func__", None) is ChunkingOptions.measure
@@ -1774,7 +1775,7 @@ class _HtmlTableSplitter:
             fragment_blank_index.delete(start)
             if cell.start_row == len(fragment_cells):
                 assert row_cells is not None
-                row_cells.remove(cell)
+                cell.html = ""
             else:
                 cell.html = _format_td("", cell.width, len(fragment_cells) - cell.start_row)
             return end, cell
@@ -2073,6 +2074,11 @@ class _HtmlTableSplitter:
             placed = active.place(list(row.iter_cells()))
             cells = [own_cell_html(cell, idx) for _col, _gap, cell in placed]
             texts = [cell.text for _col, _gap, cell in placed if cell.text]
+            if idx:
+                carry_probe_budget = min(
+                    2 * max(maxlen, 256),
+                    carry_probe_budget + sum(map(len, texts)) + len(placed),
+                )
             new_spans: list[tuple[_OpenSpan, int]] = []
             for col, gap, cell in placed:
                 reach = (
@@ -2131,13 +2137,23 @@ class _HtmlTableSplitter:
                 optimistic_rows = max(1, (maxlen - carry_lower_bound) // max(1, own_step))
                 repeat_cost = carry_lower_bound if additive_char_measure else active.text_len
                 allowed_cost = 16 if additive_char_measure else 4
-                if repeat_cost > allowed_cost * optimistic_rows and (
-                    active.text_count >= 16
-                    or repeat_cost >= 256
-                    or 4 * carry_lower_bound >= 3 * maxlen
-                ):
+                if (
+                    repeat_cost > allowed_cost * optimistic_rows
+                    and (
+                        active.text_count >= 16
+                        or repeat_cost >= 256
+                        or 4 * carry_lower_bound >= 3 * maxlen
+                    )
+                ) or (not additive_char_measure and active.text_len >= max(256, maxlen // 2)):
                     carry_fits = False
                     strategic_blank_carry = True
+                if not strategic_blank_carry:
+                    probe_cost = active.text_len + active.text_count
+                    if probe_cost > carry_probe_budget:
+                        carry_fits = False
+                        strategic_blank_carry = True
+                    else:
+                        carry_probe_budget -= probe_cost
             if carry_fits is False:
                 mat_cells: list[str] = []
                 mat_texts: list[str] = []

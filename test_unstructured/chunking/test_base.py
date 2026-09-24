@@ -4824,6 +4824,57 @@ class Describe_HtmlTableSplitter:
         assert measured_label_chars < 5000
         assert sum(text.count("v") for text, _html in chunks) == rows * 49
 
+    @pytest.mark.parametrize("own_cell", ["<td>v</td>", '<td rowspan="2">v</td>'])
+    def and_it_bounds_one_multiword_label_in_custom_token_mode(self, monkeypatch, own_cell):
+        """One window-filling label is measured and emitted only a bounded number of times."""
+        words = 100
+        opts = ChunkingOptions(max_tokens=words, tokenizer="unused-by-fake-measure")
+        measured_label_chars = 0
+
+        def measured(text):
+            nonlocal measured_label_chars
+            measured_label_chars += text.count("L")
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", measured)
+        html = (
+            f'<table><tr><td rowspan="{2 * words + 1}">'
+            + " ".join(["L"] * words)
+            + "</td><td>x</td></tr>"
+            + f"<tr></tr><tr>{own_cell}</tr>" * words
+            + "</table>"
+        )
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert sum(len(fragment) for _text, fragment in chunks) < 10_000
+        assert measured_label_chars < 1500
+        assert sum(text.count("v") for text, _html in chunks) >= words
+
+    def and_it_cancels_many_new_blanks_before_one_wide_cell(self):
+        """Expired labels leave no overlapping blanks beneath a new colspan."""
+        labels = 200
+        limit = 4 * labels + 100
+        html = (
+            "<table><tr>"
+            + '<td rowspan="2">L</td>' * labels
+            + f'<td rowspan="4">R</td><td>{"x" * (limit - 2 * labels - 2)}</td>'
+            + "</tr><tr><td>P</td></tr>"
+            + f'<tr><td colspan="{labels}" rowspan="2">NEW</td></tr>'
+            + "<tr></tr></table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=limit)
+            )
+        )
+
+        continuation = next(fragment for text, fragment in chunks if "NEW" in text)
+        rows = fragment_fromstring(continuation).xpath(".//tr")
+        new_cell = next(cell for cell in rows[1].xpath("./td") if cell.text_content() == "NEW")
+        assert new_cell.get("colspan") == str(labels)
+        assert new_cell.get("rowspan") == "2"
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 3 * labels
+
     def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
         """A new own rowspan is clipped before later rows get compact blank geometry."""
         pd = pytest.importorskip("pandas")
