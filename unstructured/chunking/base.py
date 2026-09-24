@@ -1815,8 +1815,10 @@ class _HtmlTableSplitter:
                 # -- fit alone. Keep incoming spans as blank geometry in its cell-level
                 # -- fragments: their text was emitted earlier and repeating a long covering
                 # -- cell on every source row would multiply both output size and work. --
-                fallback_cells = materialize_blank_compact(placed, idx)
                 if own_fits:
+                    # -- A packed fragment needs each blank carry's remaining rowspan;
+                    # -- later rows in this fragment emit only their own cells. --
+                    fallback_cells, _fallback_texts = materialize(placed, idx, carry_text=False)
                     append_row(fallback_cells, texts)
                     # -- If the carry text could fit with a later, smaller row, let that row
                     # -- start a fresh fragment and recover its covering context. A carry too
@@ -1837,6 +1839,9 @@ class _HtmlTableSplitter:
                     if carry_alone_fits:
                         yield from flush_fragment()
                 else:
+                    # -- Cell splits are singleton rows, so compact their blank geometry
+                    # -- directly without visiting every retained span. --
+                    fallback_cells = materialize_blank_compact(placed, idx)
                     tr = _HtmlTableSplitter._parse_row_fragment(
                         f"<tr>{''.join(fallback_cells)}</tr>"
                     )
@@ -1866,7 +1871,11 @@ class _HtmlTableSplitter:
                     split_maxlen = (
                         maxlen if self._opts.use_token_counting else maxlen - empty_markup_len
                     )
-                    min_text_fragment_len = len(f"<table><tr>{_format_td('x', 1)}</tr></table>")
+                    min_text_fragment_len = max(
+                        len(f"<table><tr>{_format_td('x', cell.colspan)}</tr></table>")
+                        for _col, _gap, cell in placed
+                        if cell.text
+                    )
                     useful_text_budget = max(1, (maxlen - min_text_fragment_len) // 2)
                     if split_maxlen < min_text_fragment_len + useful_text_budget:
                         # -- The blank scaffold leaves less than half the normal text

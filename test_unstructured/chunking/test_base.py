@@ -4532,6 +4532,44 @@ class Describe_HtmlTableSplitter:
         assert sum(text.count("y") for text, _html in chunks) == n_rows * 501
         assert any('colspan="100"' in chunk_html for _text, chunk_html in chunks)
 
+    def and_it_keeps_blank_carry_columns_on_every_packed_continuation_row(self):
+        """A packed blank carry must span all of the source rows it covers."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            f'<table><tr><td rowspan="4">{"z" * 201}</td><td>q</td></tr>'
+            "<tr><td>ONE</td></tr><tr><td>TWO</td></tr>"
+            "<tr><td>THREE</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+
+        continuation = next(chunk_html for text, chunk_html in chunks if "ONE" in text)
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+        assert [row[1] for row in grid] == ["ONE", "TWO", "THREE"]
+        assert all(pd.isna(row[0]) for row in grid)
+        assert fragment_fromstring(continuation).xpath(".//tr[1]/td[1]")[0].get("rowspan") == "3"
+
+    def and_it_budgets_a_wide_own_cell_after_blank_carry(self):
+        """A colspan's actual wrapper determines whether a reduced split budget works."""
+        html = (
+            '<table><tr><td rowspan="2">anchor</td><td>x</td></tr>'
+            f'<tr><td colspan="2">{"x" * 1000}</td></tr></table>'
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert len(chunks) < 300
+        assert sum(len(text) == 1 for text, _html in chunks) == 0
+        assert sum(text.count("x") for text, _html in chunks) == 1001
+
     def and_it_keeps_html_markup_out_of_the_token_split_budget(self, monkeypatch):
         """Empty-cell HTML overhead has character units, not token units."""
         opts = ChunkingOptions(max_tokens=200, tokenizer="unused-by-fake-measure")
