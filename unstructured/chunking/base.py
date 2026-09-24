@@ -1739,6 +1739,7 @@ class _HtmlTableSplitter:
         )
 
         def commit_spans(new_spans: list[tuple[_OpenSpan, int]]) -> None:
+            nonlocal fragment_carry_cost
             active.add(new_spans)
             for span, _gap in new_spans:
                 if (
@@ -1748,6 +1749,14 @@ class _HtmlTableSplitter:
                     > maxlen
                 ):
                     oversized_carry_cols.add(span.col)
+            # Own rowspans in this fragment stay in future whole-candidate probes.
+            # Charge only accepted text spans; active spans may be blanked on fallback.
+            if fragment_cells and not additive_char_measure:
+                fragment_carry_cost += sum(
+                    len(span.text) + 1
+                    for span, _gap in new_spans
+                    if span.text and active.spans.get(span.col) is span
+                )
 
         def append_row(cells: Sequence[str | _FragmentCell], texts: list[str]) -> None:
             nonlocal fragment_text_count, fragment_char_len
@@ -2185,11 +2194,9 @@ class _HtmlTableSplitter:
                     carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
             if carry_fits:
                 append_row(mat_cells, mat_texts)
-                # -- Charge only copied cover text; the current row's own text was
-                # -- already part of row fitting before this follow-up. --
-                fragment_carry_cost = (
-                    active.text_len + active.text_count if active.text_count else 0
-                )
+                # This fragment copied active cover text. Later candidate probes
+                # remeasure it even after the source span expires.
+                fragment_carry_cost = active.text_len + active.text_count
                 if fragment_text_cover_per_row:
                     start_fragment_text_cover(mat_cells)
             else:

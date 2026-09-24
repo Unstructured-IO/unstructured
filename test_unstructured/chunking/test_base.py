@@ -4852,8 +4852,46 @@ class Describe_HtmlTableSplitter:
 
         assert sum(len(fragment) for _text, fragment in chunks) < 10_000
         assert measured_label_chars < 1500
-        assert words <= sum(text.count("L") for text, _html in chunks) < 3 * words
+        # The original oversized row and one fitting continuation each carry the label.
+        assert sum(text.count("L") for text, _html in chunks) == 2 * words
         assert sum(text.count("v") for text, _html in chunks) >= words
+
+    @pytest.mark.parametrize("packed_start", [False, True])
+    def and_it_budgets_new_token_mode_rowspan_carry(self, monkeypatch, packed_start):
+        """A newly committed label charges later whole-candidate probes in either path."""
+        words = 160
+        rows = 500
+        limit = 400
+        opts = ChunkingOptions(max_tokens=limit, tokenizer="unused-by-fake-measure")
+        measured_label_chars = 0
+
+        def measured(text):
+            nonlocal measured_label_chars
+            measured_label_chars += text.count("L")
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", measured)
+        label = f'<td rowspan="{rows + 1}">{" ".join(["L"] * words)}</td>'
+        initial_row = "<tr><td>x</td></tr>" if packed_start else f"<tr>{label}<td>x</td></tr>"
+        second_row = f"<tr>{label}<td>v</td></tr>" if packed_start else "<tr><td>v</td></tr>"
+        html = f"<table>{initial_row}{second_row}" + "<tr><td>v</td></tr>" * (rows - 1) + "</table>"
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert measured_label_chars < 5000
+        assert sum(text.count("L") for text, _html in chunks) == words
+        assert sum(text.count("v") for text, _html in chunks) == rows
+        assert any("L" in text and "v" in text for text, _html in chunks)
+        assert any("L" not in text and "v" in text for text, _html in chunks)
+        assert len(chunks) < 20
+        assert max(text.count("v") for text, _html in chunks if "L" not in text) > 100
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 3 * rows
+        assert all(opts.measure(text) <= limit for text, _html in chunks)
+        pd = pytest.importorskip("pandas")
+        for _text, fragment in chunks:
+            grid = pd.read_html(io.StringIO(fragment))[0]
+            for row in grid.itertuples(index=False, name=None):
+                if "v" in row:
+                    assert row.index("v") == 1
 
     def and_it_cancels_many_new_blanks_before_one_wide_cell(self):
         """Expired labels leave no overlapping blanks beneath a new colspan."""
