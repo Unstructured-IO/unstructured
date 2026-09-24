@@ -13,6 +13,7 @@ from typing import Any, Sequence
 import pytest
 from lxml.html import fragment_fromstring
 
+import unstructured.chunking.base as chunking_base
 from unstructured.chunking.base import (
     ChunkingOptions,
     PreChunk,
@@ -4393,6 +4394,38 @@ class Describe_HtmlTableSplitter:
         assert (
             fragment_fromstring(first_continuation).xpath(".//tr[1]/td[1]")[0].text_content() == ""
         )
+
+    def and_it_does_not_format_discarded_long_carry_on_every_row(self, monkeypatch):
+        """A rejected text-bearing carry must not escape its full text per fragment."""
+        long_text = "&" * 10_000
+        html = (
+            f'<table><tr><td rowspan="42">{html_stdlib.escape(long_text)}</td>'
+            '<td rowspan="5">short</td><td>x</td></tr>'
+            + ("<tr><td>" + "a" * 150 + "</td></tr>") * 40
+            + "<tr><td>end</td></tr></table>"
+        )
+        original_format_td = chunking_base._format_td
+        long_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal long_format_calls
+            if len(text) >= len(long_text):
+                long_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+
+        assert long_format_calls == 0
+        assert sum(text.count("&") for text, _html in chunks) == len(long_text)
+        assert sum(text.count("a" * 150) for text, _html in chunks) == 40
+        assert all(len(text) <= 200 for text, _html in chunks)
+        continuation = next(chunk_html for text, chunk_html in chunks if "a" * 150 in text)
+        assert fragment_fromstring(continuation).xpath(".//tr[1]/td[1]")[0].text_content() == ""
 
     def and_it_attaches_blank_carry_to_an_oversized_own_cell_fragment(self):
         """A blank covering cell must not become its own empty TableChunk."""

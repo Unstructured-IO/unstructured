@@ -1354,6 +1354,8 @@ class _ActiveSpanLedger:
 
     def __init__(self) -> None:
         self.spans: dict[int, _OpenSpan] = {}
+        self.text_len = 0
+        self.text_count = 0
         self.expiry: list[tuple[int, int]] = []
         self.gaps: dict[int, int | None] = {0: None}
         self.gaps_by_end: dict[int, int] = {}
@@ -1368,6 +1370,9 @@ class _ActiveSpanLedger:
             if span is None or span.reach_idx + 1 != end_row:
                 continue
             del self.spans[col]
+            if span.text:
+                self.text_len -= len(span.text)
+                self.text_count -= 1
             start = span.col
             end: int | None = span.col + span.colspan
             left = self.gaps_by_end.get(start)
@@ -1419,6 +1424,9 @@ class _ActiveSpanLedger:
                 self._add_gap(span_end, gap_end)
             right_of_initial_gap[initial_gap] = span_end
             self.spans[span.col] = span
+            if span.text:
+                self.text_len += len(span.text)
+                self.text_count += 1
             heapq.heappush(self.expiry, (span.reach_idx + 1, span.col))
 
     def _add_gap(self, start: int, end: int | None) -> None:
@@ -1738,8 +1746,21 @@ class _HtmlTableSplitter:
 
             yield from flush_fragment()
 
-            mat_cells, mat_texts = materialize(placed, idx)
-            if self._opts.measure(" ".join(mat_texts)) <= maxlen:
+            # -- For ordinary character measurement, decide whether carried text fits
+            # -- before escaping and formatting potentially huge retained cells. --
+            carry_fits = (
+                active.text_len + sum(map(len, texts)) + max(0, active.text_count + len(texts) - 1)
+                <= maxlen
+                if additive_char_measure
+                else None
+            )
+            if carry_fits is False:
+                mat_cells: list[str] = []
+                mat_texts: list[str] = []
+            else:
+                mat_cells, mat_texts = materialize(placed, idx)
+                carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
+            if carry_fits:
                 append_row(mat_cells, mat_texts)
             else:
                 # -- even this single row, with its covered columns materialized, is too big to
@@ -1753,12 +1774,19 @@ class _HtmlTableSplitter:
                     # -- start a fresh fragment and recover its covering context. A carry too
                     # -- long to fit even alone stays blank while ordinary rows accumulate;
                     # -- otherwise it would be split again on every covered source row. --
-                    carry_text = " ".join(
-                        span.text
-                        for span in sorted(active.spans.values(), key=lambda span: span.col)
-                        if span.text
+                    carry_alone_fits = (
+                        active.text_len + max(0, active.text_count - 1) <= maxlen
+                        if additive_char_measure
+                        else self._opts.measure(
+                            " ".join(
+                                span.text
+                                for span in sorted(active.spans.values(), key=lambda span: span.col)
+                                if span.text
+                            )
+                        )
+                        <= maxlen
                     )
-                    if self._opts.measure(carry_text) <= maxlen:
+                    if carry_alone_fits:
                         yield from flush_fragment()
                 else:
                     tr = _HtmlTableSplitter._parse_row_fragment(
