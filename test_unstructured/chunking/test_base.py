@@ -4736,20 +4736,22 @@ class Describe_HtmlTableSplitter:
         html_out = reconstructed.metadata.text_as_html
         assert html_out is not None
         grid = pd.read_html(io.StringIO(html_out))[0].to_numpy().tolist()
-        # -- an uncorrected rowspan="3" reaches 3 rows deep, so check the rows immediately
-        # -- following "Region" rather than the much-later NW/Southwest Territory rows --
+        # -- The first emitted singleton is clipped before the split z-cell fragments.
+        # -- The source span still covers the two body rows, so a later fragment restores
+        # -- its header context with a new rowspan bounded to those two rows. --
         assert grid[0][0] == "Region"
         for row in grid[1:9]:
             assert row[0] != "Region", f"a later row still carries Region's uncorrected span: {row}"
         for row in grid:
             if "NW" in row:
-                assert row == ["NW", "Q1"]
+                assert row == ["Region", "NW", "Q1"]
             if "Southwest Territory" in row:
-                assert row == ["Southwest Territory", "Q2"]
-        # -- no cell text lost or duplicated across the whole reconstructed table --
+                assert row == ["Region", "Southwest Territory", "Q2"]
+        # -- the header text is repeated once as context for the body fragment --
         combined_text = reconstructed.text
-        for word in ("Region", "NW", "Southwest"):
-            assert combined_text.count(word) == 1
+        assert combined_text.count("Region") == 2
+        assert combined_text.count("NW") == 1
+        assert combined_text.count("Southwest") == 1
 
 
 class Describe_TextSplitter:
