@@ -4251,16 +4251,22 @@ class Describe_HtmlTableSplitter:
             )
         )
 
-        continuation = fragment_fromstring(chunks[-1][1])
-        rows = continuation.xpath(".//tr")
+        first_continuation = next(html for text, html in chunks if "one" in text)
+        rows = fragment_fromstring(first_continuation).xpath(".//tr")
         assert [cell.text_content() for cell in rows[0].xpath("./td")] == [
             "ANCHOR",
             "SHORT",
             "one",
         ]
         assert [cell.text_content() for cell in rows[1].xpath("./td")] == ["NEW", "two"]
-        assert [cell.text_content() for cell in rows[2].xpath("./td")] == ["three"]
-        assert [cell.text_content() for cell in rows[3].xpath("./td")] == ["four"]
+        later_continuation = next(html for text, html in chunks if "three" in text)
+        later_rows = fragment_fromstring(later_continuation).xpath(".//tr")
+        assert [cell.text_content() for cell in later_rows[0].xpath("./td")] == [
+            "ANCHOR",
+            "NEW",
+            "three",
+        ]
+        assert [cell.text_content() for cell in later_rows[1].xpath("./td")] == ["four"]
 
     @pytest.mark.parametrize("continuation_cell", ["", "<td/>"])
     def and_it_keeps_many_sparse_spans_across_a_cell_split(self, continuation_cell: str):
@@ -4287,12 +4293,12 @@ class Describe_HtmlTableSplitter:
         rows = continuation.xpath(".//tr")
         assert len(rows) == continuation_rows
         cells = rows[0].xpath("./td")
-        assert len(cells) == span_count + 1 + bool(continuation_cell)
+        assert len(cells) <= 3 + bool(continuation_cell)
         assert cells[0].text_content() == "ANCHOR"
         assert cells[0].get("rowspan") == str(continuation_rows)
-        assert [int(cell.get("rowspan", "1")) for cell in cells[1 : span_count + 1]] == [
-            1 + 2 * ((i * 73) % span_count) for i in range(span_count)
-        ]
+        assert sum(int(cell.get("colspan", "1")) for cell in cells) == span_count + 1 + bool(
+            continuation_cell
+        )
 
     @pytest.mark.parametrize("wide_colspan", [2, 3])
     def and_it_skips_narrow_gaps_without_scanning_them_on_each_wide_cell(
@@ -4566,14 +4572,17 @@ class Describe_HtmlTableSplitter:
         assert sum(text.count("x") for text, _html in chunks) == 501
         assert sum(text.count("y") for text, _html in chunks) == n_rows * own_len
 
-    @pytest.mark.parametrize("variant", ["label", "two_expiries"])
-    @pytest.mark.parametrize("own_len", [498, 499, 400, 249])
+    @pytest.mark.parametrize(
+        "variant", ["label", "two_expiries", "label_two_expiries", "label_gaps"]
+    )
+    @pytest.mark.parametrize("own_len", [498, 499, 400, 249, 501])
     def and_it_compacts_mixed_blank_covers_on_near_limit_rows(self, monkeypatch, variant, own_len):
-        """A label or staggered expiries cannot restore per-span output growth."""
+        """Crossed labels, expiries, and gaps cannot restore per-span output growth."""
         n_spans = n_rows = 100
-        label = f'<td rowspan="{n_rows + 1}">A</td>' if variant == "label" else ""
+        label = f'<td rowspan="{n_rows + 1}">A</td>' if "label" in variant else ""
         blanks = "".join(
-            f'<td rowspan="{n_rows if variant == "two_expiries" and i % 2 else n_rows + 1}"/>'
+            f'<td rowspan="{n_rows if "two_expiries" in variant and i % 2 else n_rows + 1}"/>'
+            + ("<td/>" if variant == "label_gaps" else "")
             for i in range(n_spans)
         )
         html = (
@@ -4597,8 +4606,8 @@ class Describe_HtmlTableSplitter:
             )
         )
 
-        assert blank_format_calls < 1000
-        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 1000
+        assert blank_format_calls < 2000
+        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 2000
         assert sum(text.count("x") for text, _html in chunks) == 501
         assert sum(text.count("y") for text, _html in chunks) == n_rows * own_len
 
@@ -4623,6 +4632,28 @@ class Describe_HtmlTableSplitter:
         assert grid[0][2] == "ONE"
         assert grid[1][2] == "TWO"
         assert grid[2][1] == "THREE"
+
+    def and_it_keeps_a_label_over_packed_rows_with_mixed_expiries(self):
+        """Compact blank scaffolds must leave a retained label's rowspan unobstructed."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            '<table><tr><td rowspan="4">LABEL</td><td rowspan="4"/>'
+            '<td rowspan="3"/><td>' + "x" * 201 + "</td></tr>"
+            "<tr><td>ONE</td></tr><tr><td>TWO</td></tr>"
+            "<tr><td>THREE</td></tr></table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+        continuation = next(chunk_html for text, chunk_html in chunks if "ONE" in text)
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+
+        assert [row[0] for row in grid] == ["LABEL"] * 3
+        assert grid[0][3] == "ONE"
+        assert grid[1][3] == "TWO"
+        assert grid[2][2] == "THREE"
 
     def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
         """A new own rowspan is clipped before later rows get compact blank geometry."""

@@ -1661,6 +1661,7 @@ class _HtmlTableSplitter:
         fragment_text_count = 0
         fragment_char_len = 0
         fragment_blank_per_row = False
+        fragment_text_cover_per_row = False
         additive_char_measure = (
             not self._opts.use_token_counting
             and getattr(self._opts.measure, "__func__", None) is ChunkingOptions.measure
@@ -1754,6 +1755,45 @@ class _HtmlTableSplitter:
                 cells.append(_format_td("", trailing_col - col))
             return cells
 
+        def materialize_compact_text_cover(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int, emit_text: bool
+        ) -> tuple[list[str], list[str]]:
+            """Represent blank geometry as runs while retaining live text spans.
+
+            Text spans are emitted only at a fragment boundary. On later rows their
+            already emitted rowspans occupy those columns, so omit them entirely.
+            """
+            incoming = sorted(active.text_spans.values(), key=lambda span: span.col)
+            cells: list[str] = []
+            texts: list[str] = []
+            col = own_idx = span_idx = 0
+            while own_idx < len(placed) or span_idx < len(incoming):
+                own_col = placed[own_idx][0] if own_idx < len(placed) else None
+                span_col = incoming[span_idx].col if span_idx < len(incoming) else None
+                if span_col is not None and (own_col is None or span_col < own_col):
+                    span = incoming[span_idx]
+                    span_idx += 1
+                    if col < span.col:
+                        cells.append(_format_td("", span.col - col))
+                    if emit_text:
+                        cells.append(_format_td(span.text, span.colspan, span.reach_idx - idx + 1))
+                        texts.append(span.text)
+                    col = span.col + span.colspan
+                else:
+                    assert own_col is not None
+                    cell = placed[own_idx][2]
+                    own_idx += 1
+                    if col < own_col:
+                        cells.append(_format_td("", own_col - col))
+                    cells.append(own_cell_html(cell, idx))
+                    if cell.text:
+                        texts.append(cell.text)
+                    col = own_col + cell.colspan
+            trailing_col = active.gap_index.trailing_gap_start()
+            if col < trailing_col:
+                cells.append(_format_td("", trailing_col - col))
+            return cells, texts
+
         def materialize_uniform_cover(
             placed: Sequence[tuple[int, int, HtmlCell]], idx: int, width: int, reach: int
         ) -> tuple[list[str], list[str]]:
@@ -1793,6 +1833,7 @@ class _HtmlTableSplitter:
         def flush_fragment() -> Iterator[TextAndHtml]:
             nonlocal fragment_cells, fragment_texts, fragment_text_count, fragment_char_len
             nonlocal fragment_blank_per_row
+            nonlocal fragment_text_cover_per_row
             if not fragment_cells:
                 return
             m = len(fragment_cells)
@@ -1811,6 +1852,7 @@ class _HtmlTableSplitter:
             fragment_cells, fragment_texts = [], []
             fragment_text_count = fragment_char_len = 0
             fragment_blank_per_row = False
+            fragment_text_cover_per_row = False
             yield text, html
 
         for idx, row in enumerate(group):
@@ -1829,8 +1871,15 @@ class _HtmlTableSplitter:
                 if reach > idx:
                     new_spans.append((_OpenSpan(col, cell.colspan, cell.text, reach), gap))
             if fragment_cells and fits(texts):
+                packed_cells = (
+                    materialize_compact_text_cover(placed, idx, False)[0]
+                    if fragment_text_cover_per_row
+                    else materialize_blank_compact(placed, idx)
+                    if fragment_blank_per_row
+                    else cells
+                )
                 append_row(
-                    materialize_blank_compact(placed, idx) if fragment_blank_per_row else cells,
+                    packed_cells,
                     texts,
                 )
                 commit_spans(new_spans)
@@ -1864,13 +1913,15 @@ class _HtmlTableSplitter:
                     width, reach = uniform_cover
                     mat_cells, mat_texts = materialize_uniform_cover(placed, idx, width, reach)
                     carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
-                elif active.spans and not active.text_count:
-                    # -- Mixed blank expiries can be represented per source row; each
-                    # -- row gets its own compact blank columns instead of S cells. --
-                    mat_cells = materialize_blank_compact(placed, idx)
-                    mat_texts = texts
-                    carry_fits = own_fits
+                elif active.spans:
+                    # -- Mixed expiries or gaps need a per-row blank scaffold. Retained
+                    # -- text spans remain as bounded rowspans across packed rows. --
+                    mat_cells, mat_texts = materialize_compact_text_cover(
+                        placed, idx, bool(active.text_count)
+                    )
+                    carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
                     fragment_blank_per_row = True
+                    fragment_text_cover_per_row = bool(active.text_count)
                 else:
                     mat_cells, mat_texts = materialize(placed, idx)
                     carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
@@ -1887,6 +1938,7 @@ class _HtmlTableSplitter:
                     fallback_cells = materialize_blank_compact(placed, idx)
                     append_row(fallback_cells, texts)
                     fragment_blank_per_row = True
+                    fragment_text_cover_per_row = False
                     # -- If the carry text could fit with a later, smaller row, let that row
                     # -- start a fresh fragment and recover its covering context. A carry too
                     # -- long to fit even alone stays blank while ordinary rows accumulate;
