@@ -1,3 +1,9 @@
+## 0.27.9-dev0
+
+### Fixes
+
+- **Keep the text inside HTML elements the parser does not recognize.** Since 0.15.0, `partition_html()` (and the `.md`, `.eml`, `.msg`, `.epub`, `.rst` and `.org` partitioners that route through it) kept only the text *after* an element with no registered element class and dropped its content: `<font>` text in email bodies, custom elements, and the Inline XBRL facts and notes of SEC filings (`example-10k.html` lost about a third of its text, including Notes 1-14). An unrecognized element is now transparent, like a `<span>`: its text joins the surrounding paragraph and any block items it contains become their own elements. Elements whose content is not rendered as text (`<head>`, `<title>`, `<svg>`, `<math>`, `<iframe>`, `<object>`, `<audio>`, `<video>`, `<canvas>`, `<noembed>`, `<noframes>`, `<select>`, `<datalist>`, `<textarea>`, `<dialog>`, and legacy `<xml>` data islands) and the hidden Inline XBRL `<ix:header>` are still skipped. Resolves #4496 and #3842.
+
 ## 0.27.8
 
 ### Enhancements
