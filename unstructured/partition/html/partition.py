@@ -14,7 +14,7 @@ from unstructured.documents.elements import Element, ElementType
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.partition.html.parser import Flow, html_parser
+from unstructured.partition.html.parser import Flow, Math, html_parser
 from unstructured.partition.html.transformations import (
     ontology_to_unstructured_elements,
     parse_html_to_ontology,
@@ -260,6 +260,8 @@ class _HtmlPartitioner:
             root = etree.fromstring(html_text, html_parser)
         except ValueError:
             root = etree.fromstring(html_text.encode("utf-8"), html_parser)
+
+        Math._normalize_katex(root)
 
         # -- remove a variety of HTML element types like <script> and <style> that we prefer not
         # -- to encounter while parsing.
