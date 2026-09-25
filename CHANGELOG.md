@@ -1,3 +1,9 @@
+## 0.27.9-dev0
+
+### Fixes
+
+- **`combine_text_under_n_chars` no longer overrides `new_after_n_chars` in `chunk_by_title()`.** The option is documented as being capped at `new_after_n_chars`, since a combine-threshold above the soft-max recombines pre-chunks the soft-max has already declared full. The cap was dropped in a 2024 refactor of `title.py` while both the option's public documentation and the property's own docstring continued to describe it, so `chunk_by_title(max_characters=500, new_after_n_chars=100, combine_text_under_n_chars=400)` returned a single 367-character chunk where three 121-character chunks were asked for. The cap is restored; validation still rejects a negative value or one greater than `max_characters`, using the argument as given.
+
 ## 0.27.8
 
 ### Enhancements

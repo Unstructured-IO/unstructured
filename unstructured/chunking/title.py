@@ -239,7 +239,15 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         """
         # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified --
         arg_value = self._kwargs.get("combine_text_under_n_chars")
-        return self.hard_max if arg_value is None else arg_value
+        combine_text_under_n_chars = self.hard_max if arg_value is None else arg_value
+
+        # -- NOTE(abo3losh1): `new_after_n_chars` takes precedence on conflict. A threshold above
+        # -- the soft-max would combine pre-chunks the soft-max has already declared full. Only in
+        # -- character mode: this threshold is a character count, measured against `len(text)` in
+        # -- `PreChunk.can_combine()`, while `soft_max` is a token count when chunking by tokens.
+        if self.use_token_counting:
+            return combine_text_under_n_chars
+        return min(combine_text_under_n_chars, self.soft_max)
 
     @cached_property
     def multipage_sections(self) -> bool:
@@ -252,20 +260,23 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         # -- start with base-class validations --
         super()._validate()
 
+        # -- validate the argument as the caller gave it, not the capped property value, so that
+        # -- the cap applied above cannot swallow an out-of-range argument --
+        arg_value = self._kwargs.get("combine_text_under_n_chars")
+        if arg_value is None:
+            return
+
         # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
         # -- but a negative value is not
-        if self.combine_text_under_n_chars < 0:
-            raise ValueError(
-                f"'combine_text_under_n_chars' argument must be >= 0,"
-                f" got {self.combine_text_under_n_chars}"
-            )
+        if arg_value < 0:
+            raise ValueError(f"'combine_text_under_n_chars' argument must be >= 0, got {arg_value}")
 
         # -- `combine_text_under_n_chars` > `max_characters` can produce behavior confusing to
         # -- users. The chunking behavior would be no different than when
         # -- `combine_text_under_n_chars == max_characters`, but if `max_characters` is left to
         # -- default (500) then it can look like chunk-combining isn't working.
-        if self.combine_text_under_n_chars > self.hard_max:
+        if arg_value > self.hard_max:
             raise ValueError(
                 f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
-                f" value, got {self.combine_text_under_n_chars} > {self.hard_max}"
+                f" value, got {arg_value} > {self.hard_max}"
             )
