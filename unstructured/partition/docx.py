@@ -16,6 +16,9 @@ from docx.document import Document
 from docx.enum.section import WD_SECTION_START
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
+from docx.oxml.xmlchemy import BaseOxmlElement
+from docx.parts.document import DocumentPart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.table import _Cell, _Row
@@ -231,8 +234,16 @@ class DocxPartitionerOptions:
 
     @cached_property
     def document(self) -> Document:
-        """The python-docx `Document` object loaded from file or filename."""
-        return docx.Document(self._docx_file)
+        """The python-docx `Document` object loaded from file or filename.
+
+        Content that python-docx would skip because it is nested in a content control, a tracked
+        revision or a similar wrapper is lifted into place first; see `_unwrap_nested_content()`.
+        """
+        document = docx.Document(self._docx_file)
+        for part in document.part.package.iter_parts():
+            if isinstance(part, (DocumentPart, HeaderPart, FooterPart)):
+                _unwrap_nested_content(part.element)
+        return document
 
     @cached_property
     def include_page_breaks(self) -> bool:
@@ -1015,6 +1026,64 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
+
+
+# ================================================================================================
+# NESTED CONTENT
+# ================================================================================================
+
+_W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+# -- wrappers whose content is ordinary content: the content is kept, the wrapper removed --
+_UNWRAPPED_TAGS = frozenset(
+    _W + tag for tag in ("ins", "moveTo", "customXml", "smartTag", "fldSimple", "dir", "bdo")
+)
+
+
+def _unwrap_nested_content(root: BaseOxmlElement) -> None:
+    """Lift content python-docx would skip into the place it occupies, in the tree under `root`.
+
+    python-docx reads the `w:p` and `w:tbl` children of the body, a cell, a header or a footer,
+    and the runs and hyperlinks directly in a paragraph. Content one level deeper is skipped:
+
+    - a content control (`w:sdt`) keeps its paragraphs, tables, rows, cells or runs in
+      `w:sdtContent`;
+    - an insertion or a move made with track changes on (`w:ins`, `w:moveTo`) wraps its runs;
+    - custom XML markup, a smart tag, a simple field and a bidirectional span (`w:customXml`,
+      `w:smartTag`, `w:fldSimple`, `w:dir`, `w:bdo`) wrap theirs.
+
+    Each wrapper is replaced by its content. Deleted and moved-away content (`w:del`,
+    `w:moveFrom`) stays where it is, where python-docx skips it, so what is read is the text Word
+    shows once all revisions are accepted.
+
+    Two content controls keep their current treatment: the automatic table of contents stays
+    unread, and a control still showing its placeholder text is dropped, since that text only
+    tells the reader what to type there. An empty `w:ins` marking a revision in run, paragraph or
+    row properties holds no content, so removing it changes nothing that is read.
+    """
+    for wrapper in list(root.iter(_W + "sdt", *_UNWRAPPED_TAGS)):
+        parent = wrapper.getparent()
+        if parent is None:
+            continue
+        children = (
+            _content_control_children(wrapper) if wrapper.tag == _W + "sdt" else list(wrapper)
+        )
+        if children is None:
+            continue
+        index = parent.index(wrapper)
+        parent[index : index + 1] = children
+
+
+def _content_control_children(sdt: BaseOxmlElement) -> list[BaseOxmlElement] | None:
+    """The elements to put in place of content control `sdt`, or None to leave it as it is."""
+    properties = sdt.find(_W + "sdtPr")
+    if properties is not None:
+        if properties.find(_W + "showingPlcHdr") is not None:
+            return []
+        gallery = properties.find(f"{_W}docPartObj/{_W}docPartGallery")
+        if gallery is not None and gallery.get(_W + "val") == "Table of Contents":
+            return None
+    content = sdt.find(_W + "sdtContent")
+    return [] if content is None else list(content)
 
 
 # ================================================================================================

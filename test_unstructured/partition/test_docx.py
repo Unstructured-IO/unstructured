@@ -15,6 +15,7 @@ import docx
 import pytest
 from docx.document import Document
 from docx.enum.section import WD_SECTION
+from docx.oxml import parse_xml
 from docx.section import Section
 from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
@@ -277,6 +278,131 @@ def test_partition_docx_merged_cell_table_chunks_without_corrupting_rowspan_geom
     assert chunks[2].metadata.text_as_html == (
         "<table><tr><td>juliet</td><td>kilo lima mike</td></tr></table>"
     )
+
+
+_W_NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
+_REVISION = 'w:author="a" w:date="2024-01-01T00:00:00Z"'
+
+
+def _w_run(text: str) -> str:
+    return f'<w:r><w:t xml:space="preserve">{text}</w:t></w:r>'
+
+
+def _w_control(content: str, properties: str = "") -> str:
+    return (
+        f"<w:sdt {_W_NS}><w:sdtPr>{properties}</w:sdtPr>"
+        f"<w:sdtContent>{content}</w:sdtContent></w:sdt>"
+    )
+
+
+def _append_to_body(document: Document, xml: str) -> None:
+    """Insert raw WordprocessingML ahead of the body's closing `w:sectPr`."""
+    body = document.element.body
+    body.insert(len(body) - 1, parse_xml(xml))
+
+
+def test_partition_docx_reads_content_nested_in_content_controls_and_revisions(tmp_path):
+    """python-docx skips content one level below the body or a paragraph; none of it is lost."""
+    document = docx.Document()
+    _append_to_body(document, _w_control(f"<w:p>{_w_run('In a content control')}</w:p>"))
+    _append_to_body(
+        document,
+        f'<w:customXml {_W_NS} w:element="clause">'
+        f"<w:p>{_w_run('In custom XML')}</w:p></w:customXml>",
+    )
+    for content in (
+        _w_run("Signed by ")
+        + f"<w:sdt><w:sdtPr/><w:sdtContent>{_w_run('Jane Doe')}</w:sdtContent></w:sdt>",
+        _w_run("Dose: ")
+        + f'<w:ins w:id="1" {_REVISION}>{_w_run("20 mg")}</w:ins>'
+        + f'<w:del w:id="2" {_REVISION}><w:r><w:tab/><w:delText>10 mg</w:delText></w:r></w:del>',
+        f'<w:moveFrom w:id="3" {_REVISION}>{_w_run("Moved away")}</w:moveFrom>'
+        f'<w:moveTo w:id="4" {_REVISION}>{_w_run("Moved here")}</w:moveTo>',
+        _w_run("Updated ") + f'<w:fldSimple w:instr=" DATE ">{_w_run("2024-05-01")}</w:fldSimple>',
+        f'<w:smartTag w:uri="urn:x" w:element="place">{_w_run("Reutlingen")}</w:smartTag>',
+        f'<w:customXml w:element="name">{_w_run("Custom inline")}</w:customXml>',
+        f'<w:dir w:val="rtl">{_w_run("Embedded")}</w:dir>'
+        f'<w:bdo w:val="rtl">{_w_run(" override")}</w:bdo>',
+        f'<w:pPr><w:rPr><w:ins w:id="5" {_REVISION}/></w:rPr></w:pPr>'
+        f"{_w_run('Inserted paragraph')}",
+    ):
+        _append_to_body(document, f"<w:p {_W_NS}>{content}</w:p>")
+    docx_path = tmp_path / "nested-content.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path))
+
+    assert [e.text for e in elements] == [
+        "In a content control",
+        "In custom XML",
+        "Signed by Jane Doe",
+        "Dose: 20 mg",
+        "Moved here",
+        "Updated 2024-05-01",
+        "Reutlingen",
+        "Custom inline",
+        "Embedded override",
+        "Inserted paragraph",
+    ]
+
+
+def test_partition_docx_reads_content_controls_in_tables_headers_and_footers(tmp_path):
+    document = docx.Document()
+    table = document.add_table(rows=1, cols=2)
+    table.cell(0, 0).text = "Name"
+    table.cell(0, 1)._tc.p_lst[0].append(parse_xml(_w_control(_w_run("Jane Doe"))))
+    # -- a repeating-section item: the row itself is wrapped in a content control --
+    table._tbl.append(
+        parse_xml(
+            _w_control(
+                f"<w:tr><w:tc><w:p>{_w_run('Role')}</w:p></w:tc>"
+                f"<w:tc><w:p>{_w_run('Reviewer')}</w:p></w:tc></w:tr>"
+            )
+        )
+    )
+    section = document.sections[0]
+    section.header.paragraphs[0]._p.append(parse_xml(_w_control(_w_run("Quarterly report"))))
+    section.footer.paragraphs[0]._p.append(parse_xml(_w_control(_w_run("Confidential"))))
+    docx_path = tmp_path / "controls-in-tables-and-headers.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+
+    table_element = next(e for e in elements if isinstance(e, Table))
+    assert table_element.text == "Name Jane Doe Role Reviewer"
+    assert table_element.metadata.text_as_html == (
+        "<table><tr><td>Name</td><td>Jane Doe</td></tr>"
+        "<tr><td>Role</td><td>Reviewer</td></tr></table>"
+    )
+    assert [e.text for e in elements if isinstance(e, Header)] == ["Quarterly report"]
+    assert [e.text for e in elements if isinstance(e, Footer)] == ["Confidential"]
+
+
+def test_partition_docx_leaves_out_the_table_of_contents_and_placeholder_text(tmp_path):
+    """The automatic table of contents stays unread, and so does a control's placeholder text."""
+    toc = '<w:docPartObj><w:docPartGallery w:val="Table of Contents"/></w:docPartObj>'
+    document = docx.Document()
+    document.add_paragraph("Before")
+    _append_to_body(
+        document,
+        _w_control(
+            f"<w:p>{_w_run('Contents')}</w:p><w:p>{_w_run('Introduction')}<w:r><w:tab/></w:r>"
+            f"{_w_run('1')}</w:p>",
+            properties=toc,
+        ),
+    )
+    _append_to_body(
+        document,
+        f"<w:p {_W_NS}>{_w_run('Due date: ')}<w:sdt><w:sdtPr><w:showingPlcHdr/></w:sdtPr>"
+        f"<w:sdtContent>{_w_run('Click or tap to enter a date.')}</w:sdtContent></w:sdt></w:p>",
+    )
+    document.add_paragraph("After")
+    docx_path = tmp_path / "toc-and-placeholder.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path))
+
+    assert [e.text for e in elements] == ["Before", "Due date: ", "After"]
 
 
 def test_partition_docx_grabs_header_and_footer():
