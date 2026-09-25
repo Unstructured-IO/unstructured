@@ -874,7 +874,7 @@ class Text(Element):
         embeddings: Optional[list[float]] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
-        self.text: str = text
+        self.text: str = "" if text is None else text
         self.embeddings: Optional[list[float]] = embeddings
 
         super().__init__(
@@ -898,7 +898,7 @@ class Text(Element):
         )
 
     def __str__(self):
-        return self.text
+        return "" if self.text is None else self.text
 
     def apply(self, *cleaners: Callable[[str], str]):
         """Applies a cleaning brick to the text element.
