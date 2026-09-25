@@ -7,11 +7,13 @@ from __future__ import annotations
 import html as html_stdlib
 import io
 import logging
+import random
 from typing import Any, Sequence
 
 import pytest
 from lxml.html import fragment_fromstring
 
+import unstructured.chunking.base as chunking_base
 from unstructured.chunking.base import (
     ChunkingOptions,
     PreChunk,
@@ -19,9 +21,12 @@ from unstructured.chunking.base import (
     PreChunkCombiner,
     PreChunker,
     TokenCounter,
+    _ActiveSpanLedger,
     _CellAccumulator,
     _Chunker,
+    _GapIndex,
     _HtmlTableSplitter,
+    _OpenSpan,
     _PreChunkAccumulator,
     _RowAccumulator,
     _TableChunker,
@@ -3761,11 +3766,12 @@ class Describe_HtmlTableSplitter:
         assert chunks == [
             ("Region", "<table><tr><td>Region</td></tr></table>"),
             ("xxxxxxxxxxxxx", "<table><tr><td>xxxxxxxxxxxxx</td></tr></table>"),
-            ("yyyyyyyyyyyyy", "<table><tr><td>yyyyyyyyyyyyy</td></tr></table>"),
+            ("yyyyyyyyyyyyy", "<table><tr><td/><td>yyyyyyyyyyyyy</td></tr></table>"),
         ]
-        # -- no cell text lost or duplicated across the whole set of chunks --
+        # -- the covering cell supplies geometry without re-splitting its text --
         combined_text = " ".join(text for text, _ in chunks)
-        for word in ("Region", "xxxxxxxxxxxxx", "yyyyyyyyyyyyy"):
+        assert combined_text.count("Region") == 1
+        for word in ("xxxxxxxxxxxxx", "yyyyyyyyyyyyy"):
             assert combined_text.count(word) == 1
 
     def and_it_bounds_a_rowspan_0_header_to_its_own_thead_instead_of_the_whole_table(self):
@@ -4205,8 +4211,8 @@ class Describe_HtmlTableSplitter:
         assert len(chunks) > 1
         assert all(len(chunk.text) <= 60 for chunk in chunks)
 
-    def and_it_matches_main_after_cell_splitting_an_oversized_rowspan_group(self):
-        """Incoming spans are discarded after cell fallback, preserving main's limitation."""
+    def and_it_preserves_a_rowspan_after_cell_splitting_an_oversized_group(self):
+        """A cell-level fallback must keep covering columns for later rows."""
         html = (
             "<table><tbody>"
             '<tr><th rowspan="4">HHHHHHHHHHHHHHHHHHHH</th><th>x</th></tr>'
@@ -4226,7 +4232,971 @@ class Describe_HtmlTableSplitter:
         value_chunk = next(chunk for chunk in chunks if "VALUE" in chunk.text)
         value_html = fragment_fromstring(value_chunk.metadata.text_as_html or "")
         value_row = next(row for row in value_html.xpath(".//tr") if "VALUE" in row.text_content())
-        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == ["VALUE"]
+        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == [
+            "HHHHHHHHHHHHHHHHHHHH",
+            "VALUE",
+        ]
+
+    def and_it_places_cells_after_spans_expire_inside_an_oversized_group(self):
+        """A later cell reuses an expired span's column while longer spans stay active."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            '<table><tr><td rowspan="5">ANCHOR</td><td rowspan="2">SHORT</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            '<tr><td>one</td></tr><tr><td rowspan="2">NEW</td><td>two</td></tr>'
+            "<tr><td>three</td></tr><tr><td>four</td></tr></table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        first_continuation = next(html for text, html in chunks if "one" in text)
+        rows = fragment_fromstring(first_continuation).xpath(".//tr")
+        assert [cell.text_content() for cell in rows[0].xpath("./td")] == [
+            "ANCHOR",
+            "SHORT",
+            "one",
+        ]
+        assert [cell.text_content() for cell in rows[1].xpath("./td")] == ["NEW", "two"]
+        assert [cell.text_content() for cell in rows[2].xpath("./td")] == ["three"]
+        assert [cell.text_content() for cell in rows[3].xpath("./td")] == ["four", ""]
+        grid = pd.read_html(io.StringIO(first_continuation))[0].to_numpy().tolist()
+        assert grid[2][2] == "three"
+        assert grid[3][1] == "four"
+
+    @pytest.mark.parametrize("continuation_cell", ["", "<td/>"])
+    def and_it_keeps_many_sparse_spans_across_a_cell_split(self, continuation_cell: str):
+        """Hundreds of staggered expirations must not erase the long covering span."""
+        span_count = 250
+        continuation_rows = 500
+        html = (
+            f'<table><tr><td rowspan="{continuation_rows + 1}">ANCHOR</td>'
+            + "".join(
+                f'<td rowspan="{2 + 2 * ((i * 73) % span_count)}"/>' for i in range(span_count)
+            )
+            + f"<td>{'x' * 200}</td></tr>"
+            + f"<tr>{continuation_cell}</tr>" * continuation_rows
+            + "</table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=100)
+            )
+        )
+
+        continuation = fragment_fromstring(chunks[-1][1])
+        rows = continuation.xpath(".//tr")
+        assert len(rows) == continuation_rows
+        cells = rows[0].xpath("./td")
+        assert len(cells) <= 3 + bool(continuation_cell)
+        assert cells[0].text_content() == "ANCHOR"
+        assert cells[0].get("rowspan") == str(continuation_rows)
+        assert sum(int(cell.get("colspan", "1")) for cell in cells) == span_count + 1 + bool(
+            continuation_cell
+        )
+
+    @pytest.mark.parametrize("wide_colspan", [2, 3])
+    def and_it_skips_narrow_gaps_without_scanning_them_on_each_wide_cell(
+        self, monkeypatch, wide_colspan: int
+    ):
+        """Repeated width-two cells have indexed lookup across many width-one gaps."""
+        gaps = 500
+        continuation_rows = 1000
+        cells = "".join(
+            f'<td rowspan="{2 + i % 7}"/><td rowspan="{continuation_rows + 1}"/>'
+            for i in range(gaps)
+        )
+        html = (
+            f'<table><tr><td rowspan="{continuation_rows + 1}">A</td>'
+            f"{cells}<td>{'x' * 200}</td></tr>"
+            + f'<tr><td colspan="{wide_colspan}"/></tr>' * continuation_rows
+            + "</table>"
+        )
+        first_fit = _GapIndex._first_fit.__func__
+        visits = 0
+
+        def counted_first_fit(cls, node, cursor, width):
+            nonlocal visits
+            visits += 1
+            return first_fit(cls, node, cursor, width)
+
+        monkeypatch.setattr(_GapIndex, "_first_fit", classmethod(counted_first_fit))
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=100)
+            )
+        )
+
+        assert visits < continuation_rows * 50
+        assert len(fragment_fromstring(chunks[-1][1]).xpath(".//tr")) == continuation_rows
+
+    def and_it_preserves_a_hole_before_a_surviving_span_at_a_fragment_boundary(self):
+        """An expired left span must not move a surviving right span into its column."""
+        html = (
+            '<table><tr><td rowspan="2">LEFT</td><td rowspan="4">RIGHT</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            f"<tr><td>{'y' * 80}</td></tr><tr/><tr><td>tail</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert chunks[-1] == (
+            "RIGHT tail",
+            '<table><tr><td/><td rowspan="2">RIGHT</td></tr><tr><td>tail</td></tr></table>',
+        )
+
+    def and_it_places_a_wide_cell_after_a_narrow_gap(self):
+        """A wide cell must not overlap a live span beside an interior gap."""
+        ledger = _ActiveSpanLedger()
+        cell = HtmlCell(fragment_fromstring("<td/>"))
+        placed = ledger.place([cell, cell, cell])
+        ledger.add(
+            [
+                (_OpenSpan(0, 1, "LEFT", 3), placed[0][1]),
+                (_OpenSpan(2, 1, "RIGHT", 3), placed[2][1]),
+            ]
+        )
+
+        ledger.expire(1)
+        crossing = HtmlCell(fragment_fromstring('<td colspan="3"/>'))
+        placed_col, gap, _ = ledger.place([crossing])[0]
+        assert placed_col == 3
+        ledger.add([(_OpenSpan(placed_col, 3, "WIDE", 4), gap)])
+
+        assert sorted(ledger.spans) == [0, 2, 3]
+        assert ledger.expire(4) == [0, 2]
+        assert ledger.place([cell])[0][0] == 0
+
+    def and_it_does_not_resplit_a_long_covering_cell_on_every_row(self):
+        """An oversized carry supplies blank geometry after its text was already split."""
+        html = (
+            f'<table><tr><td rowspan="301">{"z" * 700}</td><td>q</td></tr>'
+            + "<tr><td>ab</td></tr>" * 300
+            + "</table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+
+        assert len(chunks) <= 20
+        assert sum(text.count("z") for text, _html in chunks) == 700
+        assert sum(text.count("ab") for text, _html in chunks) == 300
+        assert all(len(text) <= 200 for text, _html in chunks)
+        assert all(fragment_fromstring(chunk_html) is not None for _text, chunk_html in chunks)
+        first_continuation = next(chunk_html for text, chunk_html in chunks if "ab" in text)
+        assert (
+            fragment_fromstring(first_continuation).xpath(".//tr[1]/td[1]")[0].text_content() == ""
+        )
+
+    def and_it_does_not_format_discarded_long_carry_on_every_row(self, monkeypatch):
+        """A rejected text-bearing carry must not escape its full text per fragment."""
+        long_text = "&" * 10_000
+        html = (
+            f'<table><tr><td rowspan="42">{html_stdlib.escape(long_text)}</td>'
+            '<td rowspan="5">short</td><td>x</td></tr>'
+            + ("<tr><td>" + "a" * 150 + "</td></tr>") * 40
+            + "<tr><td>end</td></tr></table>"
+        )
+        original_format_td = chunking_base._format_td
+        long_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal long_format_calls
+            if len(text) >= len(long_text):
+                long_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+
+        assert long_format_calls == 0
+        assert sum(text.count("&") for text, _html in chunks) == len(long_text)
+        assert sum(text.count("a" * 150) for text, _html in chunks) == 40
+        assert all(len(text) <= 200 for text, _html in chunks)
+        continuation = next(chunk_html for text, chunk_html in chunks if "a" * 150 in text)
+        assert fragment_fromstring(continuation).xpath(".//tr[1]/td[1]")[0].text_content() == ""
+
+    def and_it_does_not_format_discarded_long_carry_in_token_mode(self, monkeypatch):
+        """An oversized token-mode carry has a one-time fit decision."""
+        long_text = "&" * 10_000
+        html = (
+            f'<table><tr><td rowspan="32">{html_stdlib.escape(long_text)}</td><td>x</td></tr>'
+            + ("<tr><td>" + "abcdef" * 25 + "</td></tr>") * 30
+            + "<tr><td>end</td></tr></table>"
+        )
+        original_format_td = chunking_base._format_td
+        long_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal long_format_calls
+            if len(text) >= len(long_text):
+                long_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        monkeypatch.setattr(ChunkingOptions, "measure", lambda _self, text: len(text))
+        monkeypatch.setattr(_TextSplitter, "__call__", lambda _self, text: (text[:100], text[100:]))
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html),
+                ChunkingOptions(max_tokens=200, tokenizer="unused-by-fake-measure"),
+            )
+        )
+
+        assert long_format_calls == 0
+        assert sum(text.count("&") for text, _html in chunks) == len(long_text)
+        assert sum(text.count("abcdef" * 25) for text, _html in chunks) == 30
+        assert all(fragment_fromstring(chunk_html) is not None for _text, chunk_html in chunks)
+
+    def and_it_compacts_many_blank_cells_before_splitting_a_long_cell(self):
+        """A wide empty scaffold must not reduce every text fragment to one character."""
+        html = (
+            "<table><tr>"
+            + '<td rowspan="2"/>' * 100
+            + f"<td>{'x' * 10_000}</td></tr>"
+            + "<tr><td>TAIL</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert len(chunks) < 100
+        assert sum(text.count("x") for text, _html in chunks) == 10_000
+        assert sum(text.count("TAIL") for text, _html in chunks) == 1
+        assert all(len(text) <= 500 for text, _html in chunks)
+        first_cells = fragment_fromstring(chunks[0][1]).xpath(".//tr[1]/td")
+        assert first_cells[0].get("colspan") == "100"
+
+    def and_it_avoids_one_character_chunks_at_a_small_blank_scaffold_budget(self):
+        """An infeasible blank scaffold must not govern every text continuation."""
+        html = (
+            "<table><tr>"
+            + '<td rowspan="2"/>' * 100
+            + f"<td>{'x' * 10_000}</td></tr>"
+            + "<tr><td>TAIL</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert len(chunks) < 1000
+        assert sum(text.count("x") for text, _html in chunks) == 10_000
+        assert sum(text.count("TAIL") for text, _html in chunks) == 1
+        assert sum(len(text) == 1 for text, _html in chunks) < 10
+
+    def and_it_builds_blank_scaffolds_without_scanning_each_retained_span(self, monkeypatch):
+        """Repeated oversized own rows need one blank run, not one cell per live span."""
+        n_spans = n_rows = 100
+        html = (
+            "<table><tr>"
+            + (f'<td rowspan="{n_rows + 1}"/>') * n_spans
+            + f"<td>{'x' * 501}</td></tr>"
+            + (f"<tr><td>{'y' * 501}</td></tr>") * n_rows
+            + "</table>"
+        )
+        original_format_td = chunking_base._format_td
+        blank_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal blank_format_calls
+            if not text:
+                blank_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert blank_format_calls < 1000
+        assert sum(text.count("x") for text, _html in chunks) == 501
+        assert sum(text.count("y") for text, _html in chunks) == n_rows * 501
+        assert any('colspan="100"' in chunk_html for _text, chunk_html in chunks)
+
+    @pytest.mark.parametrize("own_len", [499, 501])
+    def and_it_compacts_uniform_blank_spans_for_fitting_and_oversized_rows(
+        self, monkeypatch, own_len
+    ):
+        """Both sides of the own-row size limit avoid one cell per blank span."""
+        n_spans = n_rows = 100
+        html = (
+            "<table><tr>"
+            + (f'<td rowspan="{n_rows + 1}"/>') * n_spans
+            + f"<td>{'x' * 501}</td></tr>"
+            + (f"<tr><td>{'y' * own_len}</td></tr>") * n_rows
+            + "</table>"
+        )
+        original_format_td = chunking_base._format_td
+        blank_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal blank_format_calls
+            if not text:
+                blank_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert blank_format_calls < 1000
+        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 1000
+        assert sum(text.count("x") for text, _html in chunks) == 501
+        assert sum(text.count("y") for text, _html in chunks) == n_rows * own_len
+
+    @pytest.mark.parametrize(
+        "variant", ["label", "two_expiries", "label_two_expiries", "label_gaps"]
+    )
+    @pytest.mark.parametrize("own_len", [498, 499, 400, 249, 501])
+    def and_it_compacts_mixed_blank_covers_on_near_limit_rows(self, monkeypatch, variant, own_len):
+        """Crossed labels, expiries, and gaps cannot restore per-span output growth."""
+        n_spans = n_rows = 100
+        label = f'<td rowspan="{n_rows + 1}">A</td>' if "label" in variant else ""
+        blanks = "".join(
+            f'<td rowspan="{n_rows if "two_expiries" in variant and i % 2 else n_rows + 1}"/>'
+            + ("<td/>" if variant == "label_gaps" else "")
+            for i in range(n_spans)
+        )
+        html = (
+            f"<table><tr>{label}{blanks}<td>{'x' * 501}</td></tr>"
+            + (f"<tr><td>{'y' * own_len}</td></tr>") * n_rows
+            + "</table>"
+        )
+        original_format_td = chunking_base._format_td
+        blank_format_calls = 0
+
+        def counted_format_td(text, colspan, rowspan=1):
+            nonlocal blank_format_calls
+            if not text:
+                blank_format_calls += 1
+            return original_format_td(text, colspan, rowspan)
+
+        monkeypatch.setattr(chunking_base, "_format_td", counted_format_td)
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert blank_format_calls < 2000
+        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 2000
+        assert sum(text.count("x") for text, _html in chunks) == 501
+        assert sum(text.count("y") for text, _html in chunks) == n_rows * own_len
+
+    def and_it_preserves_columns_when_packed_blank_spans_expire_at_different_rows(self):
+        """Per-row blank geometry follows source expiry inside a packed fragment."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            '<table><tr><td rowspan="4"/><td rowspan="3"/><td>'
+            + "x" * 201
+            + "</td></tr><tr><td>ONE</td></tr><tr><td>TWO</td></tr>"
+            + "<tr><td>THREE</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+        continuation = next(chunk_html for text, chunk_html in chunks if "ONE" in text)
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+
+        assert grid[0][2] == "ONE"
+        assert grid[1][2] == "TWO"
+        assert grid[2][1] == "THREE"
+
+    def and_it_keeps_a_label_over_packed_rows_with_mixed_expiries(self):
+        """Compact blank scaffolds must leave a retained label's rowspan unobstructed."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            '<table><tr><td rowspan="4">LABEL</td><td rowspan="4"/>'
+            '<td rowspan="3"/><td>' + "x" * 201 + "</td></tr>"
+            "<tr><td>ONE</td></tr><tr><td>TWO</td></tr>"
+            "<tr><td>THREE</td></tr></table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+        continuation = next(chunk_html for text, chunk_html in chunks if "ONE" in text)
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+
+        assert [row[0] for row in grid] == ["LABEL"] * 3
+        assert grid[0][3] == "ONE"
+        assert grid[1][3] == "TWO"
+        assert grid[2][2] == "THREE"
+
+    @pytest.mark.parametrize("continuation_cell", ["", "<td/>"])
+    def and_it_skips_adjacent_labels_already_covering_packed_rows(
+        self, monkeypatch, continuation_cell
+    ):
+        """Packed blank scaffolds must not revisit each retained label per row."""
+        span_count = 200
+        continuation_rows = 400
+        label_cells = "".join(
+            f'<td rowspan="{continuation_rows + 1 - i % 2}">A</td>' for i in range(span_count)
+        )
+        html = (
+            f"<table><tr>{label_cells}<td>{'x' * 501}</td></tr>"
+            + f"<tr>{continuation_cell}</tr>" * continuation_rows
+            + "</table>"
+        )
+        original_col = chunking_base._OpenSpan.col
+        col_reads = 0
+
+        def counted_col(span):
+            nonlocal col_reads
+            col_reads += 1
+            return original_col.__get__(span, chunking_base._OpenSpan)
+
+        monkeypatch.setattr(chunking_base._OpenSpan, "col", property(counted_col))
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+
+        assert col_reads < 5000
+        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 1500
+
+    @pytest.mark.parametrize("own_text", ["", "v"])
+    def and_it_packs_new_spans_under_mixed_expiry_labels(self, own_text):
+        """Opening a short span per row must not re-emit every retained label."""
+        span_count = 200
+        continuation_rows = 400
+        labels = "".join(
+            f'<td rowspan="{continuation_rows + 1 - i % 2}">L</td>' for i in range(span_count)
+        )
+        html = (
+            f"<table><tr>{labels}<td>{'x' * 801}</td></tr>"
+            + f'<tr><td rowspan="2">{own_text}</td></tr>' * continuation_rows
+            + "</table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=800)
+            )
+        )
+
+        assert sum(chunk_html.count("<td") for _text, chunk_html in chunks) < 2000
+        assert sum(text.count("L") for text, _html in chunks) < 1000
+        own_copies = sum(text.count("v") for text, _html in chunks)
+        assert continuation_rows * bool(own_text) <= own_copies < continuation_rows + 10
+
+    @pytest.mark.parametrize("variant", ["early_expiry", "persistent_gaps"])
+    @pytest.mark.parametrize("own_cell", ["", '<td rowspan="2"/>', '<td rowspan="2">v</td>'])
+    def and_it_avoids_padding_each_sparse_row_between_label_runs(self, variant, own_cell):
+        """Stable interior blank intervals occupy one bounded output rowspan."""
+        span_count = 100
+        continuation_rows = 200
+        limit = 2 * span_count + 20
+        labels = "".join(
+            (
+                f'<td rowspan="{2 if i % 2 == 0 else continuation_rows + 1}">L</td>'
+                if variant == "early_expiry"
+                else f'<td rowspan="{continuation_rows + 1}">L</td>'
+                + ("<td/>" if i % 2 == 0 else "")
+            )
+            for i in range(span_count)
+        )
+        html = (
+            f"<table><tr>{labels}<td>{'x' * (limit + 1)}</td></tr>"
+            + f"<tr>{own_cell}</tr>" * continuation_rows
+            + "</table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=limit)
+            )
+        )
+
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 1000
+        assert sum(text.count("x") for text, _html in chunks) == limit + 1
+        assert sum(text.count("v") for text, _html in chunks) >= continuation_rows * (
+            "v" in own_cell
+        )
+
+    def and_it_does_not_repeat_labels_between_empty_and_tiny_rows(self):
+        """An empty row must not restart a full label carry every other row."""
+        labels = 100
+        rows = 200
+        limit = 2 * labels - 1
+        html = (
+            "<table><tr>"
+            + "".join(f'<td rowspan="{rows + 1 - i % 2}">L</td>' for i in range(labels))
+            + f"<td>{'x' * (limit + 1)}</td></tr>"
+            + "<tr></tr><tr><td>v</td></tr>" * (rows // 2)
+            + "</table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=limit)
+            )
+        )
+
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 1000
+        assert sum(text.count("v") for text, _html in chunks) == rows // 2
+
+    def and_it_does_not_repeat_one_window_filling_label(self):
+        """One long label must not multiply across alternating empty and tiny rows."""
+        rows = 600
+        limit = 300
+        html = (
+            f'<table><tr><td rowspan="{rows + 1}">{"L" * limit}</td>'
+            f"<td>{'x' * (limit + 1)}</td></tr>"
+            + "<tr></tr><tr><td>v</td></tr>" * (rows // 2)
+            + "</table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=limit)
+            )
+        )
+
+        assert sum(text.count("L") for text, _html in chunks) == limit
+        assert sum(text.count("v") for text, _html in chunks) == rows // 2
+        assert sum(len(fragment) for _text, fragment in chunks) < 20_000
+
+    def and_it_bounds_label_carry_with_a_custom_token_measure(self, monkeypatch):
+        """Custom measurement still applies the sparse repetition policy."""
+        labels = 100
+        rows = 200
+        opts = ChunkingOptions(max_tokens=labels + 1, tokenizer="unused-by-fake-measure")
+        monkeypatch.setattr(opts, "measure", lambda text: len(text.split()))
+        html = (
+            "<table><tr>"
+            + "".join(f'<td rowspan="{rows + 1 - i % 2}">L</td>' for i in range(labels))
+            + "<td>x x</td></tr>"
+            + "<tr><td>v</td></tr>" * rows
+            + "</table>"
+        )
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 1000
+        assert sum(text.count("v") for text, _html in chunks) == rows
+        assert all(opts.measure(text) <= labels + 1 for text, _html in chunks)
+
+    def and_it_avoids_remeasuring_stable_labels_when_short_labels_change(self, monkeypatch):
+        """New two-row labels must not invalidate a full-cover measurement per row."""
+        labels = 100
+        rows = 200
+        opts = ChunkingOptions(max_tokens=50, tokenizer="unused-by-fake-measure")
+        measured_label_chars = 0
+
+        def measured(text):
+            nonlocal measured_label_chars
+            measured_label_chars += text.count("L")
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", measured)
+        html = (
+            "<table><tr>"
+            + "".join(f'<td rowspan="{rows + 1}">L</td>' for _ in range(labels))
+            + "<td>x x</td></tr>"
+            + f'<tr><td rowspan="2">{"v " * 48}v</td></tr>' * rows
+            + "</table>"
+        )
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert measured_label_chars < 5000
+        assert sum(text.count("v") for text, _html in chunks) == rows * 49
+
+    @pytest.mark.parametrize("own_cell", ["<td>v</td>", '<td rowspan="2">v</td>'])
+    def and_it_bounds_one_multiword_label_in_custom_token_mode(self, monkeypatch, own_cell):
+        """One window-filling label is measured and emitted only a bounded number of times."""
+        words = 100
+        opts = ChunkingOptions(max_tokens=words, tokenizer="unused-by-fake-measure")
+        measured_label_chars = 0
+
+        def measured(text):
+            nonlocal measured_label_chars
+            measured_label_chars += text.count("L")
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", measured)
+        html = (
+            f'<table><tr><td rowspan="{2 * words + 1}">'
+            + " ".join(["L"] * words)
+            + "</td><td>x</td></tr>"
+            + f"<tr></tr><tr>{own_cell}</tr>" * words
+            + "</table>"
+        )
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert sum(len(fragment) for _text, fragment in chunks) < 10_000
+        assert measured_label_chars < 1500
+        # The original oversized row and one fitting continuation each carry the label.
+        assert sum(text.count("L") for text, _html in chunks) == 2 * words
+        assert sum(text.count("v") for text, _html in chunks) >= words
+
+    @pytest.mark.parametrize("packed_start", [False, True])
+    def and_it_budgets_new_token_mode_rowspan_carry(self, monkeypatch, packed_start):
+        """A newly committed label charges later whole-candidate probes in either path."""
+        words = 160
+        rows = 500
+        limit = 400
+        opts = ChunkingOptions(max_tokens=limit, tokenizer="unused-by-fake-measure")
+        measured_label_chars = 0
+
+        def measured(text):
+            nonlocal measured_label_chars
+            measured_label_chars += text.count("L")
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", measured)
+        label = f'<td rowspan="{rows + 1}">{" ".join(["L"] * words)}</td>'
+        initial_row = "<tr><td>x</td></tr>" if packed_start else f"<tr>{label}<td>x</td></tr>"
+        second_row = f"<tr>{label}<td>v</td></tr>" if packed_start else "<tr><td>v</td></tr>"
+        html = f"<table>{initial_row}{second_row}" + "<tr><td>v</td></tr>" * (rows - 1) + "</table>"
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert measured_label_chars < 5000
+        assert sum(text.count("L") for text, _html in chunks) == words
+        assert sum(text.count("v") for text, _html in chunks) == rows
+        assert any("L" in text and "v" in text for text, _html in chunks)
+        assert any("L" not in text and "v" in text for text, _html in chunks)
+        assert len(chunks) < 20
+        assert max(text.count("v") for text, _html in chunks if "L" not in text) > 100
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 3 * rows
+        assert all(opts.measure(text) <= limit for text, _html in chunks)
+        pd = pytest.importorskip("pandas")
+        for _text, fragment in chunks:
+            grid = pd.read_html(io.StringIO(fragment))[0]
+            for row in grid.itertuples(index=False, name=None):
+                if "v" in row:
+                    assert row.index("v") == 1
+
+    def and_it_cancels_many_new_blanks_before_one_wide_cell(self):
+        """Expired labels leave no overlapping blanks beneath a new colspan."""
+        labels = 200
+        limit = 4 * labels + 100
+        html = (
+            "<table><tr>"
+            + '<td rowspan="2">L</td>' * labels
+            + f'<td rowspan="4">R</td><td>{"x" * (limit - 2 * labels - 2)}</td>'
+            + "</tr><tr><td>P</td></tr>"
+            + f'<tr><td colspan="{labels}" rowspan="2">NEW</td></tr>'
+            + "<tr></tr></table>"
+        )
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=limit)
+            )
+        )
+
+        continuation = next(fragment for text, fragment in chunks if "NEW" in text)
+        rows = fragment_fromstring(continuation).xpath(".//tr")
+        new_cell = next(cell for cell in rows[1].xpath("./td") if cell.text_content() == "NEW")
+        assert rows[1].xpath("./td[1]")[0] is new_cell
+        assert new_cell.get("colspan") == str(labels)
+        assert new_cell.get("rowspan") == "2"
+        pd = pytest.importorskip("pandas")
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+        assert grid[1][0] == "NEW"
+        assert grid[1][labels] == "R"
+        assert sum(fragment.count("<td") for _text, fragment in chunks) < 3 * labels
+
+    @pytest.mark.parametrize("own_cell", ["<td>v</td>", '<td rowspan="2">v</td>'])
+    def and_it_budgets_packed_row_measurement_of_a_partial_label(self, monkeypatch, own_cell):
+        """Successful packed fits cannot remeasure a carried prefix on every row."""
+        label_words = 100
+        rows = 200
+        limit = 400
+        opts = ChunkingOptions(max_tokens=limit, tokenizer="unused-by-fake-measure")
+        measured_label_chars = 0
+
+        def measured(text):
+            nonlocal measured_label_chars
+            measured_label_chars += text.count("L")
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", measured)
+        html = (
+            f'<table><tr><td rowspan="{rows + 1}">'
+            + " ".join(["L"] * label_words)
+            + "</td><td>"
+            + " ".join(["x"] * limit)
+            + "</td></tr>"
+            + f"<tr>{own_cell}</tr>" * rows
+            + "</table>"
+        )
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert measured_label_chars < 5000
+        assert any(text.count("L") == label_words and "v" in text for text, _html in chunks)
+        assert any("L" not in text and "v" in text for text, _html in chunks)
+        assert sum(text.count("v") for text, _html in chunks) >= rows
+        assert all(opts.measure(text) <= limit for text, _html in chunks)
+
+    def and_it_preserves_columns_when_a_packed_row_opens_a_new_span(self):
+        """A new own rowspan is clipped before later rows get compact blank geometry."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            f'<table><tr><td rowspan="4">{"z" * 201}</td><td>q</td></tr>'
+            '<tr><td rowspan="2">NEW</td><td>ONE</td></tr>'
+            "<tr><td>TWO</td></tr><tr><td>THREE</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+        positions = {}
+        for _text, chunk_html in chunks:
+            for row in pd.read_html(io.StringIO(chunk_html))[0].to_numpy().tolist():
+                for col, value in enumerate(row):
+                    if value in {"ONE", "TWO", "THREE"}:
+                        positions[value] = col
+
+        assert positions == {"ONE": 2, "TWO": 2, "THREE": 1}
+
+    def and_it_compacts_blank_runs_between_fitting_retained_labels(self):
+        """Text-bearing spans retain their columns while nearby blanks coalesce."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            '<table><tr><td rowspan="3">A</td><td rowspan="3"/>'
+            '<td rowspan="3">B</td><td rowspan="3"/><td>'
+            + "x" * 501
+            + "</td></tr><tr><td>ONE</td></tr><tr><td>TWO</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=500)
+            )
+        )
+        continuation = next(chunk_html for text, chunk_html in chunks if "ONE" in text)
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+
+        assert [row[0] for row in grid] == ["A", "A"]
+        assert [row[2] for row in grid] == ["B", "B"]
+        assert [row[4] for row in grid] == ["ONE", "TWO"]
+
+    def and_it_keeps_blank_carry_columns_on_every_packed_continuation_row(self):
+        """A packed blank carry must span all of the source rows it covers."""
+        pd = pytest.importorskip("pandas")
+        html = (
+            f'<table><tr><td rowspan="4">{"z" * 201}</td><td>q</td></tr>'
+            "<tr><td>ONE</td></tr><tr><td>TWO</td></tr>"
+            "<tr><td>THREE</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=200)
+            )
+        )
+
+        continuation = next(chunk_html for text, chunk_html in chunks if "ONE" in text)
+        grid = pd.read_html(io.StringIO(continuation))[0].to_numpy().tolist()
+        assert [row[1] for row in grid] == ["ONE", "TWO", "THREE"]
+        assert all(pd.isna(row[0]) for row in grid)
+        assert all(
+            row.xpath("./td[1]")[0].text_content() == ""
+            for row in fragment_fromstring(continuation).xpath(".//tr")
+        )
+
+    def and_it_budgets_a_wide_own_cell_after_blank_carry(self):
+        """A colspan's actual wrapper determines whether a reduced split budget works."""
+        html = (
+            '<table><tr><td rowspan="2">anchor</td><td>x</td></tr>'
+            f'<tr><td colspan="2">{"x" * 1000}</td></tr></table>'
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert len(chunks) < 300
+        assert sum(len(text) == 1 for text, _html in chunks) == 0
+        assert sum(text.count("x") for text, _html in chunks) == 1001
+
+    def and_it_keeps_html_markup_out_of_the_token_split_budget(self, monkeypatch):
+        """Empty-cell HTML overhead has character units, not token units."""
+        opts = ChunkingOptions(max_tokens=200, tokenizer="unused-by-fake-measure")
+        monkeypatch.setattr(ChunkingOptions, "measure", lambda _self, text: len(text))
+        monkeypatch.setattr(_TextSplitter, "__call__", lambda _self, text: (text[:100], text[100:]))
+        original_row_splits = _HtmlTableSplitter._iter_row_splits
+        budgets: list[int] = []
+
+        def recorded_row_splits(self, row, maxlen):
+            budgets.append(maxlen)
+            yield from original_row_splits(self, row, maxlen)
+
+        monkeypatch.setattr(_HtmlTableSplitter, "_iter_row_splits", recorded_row_splits)
+        html = (
+            "<table><tr>"
+            + '<td rowspan="2"/>' * 20
+            + f"<td>{'x' * 1000}</td></tr>"
+            + "<tr><td>TAIL</td></tr></table>"
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(HtmlTable.from_html_text(html), opts))
+
+        assert budgets
+        assert all(budget == 200 for budget in budgets)
+        assert sum(text.count("x") for text, _html in chunks) == 1000
+        assert sum(text.count("TAIL") for text, _html in chunks) == 1
+
+    def and_it_attaches_blank_carry_to_an_oversized_own_cell_fragment(self):
+        """A blank covering cell must not become its own empty TableChunk."""
+        html = (
+            f'<table><tr><td rowspan="2">{"z" * 700}</td><td>q</td></tr>'
+            f"<tr><td>{'a' * 300}</td></tr></table>"
+        )
+        table = Table(f"{'z' * 700} q {'a' * 300}", metadata=ElementMetadata(text_as_html=html))
+
+        chunks = chunk_by_title([table], max_characters=200, repeat_table_headers=False)
+
+        assert all(chunk.text for chunk in chunks)
+        assert all(len(chunk.metadata.text_as_html or "") <= 200 for chunk in chunks)
+        first_own_chunk = next(chunk for chunk in chunks if "a" in chunk.text)
+        own_cells = fragment_fromstring(first_own_chunk.metadata.text_as_html or "").xpath(
+            ".//tr/td"
+        )
+        assert own_cells[0].text_content() == ""
+        assert own_cells[1].text_content()
+
+    def and_it_measures_joined_text_when_row_fitting_uses_a_custom_measure(self, monkeypatch):
+        """A non-additive measurement override still sees the full candidate text."""
+        opts = ChunkingOptions(max_characters=3)
+        measured: list[str] = []
+
+        def count_words(text: str) -> int:
+            measured.append(text)
+            return len(text.split())
+
+        monkeypatch.setattr(opts, "measure", count_words)
+        table = HtmlTable.from_html_text(
+            '<table><tr><td rowspan="3">anchor</td><td>one two</td></tr>'
+            "<tr><td>three</td></tr><tr><td>four</td></tr></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter(table, opts)._iter_oversized_group_splits(
+                tuple(table.iter_rows()), 3
+            )
+        )
+
+        assert [text for text, _html in chunks] == ["anchor one two", "anchor three four"]
+        assert "anchor three four" in measured
+        assert all(len(text.split()) <= 3 for text, _html in chunks)
+
+    def and_it_tolerates_seeded_malformed_span_combinations(self):
+        """Overlapping source spans must not crash table chunking or emit broken HTML."""
+        for seed in range(100):
+            rng = random.Random(seed)
+            n_rows = rng.randint(2, 7)
+            rows = [f'<tr><td rowspan="{n_rows}">ANCHOR</td><td>{"x" * 100}</td></tr>']
+            for row_idx in range(1, n_rows):
+                cells = [
+                    f'<td colspan="{rng.choice((1, 2, 3, 5))}" '
+                    f'rowspan="{rng.choice((0, 1, 2, 3, 9))}">v{row_idx}{cell_idx}</td>'
+                    for cell_idx in range(rng.randint(0, 4))
+                ]
+                rows.append(f"<tr>{''.join(cells)}</tr>")
+            table = HtmlTable.from_html_text(f"<table>{''.join(rows)}</table>")
+
+            chunks = list(
+                _HtmlTableSplitter.iter_subtables(table, ChunkingOptions(max_characters=60))
+            )
+
+            assert all(len(text) <= 60 for text, _html in chunks), seed
+            assert all(fragment_fromstring(chunk_html) is not None for _text, chunk_html in chunks)
+
+    def and_it_scopes_a_zero_rowspan_to_its_section_during_cell_fallback(self):
+        """A positive span may continue into tfoot after a tbody zero span expires."""
+        html = (
+            '<table><tbody><tr><td rowspan="0">ZERO</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            '<tr><td rowspan="2">LONG</td><td>body</td></tr></tbody>'
+            "<tfoot><tr><td>TAIL</td></tr></tfoot></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert chunks[-1] == (
+            "ZERO LONG body TAIL",
+            '<table><tr><td>ZERO</td><td rowspan="2">LONG</td><td>body</td></tr>'
+            "<tr><td>TAIL</td></tr></table>",
+        )
+
+    @pytest.mark.parametrize("zero_text", ["Z", ""])
+    def and_it_bounds_an_own_zero_span_before_a_fragment_crosses_sections(self, zero_text: str):
+        """The emitted zero span and the source ledger must end on the same tbody row."""
+        html = (
+            '<table><tbody><tr><td rowspan="4">A</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            f'<tr><td rowspan="0">{zero_text}</td><td>B</td></tr>'
+            "<tr><td>C</td></tr></tbody><tfoot><tr><td>TARGET</td></tr></tfoot></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        rows = fragment_fromstring(chunks[-1][1]).xpath(".//tr")
+        assert len(rows) == 3
+        assert rows[0].xpath("./td")[0].get("rowspan") == "3"
+        assert rows[0].xpath("./td")[1].get("rowspan") == "2"
+        assert rows[0].xpath("./td")[1].text_content() == zero_text
+        assert [cell.text_content() for cell in rows[-1].xpath("./td")] == ["TARGET"]
+
+    def and_it_bounds_a_zero_span_appended_to_an_open_fragment(self):
+        html = (
+            '<table><tbody><tr><td rowspan="4">A</td>'
+            f"<td>{'x' * 80}</td></tr>"
+            '<tr><td>PRE</td></tr><tr><td rowspan="0">Z</td><td>C</td></tr>'
+            "</tbody><tfoot><tr><td>TARGET</td></tr></tfoot></table>"
+        )
+
+        chunks = list(
+            _HtmlTableSplitter.iter_subtables(
+                HtmlTable.from_html_text(html), ChunkingOptions(max_characters=50)
+            )
+        )
+
+        assert chunks[-1] == (
+            "A PRE Z C TARGET",
+            '<table><tr><td rowspan="3">A</td><td>PRE</td></tr>'
+            "<tr><td>Z</td><td>C</td></tr><tr><td>TARGET</td></tr></table>",
+        )
 
     def and_it_bounds_a_positive_rowspan_whose_own_row_is_oversized_even_alone(self):
         """`Region`'s `rowspan="3"` exactly reaches the table's last row, so it opens a 3-row
@@ -4306,20 +5276,22 @@ class Describe_HtmlTableSplitter:
         html_out = reconstructed.metadata.text_as_html
         assert html_out is not None
         grid = pd.read_html(io.StringIO(html_out))[0].to_numpy().tolist()
-        # -- an uncorrected rowspan="3" reaches 3 rows deep, so check the rows immediately
-        # -- following "Region" rather than the much-later NW/Southwest Territory rows --
+        # -- The first emitted singleton is clipped before the split z-cell fragments.
+        # -- The source span still covers the two body rows, so a later fragment restores
+        # -- its header context with a new rowspan bounded to those two rows. --
         assert grid[0][0] == "Region"
         for row in grid[1:9]:
             assert row[0] != "Region", f"a later row still carries Region's uncorrected span: {row}"
         for row in grid:
             if "NW" in row:
-                assert row == ["NW", "Q1"]
+                assert row == ["Region", "NW", "Q1"]
             if "Southwest Territory" in row:
-                assert row == ["Southwest Territory", "Q2"]
-        # -- no cell text lost or duplicated across the whole reconstructed table --
+                assert row == ["Region", "Southwest Territory", "Q2"]
+        # -- the header text is repeated once as context for the body fragment --
         combined_text = reconstructed.text
-        for word in ("Region", "NW", "Southwest"):
-            assert combined_text.count(word) == 1
+        assert combined_text.count("Region") == 2
+        assert combined_text.count("NW") == 1
+        assert combined_text.count("Southwest") == 1
 
 
 class Describe_TextSplitter:
