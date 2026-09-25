@@ -982,7 +982,7 @@ class _TextFileDifferentiator:
             with self._ctx.open() as file:
                 json.load(file)
             return True
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, UnicodeDecodeError):
             return False
 
 

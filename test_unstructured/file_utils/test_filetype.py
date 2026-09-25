@@ -1373,6 +1373,15 @@ def test_json_content_type_is_disambiguated_for_ndjson():
     assert predicted_type == FileType.NDJSON
 
 
+def test_it_does_not_crash_on_non_utf8_bracket_prefixed_text_with_no_extension():
+    non_utf8_bytes = b"{not json at all just braces \xe9 text} and more padding to fill the head"
+
+    file_buffer = io.BytesIO(non_utf8_bytes)
+    predicted_type = detect_filetype(file=file_buffer)
+
+    assert predicted_type == FileType.TXT
+
+
 def test_office_files_when_document_archive_has_non_standard_prefix():
     predicted_type = detect_filetype(
         file_path=input_path("file_type/test_document_from_office365.docx")
