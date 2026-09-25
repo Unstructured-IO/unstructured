@@ -5,6 +5,9 @@ from __future__ import annotations
 import io
 import tempfile
 from email.message import EmailMessage
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from typing import Any
 
 import pytest
@@ -174,6 +177,111 @@ def test_partition_email_finds_content_when_it_is_marked_with_content_dispositio
     e = elements[0]
     assert isinstance(e, Text)
     assert e.text == "This is a test of inline"
+
+
+def test_partition_email_reads_an_html_body_split_by_an_inline_attachment():
+    """Apple Mail sends a file placed inside the text as a `multipart/mixed` alternative: an HTML
+    part, the file, and another HTML part."""
+    elements = partition_email(example_doc_path("eml/mime-html-split-by-inline-attachment.eml"))
+
+    assert [e.text for e in elements] == ["Here is the report.", "Let me know what you think."]
+
+
+def _html(text: str) -> MIMEText:
+    return MIMEText(f"<html><body><p>{text}</p></body></html>", "html")
+
+
+def _inline_file() -> MIMEText:
+    part = MIMEText("a,b\n1,2\n", "csv")
+    part.add_header("Content-Disposition", "inline", filename="table.csv")
+    return part
+
+
+def _mixed(*parts: MIMEText | MIMEMultipart) -> MIMEMultipart:
+    mixed = MIMEMultipart("mixed")
+    mixed["Subject"] = "A body in several parts"
+    for part in parts:
+        mixed.attach(part)
+    return mixed
+
+
+def _alternative_body(text: str) -> MIMEMultipart:
+    alternative = MIMEMultipart("alternative")
+    alternative.attach(MIMEText(text, "plain"))
+    alternative.attach(_html(text))
+    return alternative
+
+
+def _related_body(text: str) -> MIMEMultipart:
+    related = MIMEMultipart("related")
+    related.attach(_html(text))
+    image = MIMEImage(b"GIF89a\x01\x00\x01\x00\x00\x00\x00;", "gif")
+    image.add_header("Content-ID", "<logo>")
+    related.attach(image)
+    return related
+
+
+@pytest.mark.parametrize(
+    ("message", "expected_texts"),
+    [
+        (
+            _mixed(_html("Text before the file."), _inline_file(), _html("Text after the file.")),
+            ["Text before the file.", "Text after the file."],
+        ),
+        (
+            _mixed(
+                _related_body("Text before the file."),
+                _inline_file(),
+                _html("Text after the file."),
+            ),
+            ["Text before the file.", "Text after the file."],
+        ),
+        (
+            _mixed(_alternative_body("The message."), MIMEText("The list footer.", "plain")),
+            ["The message.", "The list footer."],
+        ),
+    ],
+    ids=["html-parts", "related-then-html", "footer-part"],
+)
+def test_partition_email_reads_every_inline_part_of_a_mixed_body(
+    message: MIMEMultipart, expected_texts: list[str]
+):
+    elements = partition_email(file=io.BytesIO(message.as_bytes()), process_attachments=False)
+
+    assert [e.text for e in elements] == expected_texts
+
+
+@pytest.mark.parametrize(
+    ("message", "expected_texts", "expected_attachments"),
+    [
+        (
+            _mixed(_html("Text before the file."), _inline_file(), _html("Text after the file.")),
+            ["Text before the file.", "Text after the file."],
+            ["table.csv"],
+        ),
+        (
+            _mixed(_alternative_body("The message."), _alternative_body("The list footer.")),
+            ["The message.", "The list footer."],
+            [],
+        ),
+    ],
+    ids=["html-parts", "alternative-parts"],
+)
+def test_partition_email_does_not_partition_a_body_part_again_as_an_attachment(
+    request: FixtureRequest,
+    message: MIMEMultipart,
+    expected_texts: list[str],
+    expected_attachments: list[str],
+):
+    """`iter_attachments()` hands over the second body-like part of a kind as an attachment."""
+    partition_ = function_mock(request, "unstructured.partition.auto.partition", return_value=[])
+
+    elements = partition_email(file=io.BytesIO(message.as_bytes()))
+
+    assert [e.text for e in elements] == expected_texts
+    assert [c.kwargs["metadata_filename"] for c in partition_.call_args_list] == (
+        expected_attachments
+    )
 
 
 def test_partition_email_from_filename_malformed_encoding():
@@ -477,6 +585,34 @@ class DescribeEmailPartitionerOptions:
     def and_it_returns_None_when_the_email_has_no_body(self):
         ctx = EmailPartitioningContext(example_doc_path("eml/mime-no-body.eml"))
         assert ctx.body_part is None
+
+    # -- .body_parts -----------------------------
+
+    def it_returns_just_the_body_part_when_the_body_is_in_one_part(self):
+        ctx = EmailPartitioningContext(example_doc_path("eml/mime-different-plain-html.eml"))
+        assert ctx.body_parts == [ctx.body_part]
+
+    def and_it_returns_every_inline_part_of_a_body_split_by_an_inline_attachment(self):
+        ctx = EmailPartitioningContext(
+            example_doc_path("eml/mime-html-split-by-inline-attachment.eml")
+        )
+
+        contents = [part.get_content() for part in ctx.body_parts]
+
+        assert len(contents) == 2
+        assert "Here is the report." in contents[0]
+        assert "Let me know what you think." in contents[1]
+
+    def and_it_returns_the_plain_text_part_alone_when_that_is_preferred(self):
+        ctx = EmailPartitioningContext(
+            example_doc_path("eml/mime-html-split-by-inline-attachment.eml"),
+            content_source="text/plain",
+        )
+        assert ctx.body_parts == [ctx.body_part]
+
+    def and_it_returns_no_parts_when_the_email_has_no_body(self):
+        ctx = EmailPartitioningContext(example_doc_path("eml/mime-no-body.eml"))
+        assert ctx.body_parts == []
 
     # -- .cc_addresses ---------------------------
 

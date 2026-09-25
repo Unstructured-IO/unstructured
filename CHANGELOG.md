@@ -1,3 +1,9 @@
+## 0.27.9-dev0
+
+### Fixes
+
+- **`partition_email()` no longer drops the text after an inline attachment.** With the default `content_source="text/html"`, the body was the single part `EmailMessage.get_body()` returns. Apple Mail sends a message with a file placed inside its text as a `multipart/mixed` part holding an HTML part, the file, and another HTML part, so everything after the file was lost. The same happened to a mailing-list footer sent as a part of its own. Each inline text, alternative or related part of the `multipart/mixed` part that holds the body is now read, in order, and a part read as body text is not partitioned again as an attachment. A body with a second `multipart/alternative` part no longer raises `KeyError`.
+
 ## 0.27.8
 
 ### Enhancements
