@@ -391,6 +391,15 @@ class ChunkingOptions:
                 " adjacent elements"
             )
 
+        # -- a negative `overlap` is a caller mistake, not a smaller overlap: on the
+        # -- character-split path it moves the remainder's start past the end of the fragment and
+        # -- silently deletes that many characters from the document, and with `overlap_all=True`
+        # -- `_text[-overlap:]` becomes a forward slice that repeats most of the chunk instead of
+        # -- its tail. Reject it here, as `new_after_n_chars` already is.
+        overlap_arg = self._kwargs.get("overlap")
+        if overlap_arg is not None and overlap_arg < 0:
+            raise ValueError(f"'overlap' argument must be >= 0, got {overlap_arg}")
+
         # -- overlap must be less than max-chars or the chunk text will never be consumed --
         if self.overlap >= hard_max:
             raise ValueError(

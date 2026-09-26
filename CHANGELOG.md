@@ -1,3 +1,9 @@
+## 0.27.10
+
+### Fixes
+
+- **Reject a negative `overlap`.** `ChunkingOptions` validated `new_after_n_chars` and `new_after_n_tokens` but not `overlap`, so a negative value silently corrupted output: on the character-split path the remainder started past the end of the fragment and dropped that many characters at every split boundary, and with `overlap_all=True` the tail slice ran forward and repeated most of the chunk. It now raises `ValueError`, matching the sibling options.
+
 ## 0.27.9
 
 ### Fixes
