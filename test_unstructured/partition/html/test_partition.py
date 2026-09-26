@@ -1633,3 +1633,53 @@ def test_partition_html_leaves_page_number_None_when_not_present():
     html_text = "<html><body><p>No page markup.</p></body></html>"
     elements = partition_html(text=html_text)
     assert all(e.metadata.page_number is None for e in elements)
+
+
+# -- definition lists (`<dl>`) --------------------------------------------------------------------
+
+
+def test_partition_html_extracts_definition_list_terms_and_definitions():
+    """`<dl>`, `<dt>` and `<dd>` were `RemovedBlock`, so a glossary vanished without an error."""
+    html_text = (
+        "<html><body><h2>Glossary</h2><dl>"
+        "<dt>Shard</dt><dd>A horizontal partition of a table stored on its own server.</dd>"
+        "<dt>Replica</dt><dd>A read-only copy of a shard.</dd>"
+        "</dl></body></html>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [(type(e).__name__, e.text, e.metadata.category_depth) for e in elements] == [
+        ("Title", "Glossary", 1),
+        ("Text", "Shard", None),
+        ("ListItem", "A horizontal partition of a table stored on its own server.", 1),
+        ("Text", "Replica", None),
+        ("ListItem", "A read-only copy of a shard.", 1),
+    ]
+
+
+def test_partition_html_extracts_a_sphinx_style_api_reference():
+    """Sphinx renders each documented object as a `<dl>`, so a whole API reference was dropped."""
+    html_text = (
+        '<html><body><h1>API reference</h1><dl class="py function">'
+        '<dt class="sig sig-object py"><span class="sig-name">connect</span>'
+        "(<em>host</em>, <em>port=5432</em>)</dt>"
+        "<dd><p>Open a connection to the database server.</p>"
+        '<dl class="field-list simple"><dt class="field-odd">Parameters</dt>'
+        '<dd class="field-odd"><ul><li><p><strong>host</strong>: server hostname.</p></li>'
+        "<li><p><strong>port</strong>: TCP port.</p></li></ul></dd>"
+        '<dt class="field-even">Returns</dt>'
+        '<dd class="field-even"><p>An open connection object.</p></dd></dl>'
+        "</dd></dl></body></html>"
+    )
+
+    assert [e.text for e in partition_html(text=html_text)] == [
+        "API reference",
+        "connect(host, port=5432)",
+        "Open a connection to the database server.",
+        "Parameters",
+        "host: server hostname.",
+        "port: TCP port.",
+        "Returns",
+        "An open connection object.",
+    ]
