@@ -1,3 +1,9 @@
+## 0.27.10
+
+### Fixes
+
+- **Extract `<figure>` content instead of discarding it**: `<figure>` was mapped to `RemovedBlock`, so `partition_html()` dropped every figure together with its image and `<figcaption>`, including every Wikipedia thumbnail. A figure is now an ordinary container: its image becomes an `Image` element (with `image_url`), a code listing or table inside it is kept, and the `<figcaption>` becomes a `FigureCaption`, as hi_res PDF partitioning emits for a picture and its caption. Resolves #3606.
+
 ## 0.27.9
 
 ### Fixes

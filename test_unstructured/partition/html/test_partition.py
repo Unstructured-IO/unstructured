@@ -1633,3 +1633,64 @@ def test_partition_html_leaves_page_number_None_when_not_present():
     html_text = "<html><body><p>No page markup.</p></body></html>"
     elements = partition_html(text=html_text)
     assert all(e.metadata.page_number is None for e in elements)
+
+
+# -- figures (`<figure>`) -------------------------------------------------------------------------
+
+
+def test_partition_html_extracts_a_figure_image_and_its_caption():
+    """`<figure>` was `RemovedBlock`, so the image and its `<figcaption>` were both dropped.
+
+    Wikipedia wraps every thumbnail this way (#3606).
+    """
+    html_text = (
+        "<html><body><p>Intro.</p>"
+        '<figure typeof="mw:File/Thumb"><a href="/wiki/File:Tonnetz.svg">'
+        '<img src="//upload.wikimedia.org/tonnetz.svg" alt="Tonnetz diagram"></a>'
+        '<figcaption>The <a href="/wiki/Tonnetz">Tonnetz</a>, minor as upside-down major'
+        "</figcaption></figure></body></html>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [(type(e).__name__, e.text) for e in elements] == [
+        ("Text", "Intro."),
+        ("Image", "Tonnetz diagram"),
+        ("FigureCaption", "The Tonnetz, minor as upside-down major"),
+    ]
+    assert elements[1].metadata.image_url == "//upload.wikimedia.org/tonnetz.svg"
+    assert elements[2].metadata.link_texts == ["Tonnetz"]
+    assert elements[2].metadata.link_urls == ["/wiki/Tonnetz"]
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        ("<pre>x = 1</pre>", ("CodeSnippet", "x = 1")),
+        ("<table><tr><td>Q1</td><td>10</td></tr></table>", ("Table", "Q1 10")),
+    ],
+)
+def test_partition_html_keeps_non_image_figure_content_and_caption(
+    content: str, expected: tuple[str, str]
+):
+    html_text = (
+        f"<html><body><figure>{content}<figcaption>Caption text.</figcaption></figure>"
+        "</body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        expected,
+        ("FigureCaption", "Caption text."),
+    ]
+
+
+def test_partition_html_keeps_a_block_wrapped_figcaption_a_figure_caption():
+    html_text = (
+        '<html><body><figure><img src="/c.png" alt="C">'
+        "<figcaption><p>Wrapped caption text.</p></figcaption></figure></body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        ("Image", "C"),
+        ("FigureCaption", "Wrapped caption text."),
+    ]

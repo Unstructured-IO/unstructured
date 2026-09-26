@@ -92,6 +92,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     EmailAddress,
+    FigureCaption,
     Image,
     ListItem,
     NarrativeText,
@@ -456,6 +457,36 @@ class Heading(Flow):
     """
 
     _ElementCls = Title
+
+
+class Figure(Flow):
+    """A `<figure>` element, such as an image, code listing or table with its `<figcaption>`.
+
+    It is traversed like a `<div>`. The distinct class keeps a list item from adopting a figure as
+    though it were a plain paragraph.
+    """
+
+
+class FigureCaptionBlock(Flow):
+    """A `<figcaption>` element, which generates a `FigureCaption` element."""
+
+    _ElementCls = FigureCaption
+
+    def iter_elements(self) -> Iterator[Element]:
+        """Adopt a sole text block, such as a caption wrapped in a `<p>`."""
+        if len(self) == 1 and not (self.text or "").strip():
+            child = self[0]
+            if (
+                type(child) in (Flow, BlockItem)
+                and not (child.tail or "").strip()
+                and all(node.is_phrasing for node in child.iterdescendants())
+            ):
+                yield from self._element_from_text_or_tail(
+                    child.text or "", deque(child), FigureCaption
+                )
+                return
+
+        yield from super().iter_elements()
 
 
 class ListBlock(Flow):
@@ -1035,6 +1066,8 @@ element_class_lookup.get_namespace(None).update(
         "ul": ListBlock,
         "li": ListItemBlock,
         # -- image --
+        "figure": Figure,
+        "figcaption": FigureCaptionBlock,
         "img": ImageBlock,
         # -- table --
         "table": TableBlock,
@@ -1078,7 +1111,6 @@ element_class_lookup.get_namespace(None).update(
         "dl": RemovedBlock,
         "dd": RemovedBlock,
         "dt": RemovedBlock,
-        "figure": RemovedBlock,
         "hr": RemovedBlock,
         "nav": RemovedBlock,
         "template": RemovedBlock,
