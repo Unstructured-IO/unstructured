@@ -7227,7 +7227,6 @@ dependencies = [
     { name = "langdetect" },
     { name = "lxml" },
     { name = "nh3" },
-    { name = "numba" },
     { name = "numpy" },
     { name = "psutil" },
     { name = "python-iso639" },
@@ -7249,6 +7248,7 @@ all-docs = [
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
     { name = "networkx" },
+    { name = "numba" },
     { name = "openai-whisper" },
     { name = "openpyxl" },
     { name = "pandas" },
@@ -7289,6 +7289,7 @@ huggingface = [
 ]
 image = [
     { name = "google-cloud-vision" },
+    { name = "numba" },
     { name = "pdf2image" },
     { name = "pdfminer-six" },
     { name = "pi-heif" },
@@ -7305,6 +7306,7 @@ local-inference = [
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
     { name = "networkx" },
+    { name = "numba" },
     { name = "openai-whisper" },
     { name = "openpyxl" },
     { name = "pandas" },
@@ -7336,6 +7338,7 @@ paddleocr = [
 ]
 pdf = [
     { name = "google-cloud-vision" },
+    { name = "numba" },
     { name = "pdf2image" },
     { name = "pdfminer-six" },
     { name = "pi-heif" },
@@ -7422,7 +7425,10 @@ requires-dist = [
     { name = "networkx", marker = "extra == 'local-inference'", specifier = ">=3.2.0,<4.0.0" },
     { name = "networkx", marker = "extra == 'xlsx'", specifier = ">=3.2.0,<4.0.0" },
     { name = "nh3", specifier = ">=0.3.0,<1.0.0" },
-    { name = "numba", specifier = ">=0.60.0,<1.0.0" },
+    { name = "numba", marker = "extra == 'all-docs'", specifier = ">=0.60.0,<1.0.0" },
+    { name = "numba", marker = "extra == 'image'", specifier = ">=0.60.0,<1.0.0" },
+    { name = "numba", marker = "extra == 'local-inference'", specifier = ">=0.60.0,<1.0.0" },
+    { name = "numba", marker = "extra == 'pdf'", specifier = ">=0.60.0,<1.0.0" },
     { name = "numpy", specifier = ">=1.26.0,<3.0.0" },
     { name = "openai-whisper", marker = "extra == 'all-docs'", specifier = ">=20231117,<20270000" },
     { name = "openai-whisper", marker = "extra == 'audio'", specifier = ">=20231117,<20270000" },
