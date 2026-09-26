@@ -458,6 +458,31 @@ class Heading(Flow):
     _ElementCls = Title
 
 
+class Summary(Heading):
+    """A `<summary>` element, the visible label of a `<details>` disclosure widget.
+
+    The label is a `Title` even when it follows an image (such as an expand/collapse icon) or is
+    wrapped in an ordinary block like `<p>` or `<div>`, so each widget still starts a new section
+    when chunking by title.
+    """
+
+    def iter_elements(self) -> Iterator[Element]:
+        yield from self._iter_label_elements(self)
+
+    def _iter_label_elements(self, block: Flow) -> Iterator[Element]:
+        """Generate the elements in `block`, making every run of its text a `Title`."""
+        q: deque[Flow | Phrasing] = deque(block)
+        yield from block._element_from_text_or_tail(block.text or "", q, Title)
+        while q:
+            child = cast(Flow, q.popleft())
+            # -- descend into a plain wrapper; an image, heading, table, etc. keeps its own type --
+            if type(child) in (Flow, BlockItem):
+                yield from self._iter_label_elements(child)
+            else:
+                yield from child.iter_elements()
+            yield from block._element_from_text_or_tail(child.tail or "", q, Title)
+
+
 class ListBlock(Flow):
     """Either a `<ul>` or `<ol>` element, maybe a `<dl>` element at some point.
 
@@ -1075,7 +1100,7 @@ element_class_lookup.get_namespace(None).update(
         "label": RemovedPhrasing,
         # -- disclosure widget: `<summary>` is its heading, the rest is ordinary flow content --
         "details": Flow,
-        "summary": Heading,
+        "summary": Summary,
         # -- removed block --
         "dl": RemovedBlock,
         "dd": RemovedBlock,
