@@ -171,6 +171,22 @@ class DescribeChunkingOptions:
         ):
             ChunkingOptions(new_after_n_chars=n_chars)._validate()
 
+    @pytest.mark.parametrize("overlap", [-1, -5])
+    def it_rejects_overlap_for_n_less_than_zero(self, overlap: int):
+        """A negative `overlap` silently corrupts chunk text, so reject it at validation.
+
+        On the character-split path `_TextSplitter.__call__` computes the remainder as
+        `s[maxlen - overlap:]`, so a negative overlap starts the remainder *after* the end of the
+        fragment and drops that many characters of the document at every split boundary. With
+        `overlap_all=True`, `PreChunk.overlap_tail` computes `self._text[-overlap:]`, which for a
+        negative overlap is a forward slice that repeats nearly the whole chunk in the next one.
+        """
+        with pytest.raises(
+            ValueError,
+            match=f"'overlap' argument must be >= 0, got {overlap}",
+        ):
+            ChunkingOptions(overlap=overlap)._validate()
+
     def it_rejects_overlap_not_less_than_max_characters(self):
         with pytest.raises(
             ValueError,
