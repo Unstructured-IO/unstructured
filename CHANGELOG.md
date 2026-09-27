@@ -1,3 +1,12 @@
+## 0.27.11
+
+### Fixes
+
+- **Preserve serialized element identity when rehydrating JSON.** `partition_json()` no longer
+  replaces element IDs or stored metadata with attributes from the JSON container. Explicit
+  `metadata_filename` and `metadata_last_modified` overrides remain supported, while arbitrary
+  JSON continues to receive JSON source metadata and deterministic IDs.
+
 ## 0.27.10
 
 ### Fixes

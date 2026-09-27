@@ -7,15 +7,18 @@ import json
 import os
 import pathlib
 import tempfile
+from collections.abc import Iterable
 
 import pytest
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import example_doc_path
+from unstructured.chunking import register_chunking_strategy
 from unstructured.chunking.dispatch import reconstruct_table_from_chunks
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     CompositeElement,
+    Element,
     ElementMetadata,
     Table,
     TableChunk,
@@ -29,7 +32,7 @@ from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
 from unstructured.partition.text import partition_text
 from unstructured.partition.xml import partition_xml
-from unstructured.staging.base import elements_to_json
+from unstructured.staging.base import elements_from_json, elements_to_dicts, elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -48,9 +51,84 @@ def test_it_chunks_elements_when_a_chunking_strategy_is_specified():
     chunks = partition_json(
         "example-docs/spring-weather.html.json", chunking_strategy="basic", max_characters=1500
     )
+    repeated = partition_json(
+        "example-docs/spring-weather.html.json", chunking_strategy="basic", max_characters=1500
+    )
 
     assert len(chunks) == 9
     assert all(isinstance(ch, CompositeElement) for ch in chunks)
+    assert [chunk.id for chunk in chunks] == [chunk.id for chunk in repeated]
+
+
+def test_partition_json_preserves_serialized_elements():
+    path = example_doc_path("simple.json")
+
+    expected = elements_from_json(filename=path)
+    actual = partition_json(filename=path)
+
+    assert elements_to_dicts(actual) == elements_to_dicts(expected)
+
+
+def test_partition_json_preserves_attachment_filename_during_rehydration():
+    serialized = elements_to_dicts(
+        [
+            Text(
+                "attachment",
+                metadata=ElementMetadata(
+                    filename="invoice.pdf",
+                    attached_to_filename="message.eml",
+                ),
+            )
+        ]
+    )
+
+    elements = partition_json(text=json.dumps(serialized), metadata_filename="renamed.eml")
+
+    assert elements[0].metadata.filename == "invoice.pdf"
+    assert elements[0].metadata.attached_to_filename == "message.eml"
+
+
+def test_partition_json_passes_complete_call_arguments_to_custom_chunker():
+    call_args: dict[str, object] = {}
+
+    def capture_call_args(
+        elements: Iterable[Element],
+        *,
+        max_characters: int | None = None,
+        filename: str | None = None,
+        file: object = None,
+        text: str | None = None,
+        metadata_last_modified: str | None = None,
+        metadata_filename: str | None = None,
+    ) -> list[Element]:
+        call_args.update(
+            filename=filename,
+            file=file,
+            text=text,
+            metadata_last_modified=metadata_last_modified,
+            metadata_filename=metadata_filename,
+        )
+        return list(elements)
+
+    register_chunking_strategy("capture-json-call-args", capture_call_args)
+    stream = io.BytesIO(b"  \n")
+
+    assert (
+        partition_json(
+            file=stream,
+            metadata_last_modified="2020-07-05T09:24:28",
+            metadata_filename="cars.json",
+            chunking_strategy="capture-json-call-args",
+        )
+        == []
+    )
+    assert call_args == {
+        "filename": None,
+        "file": stream,
+        "text": None,
+        "metadata_last_modified": "2020-07-05T09:24:28",
+        "metadata_filename": "cars.json",
+    }
 
 
 @pytest.mark.parametrize("filename", test_files)
@@ -248,15 +326,50 @@ def test_partition_json_raises_with_too_many_specified():
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_json_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
+def test_partition_json_preserves_serialized_last_modified_from_file_path(
+    mocker: MockFixture,
+):
+    filesystem_last_modified = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.json.get_last_modified_date", return_value=filesystem_last_modified
+    )
+    path = example_doc_path("spring-weather.html.json")
+
+    expected = elements_from_json(filename=path)
+    elements = partition_json(path)
+
+    assert [e.metadata.last_modified for e in elements] == [
+        e.metadata.last_modified for e in expected
+    ]
+
+
+def test_partition_json_arbitrary_file_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
         "unstructured.partition.json.get_last_modified_date", return_value=filesystem_last_modified
     )
 
-    elements = partition_json(example_doc_path("spring-weather.html.json"))
+    elements = partition_json(example_doc_path("arbitrary-records.json"))
 
     assert all(e.metadata.last_modified == filesystem_last_modified for e in elements)
+
+
+def test_partition_json_arbitrary_chunks_preserve_last_modified_on_orig_elements():
+    metadata_last_modified = "2020-07-05T09:24:28"
+
+    chunks = partition_json(
+        text='[{"make": "Fabrikam"}, {"make": "Contoso"}]',
+        metadata_last_modified=metadata_last_modified,
+        chunking_strategy="basic",
+    )
+
+    orig_elements = [
+        orig_element for chunk in chunks for orig_element in chunk.metadata.orig_elements or []
+    ]
+    assert orig_elements
+    assert all(
+        element.metadata.last_modified == metadata_last_modified for element in orig_elements
+    )
 
 
 def test_partition_json_from_file_gets_last_modified_None():
@@ -323,6 +436,23 @@ def it_partitions_an_arbitrary_object_into_a_single_Text_element():
     elements = partition_json(text='{"make": "Fabrikam", "model": "F-100"}')
 
     assert elements == [Text(text='{\n  "make": "Fabrikam",\n  "model": "F-100"\n}')]
+
+
+def and_it_adds_json_metadata_and_deterministic_ids_to_arbitrary_content():
+    elements = partition_json(
+        text='{"make": "Fabrikam"}',
+        metadata_filename="cars.json",
+        chunking_strategy="basic",
+    )
+    repeated = partition_json(
+        text='{"make": "Fabrikam"}',
+        metadata_filename="cars.json",
+        chunking_strategy="basic",
+    )
+
+    assert elements[0].metadata.filename == "cars.json"
+    assert elements[0].metadata.filetype == "application/json"
+    assert elements[0].id == repeated[0].id
 
 
 def and_it_preserves_deeply_nested_values_in_the_pretty_printed_text():

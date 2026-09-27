@@ -14,24 +14,45 @@ from __future__ import annotations
 import json
 from typing import IO, Any, Optional
 
-from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element, process_metadata
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common.common import exactly_one
+from unstructured.chunking.dispatch import chunk
+from unstructured.documents.elements import Element, assign_and_map_hash_ids
+from unstructured.file_utils.filetype import FileType
+from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.json_partitioning import (
     elements_from_arbitrary_value,
     is_element_shaped_dict,
     loads_strict_json,
     rehydrate_elements,
 )
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import get_last_modified_date, set_element_hierarchy
 from unstructured.telemetry import partition_runtime_telemetry
 
 
+def _apply_chunking(
+    elements: list[Element],
+    *,
+    filename: Optional[str],
+    file: Optional[IO[bytes]],
+    text: Optional[str],
+    metadata_last_modified: Optional[str],
+    kwargs: dict[str, Any],
+) -> list[Element]:
+    """Apply the requested chunking strategy before final metadata processing."""
+    call_args = {
+        "filename": filename,
+        "file": file,
+        "text": text,
+        "metadata_last_modified": metadata_last_modified,
+        **kwargs,
+    }
+    chunking_strategy = call_args.pop("chunking_strategy", None)
+    if chunking_strategy is None:
+        return elements
+
+    return chunk(elements, chunking_strategy, **call_args)
+
+
 @partition_runtime_telemetry("json")
-@process_metadata()
-@add_metadata_with_filetype(FileType.JSON)
-@add_chunking_strategy
 def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -72,7 +93,14 @@ def partition_json(
         The last modified date for the document.
     """
     if text is not None and text.strip() == "" and not file and not filename:
-        return []
+        return _apply_chunking(
+            [],
+            filename=filename,
+            file=file,
+            text=text,
+            metadata_last_modified=metadata_last_modified,
+            kwargs=kwargs,
+        )
 
     exactly_one(filename=filename, file=file, text=text)
 
@@ -91,21 +119,70 @@ def partition_json(
         file_text = str(text)
 
     if not file_text.strip():
-        return []
+        return _apply_chunking(
+            [],
+            filename=filename,
+            file=file,
+            text=text,
+            metadata_last_modified=metadata_last_modified,
+            kwargs=kwargs,
+        )
 
     try:
         value = loads_strict_json(file_text)
     except (json.JSONDecodeError, RecursionError):
         raise ValueError("Not a valid json")
 
-    if isinstance(value, list) and value and all(is_element_shaped_dict(i) for i in value):
-        # -- Branch A: rehydrate serialized Unstructured elements --
-        elements = rehydrate_elements(value)
-    else:
-        # -- Branch B: arbitrary JSON --
-        elements = elements_from_arbitrary_value(value)
+    is_rehydration = (
+        isinstance(value, list) and bool(value) and all(is_element_shaped_dict(i) for i in value)
+    )
+    elements = rehydrate_elements(value) if is_rehydration else elements_from_arbitrary_value(value)
 
-    for element in elements:
-        element.metadata.last_modified = metadata_last_modified or last_modified
+    if is_rehydration:
+        elements = _apply_chunking(
+            elements,
+            filename=filename,
+            file=file,
+            text=text,
+            metadata_last_modified=metadata_last_modified,
+            kwargs=kwargs,
+        )
+        metadata_filename = kwargs.get("metadata_filename")
+        for element in elements:
+            if metadata_filename and element.metadata.attached_to_filename is None:
+                add_element_metadata(element, filename=metadata_filename)
+            if metadata_last_modified:
+                element.metadata.last_modified = metadata_last_modified
+
+        if (
+            kwargs.get("chunking_strategy") is not None
+            and kwargs.get("unique_element_ids", False) is False
+        ):
+            elements = assign_and_map_hash_ids(elements)
+    else:
+        for element in elements:
+            element.metadata.last_modified = metadata_last_modified or last_modified
+
+        elements = _apply_chunking(
+            elements,
+            filename=filename,
+            file=file,
+            text=text,
+            metadata_last_modified=metadata_last_modified,
+            kwargs=kwargs,
+        )
+        elements = set_element_hierarchy(elements)
+        metadata_filename = kwargs.get("metadata_filename") or filename
+        for element in elements:
+            add_element_metadata(
+                element,
+                filename=metadata_filename,
+                filetype=FileType.JSON.mime_type,
+                url=kwargs.get("url"),
+                text_as_html=kwargs.get("text_as_html"),
+            )
+
+        if kwargs.get("unique_element_ids", False) is False:
+            elements = assign_and_map_hash_ids(elements)
 
     return elements
