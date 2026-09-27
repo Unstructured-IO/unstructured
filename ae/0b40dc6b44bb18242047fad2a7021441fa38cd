@@ -1,0 +1,22 @@
+unstructured/staging/base.py
+  s_5a033f6652bacd::t_bfd986dc9ed3b5 9,17,502-503,505-507
+  s_5a033f6652bacd::t_2b9cb585063721 514-516
+test_unstructured/staging/test_base.py
+  s_5a033f6652bacd::t_f24c099709b6e4 1029-1082
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ae0b40dc6b44bb18242047fad2a7021441fa38cd",
+  "prompts": {},
+  "sessions": {
+    "s_5a033f6652bacd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "34f192df-e532-4730-9cc6-38cce2ae2517",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "paulkarayan <pk@unstructured.io>"
+    }
+  }
+}
