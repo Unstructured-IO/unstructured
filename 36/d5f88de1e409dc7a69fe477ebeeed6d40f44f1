@@ -1,0 +1,39 @@
+test_unstructured/staging/test_base.py
+  s_bbec982434ba1e::t_006e7a020657a4 1014-1028
+unstructured/documents/elements.py
+  s_bbec982434ba1e::t_c57d789531ec4f 439,445-449
+  s_bbec982434ba1e::t_c09cfb1aca3870 238-244
+  s_bbec982434ba1e::t_66eaea2bc4e909 450
+test_unstructured/documents/test_elements.py
+  s_bbec982434ba1e::t_006e7a020657a4 12,430-435,457-467
+  s_bbec982434ba1e::t_c57d789531ec4f 436-456
+  s_bbec982434ba1e::t_8730d503db799b 468
+unstructured/staging/base.py
+  s_bbec982434ba1e::t_c09cfb1aca3870 490-496
+CHANGELOG.md
+  s_bbec982434ba1e::t_3d75cb8a740551 2-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "36d5f88de1e409dc7a69fe477ebeeed6d40f44f1",
+  "prompts": {},
+  "sessions": {
+    "s_5a033f6652bacd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "34f192df-e532-4730-9cc6-38cce2ae2517",
+        "model": "claude-opus-5"
+      },
+      "human_author": "paulkarayan <pk@unstructured.io>"
+    },
+    "s_bbec982434ba1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c01cb0da-3c2e-4677-add9-902ae5c584e4",
+        "model": "claude-opus-5"
+      },
+      "human_author": "paulkarayan <pk@unstructured.io>"
+    }
+  }
+}
