@@ -12,6 +12,9 @@ unstructured/staging/base.py
   s_bbec982434ba1e::t_c09cfb1aca3870 490-496
 CHANGELOG.md
   s_bbec982434ba1e::t_3d75cb8a740551 2-6
+  s_5a033f6652bacd::t_cebe1984841572 1
+unstructured/__version__.py
+  s_5a033f6652bacd::t_cebe1984841572 1
 ---
 {
   "schema_version": "authorship/3.0.0",
