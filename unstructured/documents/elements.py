@@ -436,17 +436,18 @@ class ElementMetadata:
         """
         from unstructured.staging.base import elements_to_base64_gzipped_json
 
-        meta_dict = dict(self.fields)
+        # -- copy the fields a caller could mutate to reach back into this metadata, but not the
+        # -- ones replaced by their serialized form below. Those stay in place as placeholders so
+        # -- the reassignments keep their original key position --
+        fields = self.fields
+        copied = copy.deepcopy(
+            {k: v for k, v in fields.items() if k not in self.SEPARATELY_SERIALIZED_FIELD_NAMES}
+        )
+        meta_dict = {k: copied.get(k, v) for k, v in fields.items()}
 
         # -- remove fields that should not be serialized --
         for field_name in self.DEBUG_FIELD_NAMES:
             meta_dict.pop(field_name, None)
-
-        # -- drop the fields replaced by their serialized form below, then copy what is left so a
-        # -- caller mutating the returned dict cannot reach back into this metadata --
-        for field_name in self.SEPARATELY_SERIALIZED_FIELD_NAMES:
-            meta_dict.pop(field_name, None)
-        meta_dict = copy.deepcopy(meta_dict)
 
         # -- don't serialize empty lists --
         meta_dict: dict[str, Any] = {

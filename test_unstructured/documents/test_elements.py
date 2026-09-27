@@ -455,6 +455,33 @@ class DescribeElementMetadata:
             for separately_serialized_field in ElementMetadata.SEPARATELY_SERIALIZED_FIELD_NAMES
         )
 
+    def and_it_emits_the_separately_serialized_fields_in_their_declared_position(self):
+        """A field's key position must not depend on whether it gets a separate serialized form.
+
+        `Element.to_dict()` output is written verbatim by consumers that do not sort keys, so
+        moving `coordinates`, `data_source`, `orig_elements` or `key_value_pairs` to the end of the
+        dict changes the bytes they write.
+        """
+        meta = ElementMetadata(
+            coordinates=CoordinatesMetadata(
+                points=((2, 2), (1, 4), (3, 4), (3, 2)), system=RelativeCoordinateSystem()
+            ),
+            data_source=DataSourceMetadata(url="https://example.com"),
+            filetype="text/plain",
+            languages=["eng"],
+            orig_elements=assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")]),
+            page_number=2,
+        )
+
+        assert list(meta.to_dict()) == [
+            "coordinates",
+            "data_source",
+            "filetype",
+            "languages",
+            "orig_elements",
+            "page_number",
+        ]
+
     def and_it_serializes_orig_elements_the_same_way_on_every_call(self):
         """Two `to_dict()` calls on one metadata must agree on the ids of its `orig_elements`.
 
