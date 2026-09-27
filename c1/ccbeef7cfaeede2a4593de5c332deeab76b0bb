@@ -1,0 +1,21 @@
+test_unstructured/documents/test_elements.py
+  s_5a033f6652bacd::t_577c718d21e127 458-484
+unstructured/documents/elements.py
+  s_5a033f6652bacd::t_2c6bfe53c33126 439-446
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c1ccbeef7cfaeede2a4593de5c332deeab76b0bb",
+  "prompts": {},
+  "sessions": {
+    "s_5a033f6652bacd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "34f192df-e532-4730-9cc6-38cce2ae2517",
+        "model": "claude-opus-5"
+      },
+      "human_author": "paulkarayan <pk@unstructured.io>"
+    }
+  }
+}
