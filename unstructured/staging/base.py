@@ -6,7 +6,7 @@ import io
 import json
 import re
 import zlib
-from copy import deepcopy
+from copy import copy
 from datetime import datetime
 from typing import Any, Iterable, Optional, Sequence, cast
 
@@ -14,6 +14,7 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
+    CoordinatesMetadata,
     Element,
     ElementMetadata,
     Formula,
@@ -498,17 +499,21 @@ def _fix_metadata_field_precision(elements: Iterable[Element]) -> list[Element]:
         # -- without this the copy below takes a fresh uuid with it and every call reports a
         # -- different `element_id` for the same element --
         _ = element.id
-        el = deepcopy(element)
+        el = copy(element)
+        el.metadata = copy(element.metadata)
         if el.metadata.coordinates:
-            precision = 1 if isinstance(el.metadata.coordinates.system, PixelSpace) else 2
-            points = el.metadata.coordinates.points
+            coordinates = el.metadata.coordinates
+            precision = 1 if isinstance(coordinates.system, PixelSpace) else 2
+            points = coordinates.points
             assert points is not None
             rounded_points: list[Point] = []
             for point in points:
                 x, y = point
                 rounded_point = (round(x, precision), round(y, precision))
                 rounded_points.append(rounded_point)
-            el.metadata.coordinates.points = tuple(rounded_points)
+            el.metadata.coordinates = CoordinatesMetadata(
+                points=tuple(rounded_points), system=coordinates.system
+            )
 
         if el.metadata.detection_class_prob:
             el.metadata.detection_class_prob = round(el.metadata.detection_class_prob, 5)
