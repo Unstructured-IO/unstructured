@@ -1,3 +1,9 @@
+## 0.27.10
+
+### Fixes
+
+- **Extract definition lists instead of discarding them**: `<dl>`, `<dt>` and `<dd>` were mapped to `RemovedBlock`, so `partition_html()` dropped every glossary and every Sphinx-generated API reference (each documented function with its parameters and return value) without an error. `<dl>` is now a list container, each `<dd>` definition a `ListItem` and each `<dt>` term an ordinary text block. The v2 (ontology) parser already kept definition lists.
+
 ## 0.27.9
 
 ### Fixes
