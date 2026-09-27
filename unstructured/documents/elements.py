@@ -159,6 +159,8 @@ class ElementMetadata:
     #   to consolidate this new metadata field from each pre-chunk element during chunking.
     # - Add field-name to DEBUG_FIELD_NAMES if it shouldn't appear in dict/JSON or participate in
     #   equality comparison.
+    # - Add field-name to SEPARATELY_SERIALIZED_FIELD_NAMES if `.to_dict()` replaces its value
+    #   with a serialized form, so it is not deep-copied first.
 
     attached_to_filename: Optional[str]
     category_depth: Optional[int]

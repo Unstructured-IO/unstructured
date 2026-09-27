@@ -486,6 +486,11 @@ def elements_to_ndjson(
 
 
 def _fix_metadata_field_precision(elements: Iterable[Element]) -> list[Element]:
+    """Round `coordinates` and `detection_class_prob` for serialization.
+
+    An element with neither field is returned as-is, the caller's own object. Any other element is
+    returned as a shallow copy with its own metadata copy; the caller's element is not modified.
+    """
     out_elements: list[Element] = []
     for element in elements:
         # -- the copy exists only so the two fields below can be rounded without touching the
