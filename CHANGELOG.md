@@ -1,3 +1,9 @@
+## 0.27.11
+
+### Fixes
+
+- **`create_file_from_elements(output_format="text", filename=...)` no longer writes an empty file when `elements` is an iterator.** The text branch converted `elements` once for the return value and then iterated it a second time to write the file, so a generator or other one-shot iterable (for example a filtered selection of partitioned elements) produced the correct return value but an empty output file. The already-converted text is now written directly, as the markdown and HTML branches already do.
+
 ## 0.27.10
 
 ### Fixes
