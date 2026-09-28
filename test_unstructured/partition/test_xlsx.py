@@ -9,6 +9,7 @@ import sys
 import tempfile
 from typing import Any
 
+import openpyxl
 import pandas as pd
 import pandas.testing as pdt
 import pytest
@@ -295,6 +296,26 @@ def test_partition_xlsx_with_more_than_1k_cells():
         partition_xlsx("example-docs/more-than-1k-cells.xlsx")
     finally:
         sys.setrecursionlimit(old_recursion_limit)
+
+
+def test_partition_xlsx_keeps_cell_text_that_pandas_reads_as_missing_by_default():
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    for row in (
+        ["Item", "Status"],
+        ["Pear", "N/A"],
+        ["Fig", "NA"],
+        ["Plum", "null"],
+        ["Kiwi", "None"],
+    ):
+        worksheet.append(row)
+    file = io.BytesIO()
+    workbook.save(file)
+
+    (table,) = partition_xlsx(file=file)
+
+    assert table.text == "Item Status Pear N/A Fig NA Plum null Kiwi None"
+    assert "<td>N/A</td>" in table.metadata.text_as_html
 
 
 # ================================================================================================
