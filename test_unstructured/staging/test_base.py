@@ -941,6 +941,21 @@ def test_create_file_from_elements_filename_write(format_name: str, expected_in_
             os.unlink(tmp_filename)
 
 
+@pytest.mark.parametrize("format_name", ["markdown", "text", "html"])
+def test_create_file_from_elements_writes_file_from_an_iterator(format_name: str, tmp_path):
+    """A one-shot iterator of elements is written to the file, not just returned."""
+    elements = [Title("Heading"), NarrativeText("Some body text.")]
+    filename = str(tmp_path / "out")
+
+    out = base.create_file_from_elements(
+        iter(elements), output_format=format_name, filename=filename
+    )
+
+    assert "Some body text." in out
+    with open(filename, encoding="utf-8") as f:
+        assert f.read() == out
+
+
 def test_create_file_from_elements_exclude_binary_image_data_markdown():
     """exclude_binary_image_data=True passthrough: markdown omits base64 image data."""
     elements = [
