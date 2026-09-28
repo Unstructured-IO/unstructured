@@ -1,3 +1,9 @@
+## 0.27.11
+
+### Fixes
+
+- **Keep XLSX cell text that pandas treats as missing by default.** `partition_xlsx()` read worksheets with the pandas default NA strings, so a cell reading `N/A`, `NA`, `null`, `None`, `NaN` or similar came out empty. Besides losing the text, that could break a table apart, with the rows beside those cells emitted as `Title` elements. Only empty cells count as missing now, so subtable detection is unchanged.
+
 ## 0.27.10
 
 ### Fixes

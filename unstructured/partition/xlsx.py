@@ -200,7 +200,12 @@ class _XlsxPartitionerOptions:
             raise UnprocessableEntityError("XLSX file is password protected.")
 
         return pd.read_excel(
-            io.BytesIO(self._file_bytes), sheet_name=None, header=self.header_row_idx
+            io.BytesIO(self._file_bytes),
+            sheet_name=None,
+            header=self.header_row_idx,
+            # -- only an empty cell is missing; cell text such as "N/A" or "None" is content --
+            keep_default_na=False,
+            na_values=[""],
         )
 
     @cached_property
