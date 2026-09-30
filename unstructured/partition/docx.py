@@ -469,6 +469,8 @@ class _DocxPartitioner:
             )
         )
 
+        label = "" if is_continuation else self._list_labels.label(paragraph)
+
         # -- blank paragraphs are commonly used for spacing between paragraphs and do not
         # -- contribute to the document-element stream
         if not text.strip():
@@ -481,7 +483,12 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
-                label = "" if is_continuation else self._list_labels.label(paragraph)
+                if label and metadata.links:
+                    shift = len(label) + 1
+                    metadata.links = [
+                        {**link, "start_index": link["start_index"] + shift}
+                        for link in metadata.links
+                    ]
                 yield ListItem(
                     text=f"{label} {clean_text}" if label else clean_text,
                     metadata=metadata,
@@ -826,6 +833,7 @@ class _DocxPartitioner:
 
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
+        self._advance_table_numbering(table)
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table.
         html_table = (
@@ -846,6 +854,21 @@ class _DocxPartitioner:
                 emphasized_text_tags=emphasized_text_tags or None,
             ),
         )
+
+    def _advance_table_numbering(self, table: DocxTable) -> None:
+        """Advance the list counters for each numbered paragraph in `table`, in document order.
+
+        Table text is not labeled, but Word counts its numbered paragraphs like any other.
+        """
+        for row in table.rows:
+            for tc in row._tr.tc_lst:
+                if tc.vMerge == "continue":
+                    continue
+                for block_item in _Cell(tc, table).iter_inner_content():
+                    if isinstance(block_item, Paragraph):
+                        self._list_labels.label(block_item)
+                    else:
+                        self._advance_table_numbering(block_item)
 
     def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
@@ -1097,24 +1120,29 @@ class _ListLabels:
         if ilvl is None:
             linked = self._xpath(abstract, f'./w:lvl[w:pStyle/@w:val="{style_id}"]/@w:ilvl')
             ilvl = int(linked[0]) if linked else 0
+        if not 0 <= ilvl <= _MAX_LIST_LEVEL:
+            return ""
         lvl = self._level(num, abstract, ilvl)
-        if lvl is None or self._val(lvl, "w:numFmt") in ("bullet", "none"):
+        if lvl is None:
             return ""
 
-        counters = self._counters.setdefault(abstract_id, [])
-        current = counters[ilvl] if ilvl < len(counters) else None
-        start = self._start(lvl)
+        counters = self._counters.setdefault(abstract_id, [None] * (_MAX_LIST_LEVEL + 1))
         override = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride/@w:val')
         if override and (num_id, ilvl) not in self._restarted:
             self._restarted.add((num_id, ilvl))
-            value = int(override[0])
-        elif current is None:
-            value = start
+            counters[ilvl] = int(override[0])
+        elif counters[ilvl] is None:
+            counters[ilvl] = self._start(lvl)
         else:
-            value = current + 1
-        del counters[ilvl:]
-        counters.extend([None] * (ilvl - len(counters)))
-        counters.append(value)
+            counters[ilvl] += 1
+        for deeper in range(ilvl + 1, _MAX_LIST_LEVEL + 1):
+            deeper_lvl = self._level(num, abstract, deeper)
+            restart = None if deeper_lvl is None else self._val(deeper_lvl, "w:lvlRestart")
+            if restart is None or (restart != "0" and ilvl < int(restart)):
+                counters[deeper] = None
+
+        if self._val(lvl, "w:numFmt") in ("bullet", "none"):
+            return ""
 
         def render_placeholder(match: re.Match[str]) -> str:
             level = int(match.group(1)) - 1
@@ -1129,7 +1157,10 @@ class _ListLabels:
                 self._val(referenced, "w:numFmt") or "decimal",
             )
 
-        return re.sub(r"%(\d)", render_placeholder, self._val(lvl, "w:lvlText") or "").strip()
+        try:
+            return re.sub(r"%(\d)", render_placeholder, self._val(lvl, "w:lvlText") or "").strip()
+        except _UnrenderableLabel:
+            return ""
 
     def _resolve_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
         """The `(numId, ilvl, style_id)` in effect for `paragraph`, `None` for any not specified.
@@ -1192,7 +1223,16 @@ class _ListLabels:
 
     @staticmethod
     def _format_number(value: int, num_fmt: str) -> str:
-        """`value` rendered in the Word number format `num_fmt`; unknown formats are decimal."""
+        """`value` rendered in the Word number format `num_fmt`.
+
+        Raises `_UnrenderableLabel` for a format or value this cannot render as Word does.
+        """
+        if not 0 <= value <= _MAX_LIST_NUMBER:
+            raise _UnrenderableLabel
+        if num_fmt == "decimal":
+            return str(value)
+        if num_fmt == "decimalZero":
+            return f"{value:02d}"
         if num_fmt in ("lowerLetter", "upperLetter") and value > 0:
             letters = chr(ord("a") + (value - 1) % 26) * ((value - 1) // 26 + 1)
             return letters if num_fmt == "lowerLetter" else letters.upper()
@@ -1202,10 +1242,24 @@ class _ListLabels:
                 count, value = divmod(value, size)
                 roman += numeral * count
             return roman.lower() if num_fmt == "lowerRoman" else roman
-        if num_fmt == "decimalZero":
-            return f"{value:02d}"
-        return str(value)
+        if num_fmt == "ordinal":
+            suffix = (
+                "th"
+                if 10 <= value % 100 <= 20
+                else {1: "st", 2: "nd", 3: "rd"}.get(value % 10, "th")
+            )
+            return f"{value}{suffix}"
+        if num_fmt == "decimalEnclosedCircle":
+            return chr(0x2460 + value - 1) if 1 <= value <= 20 else str(value)
+        raise _UnrenderableLabel
 
+
+class _UnrenderableLabel(Exception):
+    """A list label whose number format or value cannot be rendered the way Word does."""
+
+
+_MAX_LIST_LEVEL = 8
+_MAX_LIST_NUMBER = 32767
 
 _ROMAN_NUMERALS = (
     ("M", 1000),
