@@ -1083,6 +1083,14 @@ class _ListLabels:
             self._numbering = document.part.numbering_part.element
         except Exception:
             self._numbering = None
+        self._nums: dict[str, Any] = {}
+        self._abstracts: dict[str, Any] = {}
+        if self._numbering is not None:
+            for num in self._numbering.findall(qn("w:num")):
+                self._nums.setdefault(num.get(qn("w:numId")), num)
+            for abstract in self._numbering.findall(qn("w:abstractNum")):
+                self._abstracts.setdefault(abstract.get(qn("w:abstractNumId")), abstract)
+        self._levels: dict[tuple[str, int], Any | None] = {}
         self._counters: dict[str, list[int | None]] = {}
         self._restarted: set[tuple[str, int]] = set()
 
@@ -1107,15 +1115,13 @@ class _ListLabels:
         num_id, ilvl, style_id = self._resolve_num_pr(paragraph)
         if num_id in (None, "0"):
             return ""
-        nums = self._numbering.xpath(f'./w:num[@w:numId="{num_id}"]')
-        if not nums:
+        num = self._nums.get(num_id)
+        if num is None:
             return ""
-        num = nums[0]
         abstract_id = self._val(num, "w:abstractNumId")
-        abstracts = self._numbering.xpath(f'./w:abstractNum[@w:abstractNumId="{abstract_id}"]')
-        if not abstracts:
+        abstract = self._abstracts.get(abstract_id)
+        if abstract is None:
             return ""
-        abstract = abstracts[0]
 
         if ilvl is None:
             linked = self._xpath(abstract, f'./w:lvl[w:pStyle/@w:val="{style_id}"]/@w:ilvl')
@@ -1206,11 +1212,13 @@ class _ListLabels:
 
     def _level(self, num: Any, abstract: Any, ilvl: int) -> Any | None:
         """The `w:lvl` definition in effect for `ilvl` of `num`, None when undefined."""
-        for lvl in num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:lvl') or self._xpath(
-            abstract, f'./w:lvl[@w:ilvl="{ilvl}"]'
-        ):
-            return lvl
-        return None
+        key = (num.get(qn("w:numId")), ilvl)
+        if key not in self._levels:
+            found = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:lvl') or self._xpath(
+                abstract, f'./w:lvl[@w:ilvl="{ilvl}"]'
+            )
+            self._levels[key] = found[0] if found else None
+        return self._levels[key]
 
     @staticmethod
     def _xpath(element: Any, expression: str) -> list[Any]:

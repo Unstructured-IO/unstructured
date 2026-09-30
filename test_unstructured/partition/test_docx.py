@@ -612,6 +612,55 @@ def test_partition_docx_restarts_numbered_children_after_a_bullet_parent(tmp_pat
     assert [e.text for e in elements] == ["A", "1. x", "B", "1. y"]
 
 
+def test_partition_docx_restarts_a_child_level_at_its_definition_start_after_an_override(tmp_path):
+    numbering_xml = (
+        f"<w:numbering {_W_NS}>"
+        '<w:abstractNum w:abstractNumId="0">'
+        + _lvl_xml(0, "decimal", "%1.")
+        + _lvl_xml(1, "decimal", "%2.")
+        + "</w:abstractNum>"
+        '<w:num w:numId="1"><w:abstractNumId w:val="0"/>'
+        '<w:lvlOverride w:ilvl="1"><w:startOverride w:val="5"/></w:lvlOverride></w:num>'
+        "</w:numbering>"
+    )
+    path = _numbered_docx(
+        tmp_path,
+        [("P", 1, 0), ("x", 1, 1), ("x2", 1, 1), ("Q", 1, 0), ("y", 1, 1), ("y2", 1, 1)],
+        numbering_xml=numbering_xml,
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. P", "5. x", "6. x2", "2. Q", "1. y", "2. y2"]
+
+
+def test_partition_docx_resolves_each_paragraph_against_its_own_numbering_definition(tmp_path):
+    formats = ["decimal", "upperRoman", "lowerLetter"]
+    numbering_xml = (
+        f"<w:numbering {_W_NS}>"
+        + "".join(
+            f'<w:abstractNum w:abstractNumId="{n}">'
+            + _lvl_xml(0, formats[n % 3], "%1.")
+            + "</w:abstractNum>"
+            for n in range(300)
+        )
+        + "".join(
+            f'<w:num w:numId="{n + 1}"><w:abstractNumId w:val="{n}"/></w:num>' for n in range(300)
+        )
+        + "</w:numbering>"
+    )
+    path = _numbered_docx(
+        tmp_path, [(f"item {n}", n + 1, 0) for n in range(300)], numbering_xml=numbering_xml
+    )
+
+    elements = partition_docx(path)
+
+    expected_labels = {"decimal": "1.", "upperRoman": "I.", "lowerLetter": "a."}
+    assert [e.text for e in elements] == [
+        f"{expected_labels[formats[n % 3]]} item {n}" for n in range(300)
+    ]
+
+
 def test_partition_docx_counts_an_empty_numbered_paragraph(tmp_path):
     path = _numbered_docx(tmp_path, [("a", 1, 0), ("", 1, 0), ("c", 1, 0)])
 
