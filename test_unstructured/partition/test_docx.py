@@ -560,6 +560,30 @@ def test_partition_docx_wraps_letter_labels_past_z(tmp_path):
     assert [e.text for e in elements] == ["z. x", "aa. y"]
 
 
+@pytest.mark.parametrize(
+    ("num_fmt", "start", "expected_labels"),
+    [
+        ("lowerLetter", 27, ["aa", "bb", "cc"]),
+        ("lowerLetter", 52, ["zz", "aaa", "bbb"]),
+        ("upperLetter", 52, ["ZZ", "AAA", "BBB"]),
+    ],
+)
+def test_partition_docx_repeats_the_letter_rather_than_counting_in_base_26(
+    tmp_path, num_fmt: str, start: int, expected_labels: list[str]
+):
+    # -- Word numbers a, b, ... z, aa, bb, ... zz, aaa; not spreadsheet-style (aa, ab, ac) --
+    numbering_xml = _single_definition_numbering(_lvl_xml(0, num_fmt, "%1", start=start))
+    path = _numbered_docx(
+        tmp_path, [(f"item {n}", 1, 0) for n in range(3)], numbering_xml=numbering_xml
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == [
+        f"{label} item {n}" for n, label in enumerate(expected_labels)
+    ]
+
+
 def test_partition_docx_falls_back_to_plain_text_when_numbering_is_unresolvable(tmp_path):
     numbering_xml = f"<w:numbering {_W_NS}/>"
     path = _numbered_docx(tmp_path, [("orphan", 1, 0)], numbering_xml=numbering_xml)
