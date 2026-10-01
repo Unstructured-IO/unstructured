@@ -1,10 +1,36 @@
-## 0.27.8-dev0
+## 0.27.10
 
 ### Enhancements
 
 - Optimize XLSX subtable detection using sparse populated-cell traversal; preserve table grouping and output without introducing size limits.
 
 ### Fixes
+
+- **Extract definition lists instead of discarding them**: `<dl>`, `<dt>` and `<dd>` were mapped to `RemovedBlock`, so `partition_html()` dropped every glossary and every Sphinx-generated API reference (each documented function with its parameters and return value) without an error. `<dl>` is now a list container, each `<dd>` definition a `ListItem` and each `<dt>` term an ordinary text block. The v2 (ontology) parser already kept definition lists.
+
+## 0.27.9
+
+### Fixes
+
+- **Keep active rowspans across oversized table-cell splits.** Continuation rows retain their covering columns and place new cells correctly as shorter spans expire. When a covering cell cannot fit beside an oversized row, its text is not split again for every covered row. A `rowspan="0"` remains scoped to its original table section. Sparse tables with many span expirations are processed without repeatedly scanning every active span.
+
+## 0.27.8
+
+### Enhancements
+
+- **Reuse spaCy results across tokenization helpers.** Cache the processed `Doc` for text up to 8,192 characters so sentence, word, and part-of-speech tokenization run the spaCy pipeline only once per distinct text.
+
+### Fixes
+
+- **`GLOBAL_WORKING_PROCESS_DIR` no longer crashes on Windows.** Use `os.getpid()` when the POSIX-only `os.getpgid()` is unavailable.
+
+- **Preserve HTML table header semantics.** The v1 HTML parser now retains `<thead>`, `<tbody>`,
+  and `<tfoot>` row groups and preserves `<th>` cells in `Table.metadata.text_as_html`. Table text,
+  nested content extraction, and attribute sanitization are unchanged. Chunking now detects and
+  repeats eligible v1 HTML header rows by default; `repeat_table_headers=False` disables header
+  repetition. Split-table chunk text now treats `<br>` as a word boundary for all table sources.
+
+- **Recognize HTML and Markdown loose-list items.** A list item containing a single ordinary text block (such as `<li><p>text</p></li>`) now produces a `ListItem`, preserving inline annotations and list depth. Multi-paragraph items and specialized blocks retain their existing behavior. Resolves #3499.
 
 - **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
 

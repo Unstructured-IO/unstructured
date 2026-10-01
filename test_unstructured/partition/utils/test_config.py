@@ -1,3 +1,4 @@
+import os
 import tempfile
 from pathlib import Path
 
@@ -8,6 +9,19 @@ def test_default_config():
     from unstructured.partition.utils.config import env_config
 
     assert env_config.IMAGE_CROP_PAD == 0
+
+
+def test_get_tempdir_without_getpgid(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
+    """Windows has no os.getpgid; the process temp dir must still resolve."""
+    import unstructured.partition.utils.config as config_mod
+
+    monkeypatch.delattr(config_mod.os, "getpgid", raising=False)
+    config_mod.get_tempdir.cache_clear()
+    try:
+        tempdir = Path(config_mod.get_tempdir(str(tmp_path)))
+        assert tempdir == tmp_path / "tmp" / str(os.getpid())
+    finally:
+        config_mod.get_tempdir.cache_clear()
 
 
 def test_env_override(monkeypatch: pytest.MonkeyPatch):
