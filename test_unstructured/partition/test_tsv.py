@@ -15,6 +15,7 @@ from test_unstructured.partition.test_constants import (
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Table
+from unstructured.partition.auto import partition
 from unstructured.partition.tsv import partition_tsv
 
 EXPECTED_FILETYPE = "text/tsv"
@@ -159,3 +160,26 @@ def test_partition_tsv_supports_chunking_strategy_while_partitioning():
 
     # The same chunks are returned if chunking elements or chunking during partitioning.
     assert chunk_elements == chunks
+
+
+# -- `infer_table_structure` ---------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+def test_partition_tsv_from_filename_infer_table_structure(infer_table_structure: bool):
+    elements = partition_tsv(
+        example_doc_path("stanley-cups.tsv"), infer_table_structure=infer_table_structure
+    )
+
+    has_text_as_html = elements[0].metadata.text_as_html is not None
+    assert has_text_as_html == infer_table_structure
+
+
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+def test_partition_tsv_via_partition_respects_infer_table_structure(infer_table_structure: bool):
+    elements = partition(
+        example_doc_path("stanley-cups.tsv"), infer_table_structure=infer_table_structure
+    )
+
+    has_text_as_html = elements[0].metadata.text_as_html is not None
+    assert has_text_as_html == infer_table_structure
