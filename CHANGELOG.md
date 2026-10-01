@@ -1,3 +1,9 @@
+## 0.27.34
+
+### Fixes
+
+- **Translate every chunk in `translate_text()`.** Text longer than the model's attention window is split into chunks, but each iteration translated the whole input instead of the chunk, so the first window was translated once per chunk and the rest of the text was dropped. Each chunk is now translated once.
+
 ## 0.27.33
 
 ### Fixes
