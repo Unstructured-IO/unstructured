@@ -1,8 +1,10 @@
-## 0.27.10
+## 0.27.11
 
 ### Enhancements
 
 - Optimize XLSX subtable detection using sparse populated-cell traversal; preserve table grouping and output without introducing size limits.
+
+## 0.27.10
 
 ### Fixes
 
