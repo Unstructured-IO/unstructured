@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from itertools import chain
 from typing import Sequence, Type
 
 from bs4 import BeautifulSoup, Tag
@@ -188,8 +187,9 @@ def combine_inline_elements(
     }
 
     Each element is paired with its DOM-nesting depth; merging is only allowed between elements at
-    the same depth (see `can_unstructured_elements_be_merged`). The depth travels with the element
-    rather than being stored on it.
+    the same depth. Depth equality is checked here; the HTML content rule is
+    `_element_html_is_inline_mergeable` (both combined are `can_unstructured_elements_be_merged`).
+    The depth travels with the element rather than being stored on it.
 
     Args:
         elements_with_depth (list[tuple[Element, int]]): (element, nesting-depth) pairs to combine.
@@ -199,27 +199,74 @@ def combine_inline_elements(
     """
     result_elements: list[tuple[elements.Element, int]] = []
 
+    def _close_run(run: tuple[elements.Element, int], texts: list[str], htmls: list[str]) -> None:
+        # Write the accumulated run back to its base element in one shot. Appending on every
+        # merge was O(n^2): attribute targets get no in-place-concat optimization, and the merge
+        # check re-parsed the growing text_as_html each time. A lone (unmerged) element is left
+        # untouched, matching the previous behavior. See ML-1713.
+        element = run[0]
+        if len(texts) > 1:
+            element.text = " ".join(texts)
+            element.metadata.text_as_html = "".join(htmls)
+        result_elements.append(run)
+
     current: tuple[elements.Element, int] | None = None
+    # Mergeability depends only on an element's own HTML, so it is parsed at most once and
+    # cached. `None` means "not yet computed" -- HTML is only parsed for a same-depth adjacency,
+    # so mismatched-depth (and lone) elements never touch BeautifulSoup, as before ML-1713.
+    current_mergeable: bool | None = None
+    text_parts: list[str] = []
+    html_parts: list[str] = []
     for nxt in elements_with_depth:
+        next_element, next_depth = nxt
+
         if current is None:
-            current = nxt
+            current, current_mergeable = nxt, None
+            text_parts, html_parts = [next_element.text], [next_element.metadata.text_as_html]
             continue
 
-        current_element, current_depth = current
-        next_element, next_depth = nxt
-        if can_unstructured_elements_be_merged(
-            current_element, next_element, current_depth=current_depth, next_depth=next_depth
-        ):
-            current_element.text += " " + next_element.text
-            current_element.metadata.text_as_html += next_element.metadata.text_as_html
-        else:
-            result_elements.append(current)
-            current = nxt
+        _, current_depth = current
+        next_mergeable: bool | None = None
+        if current_depth == next_depth:
+            if current_mergeable is None:
+                current_mergeable = _element_html_is_inline_mergeable(current[0])
+            if current_mergeable:
+                next_mergeable = _element_html_is_inline_mergeable(next_element)
+                if next_mergeable:
+                    text_parts.append(next_element.text)
+                    html_parts.append(next_element.metadata.text_as_html)
+                    continue
+
+        _close_run(current, text_parts, html_parts)
+        # Carry next's known mergeability so it is never re-parsed as the new current.
+        current, current_mergeable = nxt, next_mergeable
+        text_parts, html_parts = [next_element.text], [next_element.metadata.text_as_html]
 
     if current is not None:
-        result_elements.append(current)
+        _close_run(current, text_parts, html_parts)
 
     return result_elements
+
+
+def _element_html_is_inline_mergeable(element: elements.Element) -> bool:
+    """Whether an element's own top-level HTML tags are all childless inline or text tags.
+
+    Parses only the element's own ``text_as_html``. `combine_inline_elements` computes this
+    once per element, so a growing merged run is never re-parsed -- re-parsing the accumulated
+    run each step made merging O(n^2) (ML-1713)."""
+    html = element.metadata.text_as_html
+    if not isinstance(html, str):
+        # No HTML to classify (e.g. text_as_html defaults to None) -> not mergeable. The
+        # element is left untouched, as before this became a per-element check.
+        return False
+    html_tags = BeautifulSoup(html, "html.parser").find_all(recursive=False)
+    ontology_elements = [parse_html_to_ontology_element(html_tag) for html_tag in html_tags]
+    for ontology_element in ontology_elements:
+        if ontology_element.children:
+            return False
+        if not (is_inline_element(ontology_element) or is_text_element(ontology_element)):
+            return False
+    return True
 
 
 def can_unstructured_elements_be_merged(
@@ -241,26 +288,11 @@ def can_unstructured_elements_be_merged(
     if current_depth != next_depth:
         return False
 
-    current_html_tags = BeautifulSoup(
-        current_element.metadata.text_as_html, "html.parser"
-    ).find_all(recursive=False)
-    next_html_tags = BeautifulSoup(next_element.metadata.text_as_html, "html.parser").find_all(
-        recursive=False
+    # Requiring both elements' tags to be childless inline/text is equivalent to checking the
+    # union of their tags, but keeps each element's HTML parsed independently.
+    return _element_html_is_inline_mergeable(current_element) and _element_html_is_inline_mergeable(
+        next_element
     )
-
-    ontology_elements = [
-        parse_html_to_ontology_element(html_tag)
-        for html_tag in chain(current_html_tags, next_html_tags)
-    ]
-
-    for ontology_element in ontology_elements:
-        if ontology_element.children:
-            return False
-
-        if not (is_inline_element(ontology_element) or is_text_element(ontology_element)):
-            return False
-
-    return True
 
 
 def is_text_element(ontology_element: ontology.OntologyElement) -> bool:

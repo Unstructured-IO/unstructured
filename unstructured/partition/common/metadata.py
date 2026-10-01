@@ -17,6 +17,28 @@ from unstructured.utils import get_call_args_applying_defaults
 
 _P = ParamSpec("_P")
 
+# -- Name of a transient, in-process attribute used to identify elements produced by partitioning
+# -- an attachment. It is deliberately NOT an `ElementMetadata` field: it must not appear in
+# -- dict/JSON output, and it must work when the containing document's file-name is unknown --
+# -- which is exactly when `.metadata.attached_to_filename` is `None` and so cannot serve as the
+# -- marker (e.g. `partition(file=f)` with no `metadata_filename`).
+_ATTACHMENT_ELEMENT_ATTR = "_produced_by_attachment_partitioning"
+
+
+def mark_as_attachment_element(element: Element) -> None:
+    """Record that `element` was produced by partitioning an attachment.
+
+    Attachment elements are partitioned by a nested `partition()` call, which assigns them their
+    own (correct) source-document metadata. Marking them lets the containing document's partitioner
+    avoid overwriting that metadata with its own.
+    """
+    setattr(element, _ATTACHMENT_ELEMENT_ATTR, True)
+
+
+def is_attachment_element(element: Element) -> bool:
+    """True when `element` was produced by partitioning an attachment."""
+    return getattr(element, _ATTACHMENT_ELEMENT_ATTR, False) is True
+
 
 def get_last_modified_date(filename: str) -> str | None:
     """Modification time of file at path `filename`, if it exists.

@@ -1105,15 +1105,32 @@ class Describe_FileTypeDetectionContext:
         assert len(text_head) == 4096
         assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
 
-    def but_not_to_correct_a_wrong_encoding_arg_for_a_file_like_object_open_in_binary_mode(self):
-        """Fails silently in this case, returning empty string."""
+    def and_it_uses_character_detection_to_correct_a_wrong_encoding_arg_for_a_file_like_object(
+        self,
+    ):
+        """Fallback character detection corrects a wrong encoding arg, like the file-path case."""
         with open(example_doc_path("norwich-city.txt"), "rb") as f:
             file = io.BytesIO(f.read())
         ctx = _FileTypeDetectionContext(file=file, encoding="utf_32_be")
 
         text_head = ctx.text_head
 
-        assert text_head == ""
+        assert isinstance(text_head, str)
+        assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
+
+    def and_it_detects_a_non_utf8_file_like_object_instead_of_stripping_its_characters(self):
+        """A non-UTF-8 file-like object is decoded via fallback detection, not errors="ignore".
+
+        Regression for #4434: decoding with errors="ignore" silently stripped the
+        undecodable characters, corrupting the text head for cloud-storage streams.
+        """
+        content = "café à la résumé".encode("iso_8859_1")
+        ctx = _FileTypeDetectionContext(file=io.BytesIO(content))
+
+        text_head = ctx.text_head
+
+        assert "café" in text_head
+        assert "résumé" in text_head
 
     def and_it_grabs_the_first_4k_chars_from_binary_file_for_textual_type_differentiation(self):
         with open(example_doc_path("norwich-city.txt"), "rb") as f:
@@ -1125,6 +1142,23 @@ class Describe_FileTypeDetectionContext:
             # -- some characters consume multiple bytes, so shorter than 4096 --
             assert len(text_head) == 4063
             assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
+
+    def and_it_runs_character_detection_for_a_truncated_utf8_tail(self):
+        """A truncated stream must fall through to detection, not silently drop the tail."""
+        content = b"caf\xc3"
+        ctx = _FileTypeDetectionContext(file=io.BytesIO(content))
+
+        # -- a silently-truncated decode would return exactly "caf" --
+        assert ctx.text_head != "caf"
+
+    def and_it_does_not_mistake_a_boundary_split_character_for_a_wrong_encoding(self):
+        """A multi-byte character split by the 4096-byte read is not a decode error."""
+        content = b"a" * 4095 + "é".encode()
+        ctx = _FileTypeDetectionContext(file=io.BytesIO(content))
+
+        text_head = ctx.text_head
+
+        assert text_head == "a" * 4095
 
     def and_it_grabs_the_first_4k_chars_from_text_file_for_textual_type_differentiation(self):
         """Not a documented behavior to accept IO[str], but support is implemented."""
@@ -1147,9 +1181,6 @@ class Describe_FileTypeDetectionContext:
         assert len(text_head) == 188
         assert text_head.startswith("This is a test document to use for unit tests.\n\n    Doyle")
 
-    # TODO: this fails because `.text_head` ignores decoding errors on a file open for binary
-    # reading. Probably better if it used chardet in that case as it does for a file-path.
-    @pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)
     def and_it_accommodates_a_utf_32_encoded_file_like_object(self):
         with open(example_doc_path("fake-text-utf-32.txt"), "rb") as f:
             file = io.BytesIO(f.read())

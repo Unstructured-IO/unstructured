@@ -16,10 +16,12 @@ from unstructured.partition.common.common import (
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text import element_from_text
+from unstructured.telemetry import partition_runtime_telemetry
 
 DETECTION_ORIGIN: str = "xml"
 
 
+@partition_runtime_telemetry("xml")
 @apply_metadata(FileType.XML)
 @add_chunking_strategy
 def partition_xml(

@@ -33,6 +33,14 @@ def test_clean_non_ascii_chars(text, expected):
         ("– An EN DASH bullet point!", "An EN DASH bullet point!"),
         ("\u2013 Another EN DASH bullet!", "Another EN DASH bullet!"),
         ("Text with – inside", "Text with – inside"),
+        ("- A HYPHEN bullet point!", "A HYPHEN bullet point!"),
+        ("Text with a my-service hyphen inside", "Text with a my-service hyphen inside"),
+        # -- a sign is not a bullet: it is not separated from what follows it --
+        ("-123.45", "-123.45"),
+        ("–10 °C", "–10 °C"),
+        ("-5", "-5"),
+        ("-item", "-item"),
+        ("-", ""),  # a lone dash is an empty bullet: the end-of-text branch
     ],
 )
 def test_clean_bullets(text, expected):
@@ -260,6 +268,106 @@ the fox met a friendly bear."""
         "· The big red fox is walking down the lane. ",
         "· At the end of the lane the fox met a friendly bear.",
     ]
+
+
+def test_group_bullet_paragraph_splits_dash_bullets_at_line_start():
+    text = """- The big red fox
+is walking down the lane.
+- At the end of the lane
+the fox met a friendly bear."""
+    assert core.group_bullet_paragraph(text) == [
+        "- The big red fox is walking down the lane. ",
+        "- At the end of the lane the fox met a friendly bear.",
+    ]
+
+
+def test_group_bullet_paragraph_keeps_hyphens_inside_dash_bullet_items():
+    """A hyphen inside a bullet item is punctuation, not a second bullet."""
+    text = """- deploy my-service now
+- check the state-of-the-art model
+- call 555-123-4567"""
+    assert core.group_bullet_paragraph(text) == [
+        "- deploy my-service now ",
+        "- check the state-of-the-art model ",
+        "- call 555-123-4567",
+    ]
+
+
+@pytest.mark.parametrize(
+    "separator",
+    ["\x0c", "\x0b", "\x85", "\u2028", "\u2029", "\x1c"],
+    ids=["form-feed", "vertical-tab", "nel", "line-sep", "para-sep", "file-sep"],
+)
+def test_group_bullet_paragraph_splits_bullets_behind_a_line_separator(separator: str):
+    """A separator between the newline and the dash must not prevent the split.
+
+    These characters sit where indentation would, so the indentation class has to consume
+    them; refusing them leaves the `(?<=\\n)` lookbehind unable to reach the dash and both
+    items collapse into one. They are whitespace, and the rejoin normalises whitespace
+    away regardless, so consuming them loses nothing.
+    """
+    assert core.group_bullet_paragraph(f"- a here\n{separator}- b here") == [
+        "- a here ",
+        "- b here",
+    ]
+
+
+def test_group_bullet_paragraph_splits_indented_dash_bullets():
+    text = """- top level item
+  - nested my-service item"""
+    assert core.group_bullet_paragraph(text) == [
+        "- top level item ",
+        "- nested my-service item",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        # -- hyphenated values are single paragraphs, not one paragraph per fragment --
+        ("Phone: 555-123-4567\n\nEnd", "Phone: 555-123-4567\n\nEnd"),
+        ("SSN: 123-45-6789\n\nEnd", "SSN: 123-45-6789\n\nEnd"),
+        ("Date: 2026-08-19\n\nEnd", "Date: 2026-08-19\n\nEnd"),
+        ("Card: 4111-1111-1111-1111\n\nEnd", "Card: 4111-1111-1111-1111\n\nEnd"),
+        ("IBAN: GB29-NWBK-6016-1331-9268-19\n\nEnd", "IBAN: GB29-NWBK-6016-1331-9268-19\n\nEnd"),
+        (
+            "trace_id: 550e8400-e29b-41d4-a716-446655440000\n\nEnd",
+            "trace_id: 550e8400-e29b-41d4-a716-446655440000\n\nEnd",
+        ),
+        ("Contact: Jean-Luc Picard\n\nEnd", "Contact: Jean-Luc Picard\n\nEnd"),
+        ("name: my-service\n\nEnd", "name: my-service\n\nEnd"),
+        (
+            "2026-08-19 ERROR conn-pool-3 failed\n\nEnd",
+            "2026-08-19 ERROR conn-pool-3 failed\n\nEnd",
+        ),
+        # -- CJK never satisfies the space-separated `all_lines_short` guard --
+        ("連絡先：090-1234-5678\n\n住所：東京", "連絡先：090-1234-5678\n\n住所：東京"),
+        # -- en-dash is ambiguous in the same way --
+        ("Range: 10–20\n\nEnd", "Range: 10–20\n\nEnd"),
+        # -- unambiguous bullet glyphs still split inline (trailing space is pre-existing) --
+        ("• milk • eggs • bread\n\nEnd", "• milk \n\n• eggs \n\n• bread\n\nEnd"),
+        # -- dash bullets at line start still become separate paragraphs --
+        (
+            "- first item here\n- second item here\n\nEnd",
+            "- first item here \n\n- second item here\n\nEnd",
+        ),
+        # -- NOTE: declared behavior change. Inline dash bullets on one line no longer
+        # -- split; keeping hyphenated identifiers intact is worth this trade.
+        ("- one - two - three\n\nEnd", "- one - two - three\n\nEnd"),
+    ],
+)
+def test_group_broken_paragraphs_does_not_split_on_hyphens(text: str, expected: str):
+    assert core.group_broken_paragraphs(text) == expected
+
+
+def test_group_broken_paragraphs_still_splits_short_unrelated_lines():
+    """The Apache-License case the comment in `group_broken_paragraphs` cites."""
+    text = """Apache License
+Version 2.0, January 2004
+http://www.apache.org/licenses/"""
+    assert core.group_broken_paragraphs(text) == (
+        "Apache License\n\nVersion 2.0, January 2004\n\nhttp://www.apache.org/licenses/"
+    )
 
 
 @pytest.mark.parametrize(

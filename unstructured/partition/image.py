@@ -9,8 +9,10 @@ from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.lang import check_language_args
 from unstructured.partition.pdf import partition_pdf_or_image
 from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.telemetry import partition_runtime_telemetry
 
 
+@partition_runtime_telemetry()
 @process_metadata()  # TODO(shreya): update to use `apply_metadata` decorator
 @add_metadata
 @add_chunking_strategy

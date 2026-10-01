@@ -24,6 +24,7 @@ from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEnco
 from unstructured.partition.html import partition_html
 from unstructured.partition.html.transformations import (
     can_unstructured_elements_be_merged,
+    combine_inline_elements,
     ontology_to_unstructured_elements,
     parse_html_to_ontology,
 )
@@ -511,3 +512,53 @@ def test_inline_elements_at_different_nesting_depths_are_not_merged():
     assert (
         can_unstructured_elements_be_merged(first, second, current_depth=1, next_depth=2) is False
     )
+
+
+def test_combine_inline_elements_merges_a_long_run_without_reparsing(monkeypatch):
+    """Regression for ML-1713: merging a long run of inline elements used to re-parse the
+    growing run on every step (O(n^2)). This asserts the exact merged output and, machine-
+    independently, that the total HTML handed to BeautifulSoup stays linear -- each element's
+    own HTML is parsed at most once, whereas the pre-fix code re-parsed the accumulating run."""
+    import unstructured.partition.html.transformations as tr
+
+    parsed_chars = 0
+    real_beautifulsoup = tr.BeautifulSoup
+
+    def counting_beautifulsoup(markup, *args, **kwargs):
+        nonlocal parsed_chars
+        if isinstance(markup, str):
+            parsed_chars += len(markup)
+        return real_beautifulsoup(markup, *args, **kwargs)
+
+    monkeypatch.setattr(tr, "BeautifulSoup", counting_beautifulsoup)
+
+    n = 1500
+    elements_with_depth = [(_inline_element(f"w{i}"), 2) for i in range(n)]
+    total_own_html = sum(len(element.metadata.text_as_html) for element, _ in elements_with_depth)
+
+    combined = tr.combine_inline_elements(elements_with_depth)
+
+    assert len(combined) == 1
+    merged = combined[0][0]
+    assert merged.text == " ".join(f"w{i}" for i in range(n))
+    assert merged.metadata.text_as_html == "".join(
+        f'<a class="Hyperlink">w{i}</a>' for i in range(n)
+    )
+    # Linear: total parsed HTML is within a small constant of parsing each element once.
+    # The pre-fix re-parse of the growing run made this O(n) times larger.
+    assert parsed_chars <= 2 * total_own_html
+
+
+def test_combine_inline_elements_passes_through_elements_without_text_as_html():
+    """An element whose text_as_html is None (the default) must not be parsed as HTML. It is
+    classified as non-mergeable and passed through untouched -- classifying every element eagerly
+    would otherwise reach BeautifulSoup(None) and raise TypeError (ML-1713 review)."""
+    singleton = Text(text="x")  # metadata.text_as_html defaults to None
+    assert singleton.metadata.text_as_html is None
+
+    # Singleton, and a same-/different-depth pair, none of which should raise.
+    assert combine_inline_elements([(singleton, 2)]) == [(singleton, 2)]
+
+    a, b = Text(text="a"), Text(text="b")
+    combined = combine_inline_elements([(a, 1), (b, 2)])
+    assert [e.text for e, _ in combined] == ["a", "b"]  # not merged, not crashed

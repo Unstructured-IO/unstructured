@@ -56,10 +56,7 @@ Unstructured Transform brings production-grade document processing to your agent
 
 5. **Describe what you need in plain language.** Tell the agent your intent (e.g. "parse and chunk this contract for a vector store") and Transform partitions, enriches, chunks, and embeds the file, returning structured data ready to use. 
 
-15,000 free pages a month, 3 cents per page after!
-
-📄 Full docs: https://docs.unstructured.io/transform/overview
-
+⚡ [Get Started for Free](https://transform.unstructured.io/?entry=cta)
 
 ## Unstructured Pipelines
 
@@ -290,4 +287,6 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 
 ## :chart_with_upwards_trend: Analytics
 
-Telemetry is **off by default**. To opt in, set `UNSTRUCTURED_TELEMETRY_ENABLED=true` (or `=1`) before importing `unstructured`. To opt out, set `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (e.g. `true`, `1`, `yes`, `false`, `0`—any non-empty string opts out); opt-out takes precedence. Unset the variable or leave it empty if you do not want to opt out. See our [Privacy Policy](https://unstructured.io/privacy-policy).
+Unstructured sends lightweight analytics to `GET https://packages.unstructured.io/python-telemetry` by default: one library-load ping when it is imported and one best-effort local attempt for each top-level public partition call. The shared endpoint supports separate startup and runtime query-parameter schemas. Runtime events contain the package version, normalized platform/Python/architecture values, fixed-enum partition characteristics, and aggregate final-element counts as URL query parameters; there is no request body. They never contain document or element content, filenames, paths, URLs supplied for partitioning, raw MIME values, exception details, credentials, proxy configuration, or persistent installation, machine, process, account, user, or developer identifiers. Runtime delivery never waits on the network from partition processing, has no redirects, retries, response-body download, or queue, and does not consult proxy or netrc environment settings. At most one telemetry daemon can remain stranded in a network operation; later events drop while that slot is occupied, and process exit does not wait for it. Connect/read timeouts limit socket operations, not total network wall-clock duration.
+
+To opt out before importing or partitioning, set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value after trimming whitespace (for example, `true`, `1`, `yes`, `false`, or `0`); either variable disables both library-load and runtime telemetry. Unset the variables or leave them empty or whitespace-only to retain the default behavior. See our [Privacy Policy](https://unstructured.io/privacy-policy).

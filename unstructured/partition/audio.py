@@ -16,11 +16,16 @@ from unstructured.partition.common.metadata import apply_metadata, get_last_modi
 from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
     SpeechToTextAgent,
 )
+from unstructured.telemetry import (
+    partition_runtime_telemetry,
+    set_partition_document_type_from_mime,
+)
 from unstructured.utils import is_temp_file_path
 
 _AUDIO_MIME_TYPE_FALLBACK = FileType.WAV.mime_type
 
 
+@partition_runtime_telemetry()
 @apply_metadata()
 @add_chunking_strategy
 def partition_audio(
@@ -70,6 +75,7 @@ def partition_audio(
     # Metadata from original input only (not the temp path); compute before any temp file lifecycle.
     last_modified = get_last_modified_date(filename) if filename else None
     mime_type = _audio_mime_type(filename, file, metadata_filename)
+    set_partition_document_type_from_mime(mime_type)
 
     audio_path: str
     if filename is not None:

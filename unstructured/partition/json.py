@@ -25,8 +25,10 @@ from unstructured.partition.common.json_partitioning import (
     rehydrate_elements,
 )
 from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.telemetry import partition_runtime_telemetry
 
 
+@partition_runtime_telemetry("json")
 @process_metadata()
 @add_metadata_with_filetype(FileType.JSON)
 @add_chunking_strategy

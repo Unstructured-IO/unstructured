@@ -16,6 +16,7 @@ from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
+from pypdf.errors import LimitReachedError
 from pypdf.generic import ArrayObject, IndirectObject
 
 from unstructured.chunking import add_chunking_strategy
@@ -78,6 +79,12 @@ from unstructured.partition.utils.constants import (
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import patch_psparser
+from unstructured.telemetry import (
+    mark_partition_ocr_used,
+    partition_runtime_telemetry,
+    set_partition_document_type,
+    set_partition_strategy_used,
+)
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
@@ -104,8 +111,18 @@ TEXT_OPS_PATTERN = re.compile(
     rb"(?:^|(?<=\s))" rb"(?:Tj|TJ|'|\"|Tf|Td|TD|Tm|T\*|BT|ET)" rb"(?=\s|$)",
     re.MULTILINE,
 )
-DEFAULT_MIN_FILE_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB
+# 0 -> inspect every file. A small compressed file can still declare huge decoded
+# content (CVE-2026-33123), so skipping small files is opt-in, not the default.
+DEFAULT_MIN_FILE_SIZE_BYTES = 0
 DEFAULT_MIN_RAW_STREAM_BYTES = 100_000  # 100 KB
+# Per-page defense-in-depth caps against crafted content streams (CVE-2026-33123):
+# a page exceeding either is treated as too complex (fail closed) instead of scanned.
+DEFAULT_MAX_RAW_STREAM_BYTES = 50 * 1024 * 1024  # 50 MB decoded bytes per page
+DEFAULT_MAX_CONTENT_STREAM_ARRAY_ENTRIES = 10_000  # array entries per page (pypdf's cap)
+# Document-wide caps so total work is bounded by the function, not the page count (pages
+# can share one array). Set far above any real document; exceeding them logs at warning.
+DEFAULT_MAX_TOTAL_STREAM_BYTES = 1024 * 1024 * 1024  # 1 GB decoded bytes per document
+DEFAULT_MAX_TOTAL_ARRAY_ENTRIES = 1_000_000  # array entries decoded per document
 
 # increase the max pixels so high dpi values like 300 can still be under the PIL limit
 PILImage.MAX_IMAGE_PIXELS = 5e8
@@ -122,6 +139,7 @@ def default_hi_res_model() -> str:
     return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", DEFAULT_MODEL)
 
 
+@partition_runtime_telemetry("pdf")
 @apply_metadata(FileType.PDF)
 @add_chunking_strategy
 def partition_pdf(
@@ -335,6 +353,7 @@ def partition_pdf_or_image(
         extract_images_in_pdf=extract_images_in_pdf,
         extract_image_block_types=extract_image_block_types,
     )
+    set_partition_strategy_used(strategy)
 
     if file is not None:
         file.seek(0)
@@ -622,6 +641,10 @@ def is_pdf_too_complex(
     min_graphics_to_text_ratio: float = 20.0,
     min_file_size_bytes: int = DEFAULT_MIN_FILE_SIZE_BYTES,
     min_raw_stream_bytes: int = DEFAULT_MIN_RAW_STREAM_BYTES,
+    max_raw_stream_bytes: int = DEFAULT_MAX_RAW_STREAM_BYTES,
+    max_content_stream_array_entries: int = DEFAULT_MAX_CONTENT_STREAM_ARRAY_ENTRIES,
+    max_total_stream_bytes: int = DEFAULT_MAX_TOTAL_STREAM_BYTES,
+    max_total_array_entries: int = DEFAULT_MAX_TOTAL_ARRAY_ENTRIES,
 ) -> bool:
     """Check if a PDF is likely a complex vector drawing (e.g., CAD/engineering docs)
     that would be extremely slow or produce garbage results with PDFMiner text extraction.
@@ -632,8 +655,9 @@ def is_pdf_too_complex(
        decoded stream is smaller than min_raw_stream_bytes.
     3. For large streams, regex to count graphics without parsing the stream.
 
-    A page is flagged as too complex when it has a high number of graphics operators
-    AND a high ratio of graphics-to-text operators.
+    A page is flagged (returns True) on a high graphics-op count AND graphics-to-text
+    ratio, or, as defense-in-depth against crafted content streams (CVE-2026-33123),
+    when it exceeds any of the ``max_*`` byte/entry caps below.
 
     Parameters
     ----------
@@ -648,11 +672,25 @@ def is_pdf_too_complex(
         Minimum ratio of graphics ops to text ops required (in conjunction with
         `max_graphics_ops`) to flag a page as too complex.
     min_file_size_bytes
-        Skip the complexity check entirely for files smaller than this (default 1 MB).
+        Skip the check entirely for files smaller than this. Default 0 (inspect every
+        file); raising it trades safety for speed, since a small compressed file can
+        still declare huge decoded content.
     min_raw_stream_bytes
         Skip operator counting for pages whose decoded content stream is smaller than
         this (default 100 KB). Small streams can't have enough operators to trigger
         the threshold.
+    max_raw_stream_bytes
+        Per-page decoded-byte cap (default 50 MB); a page over it is flagged too
+        complex instead of scanned in full.
+    max_content_stream_array_entries
+        Per-page cap on ``/Contents`` array entries (default 10,000, matching pypdf);
+        bounds an array of many empty streams.
+    max_total_stream_bytes
+        Document-wide decoded-byte cap (default 1 GB), so shared arrays can't scale work
+        with page count. Set far above any real document; exceeding it logs at warning.
+    max_total_array_entries
+        Document-wide cap on array entries traversed (default 1,000,000), charged for
+        every slot so non-stream entries count too. Exceeding it logs at warning.
     """
 
     original_pos: Optional[int] = None
@@ -691,40 +729,124 @@ def is_pdf_too_complex(
         if not reader.pages:
             return False
 
+        total_raw_bytes = 0
+        total_array_entries = 0
         for page_index, page in enumerate(reader.pages):
             contents = page.get("/Contents")
             if contents is None:
                 continue
 
-            # Decode raw stream bytes (cheap relative to full ContentStream parsing)
-            raw_data = b""
+            # DictionaryObject.get (unlike __getitem__) does not dereference, so an
+            # indirect /Contents array would otherwise skip the array branch below.
             try:
-                if isinstance(contents, ArrayObject):
-                    for item in contents:
-                        obj = item.get_object() if isinstance(item, IndirectObject) else item
-                        if hasattr(obj, "get_data"):
-                            raw_data += obj.get_data()
-                else:
-                    obj = (
-                        contents.get_object() if isinstance(contents, IndirectObject) else contents
-                    )
-                    if hasattr(obj, "get_data"):
-                        raw_data = obj.get_data()
+                if hasattr(contents, "get_object"):
+                    contents = contents.get_object()
             except Exception:
                 continue
+
+            # Decode raw stream bytes (cheap relative to full ContentStream parsing).
+            raw_data: Union[bytes, bytearray] = b""
+            if isinstance(contents, ArrayObject):
+                # An array of many small streams is the crafted DoS shape
+                # (CVE-2026-33123); bound both entry count and decoded bytes.
+                if len(contents) > max_content_stream_array_entries:
+                    logger.info(
+                        f"Page {page_index + 1} /Contents array has {len(contents)} "
+                        f"entries, exceeding the limit of "
+                        f"{max_content_stream_array_entries}. "
+                        "Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                # Charge every slot up front (non-stream entries are traversed too),
+                # so a shared non-stream array can't scale traversal with page count.
+                total_array_entries += len(contents)
+                if total_array_entries > max_total_array_entries:
+                    logger.warning(
+                        f"Content-stream array entries exceed {max_total_array_entries} "
+                        f"by page {page_index + 1}. "
+                        "Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                # bytearray append is amortized O(1); `bytes +=` was O(n^2).
+                accumulated = bytearray()
+                for item in contents:
+                    # Decode each stream in its own try: a bomb fails closed, but an
+                    # otherwise-unreadable stream only skips itself, so the remaining
+                    # streams on the page are still inspected and charged.
+                    try:
+                        obj = item.get_object() if isinstance(item, IndirectObject) else item
+                        if not hasattr(obj, "get_data"):
+                            continue
+                        chunk = obj.get_data()
+                    except LimitReachedError:
+                        logger.warning(
+                            f"Page {page_index + 1} content stream exceeds pypdf's decode "
+                            "limit. Flagging PDF as too complex for text extraction."
+                        )
+                        return True
+                    except Exception:
+                        continue
+                    total_raw_bytes += len(chunk)
+                    if total_raw_bytes > max_total_stream_bytes:
+                        logger.warning(
+                            f"Decoded content streams exceed {max_total_stream_bytes} "
+                            f"bytes by page {page_index + 1}. "
+                            "Flagging PDF as too complex for text extraction."
+                        )
+                        return True
+                    # Check before copying so an oversized stream is never
+                    # accumulated into the buffer or regex-scanned.
+                    if len(accumulated) + len(chunk) > max_raw_stream_bytes:
+                        logger.info(
+                            f"Page {page_index + 1} content stream exceeds "
+                            f"{max_raw_stream_bytes} bytes. "
+                            "Flagging PDF as too complex for text extraction."
+                        )
+                        return True
+                    accumulated.extend(chunk)
+                raw_data = accumulated
+            elif hasattr(contents, "get_data"):
+                try:
+                    chunk = contents.get_data()
+                except LimitReachedError:
+                    logger.warning(
+                        f"Page {page_index + 1} content stream exceeds pypdf's decode "
+                        "limit. Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                except Exception:
+                    continue
+                total_raw_bytes += len(chunk)
+                if total_raw_bytes > max_total_stream_bytes:
+                    logger.warning(
+                        f"Decoded content streams exceed {max_total_stream_bytes} "
+                        f"bytes by page {page_index + 1}. "
+                        "Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                if len(chunk) > max_raw_stream_bytes:
+                    logger.info(
+                        f"Page {page_index + 1} content stream exceeds "
+                        f"{max_raw_stream_bytes} bytes. "
+                        "Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                # No copy: the regexes accept bytes and this is not mutated.
+                raw_data = chunk
 
             # Skip pages with small content streams
             if len(raw_data) < min_raw_stream_bytes:
                 continue
 
-            # Regex count graphics and text operators without fully parsing the stream
-            num_graphics_ops = len(GRAPHICS_OPS_PATTERN.findall(raw_data))
+            # Count operators via finditer (not findall) to avoid allocating a match
+            # list proportional to operator density.
+            num_graphics_ops = sum(1 for _ in GRAPHICS_OPS_PATTERN.finditer(raw_data))
 
             # Early exit: if graphics ops don't even reach threshold, skip text counting
             if num_graphics_ops <= max_graphics_ops:
                 continue
 
-            num_text_ops = len(TEXT_OPS_PATTERN.findall(raw_data))
+            num_text_ops = sum(1 for _ in TEXT_OPS_PATTERN.finditer(raw_data))
             ratio = num_graphics_ops / max(num_text_ops, 1)
 
             if ratio > min_graphics_to_text_ratio:
@@ -870,6 +992,7 @@ def _partition_pdf_or_image_local(
 
     if file is None:
         inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
+        _record_image_layout_document_type(inferred_document_layout, is_image)
 
         pdfminer_config = _enable_detect_vertical_if_rotated(
             inferred_document_layout,
@@ -929,6 +1052,7 @@ def _partition_pdf_or_image_local(
         )
     else:
         inferred_document_layout = _run_layout_inference(process_data_with_model, file)
+        _record_image_layout_document_type(inferred_document_layout, is_image)
 
         if hasattr(file, "seek"):
             file.seek(0)
@@ -1130,6 +1254,18 @@ def _partition_pdf_with_pdfparser(
     return elements
 
 
+def _record_image_layout_document_type(document_layout: "DocumentLayout", is_image: bool) -> None:
+    """Record an image format already discovered during successful layout inference."""
+    if not is_image:
+        return
+    with contextlib.suppress(Exception):
+        for page in document_layout.pages:
+            image_format = get_page_image_metadata(page).get("format")
+            if image_format:
+                set_partition_document_type(image_format)
+                return
+
+
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
@@ -1195,12 +1331,14 @@ def _partition_pdf_or_image_with_ocr_from_image(
 
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
+    set_partition_document_type(image.format)
     ocr_agent = OCRAgent.get_agent(language=ocr_languages)
 
     # NOTE(christine): `pytesseract.image_to_string()` returns sorted text
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 
+    mark_partition_ocr_used()
     ocr_data = ocr_agent.get_layout_elements_from_image(image=image)
 
     metadata = ElementMetadata(
@@ -1422,6 +1560,7 @@ def document_to_element_list(
 
         page_image_metadata = get_page_image_metadata(page)
         image_format = page_image_metadata.get("format")
+        set_partition_document_type(image_format)
         image_width = page_image_metadata.get("width")
         image_height = page_image_metadata.get("height")
 
