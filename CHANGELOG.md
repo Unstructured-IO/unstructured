@@ -1,3 +1,9 @@
+## 0.27.11
+
+### Fixes
+
+- **Keep the labels of auto-numbered DOCX lists.** Word computes labels such as `1.`, `a)` and `iv.` from `numbering.xml` at render time, so `partition_docx()` returned `ListItem` text without them. The label is now prefixed to the item text, resolved from the paragraph or its style chain and counted per level in document order. Bullets stay unprefixed and numbering that cannot be resolved falls back to the previous text.
+
 ## 0.27.10
 
 ### Fixes

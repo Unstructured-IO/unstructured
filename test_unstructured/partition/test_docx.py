@@ -15,6 +15,7 @@ import docx
 import pytest
 from docx.document import Document
 from docx.enum.section import WD_SECTION
+from docx.oxml import parse_xml
 from docx.section import Section
 from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
@@ -336,9 +337,496 @@ def test_partition_docx_detects_lists():
     elements = partition_docx(example_doc_path("example-list-items-multiple.docx"))
 
     assert elements[-1] == ListItem(
-        "This is simply dummy text of the printing and typesetting industry.",
+        "(a) This is simply dummy text of the printing and typesetting industry.",
     )
     assert sum(1 for e in elements if isinstance(e, ListItem)) == 10
+
+
+# -- auto-numbered list labels -------------------------------------------------------------------
+
+_W_NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
+
+
+def _lvl_xml(ilvl: int, fmt: str, text: str, start: int = 1) -> str:
+    return (
+        f'<w:lvl w:ilvl="{ilvl}"><w:start w:val="{start}"/><w:numFmt w:val="{fmt}"/>'
+        f'<w:lvlText w:val="{text}"/></w:lvl>'
+    )
+
+
+def _numbered_docx(
+    tmp_path: pathlib.Path,
+    paragraphs: list[tuple[str, int | None, int]],
+    *,
+    numbering_xml: str | None = None,
+) -> str:
+    """Path of a DOCX whose numbering definitions are those in `numbering_xml`.
+
+    Each item of `paragraphs` is `(text, num_id, ilvl)`; `num_id=None` makes a plain paragraph.
+    Numbering definitions available by default:
+
+    - numId 1: multilevel list, levels `%1.` decimal, `%2)` lowerLetter, `%3.` lowerRoman
+    - numId 2: bullet list
+    - numId 3: same abstract definition as numId 1 but level 0 restarts at 5
+    - numId 4: same abstract definition as numId 1 with no override
+    - style "NumberedStyle" is bound to numId 1 and "ChildStyle" is based on it
+    - style "LinkedStyle" is bound to numId 1 at ilvl 0
+    """
+    numbering_xml = numbering_xml or (
+        f"<w:numbering {_W_NS}>"
+        '<w:abstractNum w:abstractNumId="0">'
+        + _lvl_xml(0, "decimal", "%1.")
+        + _lvl_xml(1, "lowerLetter", "%2)")
+        + _lvl_xml(2, "lowerRoman", "%3.")
+        + "</w:abstractNum>"
+        '<w:abstractNum w:abstractNumId="1">' + _lvl_xml(0, "bullet", "•") + "</w:abstractNum>"
+        '<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>'
+        '<w:num w:numId="2"><w:abstractNumId w:val="1"/></w:num>'
+        '<w:num w:numId="3"><w:abstractNumId w:val="0"/>'
+        '<w:lvlOverride w:ilvl="0"><w:startOverride w:val="5"/></w:lvlOverride></w:num>'
+        '<w:num w:numId="4"><w:abstractNumId w:val="0"/></w:num>'
+        "</w:numbering>"
+    )
+    document = docx.Document()
+    numbering = document.part.numbering_part.element
+    for child in list(numbering):
+        numbering.remove(child)
+    for child in parse_xml(numbering_xml):
+        numbering.append(child)
+    styles = document.styles.element
+    styles.append(
+        parse_xml(
+            f'<w:style {_W_NS} w:type="paragraph" w:styleId="NumberedStyle">'
+            '<w:name w:val="NumberedStyle"/><w:pPr><w:numPr><w:numId w:val="1"/></w:numPr></w:pPr>'
+            "</w:style>"
+        )
+    )
+    styles.append(
+        parse_xml(
+            f'<w:style {_W_NS} w:type="paragraph" w:styleId="ChildStyle">'
+            '<w:name w:val="ChildStyle"/><w:basedOn w:val="NumberedStyle"/></w:style>'
+        )
+    )
+    styles.append(
+        parse_xml(
+            f'<w:style {_W_NS} w:type="paragraph" w:styleId="LinkedStyle">'
+            '<w:name w:val="LinkedStyle"/><w:pPr><w:numPr><w:ilvl w:val="0"/>'
+            '<w:numId w:val="1"/></w:numPr></w:pPr></w:style>'
+        )
+    )
+    for text, num_id, ilvl in paragraphs:
+        paragraph = document.add_paragraph(text)
+        if num_id is not None:
+            paragraph._p.get_or_add_pPr().append(
+                parse_xml(
+                    f'<w:numPr {_W_NS}><w:ilvl w:val="{ilvl}"/>'
+                    f'<w:numId w:val="{num_id}"/></w:numPr>'
+                )
+            )
+    path = tmp_path / "numbered.docx"
+    document.save(str(path))
+    return str(path)
+
+
+def test_partition_docx_prefixes_list_items_with_their_auto_numbered_labels(tmp_path):
+    path = _numbered_docx(tmp_path, [("alpha", 1, 0), ("beta", 1, 0), ("gamma", 1, 0)])
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [
+        (ListItem, "1. alpha"),
+        (ListItem, "2. beta"),
+        (ListItem, "3. gamma"),
+    ]
+
+
+def test_partition_docx_labels_nested_list_levels_and_restarts_deeper_levels(tmp_path):
+    path = _numbered_docx(
+        tmp_path,
+        [
+            ("top", 1, 0),
+            ("sub one", 1, 1),
+            ("sub two", 1, 1),
+            ("subsub", 1, 2),
+            ("top two", 1, 0),
+            ("sub again", 1, 1),
+        ],
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == [
+        "1. top",
+        "a) sub one",
+        "b) sub two",
+        "i. subsub",
+        "2. top two",
+        "a) sub again",
+    ]
+    assert [e.metadata.category_depth for e in elements] == [0, 1, 1, 2, 0, 1]
+
+
+def test_partition_docx_continues_counting_after_an_intervening_paragraph(tmp_path):
+    path = _numbered_docx(
+        tmp_path,
+        [("one", 1, 0), ("two", 1, 0), ("Some narrative text between the items.", None, 0)]
+        + [("three", 1, 0)],
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == [
+        "1. one",
+        "2. two",
+        "Some narrative text between the items.",
+        "3. three",
+    ]
+
+
+def test_partition_docx_starts_a_restarted_list_at_its_start_override(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("b", 1, 0), ("c", 3, 0), ("d", 3, 0)])
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "2. b", "5. c", "6. d"]
+
+
+def test_partition_docx_labels_list_items_that_inherit_numbering_from_their_style(tmp_path):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    for text, style in [("styled", "NumberedStyle"), ("inherited", "ChildStyle")]:
+        document.add_paragraph(text, style=style)
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [
+        (ListItem, "1. styled"),
+        (ListItem, "2. inherited"),
+    ]
+
+
+def test_partition_docx_does_not_prefix_bulleted_list_items(tmp_path):
+    path = _numbered_docx(tmp_path, [("first", 2, 0), ("second", 2, 0)])
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [(ListItem, "first"), (ListItem, "second")]
+
+
+def test_partition_docx_leaves_typed_in_numbers_unchanged(tmp_path):
+    path = _numbered_docx(tmp_path, [("1. alpha", None, 0), ("2. beta", None, 0)])
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. alpha", "2. beta"]
+
+
+@pytest.mark.parametrize(
+    ("num_fmt", "expected_labels"),
+    [
+        ("decimal", ["1.", "2.", "3.", "4."]),
+        ("lowerLetter", ["a.", "b.", "c.", "d."]),
+        ("upperLetter", ["A.", "B.", "C.", "D."]),
+        ("lowerRoman", ["i.", "ii.", "iii.", "iv."]),
+        ("upperRoman", ["I.", "II.", "III.", "IV."]),
+    ],
+)
+def test_partition_docx_formats_labels_by_number_format(
+    tmp_path, num_fmt: str, expected_labels: list[str]
+):
+    numbering_xml = (
+        f"<w:numbering {_W_NS}>"
+        '<w:abstractNum w:abstractNumId="0">' + _lvl_xml(0, num_fmt, "%1.") + "</w:abstractNum>"
+        '<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>'
+        "</w:numbering>"
+    )
+    path = _numbered_docx(
+        tmp_path, [(f"item {n}", 1, 0) for n in range(4)], numbering_xml=numbering_xml
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == [
+        f"{label} item {n}" for n, label in enumerate(expected_labels)
+    ]
+
+
+def test_partition_docx_wraps_letter_labels_past_z(tmp_path):
+    numbering_xml = (
+        f"<w:numbering {_W_NS}>"
+        '<w:abstractNum w:abstractNumId="0">'
+        + _lvl_xml(0, "lowerLetter", "%1.", start=26)
+        + "</w:abstractNum>"
+        '<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>'
+        "</w:numbering>"
+    )
+    path = _numbered_docx(tmp_path, [("x", 1, 0), ("y", 1, 0)], numbering_xml=numbering_xml)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["z. x", "aa. y"]
+
+
+@pytest.mark.parametrize(
+    ("num_fmt", "start", "expected_labels"),
+    [
+        ("lowerLetter", 27, ["aa", "bb", "cc"]),
+        ("lowerLetter", 52, ["zz", "aaa", "bbb"]),
+        ("upperLetter", 52, ["ZZ", "AAA", "BBB"]),
+    ],
+)
+def test_partition_docx_repeats_the_letter_rather_than_counting_in_base_26(
+    tmp_path, num_fmt: str, start: int, expected_labels: list[str]
+):
+    # -- Word numbers a, b, ... z, aa, bb, ... zz, aaa; not spreadsheet-style (aa, ab, ac) --
+    numbering_xml = _single_definition_numbering(_lvl_xml(0, num_fmt, "%1", start=start))
+    path = _numbered_docx(
+        tmp_path, [(f"item {n}", 1, 0) for n in range(3)], numbering_xml=numbering_xml
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == [
+        f"{label} item {n}" for n, label in enumerate(expected_labels)
+    ]
+
+
+def test_partition_docx_falls_back_to_plain_text_when_numbering_is_unresolvable(tmp_path):
+    numbering_xml = f"<w:numbering {_W_NS}/>"
+    path = _numbered_docx(tmp_path, [("orphan", 1, 0)], numbering_xml=numbering_xml)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [(ListItem, "orphan")]
+
+
+def _single_definition_numbering(*levels: str) -> str:
+    """A numbering part whose only list, numId 1, has the given `w:lvl` definitions."""
+    return (
+        f"<w:numbering {_W_NS}>"
+        '<w:abstractNum w:abstractNumId="0">' + "".join(levels) + "</w:abstractNum>"
+        '<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>'
+        "</w:numbering>"
+    )
+
+
+def test_partition_docx_continues_counting_across_num_ids_sharing_a_definition(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("b", 1, 0), ("c", 4, 0), ("d", 4, 0)])
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "2. b", "3. c", "4. d"]
+
+
+def test_partition_docx_continues_the_shared_count_after_a_start_override(tmp_path):
+    path = _numbered_docx(
+        tmp_path, [("a", 1, 0), ("b", 1, 0), ("c", 3, 0), ("d", 3, 0), ("e", 1, 0)]
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "2. b", "5. c", "6. d", "7. e"]
+
+
+def test_partition_docx_restarts_numbered_children_after_a_bullet_parent(tmp_path):
+    numbering_xml = _single_definition_numbering(
+        _lvl_xml(0, "bullet", "•"), _lvl_xml(1, "decimal", "%2.")
+    )
+    path = _numbered_docx(
+        tmp_path,
+        [("A", 1, 0), ("x", 1, 1), ("B", 1, 0), ("y", 1, 1)],
+        numbering_xml=numbering_xml,
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["A", "1. x", "B", "1. y"]
+
+
+def test_partition_docx_restarts_a_child_level_at_its_override_value_each_time(tmp_path):
+    numbering_xml = (
+        f"<w:numbering {_W_NS}>"
+        '<w:abstractNum w:abstractNumId="0">'
+        + _lvl_xml(0, "decimal", "%1.")
+        + _lvl_xml(1, "decimal", "%2.")
+        + "</w:abstractNum>"
+        '<w:num w:numId="1"><w:abstractNumId w:val="0"/>'
+        '<w:lvlOverride w:ilvl="1"><w:startOverride w:val="5"/></w:lvlOverride></w:num>'
+        "</w:numbering>"
+    )
+    path = _numbered_docx(
+        tmp_path,
+        [("P", 1, 0), ("x", 1, 1), ("x2", 1, 1), ("Q", 1, 0), ("y", 1, 1), ("y2", 1, 1)],
+        numbering_xml=numbering_xml,
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. P", "5. x", "6. x2", "2. Q", "5. y", "6. y2"]
+
+
+def test_partition_docx_resolves_each_paragraph_against_its_own_numbering_definition(tmp_path):
+    formats = ["decimal", "upperRoman", "lowerLetter"]
+    numbering_xml = (
+        f"<w:numbering {_W_NS}>"
+        + "".join(
+            f'<w:abstractNum w:abstractNumId="{n}">'
+            + _lvl_xml(0, formats[n % 3], "%1.")
+            + "</w:abstractNum>"
+            for n in range(300)
+        )
+        + "".join(
+            f'<w:num w:numId="{n + 1}"><w:abstractNumId w:val="{n}"/></w:num>' for n in range(300)
+        )
+        + "</w:numbering>"
+    )
+    path = _numbered_docx(
+        tmp_path, [(f"item {n}", n + 1, 0) for n in range(300)], numbering_xml=numbering_xml
+    )
+
+    elements = partition_docx(path)
+
+    expected_labels = {"decimal": "1.", "upperRoman": "I.", "lowerLetter": "a."}
+    assert [e.text for e in elements] == [
+        f"{expected_labels[formats[n % 3]]} item {n}" for n in range(300)
+    ]
+
+
+def test_partition_docx_uses_the_level_a_style_names_over_the_one_a_definition_links(tmp_path):
+    linked = _lvl_xml(1, "lowerLetter", "%2)").replace(
+        "<w:lvlText", '<w:pStyle w:val="LinkedStyle"/><w:lvlText'
+    )
+    numbering_xml = _single_definition_numbering(_lvl_xml(0, "decimal", "%1."), linked)
+    path = _numbered_docx(tmp_path, [], numbering_xml=numbering_xml)
+    document = docx.Document(path)
+    for text in ("one", "two"):
+        document.add_paragraph(text, style="LinkedStyle")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. one", "2. two"]
+
+
+def test_partition_docx_counts_an_empty_numbered_paragraph(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("", 1, 0), ("c", 1, 0)])
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "3. c"]
+
+
+def test_partition_docx_keeps_counting_child_levels_when_level_restart_is_zero(tmp_path):
+    no_restart = _lvl_xml(1, "decimal", "%2.").replace(
+        "<w:numFmt", '<w:lvlRestart w:val="0"/><w:numFmt'
+    )
+    numbering_xml = _single_definition_numbering(_lvl_xml(0, "decimal", "%1."), no_restart)
+    path = _numbered_docx(
+        tmp_path,
+        [("P", 1, 0), ("x", 1, 1), ("Q", 1, 0), ("y", 1, 1)],
+        numbering_xml=numbering_xml,
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. P", "1. x", "2. Q", "2. y"]
+
+
+def test_partition_docx_counts_a_numbered_paragraph_inside_a_table(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0)])
+    document = docx.Document(path)
+    cell = document.add_table(rows=1, cols=1).cell(0, 0)
+    cell.paragraphs[0].text = "in table"
+    cell.paragraphs[0]._p.get_or_add_pPr().append(
+        parse_xml(f'<w:numPr {_W_NS}><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>')
+    )
+    document.add_paragraph("c")._p.get_or_add_pPr().append(
+        parse_xml(f'<w:numPr {_W_NS}><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>')
+    )
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements if isinstance(e, ListItem)] == ["1. a", "3. c"]
+
+
+def test_partition_docx_shifts_link_offsets_past_the_generated_label(tmp_path):
+    path = _numbered_docx(tmp_path, [("", 1, 0)])
+    document = docx.Document(path)
+    url_id = document.part.relate_to(
+        "https://example.com/",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+        is_external=True,
+    )
+    document.paragraphs[-1]._p.append(
+        parse_xml(
+            f'<w:hyperlink {_W_NS} xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/'
+            f'relationships" r:id="{url_id}"><w:r><w:t>example</w:t></w:r></w:hyperlink>'
+        )
+    )
+    document.save(path)
+
+    (element,) = partition_docx(path)
+
+    (link,) = element.metadata.links
+    assert element.text == "1. example"
+    assert element.text[link["start_index"] :][: len(link["text"])] == "example"
+
+
+def test_partition_docx_ignores_a_list_level_outside_the_range_word_defines(tmp_path):
+    numbering_xml = _single_definition_numbering(
+        _lvl_xml(0, "decimal", "%1."), _lvl_xml(10_000_000, "decimal", "%1.")
+    )
+    path = _numbered_docx(tmp_path, [("deep", 1, 10_000_000)], numbering_xml=numbering_xml)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [(ListItem, "deep")]
+
+
+def test_partition_docx_ignores_a_list_start_value_beyond_what_word_allows(tmp_path):
+    numbering_xml = _single_definition_numbering(
+        _lvl_xml(0, "lowerLetter", "%1.", start=900_000_000)
+    )
+    path = _numbered_docx(tmp_path, [("letters", 1, 0)], numbering_xml=numbering_xml)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["letters"]
+
+
+@pytest.mark.parametrize(
+    ("num_fmt", "start", "expected_labels"),
+    [
+        ("ordinal", 1, ["1st", "2nd", "3rd", "4th"]),
+        ("ordinal", 11, ["11th", "12th", "13th", "14th"]),
+        ("decimalEnclosedCircle", 1, ["①", "②", "③", "④"]),
+        ("decimalEnclosedCircle", 19, ["⑲", "⑳", "21", "22"]),
+    ],
+)
+def test_partition_docx_renders_ordinal_and_circled_number_formats(
+    tmp_path, num_fmt: str, start: int, expected_labels: list[str]
+):
+    numbering_xml = _single_definition_numbering(_lvl_xml(0, num_fmt, "%1", start=start))
+    path = _numbered_docx(
+        tmp_path, [(f"item {n}", 1, 0) for n in range(4)], numbering_xml=numbering_xml
+    )
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == [
+        f"{label} item {n}" for n, label in enumerate(expected_labels)
+    ]
+
+
+def test_partition_docx_falls_back_to_plain_text_for_a_number_format_it_cannot_render(tmp_path):
+    numbering_xml = _single_definition_numbering(_lvl_xml(0, "japaneseCounting", "%1"))
+    path = _numbered_docx(tmp_path, [("one", 1, 0), ("two", 1, 0)], numbering_xml=numbering_xml)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["one", "two"]
 
 
 # -- .metadata.filename --------------------------------------------------------------------------
