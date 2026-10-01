@@ -693,7 +693,7 @@ def test_partition_docx_resolves_each_paragraph_against_its_own_numbering_defini
     ]
 
 
-def test_partition_docx_uses_the_level_a_definition_links_to_a_style(tmp_path):
+def test_partition_docx_uses_the_level_a_style_names_over_the_one_a_definition_links(tmp_path):
     linked = _lvl_xml(1, "lowerLetter", "%2)").replace(
         "<w:lvlText", '<w:pStyle w:val="LinkedStyle"/><w:lvlText'
     )
@@ -706,7 +706,7 @@ def test_partition_docx_uses_the_level_a_definition_links_to_a_style(tmp_path):
 
     elements = partition_docx(path)
 
-    assert [e.text for e in elements] == ["a) one", "b) two"]
+    assert [e.text for e in elements] == ["1. one", "2. two"]
 
 
 def test_partition_docx_counts_an_empty_numbered_paragraph(tmp_path):

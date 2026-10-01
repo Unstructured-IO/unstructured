@@ -1112,7 +1112,7 @@ class _ListLabels:
             return ""
 
     def _render_label(self, paragraph: Paragraph) -> str:
-        num_id, ilvl, style_id, style_ilvl = self._resolve_num_pr(paragraph)
+        num_id, ilvl, style_id = self._resolve_num_pr(paragraph)
         if num_id in (None, "0"):
             return ""
         num = self._nums.get(num_id)
@@ -1129,8 +1129,7 @@ class _ListLabels:
                 if style_id is not None
                 else []
             )
-            fallback = 0 if style_ilvl is None else style_ilvl
-            ilvl = int(linked[0]) if linked else fallback
+            ilvl = int(linked[0]) if linked else 0
         if not 0 <= ilvl <= _MAX_LIST_LEVEL:
             return ""
         lvl = self._level(num, abstract, ilvl)
@@ -1173,20 +1172,17 @@ class _ListLabels:
         except _UnrenderableLabel:
             return ""
 
-    def _resolve_num_pr(
-        self, paragraph: Paragraph
-    ) -> tuple[str | None, int | None, str | None, int | None]:
-        """The `(numId, ilvl, style_id, style_ilvl)` in effect for `paragraph`.
+    def _resolve_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
+        """The `(numId, ilvl, style_id)` in effect for `paragraph`, `None` for any not specified.
 
-        The paragraph's own `w:numPr` takes precedence over that of its style chain. `ilvl` is the
-        paragraph's own level only; `style_ilvl` is the level its style chain names, which Word
-        ignores in favor of the level the numbering definition links to `style_id`, the style that
-        supplied the `numId`. Any value not specified is `None`.
+        The paragraph's own `w:numPr` takes precedence over that of its style chain. `style_id` is
+        the style that supplied the `numId`.
         """
         own_num_id, own_ilvl = self._num_pr_values(paragraph._p.xpath("./w:pPr/w:numPr"))
         style_num_id, style_ilvl, style_id = self._style_num_pr(paragraph)
         num_id = own_num_id if own_num_id is not None else style_num_id
-        return num_id, own_ilvl, style_id if own_num_id is None else None, style_ilvl
+        ilvl = own_ilvl if own_ilvl is not None else style_ilvl
+        return num_id, ilvl, style_id if own_num_id is None else None
 
     def _style_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
         """The `(numId, ilvl, style_id)` the paragraph's style chain (`basedOn`) provides."""
