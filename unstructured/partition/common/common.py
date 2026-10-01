@@ -395,18 +395,18 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
     if isinstance(file, bytes):
         return file
 
-    if isinstance(file, SpooledTemporaryFile):
-        file.seek(0)
-        f_bytes = file.read()
-        file.seek(0)
-        return f_bytes
-
     if isinstance(file, BytesIO):
         return file.getvalue()
 
     if isinstance(file, (TextIOWrapper, BufferedReader)):
         with open(file.name, "rb") as f:
             return f.read()
+
+    if callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
+        file.seek(0)
+        f_bytes = file.read()
+        file.seek(0)
+        return f_bytes
 
     raise ValueError("Invalid file-like object type")
 

@@ -9,6 +9,7 @@ import io
 import json
 import os
 import shutil
+import tempfile
 
 import pytest
 
@@ -508,6 +509,34 @@ def test_it_detects_EMPTY_from_empty_file_like_object():
         assert detect_filetype(file=f) == FileType.EMPTY
 
 
+@pytest.mark.parametrize("max_size", [0, 1])
+def test_it_detects_a_SpooledTemporaryFile_in_place_and_rewinds_it(max_size: int):
+    with open(example_doc_path("simple.docx"), "rb") as f:
+        content = f.read()
+
+    with tempfile.SpooledTemporaryFile(max_size=max_size) as spooled_file:
+        spooled_file.write(content)
+        spooled_file.seek(0)
+
+        with patch.object(
+            _FileTypeDetectionContext, "new", wraps=_FileTypeDetectionContext.new
+        ) as new_:
+            file_type = detect_filetype(file=spooled_file)
+
+        assert file_type == FileType.DOCX
+        assert new_.call_args.kwargs["file"] is spooled_file
+        assert spooled_file.tell() == 0
+
+
+def test_it_uses_metadata_file_path_extension_for_a_rolled_over_SpooledTemporaryFile():
+    with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
+        spooled_file.write(b"# Heading\n\nSome *markdown* text.\n")
+        assert spooled_file._rolled
+        assert not isinstance(spooled_file.name, str)
+
+        assert detect_filetype(file=spooled_file, metadata_file_path="notes.md") == FileType.MD
+
+
 def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
     file_path = example_doc_path("csv-with-escaped-commas.csv")
 
@@ -1000,6 +1029,15 @@ class Describe_FileTypeDetectionContext:
                 file.name = file_name
 
         assert _FileTypeDetectionContext(file=file).extension == ""
+
+    def and_it_ignores_a_file_name_that_is_not_a_string(self):
+        with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
+            spooled_file.write(b"<html></html>")
+            assert not isinstance(spooled_file.name, str)
+
+            ctx = _FileTypeDetectionContext(file=spooled_file, metadata_file_path="a/b/c.html")
+
+            assert ctx.extension == ".html"
 
     # -- .file_head ---------------------------------------------
 
