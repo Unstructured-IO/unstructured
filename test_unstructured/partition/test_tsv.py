@@ -23,6 +23,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Table
 from unstructured.errors import UnprocessableEntityError
+from unstructured.partition.auto import partition
 from unstructured.partition.tsv import partition_tsv
 
 EXPECTED_FILETYPE = "text/tsv"
@@ -286,3 +287,26 @@ def test_partition_tsv_with_implicit_index_columns_matches_pandas_within_the_lim
         index=False, header=True, na_rep=""
     )
     assert table.text == HtmlTable.from_html_text(expected).text
+
+
+# -- `infer_table_structure` ---------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+def test_partition_tsv_from_filename_infer_table_structure(infer_table_structure: bool):
+    elements = partition_tsv(
+        example_doc_path("stanley-cups.tsv"), infer_table_structure=infer_table_structure
+    )
+
+    has_text_as_html = elements[0].metadata.text_as_html is not None
+    assert has_text_as_html == infer_table_structure
+
+
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+def test_partition_tsv_via_partition_respects_infer_table_structure(infer_table_structure: bool):
+    elements = partition(
+        example_doc_path("stanley-cups.tsv"), infer_table_structure=infer_table_structure
+    )
+
+    has_text_as_html = elements[0].metadata.text_as_html is not None
+    assert has_text_as_html == infer_table_structure
