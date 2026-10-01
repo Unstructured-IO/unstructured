@@ -1,0 +1,27 @@
+CHANGELOG.md
+  s_3478c52635a637::t_8b728d135f91ff 1
+  s_3478c52635a637::t_2ae53b1cc21cf8 7-11
+  s_3478c52635a637::t_bff3279375b224 12
+unstructured/__version__.py
+  s_3478c52635a637::t_8b728d135f91ff 1
+unstructured/partition/html/parser.py
+  s_3478c52635a637::t_2ae53b1cc21cf8 1034,1037-1038
+test_unstructured/partition/html/test_partition.py
+  s_3478c52635a637::t_2ae53b1cc21cf8 1636-1685
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "94f93699b96385315ea67374a707e483193445ae",
+  "prompts": {},
+  "sessions": {
+    "s_3478c52635a637": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "84409fbb-2c9a-4f4b-96ec-05211b8652f1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Trevor Bossert <trevor@unstructured.io>"
+    }
+  }
+}
