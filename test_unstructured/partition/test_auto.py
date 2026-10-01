@@ -1458,15 +1458,15 @@ def test_auto_partition_preserves_attachment_filetype_when_container_filename_is
     assert all(e.metadata.filetype == FileType.TXT.mime_type for e in attachment_elements)
 
 
-def test_detect_filetype_maps_file_to_bytes_io_when_spooled_temp_file_used(mocker):
+def test_detect_filetype_reads_a_spooled_temp_file_in_place(mocker):
     detect_filetype_mock = MagicMock(return_value=FileType.JSON)
     mocker.patch("unstructured.file_utils.filetype._FileTypeDetector", detect_filetype_mock)
     with tempfile.SpooledTemporaryFile() as f:
         f.write(b'{"text": Hello, world!}')
         f.seek(0)
         detect_filetype(file=f)
-    file_detection_context = detect_filetype_mock.file_type.call_args[0][0]
-    assert file_detection_context.text_head == '{"text": Hello, world!}'
+        file_detection_context = detect_filetype_mock.file_type.call_args[0][0]
+        assert file_detection_context.text_head == '{"text": Hello, world!}'
 
 
 # -- .languages -----------------------------------------------------------

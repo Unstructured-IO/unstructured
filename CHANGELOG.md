@@ -1,8 +1,14 @@
-## 0.27.10
+## 0.27.11
 
 ### Fixes
 
-- **Avoid copying spooled uploads into memory**: DOCX, PPTX, and shared partitioning paths now reuse `SpooledTemporaryFile` inputs directly on supported Python versions instead of copying their complete contents into `BytesIO`. Large uploads remain disk-backed, avoiding an additional document-sized heap allocation without changing the partition API.
+- **Avoid copying spooled uploads into memory**: `detect_filetype()` and the DOCX, PPTX, and shared partitioning paths now read `SpooledTemporaryFile` inputs in place instead of copying their complete contents into `BytesIO`. Large uploads remain disk-backed, avoiding a document-sized heap allocation without changing the partition API. A spooled file passed to `detect_filetype()` is still returned at read position 0.
+- **Use `metadata_file_path` when a file's name is not a path**: a temporary file, including a rolled-over `SpooledTemporaryFile`, can report an integer file descriptor as its `.name`. File-type detection now ignores non-string names and falls back to `metadata_file_path` for the filename extension instead of raising `TypeError`.
+- **Read any seekable binary stream in `convert_to_bytes()`**: streams such as `tempfile.TemporaryFile()` or file-like wrappers previously raised `ValueError("Invalid file-like object type")` from text-encoding detection and PDF page rendering. Any object with `read()` and `seek()` is now read from the start and rewound.
+
+## 0.27.10
+
+### Fixes
 
 - **Extract definition lists instead of discarding them**: `<dl>`, `<dt>` and `<dd>` were mapped to `RemovedBlock`, so `partition_html()` dropped every glossary and every Sphinx-generated API reference (each documented function with its parameters and return value) without an error. `<dl>` is now a list container, each `<dd>` definition a `ListItem` and each `<dt>` term an ordinary text block. The v2 (ontology) parser already kept definition lists.
 

@@ -1,7 +1,7 @@
 import logging
 import pathlib
 from multiprocessing import Pool
-from tempfile import SpooledTemporaryFile
+from tempfile import SpooledTemporaryFile, TemporaryFile
 
 import numpy as np
 import pytest
@@ -40,6 +40,28 @@ def test_spooled_to_bytes_io_if_needed_rewinds_without_copying():
         assert result is spooled_file
         assert result.tell() == 0
         assert result.read() == b"sample content"
+
+
+@pytest.mark.parametrize("max_size", [0, 1])
+def test_convert_to_bytes_reads_a_SpooledTemporaryFile_and_rewinds_it(max_size: int):
+    with SpooledTemporaryFile(max_size=max_size) as spooled_file:
+        spooled_file.write(b"sample content")
+
+        assert common.convert_to_bytes(spooled_file) == b"sample content"
+        assert spooled_file.tell() == 0
+
+
+def test_convert_to_bytes_reads_any_seekable_binary_stream_and_rewinds_it():
+    with TemporaryFile() as file:
+        file.write(b"sample content")
+
+        assert common.convert_to_bytes(file) == b"sample content"
+        assert file.tell() == 0
+
+
+def test_convert_to_bytes_raises_for_an_object_that_is_not_a_seekable_stream():
+    with pytest.raises(ValueError, match="Invalid file-like object type"):
+        common.convert_to_bytes(object())  # pyright: ignore[reportArgumentType]
 
 
 class MockPageLayout(layout.PageLayout):
