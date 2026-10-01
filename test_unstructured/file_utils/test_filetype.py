@@ -8,6 +8,7 @@ import io
 import json
 import os
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -516,6 +517,13 @@ def test_it_uses_metadata_file_path_extension_for_a_rolled_over_SpooledTemporary
         assert not isinstance(spooled_file.name, str)
 
         assert detect_filetype(file=spooled_file, metadata_file_path="notes.md") == FileType.MD
+
+
+def test_it_preserves_a_path_like_stream_name_extension():
+    file = io.BytesIO(b"# Heading\n\nSome *markdown* text.\n")
+    file.name = Path("notes.md")
+
+    assert detect_filetype(file=file) == FileType.MD
 
 
 def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
