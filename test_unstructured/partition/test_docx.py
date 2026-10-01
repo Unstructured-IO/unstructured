@@ -370,6 +370,7 @@ def _numbered_docx(
     - numId 3: same abstract definition as numId 1 but level 0 restarts at 5
     - numId 4: same abstract definition as numId 1 with no override
     - style "NumberedStyle" is bound to numId 1 and "ChildStyle" is based on it
+    - style "LinkedStyle" is bound to numId 1 at ilvl 0
     """
     numbering_xml = numbering_xml or (
         f"<w:numbering {_W_NS}>"
@@ -404,6 +405,13 @@ def _numbered_docx(
         parse_xml(
             f'<w:style {_W_NS} w:type="paragraph" w:styleId="ChildStyle">'
             '<w:name w:val="ChildStyle"/><w:basedOn w:val="NumberedStyle"/></w:style>'
+        )
+    )
+    styles.append(
+        parse_xml(
+            f'<w:style {_W_NS} w:type="paragraph" w:styleId="LinkedStyle">'
+            '<w:name w:val="LinkedStyle"/><w:pPr><w:numPr><w:ilvl w:val="0"/>'
+            '<w:numId w:val="1"/></w:numPr></w:pPr></w:style>'
         )
     )
     for text, num_id, ilvl in paragraphs:
@@ -636,7 +644,7 @@ def test_partition_docx_restarts_numbered_children_after_a_bullet_parent(tmp_pat
     assert [e.text for e in elements] == ["A", "1. x", "B", "1. y"]
 
 
-def test_partition_docx_restarts_a_child_level_at_its_definition_start_after_an_override(tmp_path):
+def test_partition_docx_restarts_a_child_level_at_its_override_value_each_time(tmp_path):
     numbering_xml = (
         f"<w:numbering {_W_NS}>"
         '<w:abstractNum w:abstractNumId="0">'
@@ -655,7 +663,7 @@ def test_partition_docx_restarts_a_child_level_at_its_definition_start_after_an_
 
     elements = partition_docx(path)
 
-    assert [e.text for e in elements] == ["1. P", "5. x", "6. x2", "2. Q", "1. y", "2. y2"]
+    assert [e.text for e in elements] == ["1. P", "5. x", "6. x2", "2. Q", "5. y", "6. y2"]
 
 
 def test_partition_docx_resolves_each_paragraph_against_its_own_numbering_definition(tmp_path):
@@ -683,6 +691,22 @@ def test_partition_docx_resolves_each_paragraph_against_its_own_numbering_defini
     assert [e.text for e in elements] == [
         f"{expected_labels[formats[n % 3]]} item {n}" for n in range(300)
     ]
+
+
+def test_partition_docx_uses_the_level_a_definition_links_to_a_style(tmp_path):
+    linked = _lvl_xml(1, "lowerLetter", "%2)").replace(
+        "<w:lvlText", '<w:pStyle w:val="LinkedStyle"/><w:lvlText'
+    )
+    numbering_xml = _single_definition_numbering(_lvl_xml(0, "decimal", "%1."), linked)
+    path = _numbered_docx(tmp_path, [], numbering_xml=numbering_xml)
+    document = docx.Document(path)
+    for text in ("one", "two"):
+        document.add_paragraph(text, style="LinkedStyle")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["a) one", "b) two"]
 
 
 def test_partition_docx_counts_an_empty_numbered_paragraph(tmp_path):

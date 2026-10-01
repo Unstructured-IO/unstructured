@@ -1112,7 +1112,7 @@ class _ListLabels:
             return ""
 
     def _render_label(self, paragraph: Paragraph) -> str:
-        num_id, ilvl, style_id = self._resolve_num_pr(paragraph)
+        num_id, ilvl, style_id, style_ilvl = self._resolve_num_pr(paragraph)
         if num_id in (None, "0"):
             return ""
         num = self._nums.get(num_id)
@@ -1124,8 +1124,13 @@ class _ListLabels:
             return ""
 
         if ilvl is None:
-            linked = self._xpath(abstract, f'./w:lvl[w:pStyle/@w:val="{style_id}"]/@w:ilvl')
-            ilvl = int(linked[0]) if linked else 0
+            linked = (
+                self._xpath(abstract, f'./w:lvl[w:pStyle/@w:val="{style_id}"]/@w:ilvl')
+                if style_id is not None
+                else []
+            )
+            fallback = 0 if style_ilvl is None else style_ilvl
+            ilvl = int(linked[0]) if linked else fallback
         if not 0 <= ilvl <= _MAX_LIST_LEVEL:
             return ""
         lvl = self._level(num, abstract, ilvl)
@@ -1133,12 +1138,12 @@ class _ListLabels:
             return ""
 
         counters = self._counters.setdefault(abstract_id, [None] * (_MAX_LIST_LEVEL + 1))
-        override = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride/@w:val')
-        if override and (num_id, ilvl) not in self._restarted:
+        has_override = bool(num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride'))
+        if has_override and (num_id, ilvl) not in self._restarted:
             self._restarted.add((num_id, ilvl))
-            counters[ilvl] = int(override[0])
+            counters[ilvl] = self._level_start(num, lvl, ilvl)
         elif counters[ilvl] is None:
-            counters[ilvl] = self._start(lvl)
+            counters[ilvl] = self._level_start(num, lvl, ilvl)
         else:
             counters[ilvl] += 1
         for deeper in range(ilvl + 1, _MAX_LIST_LEVEL + 1):
@@ -1159,7 +1164,7 @@ class _ListLabels:
                 return ""
             count = counters[level]
             return self._format_number(
-                self._start(referenced) if count is None else count,
+                self._level_start(num, referenced, level) if count is None else count,
                 self._val(referenced, "w:numFmt") or "decimal",
             )
 
@@ -1168,17 +1173,20 @@ class _ListLabels:
         except _UnrenderableLabel:
             return ""
 
-    def _resolve_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
-        """The `(numId, ilvl, style_id)` in effect for `paragraph`, `None` for any not specified.
+    def _resolve_num_pr(
+        self, paragraph: Paragraph
+    ) -> tuple[str | None, int | None, str | None, int | None]:
+        """The `(numId, ilvl, style_id, style_ilvl)` in effect for `paragraph`.
 
-        The paragraph's own `w:numPr` takes precedence over that of its style chain. `style_id` is
-        the style that supplied the `numId`.
+        The paragraph's own `w:numPr` takes precedence over that of its style chain. `ilvl` is the
+        paragraph's own level only; `style_ilvl` is the level its style chain names, which Word
+        ignores in favor of the level the numbering definition links to `style_id`, the style that
+        supplied the `numId`. Any value not specified is `None`.
         """
         own_num_id, own_ilvl = self._num_pr_values(paragraph._p.xpath("./w:pPr/w:numPr"))
         style_num_id, style_ilvl, style_id = self._style_num_pr(paragraph)
         num_id = own_num_id if own_num_id is not None else style_num_id
-        ilvl = own_ilvl if own_ilvl is not None else style_ilvl
-        return num_id, ilvl, style_id if own_num_id is None else None
+        return num_id, own_ilvl, style_id if own_num_id is None else None, style_ilvl
 
     def _style_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
         """The `(numId, ilvl, style_id)` the paragraph's style chain (`basedOn`) provides."""
@@ -1224,6 +1232,11 @@ class _ListLabels:
     def _xpath(element: Any, expression: str) -> list[Any]:
         """Evaluate `expression` on `element`, which may be a plain lxml element."""
         return etree.XPath(expression, namespaces=nsmap)(element)
+
+    def _level_start(self, num: Any, lvl: Any, ilvl: int) -> int:
+        """The value level `ilvl` of `num` starts, or restarts, at."""
+        override = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride/@w:val')
+        return int(override[0]) if override else self._start(lvl)
 
     def _start(self, lvl: Any) -> int:
         start = self._val(lvl, "w:start")
