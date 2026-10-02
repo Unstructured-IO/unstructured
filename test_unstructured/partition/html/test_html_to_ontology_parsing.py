@@ -349,7 +349,7 @@ def test_broken_cell_is_not_raising_error():
         <table class="Table">
             <tbody>
                 <tr>
-                   <td tablecell&quot;="">
+                   <td>
                     83.64 GiB
                    </td>
                   <th rowspan="2">
@@ -513,32 +513,30 @@ def test_malformed_html():
 
     input_html = indent_html(input_html, html_parser="html5lib")
 
-    # Ontology has 1 element and everything inside is just Text
+    # Ontology has 1 element and everything inside is just Text.
+    # SECURITY (GHSA-v5mq-3xhg-98m9): the collapsed markup stored as this element's
+    # text is HTML-escaped on output, so the embedded <script>/<div>/<p> survive as
+    # inert escaped text (&lt;script&gt; ...) instead of being re-materialized as live
+    # tags. Previously this test asserted a live <script> tag in the output.
     # language=HTML
     expected_html = """
     <body class="Document">
-
       <p class="Paragraph">
-     Unclosed comment
-     <div class="">
-      <p>
-       Paragraph with missing closing angle bracket
-       <div>
-        <span>
-         <p>
-          Improperly nested paragraph within a span
-         </p>
-        </span>
-       </div>
+       Unclosed comment
+        &lt;div class=&gt;
+          &lt;p&gt;Paragraph with missing closing angle bracket
+        &lt;div&gt;
+          &lt;span&gt;
+            &lt;p&gt;Improperly nested paragraph within a span&lt;/span&gt;
+          &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;script&gt;
+          var x = "Unclosed script tag example;
+        &lt;/script&gt;
+        &lt;p&gt;Paragraph with invalid characters: � � �&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/html&gt;
       </p>
-     </div>
-     <script>
-      var x = "Unclosed script tag example;
-     </script>
-     <p>
-      Paragraph with invalid characters: � � �
-     </p>
-     </p>
     </body>
     """
 

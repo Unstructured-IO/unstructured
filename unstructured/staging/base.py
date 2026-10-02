@@ -19,6 +19,7 @@ from unstructured.documents.elements import (
     Formula,
     Image,
     Table,
+    TableChunk,
     Title,
 )
 from unstructured.errors import DecompressedSizeExceededError
@@ -207,6 +208,11 @@ def elements_from_dicts(element_dicts: Iterable[dict[str, Any]]) -> list[Element
         if item.get("type") in TYPE_TO_TEXT_ELEMENT_MAP:
             ElementCls = TYPE_TO_TEXT_ELEMENT_MAP[item["type"]]
             elements.append(ElementCls(text=item["text"], element_id=element_id, metadata=metadata))
+        elif item.get("type") == "TableChunk":
+            # -- not in TYPE_TO_TEXT_ELEMENT_MAP (the map also feeds the COCO category
+            # -- vocabulary); special-cased like CheckBox so serialized chunker output can
+            # -- rehydrate and feed `reconstruct_table_from_chunks()` (see PR #4291) --
+            elements.append(TableChunk(text=item["text"], element_id=element_id, metadata=metadata))
         elif item.get("type") == "CheckBox":
             elements.append(
                 CheckBox(checked=item["checked"], element_id=element_id, metadata=metadata)

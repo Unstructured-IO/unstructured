@@ -289,6 +289,28 @@ def test_table_element_html_attrs(table_element_html: TableElementHtml) -> None:
     assert tag["style"] == "border: 1px solid black; border-collapse: collapse;"
 
 
+def test_table_element_html_wraps_raw_text_in_a_cell(
+    table_element_html: TableElementHtml,
+) -> None:
+    # -- raw table text must sit inside a `<td>` so HTML5 parsers (e.g. the nh3
+    # -- sanitization pass) don't foster-parent it out of the empty table --
+    table_element_html.element.metadata.text_as_html = None
+    table_element_html.element.text = "cell text"
+    tag = table_element_html.get_html_element()
+    cell = tag.find("td")
+    assert cell is not None
+    assert cell.get_text() == "cell text"
+
+
+def test_table_element_html_leaves_empty_table_without_a_cell(
+    table_element_html: TableElementHtml,
+) -> None:
+    table_element_html.element.metadata.text_as_html = None
+    table_element_html.element.text = ""
+    tag = table_element_html.get_html_element()
+    assert tag.find("td") is None
+
+
 def test_link_element_html_attrs(link_element_html: LinkElementHtml) -> None:
     link_element_html.element.metadata.url = "http://example.com"
     soup = BeautifulSoup("", HTML_PARSER)

@@ -12,6 +12,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  DO_NOT_TRACK: "1"
+
 jobs:
   setup:
     strategy:
@@ -80,30 +83,13 @@ jobs:
     - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install system dependencies
+      run: bash scripts/ci/install-system-deps.sh
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
         TESSERACT_VERSION: "5.5.1"
       run: |
-        retry() {
-          local n=1 max=5 delay=15
-          while true; do
-            "$@" && return 0
-            if (( n >= max )); then
-              echo "Command failed after $n attempts: $*" >&2
-              return 1
-            fi
-            echo "Attempt $n/$max failed for: $*. Retrying in ${delay}s..." >&2
-            sleep "$delay"
-            n=$((n+1))
-          done
-        }
-        retry sudo apt-get update
-        retry sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        retry sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        retry sudo apt-get update -o "APT::Update::Error-Mode=any"
-        retry sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
-        tesseract --version
         installed_tesseract_version=$(tesseract --version | grep -oP '(?<=tesseract )\d+\.\d+\.\d+')
         if [ "$installed_tesseract_version" != "${{env.TESSERACT_VERSION}}" ]; then
           echo "Tesseract version ${{env.TESSERACT_VERSION}} is required but found version $installed_tesseract_version"
@@ -174,25 +160,7 @@ jobs:
         uv sync --locked ${{ matrix.uv-extras }} --group test
     - name: Install system dependencies
       run: |
-        retry() {
-          local n=1 max=5 delay=15
-          while true; do
-            "$@" && return 0
-            if (( n >= max )); then
-              echo "Command failed after $n attempts: $*" >&2
-              return 1
-            fi
-            echo "Attempt $n/$max failed for: $*. Retrying in ${delay}s..." >&2
-            sleep "$delay"
-            n=$((n+1))
-          done
-        }
-        retry sudo apt-get update
-        retry sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        retry sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        retry sudo apt-get update -o "APT::Update::Error-Mode=any"
-        retry sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
-        tesseract --version
+        bash scripts/ci/install-system-deps.sh
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -216,6 +184,8 @@ jobs:
       uses: docker/setup-docker-action@v4
     - name: Set up Docker Compose
       uses: docker/setup-compose-action@v1
+    - name: Install system dependencies
+      run: bash scripts/ci/install-system-deps.sh diffstat
     - name: Test (end-to-end)
       env:
         AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
@@ -263,27 +233,6 @@ jobs:
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
-        retry() {
-          local n=1 max=5 delay=15
-          while true; do
-            "$@" && return 0
-            if (( n >= max )); then
-              echo "Command failed after $n attempts: $*" >&2
-              return 1
-            fi
-            echo "Attempt $n/$max failed for: $*. Retrying in ${delay}s..." >&2
-            sleep "$delay"
-            n=$((n+1))
-          done
-        }
-        retry sudo apt-get update
-        retry sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        retry sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        retry sudo apt-get update -o "APT::Update::Error-Mode=any"
-        retry sudo apt-get install -y tesseract-ocr
-        retry sudo apt-get install -y tesseract-ocr-kor
-        retry sudo apt-get install -y diffstat
-        tesseract --version
         uv run --no-sync ./test_unstructured_ingest/test-ingest-src.sh
 
   test_json_to_html:

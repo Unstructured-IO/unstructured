@@ -75,6 +75,7 @@ Other background
 
 from __future__ import annotations
 
+import html
 import re
 from collections import defaultdict, deque
 from functools import cached_property
@@ -85,7 +86,6 @@ from lxml import etree
 from typing_extensions import TypeAlias
 
 from unstructured.cleaners.core import clean_bullets
-from unstructured.common.html_table import htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import (
     Address,
     CodeSnippet,
@@ -99,6 +99,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.partition.common.metadata import category_depth_from_html_tag
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -275,22 +276,19 @@ class _ElementAccumulator:
         )
 
     def _category_depth(self, ElementCls: type[Element]) -> int | None:
-        """Not clear on concept. Something to do with hierarchy ..."""
-        if ElementCls is ListItem:
-            return (
-                len([e for e in self._element.iterancestors() if e.tag in ("dl", "ol", "ul")])
-                if self._element.tag in ("li", "dd")
-                else 0
-            )
+        """`category_depth` from heading level (Title) or list-nesting (ListItem).
 
-        if ElementCls is Title:
-            return (
-                int(self._element.tag[1]) - 1
-                if self._element.tag in ("h1", "h2", "h3", "h4", "h5", "h6")
-                else 0
-            )
-
-        return None
+        Delegates to the shared `category_depth_from_html_tag` helper so the v1 and v2 (ontology)
+        HTML parsers compute `category_depth` identically.
+        """
+        list_ancestor_count = (
+            len([e for e in self._element.iterancestors() if e.tag in ("dl", "ol", "ul")])
+            if self._element.tag in ("li", "dd")
+            else 0
+        )
+        return category_depth_from_html_tag(
+            ElementCls, self._element.tag, list_ancestor_count=list_ancestor_count
+        )
 
     @property
     def _normalized_text(self) -> str:
@@ -482,6 +480,28 @@ class ListItemBlock(Flow):
 
     _ElementCls = ListItem
 
+    def iter_elements(self) -> Iterator[Element]:
+        """Adopt a sole text block, as produced by Markdown loose lists."""
+        if len(self) == 1 and not (self.text or "").strip():
+            child = self[0]
+            # Only unwrap ordinary text blocks, not tables, images, headings, or code.
+            # Multiple paragraphs (including those nested inside inline markup) retain
+            # normal traversal rather than being collapsed into a single list item.
+            if (
+                type(child) in (Flow, BlockItem)
+                and not (child.tail or "").strip()
+                and all(node.is_phrasing for node in child.iterdescendants())
+            ):
+                # Use the list item's accumulator to retain its list-nesting depth.
+                for element in self._element_from_text_or_tail(
+                    child.text or "", deque(child), ListItem
+                ):
+                    element.metadata.page_number = child._page_number
+                    yield element
+                return
+
+        yield from super().iter_elements()
+
 
 class Pre(BlockItem):
     """Custom element-class for `<pre>` element.
@@ -537,32 +557,60 @@ class TableBlock(Flow):
         # -- for the _cell_ containing the table (and this is recursive, so a table nested within
         # -- a cell within a table within a cell too.)
 
-        trs = cast(list[etree._Element], self.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
+        html_parts = ["<table>"]
+        row_texts: list[str] = []
 
-        if not trs:
-            return
+        def append_row(tr: etree._Element) -> None:
+            """Append the text and sanitized HTML for one recognized table row."""
+            cell_htmls: list[str] = []
+            cell_texts: list[str] = []
 
-        def iter_cell_texts(tr: etree._Element) -> Iterator[str]:
-            """Generate the text of each cell in `tr`."""
-            # -- a cell can be either a "data" cell (td) or a "heading" cell (th) --
-            tds = cast(list[etree._Element], tr.xpath("./td | ./th"))
-            for td in tds:
+            for cell in tr:
+                if cell.tag not in ("th", "td"):
+                    continue
+
                 # -- a cell can contain other elements like spans etc. so we can't count on the
-                # -- text being directly below the `<td>` element. `.itertext()` gets all of it
-                # -- recursively. Filter out whitespace text nodes resulting from HTML formatting.
-                stripped_text_nodes = (t.strip() for t in td.itertext())
-                yield " ".join(t for t in stripped_text_nodes if t)
+                # -- text being directly below the cell. `.itertext()` gets all of it recursively.
+                # -- Filter out whitespace text nodes resulting from HTML formatting.
+                stripped_text_nodes = (t.strip() for t in cell.itertext())
+                cell_text = " ".join(t for t in stripped_text_nodes if t)
+                cell_texts.append(cell_text)
 
-        table_data = [list(iter_cell_texts(tr)) for tr in trs]
-        html_table = htmlify_matrix_of_cell_texts(table_data)
-        table_text = " ".join(" ".join(t for t in row if t) for row in table_data).strip()
+                # -- Reconstruct only the recognized cell tag and escaped text. Source attributes
+                # -- and nested markup are intentionally excluded from this sanitized
+                # -- representation.
+                escaped_text = html.escape(cell_text)
+                cell_body = " ".join("<br/>".join(escaped_text.split("\n")).split())
+                cell_htmls.append(
+                    f"<{cell.tag}>{cell_body}</{cell.tag}>" if cell_body else f"<{cell.tag}/>"
+                )
+
+            # -- Retain an entry for empty rows to preserve the existing plain-text join behavior.
+            row_texts.append(" ".join(t for t in cell_texts if t))
+            if cell_htmls:
+                html_parts.extend(("<tr>", "".join(cell_htmls), "</tr>"))
+
+        for child in self:
+            if child.tag == "tr":
+                append_row(child)
+            elif child.tag in ("thead", "tbody", "tfoot"):
+                html_parts.append(f"<{child.tag}>")
+                for tr in child:
+                    if tr.tag == "tr":
+                        append_row(tr)
+                html_parts.append(f"</{child.tag}>")
+
+        table_text = " ".join(row_texts).strip()
 
         if table_text == "":
             return
 
+        html_parts.append("</table>")
         yield Table(
             table_text,
-            metadata=ElementMetadata(text_as_html=html_table, page_number=self._page_number),
+            metadata=ElementMetadata(
+                text_as_html="".join(html_parts), page_number=self._page_number
+            ),
         )
 
 
@@ -945,7 +993,12 @@ def derive_element_type_from_text(text: str) -> type[Text] | None:
 # ------------------------------------------------------------------------------------------------
 
 
-html_parser = etree.HTMLParser(remove_comments=True)
+# NOTE(VSathveek): `remove_pis=True` drops processing-instruction nodes (e.g. a
+# stray `<?xml ...?>` declaration) at parse time, just as `remove_comments` drops
+# comments. Without it such a node reaches the element traversal as a bare `lxml`
+# `_ProcessingInstruction`, which has no `is_phrasing` and raises AttributeError
+# (issue #4358).
+html_parser = etree.HTMLParser(remove_comments=True, remove_pis=True)
 # -- elements that don't have a registered class get DefaultElement --
 fallback = etree.ElementDefaultClassLookup(element=DefaultElement)
 # -- elements that do have a registered class are assigned that class via lookup --
@@ -978,8 +1031,11 @@ element_class_lookup.get_namespace(None).update(
         "p": BlockItem,
         "pre": Pre,
         # -- list blocks --
+        "dl": ListBlock,
         "ol": ListBlock,
         "ul": ListBlock,
+        "dd": ListItemBlock,
+        "dt": BlockItem,
         "li": ListItemBlock,
         # -- image --
         "img": ImageBlock,
@@ -1022,9 +1078,6 @@ element_class_lookup.get_namespace(None).update(
         "label": RemovedPhrasing,
         # -- removed block --
         "details": RemovedBlock,  # -- likely boilerplate --
-        "dl": RemovedBlock,
-        "dd": RemovedBlock,
-        "dt": RemovedBlock,
         "figure": RemovedBlock,
         "hr": RemovedBlock,
         "nav": RemovedBlock,

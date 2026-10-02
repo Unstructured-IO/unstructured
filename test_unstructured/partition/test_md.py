@@ -4,7 +4,6 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-import requests
 from markdown.extensions.fenced_code import FencedCodeExtension
 from pytest_mock import MockFixture
 
@@ -13,6 +12,18 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ElementType, Title
 from unstructured.partition.md import partition_md
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
+
+
+@pytest.mark.parametrize("marker", ["1.", "-"])
+@pytest.mark.parametrize("separator", ["\n", "\n\n"])
+def test_partition_md_recognizes_loose_and_tight_lists(marker: str, separator: str):
+    text = separator.join(f"{marker} list item {word}." for word in ["one", "two", "three"])
+
+    elements = partition_md(text=text, languages=[""])
+
+    assert [e.category for e in elements] == ["ListItem"] * 3
+    assert [e.text for e in elements] == [f"list item {word}." for word in ["one", "two", "three"]]
+    assert [e.metadata.category_depth for e in elements] == [1, 1, 1]
 
 
 def test_partition_md_from_filename():
@@ -61,7 +72,7 @@ def test_partition_md_from_url():
         status_code=200,
         headers={"Content-Type": "text/markdown"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
+    with patch("unstructured.partition.md.safe_get", return_value=response) as _:
         elements = partition_md(url="https://fake.url")
 
     assert len(elements) > 0
@@ -78,7 +89,10 @@ def test_partition_md_from_url_raises_with_bad_status_code():
         status_code=500,
         headers={"Content-Type": "text/html"},
     )
-    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+    with (
+        patch("unstructured.partition.md.safe_get", return_value=response) as _,
+        pytest.raises(ValueError),
+    ):
         partition_md(url="https://fake.url")
 
 
@@ -92,7 +106,10 @@ def test_partition_md_from_url_raises_with_bad_content_type():
         status_code=200,
         headers={"Content-Type": "application/json"},
     )
-    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+    with (
+        patch("unstructured.partition.md.safe_get", return_value=response) as _,
+        pytest.raises(ValueError),
+    ):
         partition_md(url="https://fake.url")
 
 

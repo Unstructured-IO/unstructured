@@ -48,6 +48,7 @@ from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType, create_file_type, register_partitioner
 from unstructured.partition.auto import _PartitionerLoader, partition
 from unstructured.partition.common import UnsupportedFileFormatError
+from unstructured.partition.common.metadata import is_attachment_element
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.staging.base import elements_from_json, elements_to_dicts, elements_to_json
 
@@ -411,17 +412,129 @@ def test_auto_partition_json_from_file_preserves_original_elements():
     assert elements_to_dicts(partitioned_elements) == elements_to_dicts(original_elements)
 
 
-def test_auto_partition_processes_simple_ndjson(tmp_path: pathlib.Path):
+def test_auto_partition_routes_single_line_json_object_to_json_not_ndjson(tmp_path: pathlib.Path):
+    # -- a compact single-line object is one JSON value, so it routes to JSON even though it is
+    # -- also valid one-record NDJSON. It is not an array of element-dicts, so it partitions as
+    # -- arbitrary JSON rather than rehydrating. --
     text = '{"text": "hello", "type": "NarrativeText"}'
 
-    file_path = str(tmp_path / "unprocessable.json")
+    file_path = str(tmp_path / "one-line-element-object.json")
     with open(file_path, "w") as f:
         f.write(text)
 
     result = partition(filename=file_path)
+
     assert len(result) == 1
-    assert isinstance(result[0], NarrativeText)
-    assert "hello" in result[0].text
+    assert isinstance(result[0], Text)
+    assert '"text": "hello"' in result[0].text
+    assert result[0].metadata.filetype == "application/json"
+
+
+def test_auto_partition_routes_non_element_json_object_to_partition_json():
+    elements = partition(example_doc_path("not-unstructured-payload.json"))
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert '"id": "Sample-1"' in elements[0].text
+    assert elements[0].metadata.filetype == "application/json"
+
+
+def test_auto_partition_routes_compact_single_line_json_object_fixture_to_json():
+    file_path = example_doc_path("single-line-object.json")
+
+    elements = partition(file_path)
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert elements[0].metadata.filetype == "application/json"
+    assert "Garden Trowel" in elements[0].text
+
+
+def test_auto_partition_routes_arbitrary_ndjson_to_partition_ndjson():
+    elements = partition(example_doc_path("arbitrary-records.ndjson"))
+
+    assert len(elements) == 3
+    assert all(isinstance(e, Text) for e in elements)
+    assert elements[0].metadata.filetype == "application/x-ndjson"
+    assert "Watering Can" in elements[1].text
+
+
+def test_auto_partition_rehydrates_serialized_element_ndjson():
+    elements = partition(example_doc_path("simple.ndjson"))
+
+    assert elements[0] == Title(text="These are a few of my favorite things:")
+
+
+def test_auto_partition_surfaces_ValueError_for_corrupt_element_shaped_json(
+    tmp_path: pathlib.Path,
+):
+    # -- an element-shaped payload whose metadata cannot be rehydrated raises the wrapped
+    # -- ValueError through partition(), not a low-level error like zlib.error --
+    text = json.dumps([{"type": "Title", "text": "x", "metadata": {"orig_elements": "aGVsbG8="}}])
+    file_path = str(tmp_path / "corrupt-elements.json")
+    with open(file_path, "w") as f:
+        f.write(text)
+
+    with pytest.raises(ValueError, match="could not be reconstructed"):
+        partition(filename=file_path)
+
+
+def test_auto_partition_ties_one_record_ndjson_to_ndjson_and_rehydrates(tmp_path: pathlib.Path):
+    # -- a one-record ".ndjson" asserted as "application/json" is also valid one-value JSON, but
+    # -- the ".ndjson" extension wins the tie-break so it routes to partition_ndjson and
+    # -- rehydrates rather than becoming an arbitrary-JSON Text --
+    file_path = str(tmp_path / "one-record.ndjson")
+    with open(file_path, "w") as f:
+        f.write('{"type": "Title", "text": "Hello"}\n')
+
+    with open(file_path, "rb") as f:
+        elements = partition(file=f, content_type="application/json")
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Title)
+    assert elements[0].text == "Hello"
+
+
+def test_auto_partition_routes_scalar_json_to_partition_json(tmp_path: pathlib.Path):
+    # -- a bare JSON scalar in a ".json" source reaches partition_json (not TXT) and becomes one
+    # -- Text of the pretty-printed value --
+    file_path = str(tmp_path / "scalar.json")
+    with open(file_path, "w") as f:
+        f.write("123")
+
+    elements = partition(filename=file_path)
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert elements[0].text == "123"
+    assert elements[0].metadata.filetype == "application/json"
+
+
+def test_auto_partition_routes_scalar_ndjson_to_partition_ndjson(tmp_path: pathlib.Path):
+    # -- scalar-per-line NDJSON in a ".ndjson" source reaches partition_ndjson (not TXT) and
+    # -- becomes one Text per line --
+    file_path = str(tmp_path / "scalar.ndjson")
+    with open(file_path, "w") as f:
+        f.write('1\n2\n"x"\n')
+
+    elements = partition(filename=file_path)
+
+    assert len(elements) == 3
+    assert all(isinstance(e, Text) for e in elements)
+    assert [e.text for e in elements] == ["1", "2", '"x"']
+    assert elements[0].metadata.filetype == "application/x-ndjson"
+
+
+def test_auto_partition_raises_ValueError_for_json_with_NaN(tmp_path: pathlib.Path):
+    # -- the detector shares the partitioners' strict JSON parse, so a payload containing the
+    # -- non-standard `NaN` constant is never silently detected/partitioned; partition() surfaces
+    # -- the ValueError --
+    file_path = str(tmp_path / "with-nan.json")
+    with open(file_path, "w") as f:
+        f.write('{"value": NaN}')
+
+    with pytest.raises(ValueError, match="Not a valid json"):
+        partition(filename=file_path)
 
 
 # ================================================================================================
@@ -1303,6 +1416,46 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(
         for e in elements
         if e.metadata.filetype is not None
     )
+
+
+@pytest.mark.parametrize(
+    "file_name",
+    ["eml/fake-email-attachment.eml", "fake-email-attachment.msg"],
+)
+def test_auto_partition_preserves_the_filetype_of_attachment_elements(file_name: str):
+    """Attachment elements keep their own filetype, not the containing message's.
+
+    Their filetype was assigned by the nested `partition()` call that produced them, so the
+    outer call must not re-stamp them with e.g. `message/rfc822`.
+    """
+    elements = partition(example_doc_path(file_name), process_attachments=True)
+
+    attachment_elements = [e for e in elements if is_attachment_element(e)]
+    assert attachment_elements
+    assert all(e.metadata.filetype == FileType.TXT.mime_type for e in attachment_elements)
+
+
+@pytest.mark.parametrize(
+    "file_name",
+    ["eml/fake-email-attachment.eml", "fake-email-attachment.msg"],
+)
+def test_auto_partition_preserves_attachment_filetype_when_container_filename_is_unknown(
+    file_name: str,
+):
+    """The attachment guard must not depend on `.metadata.attached_to_filename`.
+
+    That field is `None` when the containing document's file-name is unknown -- partitioning a
+    file-like object with no `metadata_filename` -- so keying the guard on it would let the
+    containing document's filetype overwrite the attachment's in exactly that case.
+    """
+    with open(example_doc_path(file_name), "rb") as f:
+        elements = partition(file=f, process_attachments=True)
+
+    attachment_elements = [e for e in elements if is_attachment_element(e)]
+    assert attachment_elements
+    # -- precondition: this is the case the `attached_to_filename` guard cannot see --
+    assert all(e.metadata.attached_to_filename is None for e in attachment_elements)
+    assert all(e.metadata.filetype == FileType.TXT.mime_type for e in attachment_elements)
 
 
 def test_detect_filetype_maps_file_to_bytes_io_when_spooled_temp_file_used(mocker):

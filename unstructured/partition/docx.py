@@ -6,6 +6,7 @@ import io
 import itertools
 import logging
 import os
+import re
 import tempfile
 import zipfile
 from functools import cached_property
@@ -14,6 +15,7 @@ from typing import IO, Any, Iterator, Protocol, Type
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
+from docx.oxml.ns import nsmap, qn
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.section import Section, _Footer, _Header
@@ -23,11 +25,15 @@ from docx.text.hyperlink import Hyperlink
 from docx.text.pagebreak import RenderedPageBreak
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
+from lxml import etree
 from typing_extensions import TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
-from unstructured.common.html_table import htmlify_matrix_of_cell_texts
+from unstructured.common.html_table import (
+    collapse_matrix_of_keyed_cells_to_spans,
+    htmlify_matrix_of_spanned_cell_texts,
+)
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -52,7 +58,9 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_us_city_state_zip,
 )
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 STYLE_TO_ELEMENT_MAPPING = {
@@ -131,6 +139,7 @@ class PicturePartitionerT(Protocol):
 # ================================================================================================
 
 
+@partition_runtime_telemetry("docx")
 @apply_metadata(FileType.DOCX)
 @add_chunking_strategy
 def partition_docx(
@@ -375,6 +384,8 @@ class _DocxPartitioner:
 
     def __init__(self, opts: DocxPartitionerOptions) -> None:
         self._opts = opts
+        # -- layout-grid cells left for `text_as_html` across all tables of this document --
+        self._table_grid_cells_remaining = env_config.DOCX_TABLE_MAX_CELLS
 
     @classmethod
     def iter_document_elements(cls, opts: DocxPartitionerOptions) -> Iterator[Element]:
@@ -392,32 +403,42 @@ class _DocxPartitioner:
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
-        # -- This implementation composes a collection of iterators into a "combined" iterator
-        # -- return value using `yield from`. You can think of the return value as an Element
-        # -- stream and each `yield from` as "add elements found by this function to the stream".
-        # -- This is functionally analogous to declaring `elements: list[Element] = []` at the top
-        # -- and using `elements.extend()` for the results of each of the function calls, but is
-        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
-        # -- those small lists), is more flexible for later iterator operations like filter,
-        # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
-        # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
-        # -- functions like `._iter_paragraph_elements()` where the "just return when done"
-        # -- characteristic of a generator avoids repeated code to form interim results into lists.
-        for section_idx, section in enumerate(self._document.sections):
-            yield from self._iter_section_page_breaks(section_idx, section)
-            yield from self._iter_section_headers(section)
+        sections = iter(enumerate(self._document.sections))
+        section_idx, section = next(sections)
 
-            for block_item in section.iter_inner_content():
-                # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
-                # -- Paragraph is more common so check that first.
-                if isinstance(block_item, Paragraph):
-                    yield from self._iter_paragraph_elements(block_item)
-                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
-                    block_item, DocxTable
-                ):
-                    yield from self._iter_table_element(block_item)
+        yield from self._iter_section_page_breaks(section_idx, section)
+        yield from self._iter_section_headers(section)
 
-            yield from self._iter_section_footers(section)
+        # -- Iterate document blocks only once. `Section.iter_inner_content()` scans from the start
+        # -- of the document to find each section's boundaries, which becomes prohibitively
+        # -- expensive for documents with many sections and paragraphs.
+        for block_item in self._document.iter_inner_content():
+            # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
+            # -- Paragraph is more common so check that first.
+            if isinstance(block_item, Paragraph):
+                yield from self._iter_paragraph_elements(block_item)
+            elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                block_item, DocxTable
+            ):
+                yield from self._iter_table_element(block_item)
+
+            # -- A paragraph-level sectPr marks the final paragraph governed by the current
+            # -- section. The final section's sectPr lives directly under w:body, so it is handled
+            # -- after the loop.
+            if (
+                isinstance(block_item, Paragraph)
+                and block_item._p.pPr is not None
+                and block_item._p.pPr.sectPr is section._sectPr
+            ):
+                yield from self._iter_section_footers(section)
+                next_section = next(sections, None)
+                if next_section is None:
+                    return
+                section_idx, section = next_section
+                yield from self._iter_section_page_breaks(section_idx, section)
+                yield from self._iter_section_headers(section)
+
+        yield from self._iter_section_footers(section)
 
     def _iter_sectionless_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in a docx `document` that has no sections.
@@ -432,12 +453,17 @@ class _DocxPartitioner:
             elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
                 yield from self._iter_table_element(block_item)
 
-    def _classify_paragraph_to_element(self, paragraph: Paragraph) -> Iterator[Element]:
+    def _classify_paragraph_to_element(
+        self, paragraph: Paragraph, is_continuation: bool = False
+    ) -> Iterator[Element]:
         """Generate zero-or-one document element for `paragraph`.
 
         In Word, an empty paragraph is commonly used for inter-paragraph spacing. An empty paragraph
         does not contribute to the document-element stream and will not cause an element to be
         emitted.
+
+        `is_continuation` is True for a fragment of a paragraph split by a page-break, other than
+        the first. Such a fragment is part of a list-item already labeled and gets no label.
         """
         text = "".join(
             e.text
@@ -445,6 +471,8 @@ class _DocxPartitioner:
                 "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
             )
         )
+
+        label = "" if is_continuation else self._list_labels.label(paragraph)
 
         # -- blank paragraphs are commonly used for spacing between paragraphs and do not
         # -- contribute to the document-element stream
@@ -458,8 +486,14 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
+                if label and metadata.links:
+                    shift = len(label) + 1
+                    metadata.links = [
+                        {**link, "start_index": link["start_index"] + shift}
+                        for link in metadata.links
+                    ]
                 yield ListItem(
-                    text=clean_text,
+                    text=f"{label} {clean_text}" if label else clean_text,
                     metadata=metadata,
                     detection_origin=DETECTION_ORIGIN,
                 )
@@ -480,8 +514,8 @@ class _DocxPartitioner:
         # -- if all that fails we give it the default `Text` element-type --
         yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
-    def _convert_table_to_html(self, table: DocxTable) -> str:
-        """HTML string version of `table`.
+    def _convert_table_to_html(self, table: DocxTable) -> str | None:
+        """HTML string version of `table`, or `None` when its layout-grid is too large.
 
         Example:
 
@@ -494,10 +528,40 @@ class _DocxPartitioner:
             </tbody>
             </table>
 
+        A merged cell (`gridSpan` and/or `vMerge`) is emitted as a single `<td>` carrying the
+        appropriate `colspan`/`rowspan` attribute rather than being repeated into every grid
+        position it visually covers.
+
         `is_nested` is used for recursive calls when a nested table is encountered. Certain
         behaviors are different in that case, but the caller can safely ignore that parameter and
         allow it to take its default value.
+
+        The HTML needs a matrix with one entry per layout-grid position. Those counts come from
+        `w:gridBefore`, `w:gridAfter` and `w:gridSpan` values, which a small document can set to
+        millions, so `None` is returned once this document's tables exceed `DOCX_TABLE_MAX_CELLS`
+        grid positions in total. The table's text is still extracted.
         """
+        try:
+            n_grid_cells = sum(_row_grid_width(row) for row in table.rows)
+        except Exception as e:
+            # -- e.g. a `w:gridSpan` value that is not a number; the grid size is unknown, so do
+            # -- not expand it. The table's text is still extracted from its physical cells. --
+            logging.warning(
+                f"Omitting text_as_html for a DOCX table with invalid layout-grid values: {e}"
+            )
+            return None
+        if n_grid_cells > self._table_grid_cells_remaining:
+            logging.warning(
+                f"Omitting text_as_html for a DOCX table spanning {n_grid_cells:,} layout-grid"
+                f" cells: the document's tables exceed DOCX_TABLE_MAX_CELLS"
+                f" ({env_config.DOCX_TABLE_MAX_CELLS:,})."
+            )
+            return None
+        self._table_grid_cells_remaining -= n_grid_cells
+
+        # -- a cell spanning several grid positions is repeated once per position; compute its
+        # -- text once --
+        cell_texts: dict[Any, str] = {}
 
         def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
             """Generate the text of each paragraph or table in `cell` as a separate string.
@@ -510,36 +574,59 @@ class _DocxPartitioner:
                     # -- structure only
                     yield paragraph.text
                 elif isinstance(table := block_item, DocxTable):
+                    # -- only the text matters, so visit each `tc` once rather than each grid
+                    # -- position; a vMerge="continue" `tc` repeats the cell above it --
                     for row in table.rows:
-                        yield from iter_row_cells_as_text(row)
+                        for tc in row._tr.tc_lst:
+                            if tc.vMerge != "continue":
+                                yield cell_text(_Cell(tc, table))
 
-        def iter_row_cells_as_text(row: _Row) -> Iterator[str]:
-            """Generate the normalized text of each cell in `row` as a separate string.
+        def cell_text(cell: _Cell) -> str:
+            """The normalized text of `cell`, including that of any table nested in it."""
+            if (text := cell_texts.get(cell._tc)) is None:
+                text = " ".join(iter_cell_block_items(cell))
+                text = cell_texts[cell._tc] = " ".join(text.split())
+            return text
 
-            The text of each paragraph within a cell is not separated. A table nested in a cell is
-            converted to a normalized string of its contents and combined with the text of the
-            cell that contains the table.
+        def iter_row_cells(row: _Row) -> Iterator[tuple[str, _Cell | None]]:
+            """Generate (cell_text, cell) for each layout-grid position in `row`.
+
+            `cell` is `None` for a grid-position with no `tc` element -- the (rare) case of a row
+            that starts late or ends early, or one where `row.cells` raises because the table has
+            merged or malformed cells; `cell_text` is the empty string in each such case.
             """
             # -- Each omitted cell at the start of the row (pretty rare) gets the empty string.
             # -- This preserves column alignment when one or more initial cells are omitted.
             for _ in range(row.grid_cols_before):
-                yield ""
+                yield "", None
 
             try:
                 # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
                 # -- table has merged or malformed cells. always wrap in try/except.
                 for cell in row.cells:
-                    cell_text = " ".join(iter_cell_block_items(cell))
-                    yield " ".join(cell_text.split())
+                    yield cell_text(cell), cell
             except Exception as e:
-                logging.warning(f"Skipping cell in _iter_row_cells_as_text due to: {e}")
-                yield ""
+                logging.warning(f"Skipping cell in _convert_table_to_html due to: {e}")
+                yield "", None
 
             # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
             for _ in range(row.grid_cols_after):
-                yield ""
+                yield "", None
 
-        return htmlify_matrix_of_cell_texts([list(iter_row_cells_as_text(r)) for r in table.rows])
+        def iter_row_merge_keyed_texts(row: _Row) -> Iterator[tuple[str, object]]:
+            """Generate (cell_text, merge_key) for each layout-grid position in `row`.
+
+            `merge_key` is shared by every grid-position spanned by the same merged cell (DOCX
+            resolves both `gridSpan` and `vMerge="continue"` to the same underlying `tc` element),
+            and is otherwise unique, so it can be fed to `collapse_matrix_of_keyed_cells_to_spans()`
+            to recover the original merge geometry.
+            """
+            for text, cell in iter_row_cells(row):
+                yield text, (cell._tc if cell is not None else object())
+
+        matrix = [list(iter_row_merge_keyed_texts(row)) for row in table.rows]
+        spanned_matrix = collapse_matrix_of_keyed_cells_to_spans(matrix)
+        return htmlify_matrix_of_spanned_cell_texts(spanned_matrix)
 
     @cached_property
     def _document(self) -> Document:
@@ -591,7 +678,19 @@ class _DocxPartitioner:
         if is_bulleted_text(paragraph.text):
             return True
 
-        return "<w:numPr>" in paragraph._p.xml
+        if "<w:numPr>" in paragraph._p.xml:
+            return True
+
+        if not self._list_labels.has_style_numbering(paragraph):
+            return False
+
+        style_type = self._style_based_element_type(paragraph)
+        return style_type is None or style_type is ListItem
+
+    @cached_property
+    def _list_labels(self) -> _ListLabels:
+        """Auto-numbering label renderer, holding list counters for this partitioning run."""
+        return _ListLabels(self._document)
 
     def _iter_paragraph_elements(self, paragraph: Paragraph) -> Iterator[Element]:
         """Generate zero-or-more document elements for `paragraph`.
@@ -633,10 +732,12 @@ class _DocxPartitioner:
             if following_paragraph_fragment:
                 yield from iter_paragraph_items(following_paragraph_fragment)
 
+        seen_fragment = False
         for item in iter_paragraph_items(paragraph):
             if isinstance(item, Paragraph):
-                yield from self._classify_paragraph_to_element(item)
+                yield from self._classify_paragraph_to_element(item, seen_fragment)
                 yield from self._iter_paragraph_images(item)
+                seen_fragment = True
             else:
                 yield from self._opts.increment_page_number()
 
@@ -761,6 +862,7 @@ class _DocxPartitioner:
 
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
+        self._advance_table_numbering(table)
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table.
         html_table = (
@@ -782,18 +884,42 @@ class _DocxPartitioner:
             ),
         )
 
-    def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
-        """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
+    def _advance_table_numbering(self, table: DocxTable) -> None:
+        """Advance the list counters for each numbered paragraph in `table`, in document order.
+
+        Table text is not labeled, but Word counts its numbered paragraphs like any other.
+        """
         for row in table.rows:
-            try:
-                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
-                # -- table has merged or malformed cells. always wrap in try/except.
-                for cell in row.cells:
-                    for paragraph in cell.paragraphs:
-                        yield from self._iter_paragraph_emphasis(paragraph)
-            except Exception as e:
-                logging.warning(f"Skipping row in _iter_table_emphasis due to: {e}")
-                continue
+            for tc in row._tr.tc_lst:
+                if tc.vMerge == "continue":
+                    continue
+                for block_item in _Cell(tc, table).iter_inner_content():
+                    if isinstance(block_item, Paragraph):
+                        self._list_labels.label(block_item)
+                    else:
+                        self._advance_table_numbering(block_item)
+
+    def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
+        """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`.
+
+        Each cell is visited once, like `._iter_table_texts()`, rather than once per layout-grid
+        position it spans. A paragraph whose formatting cannot be read (e.g. a `w:b` value that is
+        not a boolean) contributes no emphasis, and the rest of the table is unaffected.
+        """
+        for row in table.rows:
+            for tc in row._tr.tc_lst:
+                # -- vMerge="continue" indicates a spanned cell in a vertical merge --
+                if tc.vMerge == "continue":
+                    continue
+                for paragraph in _Cell(tc, table).paragraphs:
+                    # -- collect the paragraph's emphasis before yielding any, so a failure part
+                    # -- way through drops the whole paragraph and leaves no partial entries --
+                    try:
+                        emphases = list(self._iter_paragraph_emphasis(paragraph))
+                    except Exception as e:
+                        logging.warning(f"Skipping emphasis of a DOCX table paragraph due to: {e}")
+                        continue
+                    yield from emphases
 
     def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
         """Generate text of each cell in `table` stripped of leading and trailing whitespace.
@@ -975,9 +1101,247 @@ class _DocxPartitioner:
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
 
 
+def _row_grid_width(row: _Row) -> int:
+    """The number of layout-grid positions `row` declares, without expanding any of them.
+
+    A malformed negative count expands to no positions, so it counts as 0 rather than offsetting
+    the positive counts it would otherwise cancel.
+    """
+    tr = row._tr
+    counts = [tr.grid_before, *(tc.grid_span for tc in tr.tc_lst), tr.grid_after]
+    return sum(max(count, 0) for count in counts)
+
+
 # ================================================================================================
 # SUB-PARTITIONERS
 # ================================================================================================
+
+
+class _ListLabels:
+    """Renders the label Word displays for an auto-numbered paragraph, e.g. "1." or "a)".
+
+    Word stores the numbering definition in `numbering.xml` (bound to a paragraph by `w:numPr`,
+    directly or through its style chain) and computes each label at render time. This object
+    resolves that definition and keeps the running counters, so `.label()` must be called once per
+    numbered paragraph, in document order. It never raises; a paragraph whose numbering cannot be
+    resolved gets no label.
+    """
+
+    def __init__(self, document: Document):
+        try:
+            self._numbering = document.part.numbering_part.element
+        except Exception:
+            self._numbering = None
+        self._nums: dict[str, Any] = {}
+        self._abstracts: dict[str, Any] = {}
+        if self._numbering is not None:
+            for num in self._numbering.findall(qn("w:num")):
+                self._nums.setdefault(num.get(qn("w:numId")), num)
+            for abstract in self._numbering.findall(qn("w:abstractNum")):
+                self._abstracts.setdefault(abstract.get(qn("w:abstractNumId")), abstract)
+        self._levels: dict[tuple[str, int], Any | None] = {}
+        self._counters: dict[str, list[int | None]] = {}
+        self._restarted: set[tuple[str, int]] = set()
+
+    def has_style_numbering(self, paragraph: Paragraph) -> bool:
+        """True when `paragraph` gets its numbering from its style chain rather than directly."""
+        try:
+            return self._style_num_pr(paragraph)[0] not in (None, "0")
+        except Exception:
+            return False
+
+    def label(self, paragraph: Paragraph) -> str:
+        """The label for `paragraph`, advancing the list counters; "" when it has none."""
+        if self._numbering is None:
+            return ""
+        try:
+            return self._render_label(paragraph)
+        except Exception:
+            logging.warning("Could not resolve list numbering for a paragraph", exc_info=True)
+            return ""
+
+    def _render_label(self, paragraph: Paragraph) -> str:
+        num_id, ilvl, style_id = self._resolve_num_pr(paragraph)
+        if num_id in (None, "0"):
+            return ""
+        num = self._nums.get(num_id)
+        if num is None:
+            return ""
+        abstract_id = self._val(num, "w:abstractNumId")
+        abstract = self._abstracts.get(abstract_id)
+        if abstract is None:
+            return ""
+
+        if ilvl is None:
+            linked = (
+                self._xpath(abstract, f'./w:lvl[w:pStyle/@w:val="{style_id}"]/@w:ilvl')
+                if style_id is not None
+                else []
+            )
+            ilvl = int(linked[0]) if linked else 0
+        if not 0 <= ilvl <= _MAX_LIST_LEVEL:
+            return ""
+        lvl = self._level(num, abstract, ilvl)
+        if lvl is None:
+            return ""
+
+        counters = self._counters.setdefault(abstract_id, [None] * (_MAX_LIST_LEVEL + 1))
+        has_override = bool(num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride'))
+        if has_override and (num_id, ilvl) not in self._restarted:
+            self._restarted.add((num_id, ilvl))
+            counters[ilvl] = self._level_start(num, lvl, ilvl)
+        elif counters[ilvl] is None:
+            counters[ilvl] = self._level_start(num, lvl, ilvl)
+        else:
+            counters[ilvl] += 1
+        for deeper in range(ilvl + 1, _MAX_LIST_LEVEL + 1):
+            deeper_lvl = self._level(num, abstract, deeper)
+            restart = None if deeper_lvl is None else self._val(deeper_lvl, "w:lvlRestart")
+            if restart is None or (restart != "0" and ilvl < int(restart)):
+                counters[deeper] = None
+
+        if self._val(lvl, "w:numFmt") in ("bullet", "none"):
+            return ""
+
+        def render_placeholder(match: re.Match[str]) -> str:
+            level = int(match.group(1)) - 1
+            if level > ilvl:
+                return ""
+            referenced = self._level(num, abstract, level)
+            if referenced is None:
+                return ""
+            count = counters[level]
+            return self._format_number(
+                self._level_start(num, referenced, level) if count is None else count,
+                self._val(referenced, "w:numFmt") or "decimal",
+            )
+
+        try:
+            return re.sub(r"%(\d)", render_placeholder, self._val(lvl, "w:lvlText") or "").strip()
+        except _UnrenderableLabel:
+            return ""
+
+    def _resolve_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
+        """The `(numId, ilvl, style_id)` in effect for `paragraph`, `None` for any not specified.
+
+        The paragraph's own `w:numPr` takes precedence over that of its style chain. `style_id` is
+        the style that supplied the `numId`.
+        """
+        own_num_id, own_ilvl = self._num_pr_values(paragraph._p.xpath("./w:pPr/w:numPr"))
+        style_num_id, style_ilvl, style_id = self._style_num_pr(paragraph)
+        num_id = own_num_id if own_num_id is not None else style_num_id
+        ilvl = own_ilvl if own_ilvl is not None else style_ilvl
+        return num_id, ilvl, style_id if own_num_id is None else None
+
+    def _style_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
+        """The `(numId, ilvl, style_id)` the paragraph's style chain (`basedOn`) provides."""
+        num_id: str | None = None
+        ilvl: int | None = None
+        style_id: str | None = None
+        style = paragraph.style
+        seen: set[str] = set()
+        while style is not None and style.style_id not in seen:
+            seen.add(style.style_id)
+            style_num_id, style_ilvl = self._num_pr_values(style.element.xpath("./w:pPr/w:numPr"))
+            if num_id is None and style_num_id is not None:
+                num_id, style_id = style_num_id, style.style_id
+            if ilvl is None:
+                ilvl = style_ilvl
+            style = style.base_style
+        return num_id, ilvl, style_id
+
+    def _num_pr_values(self, num_prs: list[Any]) -> tuple[str | None, int | None]:
+        """The `(numId, ilvl)` of the first `w:numPr` in `num_prs`, `None` for any absent."""
+        if not num_prs:
+            return None, None
+        ilvl = self._val(num_prs[0], "w:ilvl")
+        return self._val(num_prs[0], "w:numId"), None if ilvl is None else int(float(ilvl))
+
+    @staticmethod
+    def _val(element: Any, child_tag: str) -> str | None:
+        """The `w:val` attribute of the `child_tag` child of `element`, None when absent."""
+        child = element.find(qn(child_tag))
+        return None if child is None else child.get(qn("w:val"))
+
+    def _level(self, num: Any, abstract: Any, ilvl: int) -> Any | None:
+        """The `w:lvl` definition in effect for `ilvl` of `num`, None when undefined."""
+        key = (num.get(qn("w:numId")), ilvl)
+        if key not in self._levels:
+            found = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:lvl') or self._xpath(
+                abstract, f'./w:lvl[@w:ilvl="{ilvl}"]'
+            )
+            self._levels[key] = found[0] if found else None
+        return self._levels[key]
+
+    @staticmethod
+    def _xpath(element: Any, expression: str) -> list[Any]:
+        """Evaluate `expression` on `element`, which may be a plain lxml element."""
+        return etree.XPath(expression, namespaces=nsmap)(element)
+
+    def _level_start(self, num: Any, lvl: Any, ilvl: int) -> int:
+        """The value level `ilvl` of `num` starts, or restarts, at."""
+        override = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride/@w:val')
+        return int(override[0]) if override else self._start(lvl)
+
+    def _start(self, lvl: Any) -> int:
+        start = self._val(lvl, "w:start")
+        return 1 if start is None else int(start)
+
+    @staticmethod
+    def _format_number(value: int, num_fmt: str) -> str:
+        """`value` rendered in the Word number format `num_fmt`.
+
+        Raises `_UnrenderableLabel` for a format or value this cannot render as Word does.
+        """
+        if not 0 <= value <= _MAX_LIST_NUMBER:
+            raise _UnrenderableLabel
+        if num_fmt == "decimal":
+            return str(value)
+        if num_fmt == "decimalZero":
+            return f"{value:02d}"
+        if num_fmt in ("lowerLetter", "upperLetter") and value > 0:
+            letters = chr(ord("a") + (value - 1) % 26) * ((value - 1) // 26 + 1)
+            return letters if num_fmt == "lowerLetter" else letters.upper()
+        if num_fmt in ("lowerRoman", "upperRoman") and 0 < value < 4000:
+            roman = ""
+            for numeral, size in _ROMAN_NUMERALS:
+                count, value = divmod(value, size)
+                roman += numeral * count
+            return roman.lower() if num_fmt == "lowerRoman" else roman
+        if num_fmt == "ordinal":
+            suffix = (
+                "th"
+                if 10 <= value % 100 <= 20
+                else {1: "st", 2: "nd", 3: "rd"}.get(value % 10, "th")
+            )
+            return f"{value}{suffix}"
+        if num_fmt == "decimalEnclosedCircle":
+            return chr(0x2460 + value - 1) if 1 <= value <= 20 else str(value)
+        raise _UnrenderableLabel
+
+
+class _UnrenderableLabel(Exception):
+    """A list label whose number format or value cannot be rendered the way Word does."""
+
+
+_MAX_LIST_LEVEL = 8
+_MAX_LIST_NUMBER = 32767
+
+_ROMAN_NUMERALS = (
+    ("M", 1000),
+    ("CM", 900),
+    ("D", 500),
+    ("CD", 400),
+    ("C", 100),
+    ("XC", 90),
+    ("L", 50),
+    ("XL", 40),
+    ("X", 10),
+    ("IX", 9),
+    ("V", 5),
+    ("IV", 4),
+    ("I", 1),
+)
 
 
 class _NullPicturePartitioner:

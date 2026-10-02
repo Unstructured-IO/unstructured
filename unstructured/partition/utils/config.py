@@ -16,9 +16,17 @@ from typing import Optional
 from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, STT_AGENT_WHISPER
 
 
+def _tempdir_process_key() -> int:
+    """Process-group id on POSIX so children share one temp dir; process id on Windows."""
+    getpgid = getattr(os, "getpgid", None)
+    if getpgid is not None:
+        return getpgid(0)
+    return os.getpid()
+
+
 @lru_cache(maxsize=1)
 def get_tempdir(dir: str) -> str:
-    tempdir = Path(dir) / f"tmp/{os.getpgid(0)}"
+    tempdir = Path(dir) / f"tmp/{_tempdir_process_key()}"
     return str(tempdir)
 
 
@@ -319,6 +327,21 @@ class ENVConfig:
     def PDF_RENDER_MAX_PIXELS_PER_PAGE(self) -> int:
         """Maximum rendered pixels allowed for a single PDF page"""
         return self._get_int("PDF_RENDER_MAX_PIXELS_PER_PAGE", 1_000_000_000)
+
+    @property
+    def XLSX_MAX_CELLS(self) -> int:
+        """Maximum worksheet cells, summed across all worksheets, a spreadsheet may span"""
+        return self._get_int("XLSX_MAX_CELLS", 5_000_000)
+
+    @property
+    def DOCX_TABLE_MAX_CELLS(self) -> int:
+        """Maximum layout-grid cells, summed across a DOCX document's tables, rendered as HTML"""
+        return self._get_int("DOCX_TABLE_MAX_CELLS", 5_000_000)
+
+    @property
+    def CSV_MAX_CELLS(self) -> int:
+        """Maximum `rows x columns` cells a CSV or TSV file may span"""
+        return self._get_int("CSV_MAX_CELLS", 5_000_000)
 
 
 env_config = ENVConfig()

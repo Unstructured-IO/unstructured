@@ -52,9 +52,55 @@ UNICODE_BULLETS: Final[List[str]] = [
     "·",
 ]
 BULLETS_PATTERN = "|".join(UNICODE_BULLETS)
-UNICODE_BULLETS_RE = re.compile(f"(?:{BULLETS_PATTERN})(?!{BULLETS_PATTERN})")
-# zero-width positive lookahead so bullet characters will not be removed when using .split()
+
+# NOTE - `-` (U+002D) and `–` (U+2013) are bullet glyphs *and* ordinary punctuation: an
+# intra-word hyphen, an intra-number separator, or a minus sign. Two conditions have to
+# hold before one of them may be read as a bullet, or ordinary text loses characters:
+#
+#   1. It must be at the start of a line. Used as an UNANCHORED delimiter, every
+#      hyphenated value is shredded ("090-1234-5678" -> three paragraphs).
+#   2. It must be followed by whitespace (or end there). A bullet is separated from the
+#      item it introduces; a sign is not. Without this, "-123.45" reads as a bullet and
+#      is silently rewritten to "123.45", flipping the value. Compare E_BULLET_PATTERN
+#      below, which already requires `(?=\s)` for the same reason.
+#
+# They stay in UNICODE_BULLETS so `clean_bullets`, `is_bulleted_text` and
+# `_is_empty_bullet` still recognise a leading "- item", via the qualified alternation in
+# UNICODE_BULLETS_RE.
+AMBIGUOUS_BULLETS: Final[List[str]] = ["-", "\u2013"]
+UNAMBIGUOUS_BULLETS_PATTERN = "|".join(b for b in UNICODE_BULLETS if b not in AMBIGUOUS_BULLETS)
+AMBIGUOUS_BULLETS_PATTERN = "|".join(AMBIGUOUS_BULLETS)
+# An ambiguous glyph is a bullet only when whitespace (or the end of the text) follows it.
+QUALIFIED_AMBIGUOUS_BULLET = f"(?:{AMBIGUOUS_BULLETS_PATTERN})(?=\\s|$)"
+# Any whitespace except a newline or carriage return. Indentation may be a tab, a NO-BREAK
+# SPACE or an EM SPACE in extracted text, so the class has to be wider than " \t".
+#
+# It deliberately still admits FORM FEED, VERTICAL TAB, NEL, LINE SEPARATOR and friends.
+# Those sit BETWEEN the newline and the bullet, so a class that refused them would leave
+# the `(?<=\n)` lookbehind unable to reach the dash, and "- a\n\x0c- b" would collapse into
+# a single item instead of two. They are consumed rather than preserved, which matches the
+# previous behaviour: the paragraph is rejoined with `PARAGRAPH_PATTERN` (`\s*\n\s*`)
+# substituted for a space, so this whitespace was normalised away regardless.
+NON_NEWLINE_WHITESPACE = r"[^\S\n\r]*"
+# The ambiguous branch is anchored to the start of a line so this regex stays safe under
+# `.split()` as well as `.match()`: unanchored, it splits "Amount - forty" mid-line.
+# Indentation is deliberately NOT consumed here -- that would make `.match()` strip a
+# leading "  - item" while leaving "  \u25cf item" alone, an asymmetry between glyph
+# classes. BULLET_SPLIT_RE_0W below handles indentation for the splitting path.
+UNICODE_BULLETS_RE = re.compile(
+    f"(?:(?:{UNAMBIGUOUS_BULLETS_PATTERN})|(?:(?:(?<=\\n)|\\A){QUALIFIED_AMBIGUOUS_BULLET}))"
+    f"(?!{BULLETS_PATTERN})",
+)
+# zero-width positive lookahead so bullet characters will not be removed when using
+# .split(). Retained for backwards compatibility; prefer BULLET_SPLIT_RE_0W, which does
+# not split hyphenated values.
 UNICODE_BULLETS_RE_0W = re.compile(f"(?={BULLETS_PATTERN})(?<!{BULLETS_PATTERN})")
+# Same zero-width split, but an ambiguous bullet counts only at the start of a line and
+# only when whitespace follows it, so a hyphen or a minus sign is left alone.
+BULLET_SPLIT_RE_0W = re.compile(
+    f"(?:(?={UNAMBIGUOUS_BULLETS_PATTERN})(?<!{UNAMBIGUOUS_BULLETS_PATTERN}))"
+    f"|(?:(?:(?<=\\n)|\\A){NON_NEWLINE_WHITESPACE}(?={QUALIFIED_AMBIGUOUS_BULLET}))",
+)
 E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 
 # NOTE(klaijan) - Captures reference of format [1] or [i] or [a] at any point in the line.
@@ -73,7 +119,7 @@ EMAIL_HEAD_RE = re.compile(EMAIL_HEAD_PATTERN)
 PARAGRAPH_PATTERN = r"\s*\n\s*"
 
 PARAGRAPH_PATTERN_RE = re.compile(
-    f"((?:{BULLETS_PATTERN})|{PARAGRAPH_PATTERN})(?!{BULLETS_PATTERN}|$)",
+    f"((?:{UNAMBIGUOUS_BULLETS_PATTERN})|{PARAGRAPH_PATTERN})(?!{UNAMBIGUOUS_BULLETS_PATTERN}|$)",
 )
 DOUBLE_PARAGRAPH_PATTERN_RE = re.compile("(" + PARAGRAPH_PATTERN + "){2}")
 

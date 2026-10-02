@@ -6,6 +6,7 @@ from typing import Any, Optional, Union
 from bs4 import BeautifulSoup, Tag
 
 from unstructured.documents.elements import Element, ElementType
+from unstructured.documents.html_sanitization import sanitize_html_fragment
 
 logger = logging.getLogger(__name__)
 
@@ -103,6 +104,22 @@ class ImageElementHtml(ElementHtml):
 
 class TableElementHtml(ElementHtml):
     _html_tag = "table"
+
+    def _inject_html_element_content(self, element_html: Tag, **kwargs: Any) -> None:
+        # -- A table with no `text_as_html` carries only raw text. Wrap it in a
+        # -- proper row/cell so the markup is valid; loose text placed directly in
+        # -- a `<table>` is otherwise foster-parented out of the table by HTML5
+        # -- parsers (e.g. the nh3 sanitization pass), leaving the table empty. --
+        if not self.element.text:
+            return
+        soup = BeautifulSoup("", HTML_PARSER)
+        tbody = soup.new_tag(name="tbody")
+        row = soup.new_tag(name="tr")
+        cell = soup.new_tag(name="td")
+        cell.string = self.element.text
+        row.append(cell)
+        tbody.append(row)
+        element_html.append(tbody)
 
     def _inject_html_element_attrs(self, element_html: Tag) -> None:
         element_html["style"] = f"{TABLE_BORDER_STYLE} {TABLE_BORDER_COLLAPSE_STYLE}"
@@ -245,12 +262,14 @@ def _group_element_children(children: list[ElementHtml]) -> list[ElementHtml]:
 
 def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[ElementHtml]:
     parent_to_children_map: dict[str, list[ElementHtml]] = defaultdict(list)
+    elements_by_id: dict[str, ElementHtml] = {}
     for element in elements:
+        elements_by_id.setdefault(element.element.id, element)
         if element.element.metadata.parent_id is not None:
             parent_to_children_map[element.element.metadata.parent_id].append(element)
     for parent_id, children in parent_to_children_map.items():
         grouped_children = _group_element_children(children)
-        parent = next((el for el in elements if el.element.id == parent_id), None)
+        parent = elements_by_id.get(parent_id)
         if parent is None:
             logger.warning(f"Parent element with id {parent_id} not found. Skipping.")
             continue
@@ -315,6 +334,15 @@ def elements_to_html(
         if no_group_by_page
         else _elements_to_html_tags_by_page(elements, exclude_binary_image_data)
     )
-    for element_html in elements_html:
+    # -- Defense-in-depth (GHSA-v5mq-3xhg-98m9): sanitize the assembled body content
+    # -- through nh3 before returning. This neutralizes any dangerous markup that
+    # -- survived into `text_as_html` as well as attributes injected here directly
+    # -- (e.g. an `href` built from `metadata.url`). We sanitize the fragment and
+    # -- reinsert it, since nh3 strips the surrounding <html>/<head>/<body> wrapper. --
+    body_fragment = "".join(str(element_html) for element_html in elements_html)
+    sanitized_fragment = sanitize_html_fragment(body_fragment)
+    # -- materialize the parsed nodes before appending: `append` moves a node out
+    # -- of the source soup's `.contents`, so iterating it live would skip nodes. --
+    for element_html in list(BeautifulSoup(sanitized_fragment, HTML_PARSER).contents):
         soup.body.append(element_html)
     return soup.prettify()
