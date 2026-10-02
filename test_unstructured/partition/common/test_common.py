@@ -33,11 +33,11 @@ from unstructured.documents.elements import (
 from unstructured.partition.common import common
 
 
-def test_spooled_to_bytes_io_if_needed_rewinds_without_copying():
+def test_rewind_if_spooled_rewinds_without_copying():
     with SpooledTemporaryFile(max_size=1, mode="w+b") as spooled_file:
         spooled_file.write(b"sample content")
 
-        result = common.spooled_to_bytes_io_if_needed(spooled_file)
+        result = common.rewind_if_spooled(spooled_file)
 
         assert result is spooled_file
         assert result.tell() == 0

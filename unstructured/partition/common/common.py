@@ -368,17 +368,11 @@ def exactly_one(**kwargs: Any) -> None:
 _T = TypeVar("_T")
 
 
-def spooled_to_bytes_io_if_needed(file: _T) -> _T:
-    """Rewind and return a `SpooledTemporaryFile` without copying its contents.
+def rewind_if_spooled(file: _T) -> _T:
+    """Rewind `file` to read position 0 when it is a `SpooledTemporaryFile`, without copying it.
 
     Note that `file` does not need to be IO[bytes]. It can be `None` or `bytes` and this function
-    will not complain.
-
-    Python 3.11 and newer provide the complete buffered-I/O interface required by consumers such
-    as `zipfile.ZipFile` and `pandas.read_csv()`. Since those are the only Python versions this
-    package supports, converting the spool to `BytesIO` only adds a document-sized allocation.
-
-    The function name is retained for compatibility with existing call sites.
+    will not complain. A spool is read in place, so a rolled-over upload stays disk-backed.
     """
     if isinstance(file, SpooledTemporaryFile):
         file.seek(0)
