@@ -429,7 +429,11 @@ class ElementMetadata:
         """
         from unstructured.staging.base import elements_to_base64_gzipped_json
 
-        meta_dict = copy.deepcopy(dict(self.fields))
+        # Original elements are serialized separately, so copying that entire object graph
+        # would only create a temporary copy that is immediately replaced.
+        meta_dict = copy.deepcopy(
+            {key: value for key, value in self.fields.items() if key != "orig_elements"}
+        )
 
         # -- remove fields that should not be serialized --
         for field_name in self.DEBUG_FIELD_NAMES:

@@ -5,10 +5,11 @@ import csv
 import io
 import json
 import re
+import tempfile
 import zlib
 from copy import deepcopy
 from datetime import datetime
-from typing import Any, Iterable, Optional, Sequence, cast
+from typing import Any, Iterable, Iterator, Optional, Sequence, cast
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -252,18 +253,58 @@ def elements_to_base64_gzipped_json(elements: Iterable[Element]) -> str:
     present when elements are in dict form ("element_dicts"). This function is not coupled to that
     purpose however and could have other uses.
     """
-    # -- adjust floating-point precision of coordinates down for a more compact str value --
-    precision_adjusted_elements = _fix_metadata_field_precision(elements)
-    # -- serialize elements as dicts --
-    element_dicts = elements_to_dicts(precision_adjusted_elements)
-    # -- serialize the dicts to JSON (bytes) --
-    json_bytes = json.dumps(element_dicts, sort_keys=True).encode("utf-8")
-    # -- compress the JSON bytes with gzip compression --
-    deflated_bytes = zlib.compress(json_bytes)
-    # -- base64-encode those bytes so they can be serialized as a JSON string value --
-    b64_deflated_bytes = base64.b64encode(deflated_bytes)
-    # -- convert to a string suitable for serializing in JSON --
-    return b64_deflated_bytes.decode("utf-8")
+    compressor = zlib.compressobj()
+    with tempfile.SpooledTemporaryFile(max_size=1024 * 1024) as compressed:
+        compressed.write(compressor.compress(b"["))
+        for index, element in enumerate(elements):
+            if index:
+                compressed.write(compressor.compress(b", "))
+            # Keep precision adjustment and element serialization local to one element.
+            adjusted = _fix_metadata_field_precision((element,))[0]
+            for fragment in _iter_json_fragments(adjusted.to_dict()):
+                compressed.write(compressor.compress(fragment.encode("utf-8")))
+        compressed.write(compressor.compress(b"]"))
+        compressed.write(compressor.flush())
+        compressed.seek(0)
+        # Multiples of three avoid padding between base64 fragments. Only the returned
+        # encoded value grows with the whole collection; compression buffers spill to disk.
+        return "".join(
+            base64.b64encode(block).decode("ascii")
+            for block in iter(lambda: compressed.read(65535), b"")
+        )
+
+
+def _iter_json_fragments(value: Any) -> Iterator[str]:
+    """Emit default, sorted-key JSON while escaping large strings in bounded fragments."""
+    if isinstance(value, str):
+        yield '"'
+        for start in range(0, len(value), 65536):
+            yield json.dumps(value[start : start + 65536])[1:-1]
+        yield '"'
+    elif isinstance(value, (list, tuple)):
+        yield "["
+        for index, item in enumerate(value):
+            if index:
+                yield ", "
+            yield from _iter_json_fragments(item)
+        yield "]"
+    elif isinstance(value, dict):
+        yield "{"
+        for index, (key, item) in enumerate(sorted(value.items())):
+            if index:
+                yield ", "
+            if not isinstance(key, str):
+                if isinstance(key, (int, float)) or key is None:
+                    key = json.dumps(key)
+                else:
+                    # Preserve the standard encoder's rejection of unsupported keys.
+                    json.dumps({key: item}, sort_keys=True)
+            yield from _iter_json_fragments(key)
+            yield ": "
+            yield from _iter_json_fragments(item)
+        yield "}"
+    else:
+        yield json.dumps(value)
 
 
 def elements_to_dicts(elements: Iterable[Element]) -> list[dict[str, Any]]:
