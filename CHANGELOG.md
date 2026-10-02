@@ -1,8 +1,20 @@
-## 0.27.12
+## 0.27.14
 
 ### Fixes
 
 - **Bound the work DOCX tables can demand through their declared layout grid.** `w:gridBefore`, `w:gridAfter` and `w:gridSpan` values were expanded into one entry per layout-grid position, so a few-KB document declaring millions of positions per row used GB of memory building `text_as_html`, and re-read a spanned cell's text and emphasis once per position. A table's grid size is now computed from those values without expanding them, and once a document's tables exceed `DOCX_TABLE_MAX_CELLS` grid positions in total (default 5,000,000), `text_as_html` is omitted for the rest with a warning; their text is still extracted. Each cell's text and emphasis are now read once, so a cell that spans or vertically merges across several grid positions no longer repeats its entries in `emphasized_text_contents`. A table whose grid values cannot be read omits `text_as_html` the same way, and a table paragraph whose formatting cannot be read contributes no emphasis, without stopping extraction.
+
+## 0.27.13
+
+### Fixes
+
+- **Bound CI dependency downloads.** System-package downloads now have inactivity timeouts and bounded retries, and dependency setup is reported separately from tests. Package installation is kept outside the download timeout.
+
+## 0.27.12
+
+### Fixes
+
+- **Reject spreadsheets whose worksheets span too many cells instead of exhausting memory.** `partition_xlsx()` read each worksheet into a dense data-frame sized by its farthest populated cell, so a few-KB XLSX or XLS file with one far-away cell could grow to millions of cells and use tens of GB. The span of every worksheet is now measured before it is read, streaming the file without materializing cells, and a workbook spanning more than `XLSX_MAX_CELLS` cells in total (default 5,000,000) raises `UnprocessableEntityError`. Subtable detection also now builds its graph from populated cells only, so sparse worksheets within the limit use far less memory.
 
 ## 0.27.11
 
