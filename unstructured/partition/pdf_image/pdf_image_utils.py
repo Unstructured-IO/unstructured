@@ -3,10 +3,12 @@ from __future__ import annotations
 import base64
 import os
 import re
+import shutil
 import tempfile
 import unicodedata
+from contextlib import contextmanager
 from copy import deepcopy
-from io import BytesIO
+from io import BufferedReader, BytesIO, TextIOWrapper
 from pathlib import Path, PurePath
 from typing import IO, TYPE_CHECKING, BinaryIO, Iterator, List, Optional, Tuple, Union, cast
 
@@ -20,7 +22,7 @@ from unstructured_inference.inference.pdf_image import PdfRenderTooLargeError
 from unstructured.documents.elements import ElementType
 from unstructured.errors import UnprocessableEntityError
 from unstructured.logger import logger
-from unstructured.partition.common.common import convert_to_bytes, exactly_one
+from unstructured.partition.common.common import exactly_one
 from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:
@@ -399,34 +401,57 @@ def convert_pdf_to_images(
     chunk_size: int = 10,
     password: Optional[str] = None,
 ) -> Iterator[Image.Image]:
-    # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
+    """Yield owned page images without retaining the upload or a batch of decoded pages."""
     exactly_one(filename=filename, file=file)
-    if file is not None:
-        f_bytes = convert_to_bytes(file)
-        info = pdf2image.pdfinfo_from_bytes(f_bytes, userpw=password)
-    else:
-        f_bytes = None
-        info = pdf2image.pdfinfo_from_path(filename, userpw=password)
+    with _pdf_source_path(filename, file) as source_path:
+        total_pages = pdf2image.pdfinfo_from_path(source_path, userpw=password)["Pages"]
+        for page_number in range(1, total_pages + 1):
+            try:
+                images = render_pdf_to_image(
+                    filename=source_path,
+                    dpi=env_config.PDF_RENDER_DPI,
+                    first_page=page_number,
+                    last_page=page_number,
+                    password=password,
+                    pdf_render_max_pixels_per_page=env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE,
+                )
+            except PdfRenderTooLargeError as exc:
+                raise UnprocessableEntityError(str(exc)) from exc
+            # The caller owns the yielded image and may retain it after iteration.
+            yield from cast(List[Image.Image], images)
+            del images
 
-    total_pages = info["Pages"]
-    for start_page in range(1, total_pages + 1, chunk_size):
-        end_page = min(start_page + chunk_size - 1, total_pages)
-        try:
-            chunk_images = render_pdf_to_image(
-                filename=filename if f_bytes is None else None,
-                file=f_bytes,
-                dpi=env_config.PDF_RENDER_DPI,
-                first_page=start_page,
-                last_page=end_page,
-                password=password,
-                pdf_render_max_pixels_per_page=env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE,
-            )
-        except PdfRenderTooLargeError as exc:
-            raise UnprocessableEntityError(str(exc)) from exc
-        chunk_images = cast(List[Image.Image], chunk_images)
 
-        for image in chunk_images:
-            yield image
+@contextmanager
+def _pdf_source_path(filename: str, file: Optional[bytes | IO[bytes]]) -> Iterator[str]:
+    """Yield a filesystem path for `filename` or a temporary on-disk copy of `file`.
+
+    Any readable, seekable `file` is accepted. A `BytesIO` cursor is restored after the copy and
+    other streams are left rewound; buffered files with a path name are re-read from that path.
+    """
+    if file is None:
+        yield filename
+        return
+    with tempfile.TemporaryDirectory() as directory:
+        path = os.path.join(directory, "upload.pdf")
+        with open(path, "wb") as destination:
+            if isinstance(file, bytes):
+                destination.write(file)
+            elif isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
+                getattr(file, "name", None), str
+            ):
+                with open(file.name, "rb") as source:
+                    shutil.copyfileobj(source, destination, length=1024 * 1024)
+            elif callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
+                position = file.tell() if isinstance(file, BytesIO) else 0
+                try:
+                    file.seek(0)
+                    shutil.copyfileobj(file, destination, length=1024 * 1024)
+                finally:
+                    file.seek(position)
+            else:
+                raise ValueError("Invalid file-like object type")
+        yield path
 
 
 def remove_control_characters(text: str) -> str:
