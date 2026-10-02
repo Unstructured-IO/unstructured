@@ -328,5 +328,10 @@ class ENVConfig:
         """Maximum rendered pixels allowed for a single PDF page"""
         return self._get_int("PDF_RENDER_MAX_PIXELS_PER_PAGE", 1_000_000_000)
 
+    @property
+    def XLSX_MAX_CELLS(self) -> int:
+        """Maximum worksheet cells, summed across all worksheets, a spreadsheet may span"""
+        return self._get_int("XLSX_MAX_CELLS", 5_000_000)
+
 
 env_config = ENVConfig()
