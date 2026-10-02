@@ -12,7 +12,7 @@ from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import (
     exactly_one,
-    spooled_to_bytes_io_if_needed,
+    rewind_if_spooled,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text import element_from_text
@@ -65,7 +65,7 @@ def partition_xml(
         if filename:
             raw_text = read_txt_file(filename=filename, encoding=encoding)[1]
         elif file:
-            raw_text = read_txt_file(file=spooled_to_bytes_io_if_needed(file), encoding=encoding)[1]
+            raw_text = read_txt_file(file=rewind_if_spooled(file), encoding=encoding)[1]
         else:
             assert text is not None
             raw_text = text
@@ -96,7 +96,7 @@ def get_leaf_elements(
     if filename:
         return _get_leaf_elements(filename, xml_path=xml_path)
     elif file:
-        return _get_leaf_elements(file=spooled_to_bytes_io_if_needed(file), xml_path=xml_path)
+        return _get_leaf_elements(file=rewind_if_spooled(file), xml_path=xml_path)
     else:
         b = BytesIO(bytes(cast(str, text), encoding="utf-8"))
         return _get_leaf_elements(b, xml_path=xml_path)

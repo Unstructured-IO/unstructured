@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import io
 import itertools
 import logging
 import os
 import re
-import tempfile
 import zipfile
 from functools import cached_property
 from typing import IO, Any, Iterator, Protocol, Type
@@ -51,6 +49,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
+from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -349,15 +348,8 @@ class DocxPartitionerOptions:
         if self._file_path:
             return self._file_path
 
-        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
-        # -- exception when Zipfile tries to open it. The docx format is a zip archive so we need
-        # -- to work around that bug here.
-        if isinstance(self._file, tempfile.SpooledTemporaryFile):
-            self._file.seek(0)
-            return io.BytesIO(self._file.read())
-
         assert self._file is not None  # -- assured by `._validate()` --
-        return self._file
+        return rewind_if_spooled(self._file)
 
     def _validate(self) -> DocxPartitionerOptions:
         """Raise on first invalide option, return self otherwise."""

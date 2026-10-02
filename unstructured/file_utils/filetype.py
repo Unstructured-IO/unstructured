@@ -32,7 +32,6 @@ import codecs
 import contextlib
 import functools
 import importlib.util
-import io
 import json
 import os
 import re
@@ -101,19 +100,19 @@ def detect_filetype(
           filesystem.
         - Neither `file_path` nor `file` were specified.
     """
-    file_buffer = file
-    if isinstance(file, tempfile.SpooledTemporaryFile):
-        file_buffer = io.BytesIO(file.read())
-        file.seek(0)
-
     ctx = _FileTypeDetectionContext.new(
         file_path=file_path,
-        file=file_buffer,
+        file=file,
         encoding=encoding,
         content_type=content_type,
         metadata_file_path=metadata_file_path,
     )
-    return _FileTypeDetector.file_type(ctx)
+    try:
+        return _FileTypeDetector.file_type(ctx)
+    finally:
+        # -- a spooled upload is inspected in place and is returned at read position 0 --
+        if isinstance(file, tempfile.SpooledTemporaryFile):
+            file.seek(0)
 
 
 def is_json_processable(
@@ -511,8 +510,10 @@ class _FileTypeDetectionContext:
         """Best filename-extension we can muster, "" when there is no available source."""
         # -- get from file_path, or file when it has a name (path) --
         with self.open() as file:
-            if hasattr(file, "name") and file.name:
-                return os.path.splitext(file.name)[1].lower()
+            # -- a temporary file (including a rolled-over `SpooledTemporaryFile`) can have an
+            # -- integer file-descriptor as its name, which carries no extension.
+            if isinstance(name := getattr(file, "name", None), (str, os.PathLike)) and name:
+                return os.path.splitext(name)[1].lower()
 
         # -- otherwise use metadata file-path when provided --
         if file_path := self._metadata_file_path:
