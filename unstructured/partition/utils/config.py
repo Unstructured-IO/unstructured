@@ -328,5 +328,10 @@ class ENVConfig:
         """Maximum rendered pixels allowed for a single PDF page"""
         return self._get_int("PDF_RENDER_MAX_PIXELS_PER_PAGE", 1_000_000_000)
 
+    @property
+    def DOCX_TABLE_MAX_CELLS(self) -> int:
+        """Maximum layout-grid cells, summed across a DOCX document's tables, rendered as HTML"""
+        return self._get_int("DOCX_TABLE_MAX_CELLS", 5_000_000)
+
 
 env_config = ENVConfig()

@@ -58,6 +58,7 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_us_city_state_zip,
 )
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
@@ -383,6 +384,8 @@ class _DocxPartitioner:
 
     def __init__(self, opts: DocxPartitionerOptions) -> None:
         self._opts = opts
+        # -- layout-grid cells left for `text_as_html` across all tables of this document --
+        self._table_grid_cells_remaining = env_config.DOCX_TABLE_MAX_CELLS
 
     @classmethod
     def iter_document_elements(cls, opts: DocxPartitionerOptions) -> Iterator[Element]:
@@ -511,8 +514,8 @@ class _DocxPartitioner:
         # -- if all that fails we give it the default `Text` element-type --
         yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
-    def _convert_table_to_html(self, table: DocxTable) -> str:
-        """HTML string version of `table`.
+    def _convert_table_to_html(self, table: DocxTable) -> str | None:
+        """HTML string version of `table`, or `None` when its layout-grid is too large.
 
         Example:
 
@@ -532,7 +535,25 @@ class _DocxPartitioner:
         `is_nested` is used for recursive calls when a nested table is encountered. Certain
         behaviors are different in that case, but the caller can safely ignore that parameter and
         allow it to take its default value.
+
+        The HTML needs a matrix with one entry per layout-grid position. Those counts come from
+        `w:gridBefore`, `w:gridAfter` and `w:gridSpan` values, which a small document can set to
+        millions, so `None` is returned once this document's tables exceed `DOCX_TABLE_MAX_CELLS`
+        grid positions in total. The table's text is still extracted.
         """
+        n_grid_cells = sum(_row_grid_width(row) for row in table.rows)
+        if n_grid_cells > self._table_grid_cells_remaining:
+            logging.warning(
+                f"Omitting text_as_html for a DOCX table spanning {n_grid_cells:,} layout-grid"
+                f" cells: the document's tables exceed DOCX_TABLE_MAX_CELLS"
+                f" ({env_config.DOCX_TABLE_MAX_CELLS:,})."
+            )
+            return None
+        self._table_grid_cells_remaining -= n_grid_cells
+
+        # -- a cell spanning several grid positions is repeated once per position; compute its
+        # -- text once --
+        cell_texts: dict[Any, str] = {}
 
         def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
             """Generate the text of each paragraph or table in `cell` as a separate string.
@@ -545,19 +566,19 @@ class _DocxPartitioner:
                     # -- structure only
                     yield paragraph.text
                 elif isinstance(table := block_item, DocxTable):
-                    seen_tcs: set[Any] = set()
+                    # -- only the text matters, so visit each `tc` once rather than each grid
+                    # -- position; a vMerge="continue" `tc` repeats the cell above it --
                     for row in table.rows:
-                        for text, nested_cell in iter_row_cells(row):
-                            if nested_cell is not None:
-                                if nested_cell._tc in seen_tcs:
-                                    continue
-                                seen_tcs.add(nested_cell._tc)
-                            yield text
+                        for tc in row._tr.tc_lst:
+                            if tc.vMerge != "continue":
+                                yield cell_text(_Cell(tc, table))
 
         def cell_text(cell: _Cell) -> str:
             """The normalized text of `cell`, including that of any table nested in it."""
-            text = " ".join(iter_cell_block_items(cell))
-            return " ".join(text.split())
+            if (text := cell_texts.get(cell._tc)) is None:
+                text = " ".join(iter_cell_block_items(cell))
+                text = cell_texts[cell._tc] = " ".join(text.split())
+            return text
 
         def iter_row_cells(row: _Row) -> Iterator[tuple[str, _Cell | None]]:
             """Generate (cell_text, cell) for each layout-grid position in `row`.
@@ -871,17 +892,18 @@ class _DocxPartitioner:
                         self._advance_table_numbering(block_item)
 
     def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
-        """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
+        """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`.
+
+        Each cell is visited once, like `._iter_table_texts()`, rather than once per layout-grid
+        position it spans.
+        """
         for row in table.rows:
-            try:
-                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
-                # -- table has merged or malformed cells. always wrap in try/except.
-                for cell in row.cells:
-                    for paragraph in cell.paragraphs:
-                        yield from self._iter_paragraph_emphasis(paragraph)
-            except Exception as e:
-                logging.warning(f"Skipping row in _iter_table_emphasis due to: {e}")
-                continue
+            for tc in row._tr.tc_lst:
+                # -- vMerge="continue" indicates a spanned cell in a vertical merge --
+                if tc.vMerge == "continue":
+                    continue
+                for paragraph in _Cell(tc, table).paragraphs:
+                    yield from self._iter_paragraph_emphasis(paragraph)
 
     def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
         """Generate text of each cell in `table` stripped of leading and trailing whitespace.
@@ -1061,6 +1083,12 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
+
+
+def _row_grid_width(row: _Row) -> int:
+    """The number of layout-grid positions `row` declares, without expanding any of them."""
+    tr = row._tr
+    return tr.grid_before + sum(tc.grid_span for tc in tr.tc_lst) + tr.grid_after
 
 
 # ================================================================================================

@@ -16,6 +16,7 @@ import pytest
 from docx.document import Document
 from docx.enum.section import WD_SECTION
 from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls
 from docx.section import Section
 from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
@@ -939,6 +940,85 @@ def test_table_emphasis(
 
     assert emphasized_text_contents == expected_emphasized_text_contents
     assert emphasized_text_tags == expected_emphasized_text_tags
+
+
+# -- layout-grid limit ---------------------------------------------------------------------------
+
+
+def _write_docx_with_spanned_tables(
+    tmp_path: pathlib.Path, *, n_tables: int, grid_span: int, grid_before: int = 0
+) -> str:
+    """Write a DOCX with `n_tables` 2-row tables, the second cell of each row bold and spanning
+    `grid_span` layout-grid positions, each row starting `grid_before` positions late."""
+    document = docx.Document()
+    for t in range(n_tables):
+        table = document.add_table(rows=2, cols=2)
+        for r, row in enumerate(table.rows):
+            row.cells[0].text = f"t{t}r{r}"
+            row.cells[1].paragraphs[0].add_run(f"bold{t}{r}").bold = True
+            tr = row._tr
+            if grid_before:
+                tr.get_or_add_trPr().append(
+                    parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="{grid_before}"/>')
+                )
+            tr.tc_lst[1].get_or_add_tcPr().append(
+                parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="{grid_span}"/>')
+            )
+    file_path = str(tmp_path / "spanned.docx")
+    document.save(file_path)
+    return file_path
+
+
+@pytest.mark.parametrize(("grid_span", "grid_before"), [(10_000_000, 0), (1, 10_000_000)])
+def test_partition_docx_omits_html_for_a_table_whose_grid_is_too_large(
+    grid_span: int, grid_before: int, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("DOCX_TABLE_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
+    # -- 2 rows declaring 10M grid-positions each, from a file of a few dozen KB --
+    file_path = _write_docx_with_spanned_tables(
+        tmp_path, n_tables=1, grid_span=grid_span, grid_before=grid_before
+    )
+
+    (table,) = partition_docx(file_path)
+
+    assert isinstance(table, Table)
+    assert table.text == "t0r0 bold00 t0r1 bold01"
+    assert table.metadata.text_as_html is None
+    assert table.metadata.emphasized_text_contents == ["bold00", "bold01"]
+
+
+def test_partition_docx_limits_grid_cells_summed_across_tables(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    # -- each table spans 2 rows x (1 + 50) = 102 grid positions --
+    file_path = _write_docx_with_spanned_tables(tmp_path, n_tables=2, grid_span=50)
+    monkeypatch.setenv("DOCX_TABLE_MAX_CELLS", "203")
+
+    first, second = partition_docx(file_path)
+
+    assert first.metadata.text_as_html is not None
+    assert 'colspan="50"' in first.metadata.text_as_html
+    assert second.metadata.text_as_html is None
+    assert second.text == "t1r0 bold10 t1r1 bold11"
+
+
+def test_partition_docx_reads_a_spanned_cell_once(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("DOCX_TABLE_MAX_CELLS", raising=False)
+    file_path = _write_docx_with_spanned_tables(tmp_path, n_tables=1, grid_span=1000)
+
+    (table,) = partition_docx(file_path)
+
+    assert table.metadata.text_as_html == (
+        "<table>"
+        '<tr><td>t0r0</td><td colspan="1000">bold00</td></tr>'
+        '<tr><td>t0r1</td><td colspan="1000">bold01</td></tr>'
+        "</table>"
+    )
+    # -- emphasis is reported once per cell, not once per grid-position it spans --
+    assert table.metadata.emphasized_text_contents == ["bold00", "bold01"]
+    assert table.metadata.emphasized_text_tags == ["b", "b"]
 
 
 def test_partition_docx_grabs_emphasized_texts(
