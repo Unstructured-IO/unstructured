@@ -1,3 +1,9 @@
+## 0.27.17
+
+### Fixes
+
+- **Charge each GIF frame at the canvas size Pillow decodes it at.** A GIF frame that extends past the logical screen grows the canvas every later frame is decoded onto, but the image pixel limit charged every frame at the first frame's size, so a small first frame followed by a large one was undercounted. With `hi_res`, the frames of a GIF are now measured by reading each frame descriptor's position and size, skipping color tables and image data without decoding them.
+
 ## 0.27.16
 
 ### Fixes
