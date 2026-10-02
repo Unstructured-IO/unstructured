@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import resource
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -33,7 +34,8 @@ with tempfile.TemporaryDirectory() as directory:
             {
                 "phase": "complete",
                 "elapsed_seconds": time.perf_counter() - started,
-                "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+                "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                // (1024 if sys.platform == "darwin" else 1),
                 "output_count": len(elements),
                 "sha256": hashlib.sha256(output).hexdigest(),
             }
