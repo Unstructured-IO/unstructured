@@ -1303,15 +1303,18 @@ def _partition_pdf_or_image_with_ocr(
         for page_number, image in enumerate(
             convert_pdf_to_images(filename, file, password=password), start=starting_page_number
         ):
-            page_elements = _partition_pdf_or_image_with_ocr_from_image(
-                image=image,
-                languages=languages,
-                ocr_languages=ocr_languages,
-                page_number=page_number,
-                include_page_breaks=include_page_breaks,
-                metadata_last_modified=metadata_last_modified,
-                **kwargs,
-            )
+            try:
+                page_elements = _partition_pdf_or_image_with_ocr_from_image(
+                    image=image,
+                    languages=languages,
+                    ocr_languages=ocr_languages,
+                    page_number=page_number,
+                    include_page_breaks=include_page_breaks,
+                    metadata_last_modified=metadata_last_modified,
+                    **kwargs,
+                )
+            finally:
+                image.close()
             elements.extend(page_elements)
 
     return elements
