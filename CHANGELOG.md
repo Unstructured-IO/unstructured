@@ -1,8 +1,20 @@
-## 0.27.12
+## 0.27.15
 
 ### Fixes
 
 - **Reject CSV and TSV files that span too many cells instead of exhausting memory.** Pandas sizes the data-frame by the first record and pads every shorter record out to that width, so a few-KB file whose first line is a long run of delimiters could span millions of cells and use many GB in `partition_csv()` and `partition_tsv()`. The file's span is now measured by streaming it before Pandas reads it, and a file spanning more than `CSV_MAX_CELLS` cells (default 5,000,000) raises `UnprocessableEntityError`. A lone `"\r"` line ending is also converted to `"\n"` before Pandas reads the file: Pandas 2.x's C tokenizer read one followed by a whitespace-only line as 2^18 empty rows, so 5 bytes became 262,145 rows. `"\r\n"` is left as is. The file is streamed to Pandas rather than read into memory whole, and `partition_tsv()` still decompresses a compressed filename (e.g. `.tsv.gz`) and accepts a stream that cannot seek. When the delimiter is sniffed, it is now sniffed once, from the first non-blank line, and passed to Pandas, and a file with no usable delimiter is read as one column.
+
+## 0.27.13
+
+### Fixes
+
+- **Bound CI dependency downloads.** System-package downloads now have inactivity timeouts and bounded retries, and dependency setup is reported separately from tests. Package installation is kept outside the download timeout.
+
+## 0.27.12
+
+### Fixes
+
+- **Reject spreadsheets whose worksheets span too many cells instead of exhausting memory.** `partition_xlsx()` read each worksheet into a dense data-frame sized by its farthest populated cell, so a few-KB XLSX or XLS file with one far-away cell could grow to millions of cells and use tens of GB. The span of every worksheet is now measured before it is read, streaming the file without materializing cells, and a workbook spanning more than `XLSX_MAX_CELLS` cells in total (default 5,000,000) raises `UnprocessableEntityError`. Subtable detection also now builds its graph from populated cells only, so sparse worksheets within the limit use far less memory.
 
 ## 0.27.11
 
