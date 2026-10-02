@@ -800,7 +800,7 @@ def _distinct_frames(mode: str, size: tuple[int, int], n: int) -> list[Image.Ima
     frames = []
     for i in range(n):
         frame = Image.new(mode, size, 0)
-        frame.putpixel((i, 0), 255 if mode != "P" else i + 1)
+        frame.putpixel((i, 0), (255, 255, 255) if mode == "RGB" else i + 1)
         frames.append(frame)
     return frames
 
