@@ -334,6 +334,11 @@ class ENVConfig:
         return self._get_int("XLSX_MAX_CELLS", 5_000_000)
 
     @property
+    def DOCX_TABLE_MAX_CELLS(self) -> int:
+        """Maximum layout-grid cells, summed across a DOCX document's tables, rendered as HTML"""
+        return self._get_int("DOCX_TABLE_MAX_CELLS", 5_000_000)
+
+    @property
     def CSV_MAX_CELLS(self) -> int:
         """Maximum `rows x columns` cells a CSV or TSV file may span"""
         return self._get_int("CSV_MAX_CELLS", 5_000_000)
