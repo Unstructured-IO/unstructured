@@ -1,4 +1,6 @@
+import io
 import logging
+import os
 import pathlib
 from multiprocessing import Pool
 from tempfile import SpooledTemporaryFile, TemporaryFile
@@ -57,6 +59,25 @@ def test_convert_to_bytes_reads_any_seekable_binary_stream_and_rewinds_it():
 
         assert common.convert_to_bytes(file) == b"sample content"
         assert file.tell() == 0
+
+
+def test_convert_to_bytes_reads_a_BufferedReader_without_a_path_name():
+    file = io.BufferedReader(io.BytesIO(b"sample content"))
+
+    assert common.convert_to_bytes(file) == b"sample content"
+    assert file.tell() == 0
+
+
+def test_convert_to_bytes_leaves_a_BufferedReader_over_a_file_descriptor_open():
+    with TemporaryFile() as tmp:
+        tmp.write(b"sample content")
+        tmp.flush()
+        file = io.BufferedReader(io.FileIO(tmp.fileno(), "rb", closefd=False))
+
+        assert common.convert_to_bytes(file) == b"sample content"
+        assert file.tell() == 0
+        assert not tmp.closed
+        os.fstat(tmp.fileno())
 
 
 def test_convert_to_bytes_raises_for_an_object_that_is_not_a_seekable_stream():
