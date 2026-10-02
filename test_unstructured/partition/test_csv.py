@@ -31,7 +31,14 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.errors import UnprocessableEntityError
-from unstructured.partition.csv import _CsvPartitioningContext, check_cell_count, partition_csv
+from unstructured.partition import csv as csv_module
+from unstructured.partition.csv import (
+    _CsvPartitioningContext,
+    _first_record_width,
+    check_cell_count,
+    partition_csv,
+    read_delimited_text,
+)
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 EXPECTED_FILETYPE = "text/csv"
@@ -279,6 +286,7 @@ def test_partition_csv_limits_the_cells_the_file_spans(
         '"x\n"',  # -- a quoted newline does not end the first record --
         "\x0c",  # -- form-feed is not a line ending, so the commas are on the first line --
         'a"b',  # -- a quote inside a field does not open a quoted field --
+        "\ufeff\n",  # -- a byte-order mark is dropped, leaving a blank line that is skipped --
     ],
 )
 def test_check_cell_count_measures_the_record_pandas_sizes_the_data_frame_by(
@@ -299,6 +307,47 @@ def test_partition_csv_is_not_tricked_into_millions_of_rows_by_a_carriage_return
     assert elements[0].metadata.text_as_html == (
         "<table><tr><td>a</td><td>b</td></tr><tr><td/><td>c</td></tr></table>"
     )
+
+
+@pytest.mark.parametrize(("python_engine", "expected_width"), [(True, 11), (False, 1)])
+def test_first_record_width_applies_each_pandas_engines_blank_line_rule(
+    python_engine: bool, expected_width: int
+):
+    # -- the Python engine skips a record whose one value is whitespace, even quoted; the C engine
+    # -- skips only an unquoted line of spaces and tabs --
+    chunks = iter(['"  "\n' + ";" * 10 + "\n"])
+
+    width, _ = _first_record_width(chunks, ";", python_engine, 10**9, Mock())
+
+    assert width == expected_width
+
+
+def test_partition_csv_sniffs_the_delimiter_from_the_first_non_blank_line():
+    # -- the context's sniffer only tries ",;|", so Pandas' delimiter is sniffed here --
+    elements = partition_csv(file=io.BytesIO(b"\n\na\tb\tc\n1\t2\t3\n"))
+
+    assert elements[0].metadata.text_as_html == (
+        "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td>1</td><td>2</td><td>3</td></tr>"
+        "</table>"
+    )
+
+
+def test_read_delimited_text_streams_the_file_in_chunks(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 1)
+    read_sizes: list[int] = []
+
+    class RecordingBytesIO(io.BytesIO):
+        def read(self, size: int | None = -1) -> bytes:
+            read_sizes.append(-1 if size is None else size)
+            return super().read(size)
+
+    # -- with 1-byte chunks every "\r" is held back to see whether a "\n" follows it --
+    dataframe = read_delimited_text(
+        RecordingBytesIO(b'a,"x\r\ny"\r\nc,"d\re"\r'), sep=",", header=None, encoding=None
+    )
+
+    assert dataframe.values.tolist() == [["a", "x\r\ny"], ["c", "d\ne"]]
+    assert set(read_sizes) == {1}
 
 
 def test_partition_csv_reads_a_file_with_no_usable_delimiter_as_one_column():

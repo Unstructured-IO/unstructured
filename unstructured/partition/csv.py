@@ -93,33 +93,21 @@ def read_delimited_text(
 
     Pandas 2.x's C tokenizer mishandles a lone "\r" line ending followed by a whitespace-only line
     while skipping blank lines: it emits 2^18 empty rows for each, so a few bytes become millions
-    of rows inside `pd.read_csv()`, before any limit can be checked. A "\r" not followed by "\n" is
-    therefore converted to "\n" first. "\r\n" is left alone, so text inside quoted fields of a
-    "\r\n" file is unchanged.
+    of rows inside `pd.read_csv()`, before any limit can be checked. Pandas therefore reads the
+    file through `_LoneCarriageReturnReader`, which streams it with each "\r" not followed by "\n"
+    converted to "\n". "\r\n" is left alone, so text inside quoted fields of a "\r\n" file is
+    unchanged.
 
-    When `sep` is `None` the delimiter is sniffed from the first line by `_sniff_delimiter()`, the
-    same way `check_cell_count()` measures it, rather than leaving Pandas to sniff its own.
+    When `sep` is `None` the delimiter is sniffed by `_sniff_delimiter()` from the first non-blank
+    line, the same way `check_cell_count()` measures it, rather than leaving Pandas to sniff its
+    own.
     """
-    encoding = encoding or "utf-8"
-    # -- like Pandas, drop a UTF-8 byte-order mark --
-    if codecs.lookup(encoding).name == "utf-8":
-        encoding = "utf-8-sig"
-    text = _LONE_CARRIAGE_RETURN.sub("\n", file.read().decode(encoding))
-
+    reader = _LoneCarriageReturnReader(file, encoding)
     if sep is None:
-        first_line = text[: text.find("\n") + 1] if "\n" in text else text
-        sep = _sniff_delimiter(_normalize_line_endings(first_line))
-        if sep is None:
-            # -- no usable delimiter, so the file is one column; split on a character it lacks --
-            sep = next((c for c in _ABSENT_DELIMITER_CANDIDATES if c not in text), None)
-            if sep is None:
-                raise UnprocessableEntityError("Could not determine the delimiter of the file.")
+        sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
         # -- the C engine does not sniff, so keep the Python engine this path has always used --
-        return pd.read_csv(io.StringIO(text), sep=sep, header=header, engine="python")
-    return pd.read_csv(io.StringIO(text), sep=sep, header=header)
-
-
-_LONE_CARRIAGE_RETURN = re.compile("\r(?!\n)")
+        return pd.read_csv(reader, sep=sep, header=header, engine="python")
+    return pd.read_csv(reader, sep=sep, header=header)
 
 
 def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | None) -> None:
@@ -137,7 +125,7 @@ def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | Non
       newlines inside quoted fields count too, so the scan can over-count but never under-count.
     """
     max_cells = env_config.CSV_MAX_CELLS
-    chunks = (_normalize_line_endings(c) for c in _iter_decoded_chunks(file, encoding or "utf-8"))
+    chunks = (_normalize_line_endings(c) for c in _iter_decoded_chunks(file, encoding))
 
     def raise_limit_exceeded(n_rows: int, n_cols: int) -> NoReturn:
         raise UnprocessableEntityError(
@@ -149,10 +137,8 @@ def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | Non
     # -- engine, which skips more kinds of blank line --
     python_engine = delimiter is None
     if delimiter is None:
-        first_line, chunks = _split_first_line(chunks)
-        # -- `None` when the file is read as one column --
+        first_line, chunks = _peek_first_non_blank_line(chunks)
         delimiter = _sniff_delimiter(first_line)
-        chunks = itertools.chain([first_line], chunks)
 
     n_cols, chunks = _first_record_width(
         chunks, delimiter, python_engine, max_cells, raise_limit_exceeded
@@ -173,10 +159,104 @@ def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | Non
             raise_limit_exceeded(n_rows + unterminated, n_cols)
 
 
-# -- characters `read_delimited_text()` may split a one-column file on, if absent from it --
-_ABSENT_DELIMITER_CANDIDATES = "\x1f\x1e\x1d\x1c\x07\x08"
+# -- the delimiter of a file with no usable one, which is then read as one column. It is the ASCII
+# -- "unit separator", so a file that does contain it is split on it, the same way by both
+# -- `check_cell_count()` and Pandas --
+_ONE_COLUMN_DELIMITER = "\x1f"
 
 _CSV_CHUNK_CHARS = 1 << 16
+
+
+class _LoneCarriageReturnReader(io.TextIOBase):
+    """Text stream of `file`, decoded in chunks, with each "\r" not followed by "\n" made a "\n".
+
+    A "\r" ending a chunk is held back until the next chunk shows whether it starts a "\r\n". The
+    file is never held in memory whole; only the lines peeked by `.peek_first_non_blank_line()`
+    are buffered, until they are read.
+    """
+
+    def __init__(self, file: IO[bytes], encoding: str | None):
+        self._file = file
+        self._decoder = codecs.getincrementaldecoder(_python_encoding(encoding))()
+        self._buffer = ""
+        self._held_cr = False
+        self._at_start = True
+        self._eof = False
+
+    def peek_first_non_blank_line(self) -> str:
+        """The first line that is not blank, or "" if there is none, without consuming it."""
+        start = 0
+        while True:
+            end = self._buffer.find("\n", start) + 1
+            if end == 0:
+                if not self._fill():
+                    return self._buffer[start:] if self._buffer[start:].strip() else ""
+                continue
+            if self._buffer[start:end].strip():
+                return self._buffer[start:end]
+            start = end
+
+    def read(self, size: int | None = -1) -> str:
+        if size is None or size < 0:
+            while self._fill():
+                pass
+            text, self._buffer = self._buffer, ""
+            return text
+        while len(self._buffer) < size and self._fill():
+            pass
+        text, self._buffer = self._buffer[:size], self._buffer[size:]
+        return text
+
+    def readline(self, size: int | None = -1) -> str:
+        while (end := self._buffer.find("\n") + 1) == 0 and self._fill():
+            pass
+        if end == 0:
+            end = len(self._buffer)
+        if size is not None and 0 <= size < end:
+            end = size
+        text, self._buffer = self._buffer[:end], self._buffer[end:]
+        return text
+
+    def readable(self) -> bool:
+        return True
+
+    def _fill(self) -> bool:
+        """Append the next decoded chunk to the buffer; False when the file is exhausted."""
+        if self._eof:
+            return False
+        chunk = self._file.read(_CSV_CHUNK_CHARS)
+        text = self._decoder.decode(chunk, final=not chunk)
+        if self._at_start:
+            text, self._at_start = _strip_leading_bom(text)
+        if self._held_cr:
+            text = "\r" + text
+            self._held_cr = False
+        if not chunk:
+            self._eof = True
+        elif text.endswith("\r"):
+            text, self._held_cr = text[:-1], True
+        self._buffer += _LONE_CARRIAGE_RETURN.sub("\n", text)
+        return True
+
+
+_LONE_CARRIAGE_RETURN = re.compile("\r(?!\n)")
+
+
+def _python_encoding(encoding: str | None) -> str:
+    """The codec to decode with: `encoding`, or UTF-8, dropping a UTF-8 byte-order mark as Pandas
+    does."""
+    encoding = encoding or "utf-8"
+    return "utf-8-sig" if codecs.lookup(encoding).name == "utf-8" else encoding
+
+
+def _strip_leading_bom(text: str) -> tuple[str, bool]:
+    """`text` without leading byte-order marks, and whether the start of the file is still ahead.
+
+    Pandas drops a byte-order mark from the start of the text it is given, so every leading one is
+    dropped before Pandas or the scan sees the text, leaving none for Pandas to drop differently.
+    """
+    text = text.lstrip("\ufeff")
+    return text, not text
 
 
 def _normalize_line_endings(text: str) -> str:
@@ -188,40 +268,50 @@ def _normalize_line_endings(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
-def _sniff_delimiter(first_line: str) -> str | None:
-    """The delimiter `csv.Sniffer` finds in `first_line`, or `None` when there is no usable one."""
+def _sniff_delimiter(first_line: str) -> str:
+    """The delimiter `csv.Sniffer` finds in `first_line`, or `_ONE_COLUMN_DELIMITER`."""
     try:
         delimiter = csv.Sniffer().sniff(first_line).delimiter
     except csv.Error:
-        return None
+        return _ONE_COLUMN_DELIMITER
     # -- a quote or line ending cannot delimit fields --
-    return None if delimiter in ('"', "\n", "\r") else delimiter
+    return _ONE_COLUMN_DELIMITER if delimiter in ('"', "\n", "\r") else delimiter
 
 
-def _iter_decoded_chunks(file: IO[bytes], encoding: str) -> Iterator[str]:
+def _iter_decoded_chunks(file: IO[bytes], encoding: str | None) -> Iterator[str]:
     """Generate the text of `file` in chunks of up to `_CSV_CHUNK_CHARS` bytes, decoded."""
     # -- `errors="replace"` so the scan never fails on a file Pandas would read --
-    decoder = codecs.getincrementaldecoder(encoding)(errors="replace")
+    decoder = codecs.getincrementaldecoder(_python_encoding(encoding))(errors="replace")
+    at_start = True
     while chunk := file.read(_CSV_CHUNK_CHARS):
-        if text := decoder.decode(chunk):
+        text = decoder.decode(chunk)
+        if at_start:
+            text, at_start = _strip_leading_bom(text)
+        if text:
             yield text
     if text := decoder.decode(b"", final=True):
-        yield text
+        yield text.lstrip("\ufeff") if at_start else text
 
 
-def _split_first_line(chunks: Iterator[str]) -> tuple[str, Iterator[str]]:
-    """The first line of `chunks` with its "\n", and the chunks that follow it."""
-    pending = ""
+def _peek_first_non_blank_line(chunks: Iterator[str]) -> tuple[str, Iterator[str]]:
+    """The first line of `chunks` that is not blank, and all of `chunks`, that line included.
+
+    The line ends with its "\n"; it is "" when every line is blank.
+    """
+    pending, start = "", 0
     for chunk in chunks:
         pending += chunk
-        if (end := pending.find("\n") + 1) > 0:
-            return pending[:end], itertools.chain([pending[end:]], chunks)
-    return pending, iter(())
+        while (end := pending.find("\n", start) + 1) > 0:
+            if pending[start:end].strip():
+                return pending[start:end], itertools.chain([pending], chunks)
+            start = end
+    line = pending[start:] if pending[start:].strip() else ""
+    return line, iter([pending])
 
 
 def _first_record_width(
     chunks: Iterator[str],
-    delimiter: str | None,
+    delimiter: str,
     python_engine: bool,
     max_cells: int,
     raise_limit_exceeded: Callable[[int, int], NoReturn],
@@ -230,13 +320,13 @@ def _first_record_width(
 
     Follows the quoting rules Pandas applies by default: a `"` opens a quoted field only at the
     start of a field, `""` inside a quoted field is a literal quote, and delimiters and newlines
-    inside a quoted field are part of the field. A record with no delimiter or quote and only
-    whitespace is blank, as Pandas skips it: spaces and tabs for its C engine, anything
-    `str.isspace()` for its Python engine. A `None` delimiter means a one-column file. The count is
-    0 when there is no non-blank record. The limit is applied to the record alone.
+    inside a quoted field are part of the field. A record with no delimiter is blank when Pandas
+    skips it: for its C engine when it has no quote and only spaces and tabs; for its Python engine
+    when its one field's value, quoted or not, is empty or only `str.isspace()` characters. The
+    count is 0 when there is no non-blank record. The limit is applied to the record alone.
     """
     is_blank = str.isspace if python_engine else (lambda text: not text.strip(" \t"))
-    special = re.compile(f"[{re.escape(delimiter)}\n]" if delimiter else "\n")
+    special = re.compile(f"[{re.escape(delimiter)}\n]")
     in_quotes = quote_pending = has_content = False
     at_field_start = True
     n_delimiters = 0
@@ -248,19 +338,26 @@ def _first_record_width(
                 if quote_pending:
                     quote_pending = False
                     if chunk[i] == '"':  # -- `""` is a literal quote --
+                        has_content = True
                         i += 1
                     else:  # -- the quote closed the quoted part; the field continues --
                         in_quotes = False
                     continue
                 j = chunk.find('"', i)
+                # -- the Python engine judges blankness by the value, quoted text included --
+                quoted_text = chunk[i:] if j < 0 else chunk[i:j]
+                if quoted_text and not quoted_text.isspace():
+                    has_content = True
                 if j < 0:
                     break
                 quote_pending, i = True, j + 1
                 continue
 
             if at_field_start and chunk[i] == '"':
-                in_quotes = has_content = True
-                at_field_start = False
+                # -- a quote alone makes a record non-blank for the C engine, which skips blank
+                # -- lines before parsing quotes --
+                in_quotes, at_field_start = True, False
+                has_content = has_content or not python_engine
                 i += 1
                 continue
 
