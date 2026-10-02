@@ -3,9 +3,11 @@ from __future__ import annotations
 import codecs
 import contextlib
 import csv
+import io
 import itertools
+import re
 from functools import cached_property
-from typing import IO, Any, Iterator
+from typing import IO, Any, Callable, Iterator, NoReturn
 
 import pandas as pd
 
@@ -66,11 +68,9 @@ def partition_csv(
     with ctx.open() as file:
         check_cell_count(file, ctx.delimiter, ctx.encoding)
     with ctx.open() as file:
-        read_kw: dict = {"header": ctx.header, "sep": ctx.delimiter, "encoding": ctx.encoding}
-        # sep=None is not supported by the C engine; use Python engine to avoid ParserWarning.
-        if ctx.delimiter is None:
-            read_kw["engine"] = "python"
-        dataframe = pd.read_csv(file, **read_kw)
+        dataframe = read_delimited_text(
+            file, sep=ctx.delimiter, header=ctx.header, encoding=ctx.encoding
+        )
 
     html_table = HtmlTable.from_html_text(
         dataframe.to_html(index=False, header=include_header, na_rep="")
@@ -86,43 +86,205 @@ def partition_csv(
     return [Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
 
 
+def read_delimited_text(
+    file: IO[bytes], *, sep: str | None, header: int | None, encoding: str | None
+) -> pd.DataFrame:
+    """Read delimited text from `file` into a data-frame, with its line endings normalized.
+
+    Pandas 2.x's C tokenizer mishandles a "\r" line ending followed by a whitespace-only line
+    while skipping blank lines: it emits 2^18 empty rows for each, so a few bytes become millions
+    of rows inside `pd.read_csv()`, before any limit can be checked. Every line ending is therefore
+    converted to "\n" (including inside quoted fields) and given to Pandas as its only terminator.
+
+    When `sep` is `None` the delimiter is sniffed from the first line by `_sniff_delimiter()`, the
+    same way `check_cell_count()` measures it, rather than leaving Pandas to sniff its own.
+    """
+    encoding = encoding or "utf-8"
+    # -- like Pandas, drop a UTF-8 byte-order mark --
+    if codecs.lookup(encoding).name == "utf-8":
+        encoding = "utf-8-sig"
+    text = _normalize_line_endings(file.read().decode(encoding))
+
+    if sep is None:
+        sep = _sniff_delimiter(text[: text.find("\n") + 1] if "\n" in text else text)
+        if sep is None:
+            # -- no usable delimiter, so the file is one column; split on a character it lacks --
+            sep = next((c for c in _ABSENT_DELIMITER_CANDIDATES if c not in text), None)
+            if sep is None:
+                raise UnprocessableEntityError("Could not determine the delimiter of the file.")
+        # -- the C engine does not sniff and the Python engine needs no custom line terminator,
+        # -- so keep the Python engine this path has always used --
+        return pd.read_csv(io.StringIO(text), sep=sep, header=header, engine="python")
+    return pd.read_csv(io.StringIO(text), sep=sep, header=header, lineterminator="\n")
+
+
 def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | None) -> None:
     """Raise `UnprocessableEntityError` when `file` would span more than `CSV_MAX_CELLS` cells.
 
     Pandas sizes the data-frame by the first record and pads every shorter record out to that
     width, so a tiny file whose first line is a long run of delimiters can span millions of cells.
-    The span is measured here by streaming the records, before Pandas allocates anything, and the
-    scan stops as soon as the limit is passed. `file` is read from its current position.
+    The span is measured here before Pandas allocates anything, reading `file` in fixed-size chunks
+    from its current position, with line endings normalized as `read_delimited_text()` does, and
+    the scan stops as soon as the limit is passed:
+
+    - columns are the fields of the first record, counted with Pandas' quoting rules without
+      building the fields;
+    - rows are counted as line terminators after it. That is an upper bound, since blank lines and
+      newlines inside quoted fields count too, so the scan can over-count but never under-count.
     """
     max_cells = env_config.CSV_MAX_CELLS
-    # -- `errors="replace"` so the scan never fails on a file Pandas would read --
-    lines: Iterator[str] = codecs.getreader(encoding or "utf-8")(file, errors="replace")
+    chunks = (_normalize_line_endings(c) for c in _iter_decoded_chunks(file, encoding or "utf-8"))
 
+    def raise_limit_exceeded(n_rows: int, n_cols: int) -> NoReturn:
+        raise UnprocessableEntityError(
+            f"File exceeds the maximum of {max_cells:,} table cells (CSV_MAX_CELLS): it spans"
+            f" at least {n_rows:,} rows x {n_cols:,} columns."
+        )
+
+    # -- with no delimiter given, `read_delimited_text()` sniffs one and uses Pandas' Python
+    # -- engine, which skips more kinds of blank line --
+    python_engine = delimiter is None
     if delimiter is None:
-        # -- With `sep=None` Pandas sniffs the delimiter itself, from the first non-blank line
-        # -- and without restricting the candidates, so measure with the delimiter it will use.
-        first_line = next((line for line in lines if line.strip()), "")
-        try:
-            delimiter = csv.Sniffer().sniff(first_line).delimiter
-        except csv.Error:
-            delimiter = None
-        lines = itertools.chain([first_line], lines)
+        first_line, chunks = _split_first_line(chunks)
+        # -- `None` when the file is read as one column --
+        delimiter = _sniff_delimiter(first_line)
+        chunks = itertools.chain([first_line], chunks)
 
-    # -- a single-column file has no delimiter; any character absent from each line will do --
-    records = csv.reader(lines, delimiter=delimiter or "\n")
+    n_cols, chunks = _first_record_width(
+        chunks, delimiter, python_engine, max_cells, raise_limit_exceeded
+    )
+    if n_cols == 0:
+        return
 
-    n_rows, n_cols = 0, 0
-    for record in records:
-        if not record:  # -- Pandas skips blank lines --
-            continue
-        if n_rows == 0:
-            n_cols = len(record)
-        n_rows += 1
-        if n_rows * n_cols > max_cells:
-            raise UnprocessableEntityError(
-                f"File exceeds the maximum of {max_cells:,} table cells (CSV_MAX_CELLS): it spans"
-                f" at least {n_rows:,} rows x {n_cols:,} columns."
-            )
+    # -- the first record is row 1; each later "\n" ends a row, and so does end-of-file when the
+    # -- last line is unterminated --
+    n_rows, unterminated = 1, False
+    for chunk in chunks:
+        if n_terminators := chunk.count("\n"):
+            n_rows += n_terminators
+            unterminated = not chunk.endswith("\n")
+        elif chunk:
+            unterminated = True
+        if (n_rows + unterminated) * n_cols > max_cells:
+            raise_limit_exceeded(n_rows + unterminated, n_cols)
+
+
+# -- characters `read_delimited_text()` may split a one-column file on, if absent from it --
+_ABSENT_DELIMITER_CANDIDATES = "\x1f\x1e\x1d\x1c\x07\x08"
+
+_CSV_CHUNK_CHARS = 1 << 16
+
+
+def _normalize_line_endings(text: str) -> str:
+    """`text` with each "\r\n" and "\r" line ending replaced by "\n".
+
+    Applied chunk by chunk, a "\r\n" split across chunks becomes two line endings, which only adds
+    a blank line.
+    """
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def _sniff_delimiter(first_line: str) -> str | None:
+    """The delimiter `csv.Sniffer` finds in `first_line`, or `None` when there is no usable one."""
+    try:
+        delimiter = csv.Sniffer().sniff(first_line).delimiter
+    except csv.Error:
+        return None
+    # -- a quote or line ending cannot delimit fields --
+    return None if delimiter in ('"', "\n", "\r") else delimiter
+
+
+def _iter_decoded_chunks(file: IO[bytes], encoding: str) -> Iterator[str]:
+    """Generate the text of `file` in chunks of up to `_CSV_CHUNK_CHARS` bytes, decoded."""
+    # -- `errors="replace"` so the scan never fails on a file Pandas would read --
+    decoder = codecs.getincrementaldecoder(encoding)(errors="replace")
+    while chunk := file.read(_CSV_CHUNK_CHARS):
+        if text := decoder.decode(chunk):
+            yield text
+    if text := decoder.decode(b"", final=True):
+        yield text
+
+
+def _split_first_line(chunks: Iterator[str]) -> tuple[str, Iterator[str]]:
+    """The first line of `chunks` with its "\n", and the chunks that follow it."""
+    pending = ""
+    for chunk in chunks:
+        pending += chunk
+        if (end := pending.find("\n") + 1) > 0:
+            return pending[:end], itertools.chain([pending[end:]], chunks)
+    return pending, iter(())
+
+
+def _first_record_width(
+    chunks: Iterator[str],
+    delimiter: str | None,
+    python_engine: bool,
+    max_cells: int,
+    raise_limit_exceeded: Callable[[int, int], NoReturn],
+) -> tuple[int, Iterator[str]]:
+    """The field count of the first non-blank record, and the chunks that follow it.
+
+    Follows the quoting rules Pandas applies by default: a `"` opens a quoted field only at the
+    start of a field, `""` inside a quoted field is a literal quote, and delimiters and newlines
+    inside a quoted field are part of the field. A record with no delimiter or quote and only
+    whitespace is blank, as Pandas skips it: spaces and tabs for its C engine, anything
+    `str.isspace()` for its Python engine. A `None` delimiter means a one-column file. The count is
+    0 when there is no non-blank record. The limit is applied to the record alone.
+    """
+    is_blank = str.isspace if python_engine else (lambda text: not text.strip(" \t"))
+    special = re.compile(f"[{re.escape(delimiter)}\n]" if delimiter else "\n")
+    in_quotes = quote_pending = has_content = False
+    at_field_start = True
+    n_delimiters = 0
+
+    for chunk in chunks:
+        i, n = 0, len(chunk)
+        while i < n:
+            if in_quotes:
+                if quote_pending:
+                    quote_pending = False
+                    if chunk[i] == '"':  # -- `""` is a literal quote --
+                        i += 1
+                    else:  # -- the quote closed the quoted part; the field continues --
+                        in_quotes = False
+                    continue
+                j = chunk.find('"', i)
+                if j < 0:
+                    break
+                quote_pending, i = True, j + 1
+                continue
+
+            if at_field_start and chunk[i] == '"':
+                in_quotes = has_content = True
+                at_field_start = False
+                i += 1
+                continue
+
+            match = special.search(chunk, i)
+            j = match.start() if match else n
+            if j > i:
+                at_field_start = False
+                has_content = has_content or not is_blank(chunk[i:j])
+            if match is None:
+                break
+            i = j + 1
+            if chunk[j] == delimiter:
+                n_delimiters += 1
+                has_content = at_field_start = True
+                if n_delimiters + 1 > max_cells:
+                    raise_limit_exceeded(1, n_delimiters + 1)
+            elif has_content:  # -- end of the first record --
+                if n_delimiters + 1 > max_cells:
+                    raise_limit_exceeded(1, n_delimiters + 1)
+                return n_delimiters + 1, itertools.chain([chunk[i:]], chunks)
+            else:  # -- a blank line, which Pandas skips --
+                at_field_start = True
+
+    if not has_content:
+        return 0, iter(())
+    if n_delimiters + 1 > max_cells:
+        raise_limit_exceeded(1, n_delimiters + 1)
+    return n_delimiters + 1, iter(())
 
 
 class _CsvPartitioningContext:

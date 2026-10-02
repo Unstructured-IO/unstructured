@@ -2,7 +2,7 @@
 
 ### Fixes
 
-- **Reject CSV and TSV files that span too many cells instead of exhausting memory.** Pandas sizes the data-frame by the first record and pads every shorter record out to that width, so a few-KB file whose first line is a long run of delimiters could span millions of cells and use many GB in `partition_csv()` and `partition_tsv()`. The file's span is now measured by streaming its records before Pandas reads it, and a file spanning more than `CSV_MAX_CELLS` cells (default 5,000,000) raises `UnprocessableEntityError`.
+- **Reject CSV and TSV files that span too many cells instead of exhausting memory.** Pandas sizes the data-frame by the first record and pads every shorter record out to that width, so a few-KB file whose first line is a long run of delimiters could span millions of cells and use many GB in `partition_csv()` and `partition_tsv()`. The file's span is now measured by streaming it before Pandas reads it, and a file spanning more than `CSV_MAX_CELLS` cells (default 5,000,000) raises `UnprocessableEntityError`. Line endings are also normalized to `"\n"` before Pandas reads the file: Pandas 2.x's C tokenizer read a `"\r"` line ending followed by a whitespace-only line as 2^18 empty rows, so 5 bytes became 262,145 rows. When the delimiter is sniffed, it is now sniffed once and passed to Pandas, and a file with no usable delimiter is read as one column.
 
 ## 0.27.11
 

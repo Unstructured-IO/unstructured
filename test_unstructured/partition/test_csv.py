@@ -31,7 +31,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.errors import UnprocessableEntityError
-from unstructured.partition.csv import _CsvPartitioningContext, partition_csv
+from unstructured.partition.csv import _CsvPartitioningContext, check_cell_count, partition_csv
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 EXPECTED_FILETYPE = "text/csv"
@@ -226,7 +226,7 @@ def test_partition_csv_rejects_a_wide_first_line_before_pandas_reads_it(
     file_path.write_text("h" + "," * 4999 + "\n" + "a\n" * 5000)
     read_csv_ = mocker.patch.object(pd, "read_csv")
 
-    with pytest.raises(UnprocessableEntityError, match="1,001 rows x 5,000 columns"):
+    with pytest.raises(UnprocessableEntityError, match="rows x 5,000 columns"):
         partition_csv(str(file_path))
 
     read_csv_.assert_not_called()
@@ -234,21 +234,29 @@ def test_partition_csv_rejects_a_wide_first_line_before_pandas_reads_it(
 
 @pytest.mark.parametrize("from_file", [False, True])
 @pytest.mark.parametrize(
-    ("content", "n_cells"),
+    ("content", "n_measured_cells"),
     [
-        # -- the context's restricted sniffer gives up on this one and Pandas sniffs it itself --
+        # -- the context's restricted sniffer gives up on this one, so the delimiter is sniffed
+        # -- from the first line without restricting the candidates --
         ("h" + "," * 99 + "\n" + "a\n" * 99, 100 * 100),
-        ("a;b;c\n1;2\n\n4\n", 3 * 3),  # -- blank lines are not counted --
-        # -- single-column file; Pandas sniffs "a" as the delimiter and reads 4 x 2 cells --
+        # -- every line ending counts as a row, so the blank line makes this 4 rows (Pandas
+        # -- reads 3): the measure is an upper bound --
+        ("a;b;c\n1;2\n\n4\n", 3 * 4),
+        # -- single-column file; the sniffer finds "a" as the delimiter, giving 2 columns --
         ("a\nb\nc\nd\n", 4 * 2),
-        ('"x,\ny",z\n1\n', 2 * 2),  # -- quoted delimiter and newline are not counted --
+        ('"x,\ny",z\n1\n', 2 * 2),  # -- quoted delimiter and newline start no field or row --
+        ("a,b\r\nc,d\re,f", 3 * 2),  # -- "\r\n", "\r" and an unterminated last line --
     ],
 )
 def test_partition_csv_limits_the_cells_the_file_spans(
-    content: str, n_cells: int, from_file: bool, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    content: str,
+    n_measured_cells: int,
+    from_file: bool,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     file_path = tmp_path / "table.csv"
-    file_path.write_text(content)
+    file_path.write_bytes(content.encode())
 
     def partition():
         if from_file:
@@ -256,12 +264,50 @@ def test_partition_csv_limits_the_cells_the_file_spans(
                 return partition_csv(file=f)
         return partition_csv(str(file_path))
 
-    monkeypatch.setenv("CSV_MAX_CELLS", str(n_cells))
+    monkeypatch.setenv("CSV_MAX_CELLS", str(n_measured_cells))
     assert len(partition()) == 1
 
-    monkeypatch.setenv("CSV_MAX_CELLS", str(n_cells - 1))
+    monkeypatch.setenv("CSV_MAX_CELLS", str(n_measured_cells - 1))
     with pytest.raises(UnprocessableEntityError, match="CSV_MAX_CELLS"):
         partition()
+
+
+@pytest.mark.parametrize(
+    "first_line",
+    [
+        " \t\n",  # -- a whitespace-only line is skipped, so the wide line is the first record --
+        '"x\n"',  # -- a quoted newline does not end the first record --
+        "\x0c",  # -- form-feed is not a line ending, so the commas are on the first line --
+        'a"b',  # -- a quote inside a field does not open a quoted field --
+    ],
+)
+def test_check_cell_count_measures_the_record_pandas_sizes_the_data_frame_by(
+    first_line: str, monkeypatch: pytest.MonkeyPatch
+):
+    # -- Pandas reads 4 rows x 101 columns from each of these --
+    file = io.BytesIO((first_line + "," * 100 + "\n" + "a,b\n" * 3).encode())
+    monkeypatch.setenv("CSV_MAX_CELLS", "403")
+
+    with pytest.raises(UnprocessableEntityError, match="101 columns"):
+        check_cell_count(file, ",", None)
+
+
+def test_partition_csv_is_not_tricked_into_millions_of_rows_by_a_carriage_return():
+    # -- Pandas 2.x's C tokenizer reads this as 262,145 rows --
+    elements = partition_csv(file=io.BytesIO(b"a,b\n\r ,c\n"))
+
+    assert elements[0].metadata.text_as_html == (
+        "<table><tr><td>a</td><td>b</td></tr><tr><td/><td>c</td></tr></table>"
+    )
+
+
+def test_partition_csv_reads_a_file_with_no_usable_delimiter_as_one_column():
+    # -- the sniffer picks the quote as the delimiter, which cannot delimit fields --
+    elements = partition_csv(file=io.BytesIO(b'"a"\n"b"\n'))
+
+    assert (
+        elements[0].metadata.text_as_html == "<table><tr><td>a</td></tr><tr><td>b</td></tr></table>"
+    )
 
 
 # ================================================================================================

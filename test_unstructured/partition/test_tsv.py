@@ -178,7 +178,7 @@ def test_partition_tsv_rejects_a_wide_first_line_before_pandas_reads_it(
     file_path.write_text("h" + "\t" * 4999 + "\n" + "a\n" * 5000)
     read_csv_ = mocker.patch.object(pd, "read_csv")
 
-    with pytest.raises(UnprocessableEntityError, match="1,001 rows x 5,000 columns"):
+    with pytest.raises(UnprocessableEntityError, match="rows x 5,000 columns"):
         if from_file:
             with open(file_path, "rb") as f:
                 partition_tsv(file=f)
@@ -203,3 +203,13 @@ def test_partition_tsv_partitions_a_file_at_the_cell_limit(
         elements = partition_tsv(str(file_path))
 
     assert [e.text for e in elements] == ["a b c 1 2"]
+
+
+def test_partition_tsv_reads_a_field_larger_than_the_csv_module_field_limit(tmp_path: Path):
+    # -- the `csv` module's default field limit is 128 KiB; Pandas has none --
+    file_path = tmp_path / "big-field.tsv"
+    file_path.write_text("a\t" + "x" * 200_000 + "\n")
+
+    (table,) = partition_tsv(str(file_path))
+
+    assert table.text == "a " + "x" * 200_000
