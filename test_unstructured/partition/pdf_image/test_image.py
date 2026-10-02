@@ -4,10 +4,11 @@ import io
 import os
 import pathlib
 import tempfile
+from typing import Any
 from unittest import mock
 
 import pytest
-from PIL import Image
+from PIL import Image, ImageFile, TiffImagePlugin
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout
 from unstructured_pytesseract import TesseractError
@@ -727,6 +728,137 @@ def test_check_image_max_pixels_exceeded_reports_a_decompression_bomb_frame_as_u
 
     with pytest.raises(UnprocessableEntityError, match="too many pixels"):
         pdf.check_image_max_pixels_exceeded(filename=file_path)
+
+
+def _write_tiff(tmp_path: pathlib.Path, sizes: list[tuple[int, int]]) -> str:
+    """Write a TIFF with one blank frame of each `(width, height)` in `sizes`."""
+    first, *rest = (Image.new("1", size, 1) for size in sizes)
+    file_path = str(tmp_path / "mixed.tiff")
+    first.save(file_path, compression="group4", save_all=True, append_images=rest)
+    return file_path
+
+
+@pytest.fixture()
+def pixel_allocations(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    """Records each pixel-buffer allocation and frame load PIL makes from now on."""
+    calls: list[str] = []
+    core_new = Image.core.new
+    load = ImageFile.ImageFile.load
+
+    def recording_core_new(*args: Any, **kwargs: Any):
+        calls.append("core.new")
+        return core_new(*args, **kwargs)
+
+    def recording_load(self: ImageFile.ImageFile, *args: Any, **kwargs: Any):
+        calls.append("load")
+        return load(self, *args, **kwargs)
+
+    monkeypatch.setattr(Image.core, "new", recording_core_new)
+    monkeypatch.setattr(ImageFile.ImageFile, "load", recording_load)
+    return calls
+
+
+def test_check_image_max_pixels_exceeded_reads_tiff_frame_sizes_without_allocating(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+):
+    # -- mixed frame sizes: 100x100 + 300x200 + 50x50 = 72,500 pixels --
+    file_path = _write_tiff(tmp_path, [(100, 100), (300, 200), (50, 50)])
+    pixel_allocations = request.getfixturevalue("pixel_allocations")
+
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "72500")
+    pdf.check_image_max_pixels_exceeded(filename=file_path)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "72499")
+    with pytest.raises(UnprocessableEntityError, match="first 3 frame"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path)
+
+    assert pixel_allocations == []
+
+
+def test_check_image_max_pixels_exceeded_stops_at_the_frame_that_exceeds_the_limit(
+    tmp_path: pathlib.Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = _write_tiff(tmp_path, [(10, 10), (100, 100), (1000, 1000)])
+    seek_ = mocker.spy(TiffImagePlugin.TiffImageFile, "seek")
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "5000")
+
+    with pytest.raises(UnprocessableEntityError, match="first 2 frame.* 10,100 pixels"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path)
+
+    # -- the third frame's header is never read --
+    assert max(call.args[1] for call in seek_.call_args_list) == 1
+
+
+def test_check_image_max_pixels_exceeded_charges_only_the_first_frame_of_other_formats(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+):
+    # -- an APNG's seek() decodes the frame, so only the first 40x40 frame is measured --
+    frames = [Image.new("RGB", (40, 40), (i, 0, 0)) for i in range(3)]
+    file_path = str(tmp_path / "animated.png")
+    frames[0].save(file_path, save_all=True, append_images=frames[1:])
+    pixel_allocations = request.getfixturevalue("pixel_allocations")
+
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "1600")
+    pdf.check_image_max_pixels_exceeded(filename=file_path)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "1599")
+    with pytest.raises(UnprocessableEntityError, match="first 1 frame"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path)
+
+    assert pixel_allocations == []
+
+
+def test_check_image_max_pixels_exceeded_charges_only_the_first_frame_unless_all_frames(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = _write_tiff(tmp_path, [(100, 100)] * 3)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "10000")
+
+    pdf.check_image_max_pixels_exceeded(filename=file_path, all_frames=False)
+    with pytest.raises(UnprocessableEntityError, match="first 2 frame"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path, all_frames=True)
+
+
+def test_check_image_max_pixels_exceeded_leaves_a_rejected_file_open_at_its_position(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    with open(_write_tiff(tmp_path, [(100, 100)] * 3), "rb") as f:
+        file = io.BytesIO(f.read())
+    file.seek(5)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "100")
+
+    with pytest.raises(UnprocessableEntityError):
+        pdf.check_image_max_pixels_exceeded(file=file)
+
+    assert not file.closed
+    assert file.tell() == 5
+
+
+@pytest.mark.parametrize(
+    ("strategy", "partitioner_name", "expected_all_frames"),
+    [
+        (PartitionStrategy.HI_RES, "_partition_pdf_or_image_local", True),
+        (PartitionStrategy.OCR_ONLY, "_partition_pdf_or_image_with_ocr", False),
+    ],
+)
+def test_partition_image_measures_every_frame_only_for_hi_res(
+    strategy: str, partitioner_name: str, expected_all_frames: bool, mocker: MockFixture
+):
+    check_ = mocker.patch.object(pdf, "check_image_max_pixels_exceeded")
+    mocker.patch.object(pdf, partitioner_name, return_value=[])
+    file_path = example_doc_path("img/layout-parser-paper-fast.jpg")
+
+    pdf.partition_pdf_or_image(file_path, is_image=True, strategy=strategy)
+
+    check_.assert_called_once_with(filename=file_path, file=None, all_frames=expected_all_frames)
+
+
+def test_partition_pdf_does_not_apply_the_image_pixel_limit(mocker: MockFixture):
+    check_ = mocker.patch.object(pdf, "check_image_max_pixels_exceeded")
+
+    pdf.partition_pdf_or_image(
+        example_doc_path("pdf/layout-parser-paper-fast.pdf"), strategy=PartitionStrategy.FAST
+    )
+
+    check_.assert_not_called()
 
 
 def test_check_image_max_pixels_exceeded_ignores_a_file_that_is_not_an_image():

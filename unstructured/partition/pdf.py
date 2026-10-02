@@ -7,7 +7,7 @@ import os
 import re
 import warnings
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
+from typing import IO, TYPE_CHECKING, Any, NoReturn, Optional, Union, cast
 
 import numpy as np
 import wrapt
@@ -307,9 +307,6 @@ def partition_pdf_or_image(
 
     validate_strategy(strategy, is_image)
 
-    if is_image:
-        check_image_max_pixels_exceeded(filename=filename, file=file)
-
     last_modified = get_last_modified_date(filename) if filename else None
     pdfminer_config = PDFMinerConfig(
         line_margin=pdfminer_line_margin,
@@ -358,6 +355,12 @@ def partition_pdf_or_image(
         extract_image_block_types=extract_image_block_types,
     )
     set_partition_strategy_used(strategy)
+
+    if is_image:
+        # -- hi_res decodes every frame of the image; the other strategies use only the first --
+        check_image_max_pixels_exceeded(
+            filename=filename, file=file, all_frames=strategy == PartitionStrategy.HI_RES
+        )
 
     if file is not None:
         file.seek(0)
@@ -641,30 +644,44 @@ def check_pdf_hi_res_max_pages_exceeded(
 def check_image_max_pixels_exceeded(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
+    all_frames: bool = True,
 ) -> None:
-    """Raise `UnprocessableEntityError` when the image's frames exceed `IMAGE_MAX_TOTAL_PIXELS`.
+    """Raise `UnprocessableEntityError` when the image decodes to over `IMAGE_MAX_TOTAL_PIXELS`.
 
-    Each frame of a multi-frame image (e.g. TIFF) is decoded to RGB, and hi_res holds every frame
-    at once, but blank frames compress to almost nothing, so a few-KB file can decode to GB. Frame
-    sizes are read from the frame headers here without decoding any pixels.
+    hi_res decodes each frame of a multi-frame image to RGB and holds every frame at once, but blank
+    frames compress to almost nothing, so a few-KB TIFF can decode to GB. Sizes are read here
+    without allocating or decoding any pixels:
+
+    - the first frame's size comes from the image header, read by `Image.open()`;
+    - with `all_frames`, the sizes of a TIFF's later frames are read from their IFDs, which is all
+      TIFF's `seek()` does. Other formats' `seek()` allocates or decodes the frame (e.g. APNG,
+      GIF, HEIF), so their later frames are not measured and only the first frame is charged.
+
+    `file` is left open, at the position it had.
     """
     max_pixels = env_config.IMAGE_MAX_TOTAL_PIXELS
     if isinstance(file, bytes):
         file = io.BytesIO(file)
     start = file.tell() if file is not None else 0
 
+    def raise_limit_exceeded(n_frames: int, total_pixels: int) -> NoReturn:
+        raise UnprocessableEntityError(
+            f"Image exceeds the maximum of {max_pixels:,} pixels summed across its frames"
+            f" (IMAGE_MAX_TOTAL_PIXELS): its first {n_frames:,} frame(s) hold {total_pixels:,}"
+            f" pixels."
+        )
+
     try:
         with PILImage.open(file if file is not None else filename) as image:
+            if not (all_frames and image.format == "TIFF"):
+                if image.width * image.height > max_pixels:
+                    raise_limit_exceeded(1, image.width * image.height)
+                return
             total_pixels = 0
-            # -- seeking to a frame parses its header; pixels are decoded only on `.load()` --
             for n_frames, frame in enumerate(ImageSequence.Iterator(image), start=1):
                 total_pixels += frame.width * frame.height
                 if total_pixels > max_pixels:
-                    raise UnprocessableEntityError(
-                        f"Image exceeds the maximum of {max_pixels:,} pixels summed across its"
-                        f" frames (IMAGE_MAX_TOTAL_PIXELS): its first {n_frames:,} frame(s) hold"
-                        f" {total_pixels:,} pixels."
-                    )
+                    raise_limit_exceeded(n_frames, total_pixels)
     except PILImage.DecompressionBombError as e:
         # -- PIL refuses a single frame over twice `MAX_IMAGE_PIXELS` at open or seek --
         raise UnprocessableEntityError(f"Image has too many pixels: {e}") from e
