@@ -1,8 +1,20 @@
-## 0.27.12
+## 0.27.16
 
 ### Fixes
 
 - **Reject images whose frames decode to too many pixels instead of exhausting memory.** Each frame of a multi-frame TIFF is decoded to RGB, and `hi_res` holds every frame at once, but blank frames compress to almost nothing, so a few-hundred-KB file could decode to tens of GB. `partition_image()` now measures the image before partitioning it, without allocating or decoding pixels, and raises `UnprocessableEntityError` above `IMAGE_MAX_TOTAL_PIXELS` pixels (default 500,000,000). With `hi_res`, which decodes every frame, every frame is charged: TIFF and MPO frames from their headers, HEIF images from the container, and canvas-sized frames (e.g. APNG, animated WebP, GIF) from their count; otherwise only the first frame is measured.
+
+## 0.27.13
+
+### Fixes
+
+- **Bound CI dependency downloads.** System-package downloads now have inactivity timeouts and bounded retries, and dependency setup is reported separately from tests. Package installation is kept outside the download timeout.
+
+## 0.27.12
+
+### Fixes
+
+- **Reject spreadsheets whose worksheets span too many cells instead of exhausting memory.** `partition_xlsx()` read each worksheet into a dense data-frame sized by its farthest populated cell, so a few-KB XLSX or XLS file with one far-away cell could grow to millions of cells and use tens of GB. The span of every worksheet is now measured before it is read, streaming the file without materializing cells, and a workbook spanning more than `XLSX_MAX_CELLS` cells in total (default 5,000,000) raises `UnprocessableEntityError`. Subtable detection also now builds its graph from populated cells only, so sparse worksheets within the limit use far less memory.
 
 ## 0.27.11
 
