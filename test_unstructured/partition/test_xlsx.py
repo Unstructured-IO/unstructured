@@ -16,6 +16,7 @@ import openpyxl
 import pandas as pd
 import pandas.testing as pdt
 import pytest
+from pandas.io.excel._openpyxl import OpenpyxlReader
 from pytest_mock import MockerFixture
 
 from test_unstructured.partition.test_constants import (
@@ -37,6 +38,7 @@ from unstructured.partition.xlsx import (
     _ConnectedComponent,
     _ConnectedComponents,
     _iter_worksheet_shapes,
+    _RowCompactingOpenpyxlReader,
     _SubtableParser,
     _XlsxPartitionerOptions,
     partition_xlsx,
@@ -310,14 +312,29 @@ def test_partition_xlsx_rejects_a_stray_far_cell_before_pandas_reads_it(
     tmp_path: Path, mocker: MockerFixture, monkeypatch: pytest.MonkeyPatch
 ):
     monkeypatch.delenv("XLSX_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
-    # -- one cell at row 1M makes Pandas allocate 1M x 5 cells from a few-KB file --
-    file_path = _write_xlsx(tmp_path, {"Sheet": {(1, 1): "a", (2, 3): "b", (1_048_576, 5): "c"}})
+    # -- one cell in the last column makes each of 400 rows 16,384 cells wide: 6.5M cells --
+    cells = {(row, 1): f"r{row}" for row in range(1, 401)}
+    file_path = _write_xlsx(tmp_path, {"Sheet": {**cells, (400, 16_384): "c"}})
     read_excel_ = mocker.patch.object(pd, "read_excel")
+    reader_ = mocker.patch("unstructured.partition.xlsx._RowCompactingOpenpyxlReader")
 
-    with pytest.raises(UnprocessableEntityError, match="1,048,576 rows x 5 columns"):
+    with pytest.raises(UnprocessableEntityError, match="rows x 16,384 columns"):
         partition_xlsx(file_path)
 
     read_excel_.assert_not_called()
+    reader_.assert_not_called()
+
+
+def test_partition_xlsx_partitions_a_stray_cell_in_the_last_row(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("XLSX_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
+    # -- the empty rows before a far-away row are read as one, so this spans 4 x 5 cells --
+    file_path = _write_xlsx(tmp_path, {"Sheet": {(1, 1): "a", (2, 3): "b", (1_048_576, 5): "c"}})
+
+    elements = partition_xlsx(file_path)
+
+    assert [e.text for e in elements] == ["a", "b", "c"]
 
 
 def test_partition_xlsx_partitions_a_stray_far_cell_within_the_limit(
@@ -335,12 +352,13 @@ def test_partition_xlsx_limits_cells_summed_across_worksheets(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
     # -- each worksheet spans 10 x 10 = 100 cells --
+    column = {(row, 1): f"r{row}" for row in range(1, 10)}
     file_path = _write_xlsx(
-        tmp_path, {"One": {(1, 1): "a", (10, 10): "b"}, "Two": {(1, 1): "c", (10, 10): "d"}}
+        tmp_path, {"One": {**column, (10, 10): "b"}, "Two": {**column, (10, 10): "d"}}
     )
 
     monkeypatch.setenv("XLSX_MAX_CELLS", "200")
-    assert len(partition_xlsx(file_path)) == 4
+    assert partition_xlsx(file_path)
 
     monkeypatch.setenv("XLSX_MAX_CELLS", "199")
     with pytest.raises(UnprocessableEntityError, match="worksheet 'Two'"):
@@ -588,22 +606,23 @@ class Describe_iter_worksheet_shapes:
     @pytest.mark.parametrize(
         "file_name", ["stanley-cups.xlsx", "more-than-1k-cells.xlsx", "tests-example.xls"]
     )
-    def it_measures_the_shape_Pandas_reads_for_each_worksheet(self, file_name: str):
+    def it_measures_the_shape_read_for_each_worksheet(self, file_name: str):
         file_path = example_doc_path(file_name)
-        self._assert_shapes_match_pandas(file_path)
+        self._assert_shapes_match_what_is_read(file_path)
 
     def and_it_measures_sparse_worksheets_with_trailing_empty_cells(self, tmp_path: Path):
         file_path = _write_xlsx(
             tmp_path,
             {
                 "Sparse": {(3, 2): "a", (7, 5): 0, (12, 1): "b", (13, 9): ""},
+                "Adjacent": {(1, 1): "a", (2, 1): "b", (4, 2): "c", (100_000, 3): "d"},
                 "Empty": {},
                 "Blank": {(4, 4): ""},
             },
         )
-        self._assert_shapes_match_pandas(file_path)
+        self._assert_shapes_match_what_is_read(file_path)
 
-    def _assert_shapes_match_pandas(self, file_path: str):
+    def _assert_shapes_match_what_is_read(self, file_path: str):
         with open(file_path, "rb") as f:
             file_bytes = f.read()
         opts = _XlsxPartitionerOptions(
@@ -619,11 +638,76 @@ class Describe_iter_worksheet_shapes:
             for _, name, n_rows, n_cols in _iter_worksheet_shapes(file_bytes, opts._excel_engine)
         }
 
-        expected = {
-            name: df.shape
-            for name, df in pd.read_excel(file_path, sheet_name=None, header=None).items()
-        }
-        assert shapes == expected
+        assert shapes == {name: df.shape for name, df in opts.sheets.items()}
+
+
+class Describe_RowCompactingOpenpyxlReader:
+    """Unit-test suite for `unstructured.partition.xlsx._RowCompactingOpenpyxlReader`."""
+
+    def it_reads_each_run_of_empty_rows_as_one_empty_row(self, tmp_path: Path):
+        file_path = _write_xlsx(
+            tmp_path,
+            {"Sheet": {(3, 1): "a", (4, 2): 1, (40, 1): "b", (41, 1): "c", (1_048_576, 3): "d"}},
+        )
+
+        df = _RowCompactingOpenpyxlReader(file_path).parse(sheet_name=None, header=None)["Sheet"]
+
+        expected = pd.DataFrame(
+            [
+                [None, None, None],
+                ["a", None, None],
+                [None, 1, None],
+                [None, None, None],
+                ["b", None, None],
+                ["c", None, None],
+                [None, None, None],
+                [None, None, "d"],
+            ]
+        )
+        pdt.assert_frame_equal(df, expected, check_dtype=False)
+        assert df.iloc[2, 1] == 1  # -- cell values are converted exactly as Pandas does --
+
+    @pytest.mark.parametrize(
+        "file_name",
+        [
+            "2023-half-year-analyses-by-segment.xlsx",
+            "emoji.xlsx",
+            "more-than-1k-cells.xlsx",
+            "stanley-cups.xlsx",
+            "vodafone.xlsx",
+            "xlsx-subtable-cases.xlsx",
+            None,
+        ],
+    )
+    @pytest.mark.parametrize("include_header", [False, True])
+    def it_partitions_exactly_as_the_stock_reader_does(
+        self, file_name: str | None, include_header: bool, tmp_path: Path, mocker: MockerFixture
+    ):
+        if file_name is None:
+            # -- tables separated by long runs of empty rows, and leading empty rows --
+            cells: dict[tuple[int, int], Any] = {
+                (row + 2, col): f"t{row}-{col}" for row in range(4) for col in range(1, 4)
+            }
+            cells.update({(50, 2): "Title", (51, 2): 1.5, (51, 3): 2, (52, 2): None})
+            cells.update({(row, 1): row for row in range(300, 303)})
+            cells[(9_000, 2)] = "far"
+            file_path = _write_xlsx(tmp_path, {"Sheet": cells, "Other": {(5, 5): "x"}})
+        else:
+            file_path = example_doc_path(file_name)
+
+        def partition() -> list[tuple[Any, ...]]:
+            return [
+                (e.category, e.text, e.metadata.text_as_html, e.metadata.page_name)
+                for e in partition_xlsx(file_path, include_header=include_header)
+            ]
+
+        actual = partition()
+
+        class StockReader(OpenpyxlReader):
+            pass
+
+        mocker.patch("unstructured.partition.xlsx._RowCompactingOpenpyxlReader", StockReader)
+        assert actual == partition()
 
 
 class Describe_SubtableParser:
