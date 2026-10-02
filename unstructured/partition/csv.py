@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import codecs
+import collections
 import contextlib
 import csv
 import io
@@ -66,7 +67,7 @@ def partition_csv(
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
-        check_cell_count(file, ctx.delimiter, ctx.encoding)
+        check_cell_count(file, ctx.delimiter, ctx.encoding, header=ctx.header is not None)
     with ctx.open() as file:
         dataframe = read_delimited_text(
             file, sep=ctx.delimiter, header=ctx.header, encoding=ctx.encoding
@@ -110,7 +111,9 @@ def read_delimited_text(
     return pd.read_csv(reader, sep=sep, header=header)
 
 
-def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | None) -> None:
+def check_cell_count(
+    file: IO[bytes], delimiter: str | None, encoding: str | None, *, header: bool = False
+) -> None:
     """Raise `UnprocessableEntityError` when `file` would span more than `CSV_MAX_CELLS` cells.
 
     Pandas sizes the data-frame by the first record and pads every shorter record out to that
@@ -123,6 +126,9 @@ def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | Non
       building the fields;
     - rows are counted as line terminators after it. That is an upper bound, since blank lines and
       newlines inside quoted fields count too, so the scan can over-count but never under-count.
+
+    With `header`, the first record is the header, and Pandas accepts data rows one field wider
+    than it (using the extra field as an implicit index), so one more column is counted.
     """
     max_cells = env_config.CSV_MAX_CELLS
     chunks = (_normalize_line_endings(c) for c in _iter_decoded_chunks(file, encoding))
@@ -145,6 +151,7 @@ def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | Non
     )
     if n_cols == 0:
         return
+    n_cols += header
 
     # -- the first record is row 1; each later "\n" ends a row, and so does end-of-file when the
     # -- last line is unterminated --
@@ -171,57 +178,99 @@ class _LoneCarriageReturnReader(io.TextIOBase):
     """Text stream of `file`, decoded in chunks, with each "\r" not followed by "\n" made a "\n".
 
     A "\r" ending a chunk is held back until the next chunk shows whether it starts a "\r\n". The
-    file is never held in memory whole; only the lines peeked by `.peek_first_non_blank_line()`
-    are buffered, until they are read.
+    file is never held in memory whole: decoded chunks wait in a queue until they are read, and
+    only the lines `.peek_first_non_blank_line()` looks past stay queued after it returns.
+
+    Each character is copied a bounded number of times however the text is read, so reading is
+    linear in the size of the file; `._chars_copied` counts the copies.
     """
 
     def __init__(self, file: IO[bytes], encoding: str | None):
         self._file = file
         self._decoder = codecs.getincrementaldecoder(_python_encoding(encoding))()
-        self._buffer = ""
+        self._chunks: collections.deque[str] = collections.deque()
+        self._offset = 0  # -- read position in the first queued chunk --
         self._held_cr = False
         self._at_start = True
         self._eof = False
+        self._chars_copied = 0
 
     def peek_first_non_blank_line(self) -> str:
         """The first line that is not blank, or "" if there is none, without consuming it."""
-        start = 0
+        line_parts: list[str] = []  # -- the current line, kept only until it proves blank --
+        idx, start = 0, self._offset
         while True:
-            end = self._buffer.find("\n", start) + 1
-            if end == 0:
+            if idx == len(self._chunks):
                 if not self._fill():
-                    return self._buffer[start:] if self._buffer[start:].strip() else ""
+                    line = self._join(line_parts)
+                    return line if line.strip() else ""
                 continue
-            if self._buffer[start:end].strip():
-                return self._buffer[start:end]
-            start = end
+            chunk = self._chunks[idx]
+            end = chunk.find("\n", start) + 1 or len(chunk)
+            line_parts.append(self._slice(chunk, start, end))
+            if not line_parts[-1].isspace() and line_parts[-1]:
+                # -- not blank; complete the line, then return it --
+                while not line_parts[-1].endswith("\n"):
+                    idx, start = idx + 1, 0
+                    # -- a fill can queue nothing (e.g. a chunk holding only a held-back "\r") --
+                    while idx == len(self._chunks):
+                        if not self._fill():
+                            return self._join(line_parts)
+                    chunk = self._chunks[idx]
+                    end = chunk.find("\n") + 1 or len(chunk)
+                    line_parts.append(self._slice(chunk, 0, end))
+                return self._join(line_parts)
+            if line_parts[-1].endswith("\n"):
+                line_parts = []
+            if end == len(chunk):
+                idx, start = idx + 1, 0
+            else:
+                start = end
 
     def read(self, size: int | None = -1) -> str:
-        if size is None or size < 0:
-            while self._fill():
-                pass
-            text, self._buffer = self._buffer, ""
-            return text
-        while len(self._buffer) < size and self._fill():
-            pass
-        text, self._buffer = self._buffer[:size], self._buffer[size:]
-        return text
+        parts: list[str] = []
+        remaining = -1 if size is None or size < 0 else size
+        while remaining != 0 and (self._chunks or self._fill()):
+            if not self._chunks:
+                continue
+            chunk = self._chunks[0]
+            end = len(chunk) if remaining < 0 else min(len(chunk), self._offset + remaining)
+            parts.append(self._slice(chunk, self._offset, end))
+            if remaining > 0:
+                remaining -= end - self._offset
+            self._advance(end)
+        return self._join(parts)
 
     def readline(self, size: int | None = -1) -> str:
-        while (end := self._buffer.find("\n") + 1) == 0 and self._fill():
-            pass
-        if end == 0:
-            end = len(self._buffer)
-        if size is not None and 0 <= size < end:
-            end = size
-        text, self._buffer = self._buffer[:end], self._buffer[end:]
-        return text
+        parts: list[str] = []
+        remaining = -1 if size is None or size < 0 else size
+        while remaining != 0 and (self._chunks or self._fill()):
+            if not self._chunks:
+                continue
+            chunk = self._chunks[0]
+            end = chunk.find("\n", self._offset) + 1 or len(chunk)
+            if remaining > 0:
+                end = min(end, self._offset + remaining)
+                remaining -= end - self._offset
+            parts.append(self._slice(chunk, self._offset, end))
+            self._advance(end)
+            if parts[-1].endswith("\n"):
+                break
+        return self._join(parts)
 
     def readable(self) -> bool:
         return True
 
+    def _advance(self, end: int) -> None:
+        """Move the read position to `end` in the first queued chunk, dropping it once read."""
+        if end == len(self._chunks[0]):
+            self._chunks.popleft()
+            self._offset = 0
+        else:
+            self._offset = end
+
     def _fill(self) -> bool:
-        """Append the next decoded chunk to the buffer; False when the file is exhausted."""
+        """Queue the next decoded chunk; False when the file is exhausted."""
         if self._eof:
             return False
         chunk = self._file.read(_CSV_CHUNK_CHARS)
@@ -235,8 +284,21 @@ class _LoneCarriageReturnReader(io.TextIOBase):
             self._eof = True
         elif text.endswith("\r"):
             text, self._held_cr = text[:-1], True
-        self._buffer += _LONE_CARRIAGE_RETURN.sub("\n", text)
+        if text:
+            self._chunks.append(_LONE_CARRIAGE_RETURN.sub("\n", text))
         return True
+
+    def _join(self, parts: list[str]) -> str:
+        if len(parts) == 1:
+            return parts[0]
+        self._chars_copied += sum(map(len, parts))
+        return "".join(parts)
+
+    def _slice(self, chunk: str, start: int, end: int) -> str:
+        if start == 0 and end == len(chunk):
+            return chunk
+        self._chars_copied += end - start
+        return chunk[start:end]
 
 
 _LONE_CARRIAGE_RETURN = re.compile("\r(?!\n)")
@@ -296,17 +358,33 @@ def _iter_decoded_chunks(file: IO[bytes], encoding: str | None) -> Iterator[str]
 def _peek_first_non_blank_line(chunks: Iterator[str]) -> tuple[str, Iterator[str]]:
     """The first line of `chunks` that is not blank, and all of `chunks`, that line included.
 
-    The line ends with its "\n"; it is "" when every line is blank.
+    The line ends with its "\n"; it is "" when every line is blank. Each chunk read is queued
+    unchanged for the returned chunks, and only the non-blank line itself is copied.
     """
-    pending, start = "", 0
+    read: list[str] = []
+    line_parts: list[str] = []  # -- the current line, kept only until it proves blank --
     for chunk in chunks:
-        pending += chunk
-        while (end := pending.find("\n", start) + 1) > 0:
-            if pending[start:end].strip():
-                return pending[start:end], itertools.chain([pending], chunks)
+        read.append(chunk)
+        start = 0
+        while start < len(chunk):
+            end = chunk.find("\n", start) + 1 or len(chunk)
+            segment = chunk[start:end]
+            line_parts.append(segment)
+            if segment and not segment.isspace():
+                if not segment.endswith("\n"):
+                    # -- complete the line from the chunks that follow --
+                    for more in chunks:
+                        read.append(more)
+                        end = more.find("\n") + 1 or len(more)
+                        line_parts.append(more[:end])
+                        if line_parts[-1].endswith("\n"):
+                            break
+                return "".join(line_parts), itertools.chain(read, chunks)
+            if segment.endswith("\n"):
+                line_parts = []
             start = end
-    line = pending[start:] if pending[start:].strip() else ""
-    return line, iter([pending])
+    line = "".join(line_parts)
+    return (line if line.strip() else ""), iter(read)
 
 
 def _first_record_width(

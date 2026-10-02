@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import gzip
+import io
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -213,3 +216,41 @@ def test_partition_tsv_reads_a_field_larger_than_the_csv_module_field_limit(tmp_
     (table,) = partition_tsv(str(file_path))
 
     assert table.text == "a " + "x" * 200_000
+
+
+def test_partition_tsv_decompresses_a_compressed_filename(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = tmp_path / "table.tsv.gz"
+    with gzip.open(file_path, "wb") as f:
+        f.write(b"a\tb\n1\t2\n")
+
+    (table,) = partition_tsv(str(file_path))
+
+    assert table.text == "a b 1 2"
+
+    # -- the size check measures the decompressed content --
+    monkeypatch.setenv("CSV_MAX_CELLS", "3")
+    with pytest.raises(UnprocessableEntityError, match="CSV_MAX_CELLS"):
+        partition_tsv(str(file_path))
+
+
+def test_partition_tsv_reads_a_stream_that_cannot_seek():
+    class Pipe(io.RawIOBase):
+        def __init__(self, data: bytes):
+            self._data = io.BytesIO(data)
+
+        def readable(self) -> bool:
+            return True
+
+        def seekable(self) -> bool:
+            return False
+
+        def readinto(self, buffer: Any) -> int:
+            chunk = self._data.read(len(buffer))
+            buffer[: len(chunk)] = chunk
+            return len(chunk)
+
+    (table,) = partition_tsv(file=io.BufferedReader(Pipe(b"a\tb\n1\t2\n")))
+
+    assert table.text == "a b 1 2"

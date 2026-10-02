@@ -475,3 +475,126 @@ class Describe_CsvPartitioningContext:
     @pytest.fixture()
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
         return function_mock(request, "unstructured.partition.csv.get_last_modified_date")
+
+
+# -- streaming and boundaries --------------------------------------------------------------------
+
+
+def test_partition_csv_reads_past_a_long_blank_prefix_in_linear_time(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- no delimiter in the context's sample, so the delimiter is sniffed past the blank lines and
+    # -- every blank line is replayed to Pandas' Python engine --
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 1024)
+    data = b"\n" * 200_000 + b"a\tb\n1\t2\n"
+
+    elements = partition_csv(file=io.BytesIO(data))
+
+    assert elements[0].metadata.text_as_html == (
+        "<table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table>"
+    )
+
+
+def test_lone_carriage_return_reader_copies_each_character_a_bounded_number_of_times(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 1024)
+    data = b"\n" * 200_000 + b"a\tb\n1\t2\n"
+    reader = csv_module._LoneCarriageReturnReader(io.BytesIO(data), None)
+
+    assert reader.peek_first_non_blank_line() == "a\tb\n"
+    lines = list(iter(reader.readline, ""))
+
+    assert len(lines) == 200_002
+    assert "".join(lines) == data.decode()
+    assert reader._chars_copied <= 3 * len(data)
+
+
+def test_peek_first_non_blank_line_replays_the_original_chunks():
+    chunks = ["\n" * 10, " \t\n", "a,", "b\n", "c,d\n"]
+
+    line, replay = csv_module._peek_first_non_blank_line(iter(chunks))
+
+    assert line == "a,b\n"
+    assert all(a is b for a, b in zip(replay, chunks, strict=True))
+
+
+def test_partition_csv_counts_the_implicit_index_column_of_a_header(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- data rows one field wider than the header: Pandas uses the extra field as the index --
+    data = b"a,b\n1,2,3\n4,5,6\n"
+    monkeypatch.setenv("CSV_MAX_CELLS", str(3 * 3))
+    assert len(partition_csv(file=io.BytesIO(data), include_header=True)) == 1
+
+    monkeypatch.setenv("CSV_MAX_CELLS", str(3 * 3 - 1))
+    with pytest.raises(UnprocessableEntityError, match="3 columns"):
+        partition_csv(file=io.BytesIO(data), include_header=True)
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        '﻿é,ü\r\nx,"a\r\nb"\r\n',  # -- BOM, multibyte, CRLF inside and outside quotes --
+        '日本,語\r1,"2\r3"\r\r\n',  # -- lone "\r" inside and outside quotes --
+        '﻿﻿\n"q""uote","é"\n',  # -- repeated BOM, doubled quote --
+    ],
+)
+@pytest.mark.parametrize("chunk_size", [1, 3])
+def test_reading_does_not_depend_on_where_chunks_split_the_file(
+    data: str, chunk_size: int, monkeypatch: pytest.MonkeyPatch
+):
+    encoded = data.encode()
+    expected_text = csv_module._LoneCarriageReturnReader(io.BytesIO(encoded), None).read()
+    expected_frame = read_delimited_text(io.BytesIO(encoded), sep=",", header=None, encoding=None)
+    expected_cells = expected_frame.shape[0] * expected_frame.shape[1]
+
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", chunk_size)
+
+    assert csv_module._LoneCarriageReturnReader(io.BytesIO(encoded), None).read() == expected_text
+    frame = read_delimited_text(io.BytesIO(encoded), sep=",", header=None, encoding=None)
+    assert frame.equals(expected_frame)
+    monkeypatch.setenv("CSV_MAX_CELLS", str(expected_cells - 1))
+    with pytest.raises(UnprocessableEntityError):
+        check_cell_count(io.BytesIO(encoded), ",", None)
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        b"h"
+        + b"," * 100
+        + b"\n"
+        + b"a\n" * 100_000,  # -- the first record alone passes the limit --
+        b"a,b\n" * 100_000,  # -- the rows pass the limit --
+    ],
+)
+def test_check_cell_count_stops_reading_once_the_limit_is_passed(
+    data: bytes, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 64)
+    monkeypatch.setenv("CSV_MAX_CELLS", "50")
+    n_bytes_read = 0
+
+    class CountingBytesIO(io.BytesIO):
+        def read(self, size: int | None = -1) -> bytes:
+            nonlocal n_bytes_read
+            chunk = super().read(size)
+            n_bytes_read += len(chunk)
+            return chunk
+
+    with pytest.raises(UnprocessableEntityError):
+        check_cell_count(CountingBytesIO(data), ",", None)
+
+    assert n_bytes_read <= 4 * 64
+
+
+def test_peek_first_non_blank_line_completes_a_line_across_a_chunk_of_only_a_held_carriage_return(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- with 1-byte chunks the "\r" chunk queues nothing until the "\n" after it arrives --
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 1)
+    reader = csv_module._LoneCarriageReturnReader(io.BytesIO(b"a\r\nb\n"), None)
+
+    assert reader.peek_first_non_blank_line() == "a\r\n"
+    assert reader.read() == "a\r\nb\n"

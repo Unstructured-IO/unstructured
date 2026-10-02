@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from typing import IO, Any, Optional
+import contextlib
+import shutil
+import tempfile
+from typing import IO, Any, Iterator, Optional, cast
+
+from pandas.io.common import get_handle
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.common.html_table import HtmlTable
@@ -43,19 +48,22 @@ def partition_tsv(
     header = 0 if include_header else None
 
     if filename:
-        with open(filename, "rb") as f:
-            check_cell_count(f, "\t", None)
-            f.seek(0)
+        # -- like `pd.read_csv(filename)`, decompress a file named e.g. "x.tsv.gz"; the size check
+        # -- and the read each get their own decompressing handle on the same content --
+        with _open_decompressed(filename) as f:
+            check_cell_count(f, "\t", None, header=include_header)
+        with _open_decompressed(filename) as f:
             dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
     else:
         assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
         f = spooled_to_bytes_io_if_needed(file)
-        start = f.tell()
-        check_cell_count(f, "\t", None)
-        f.seek(start)
-        dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
+        with _rereadable(f) as f:
+            start = f.tell()
+            check_cell_count(f, "\t", None, header=include_header)
+            f.seek(start)
+            dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
 
     html_table = HtmlTable.from_html_text(
         dataframe.to_html(index=False, header=include_header, na_rep="")
@@ -69,3 +77,33 @@ def partition_tsv(
     metadata.detection_origin = DETECTION_ORIGIN
 
     return [Table(text=html_table.text, metadata=metadata)]
+
+
+@contextlib.contextmanager
+def _open_decompressed(filename: str) -> Iterator[IO[bytes]]:
+    """Open `filename` for reading bytes, decompressed as its extension (e.g. ".gz") implies."""
+    with get_handle(filename, "rb", compression="infer", is_text=False) as handles:
+        yield cast(IO[bytes], handles.handle)
+
+
+@contextlib.contextmanager
+def _rereadable(file: IO[bytes]) -> Iterator[IO[bytes]]:
+    """`file` itself if it can seek, otherwise a spooled copy of the rest of it.
+
+    The size check and the read each read the file, so a stream that cannot seek back (e.g. a
+    pipe or socket) is copied once to a temporary file, which spills to disk when large.
+    """
+    try:
+        seekable = file.seekable()
+    except (AttributeError, ValueError):
+        seekable = False
+    if seekable:
+        yield file
+        return
+    with tempfile.SpooledTemporaryFile(max_size=_SPOOL_MAX_MEMORY_BYTES) as copy:
+        shutil.copyfileobj(file, copy)
+        copy.seek(0)
+        yield cast(IO[bytes], copy)
+
+
+_SPOOL_MAX_MEMORY_BYTES = 64 * 1024 * 1024
