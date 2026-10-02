@@ -2,6 +2,7 @@
 
 import base64
 import json
+import tracemalloc
 import zlib
 
 import pytest
@@ -78,3 +79,30 @@ def test_decode_keeps_existing_size_cap_at_exact_boundary(monkeypatch):
     monkeypatch.setattr(base, "MAX_DECOMPRESSED_SIZE", len(raw) - 1)
     with pytest.raises(DecompressedSizeExceededError):
         base.elements_from_base64_gzipped_json(encoded)
+
+
+def test_decode_releases_each_consumed_buffer_before_the_next_stage(monkeypatch):
+    size = 8 * 1024 * 1024
+    encoded = _encoded(json.dumps([{"type": "NarrativeText", "text": "A" * size}]).encode())
+    live_at_entry = {}
+
+    def traced(name, stage):
+        def wrapper(value):
+            live_at_entry[name] = tracemalloc.get_traced_memory()[0]
+            return stage(value)
+
+        return wrapper
+
+    monkeypatch.setattr(base.json, "loads", traced("json.loads", json.loads))
+    monkeypatch.setattr(
+        base, "elements_from_dicts", traced("elements_from_dicts", base.elements_from_dicts)
+    )
+    tracemalloc.start()
+    try:
+        elements = base.elements_from_base64_gzipped_json(encoded)
+    finally:
+        tracemalloc.stop()
+    assert len(elements[0].text) == size
+    # -- each stage starts with only its own input alive: the JSON text, then the parsed dicts --
+    assert live_at_entry["json.loads"] < 1.5 * size
+    assert live_at_entry["elements_from_dicts"] < 1.5 * size
