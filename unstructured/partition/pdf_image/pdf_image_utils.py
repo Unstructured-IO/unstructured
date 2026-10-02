@@ -405,28 +405,29 @@ def convert_pdf_to_images(
     exactly_one(filename=filename, file=file)
     with _pdf_source_path(filename, file) as source_path:
         total_pages = pdf2image.pdfinfo_from_path(source_path, userpw=password)["Pages"]
-        for start_page in range(1, total_pages + 1, chunk_size):
-            end_page = min(start_page + chunk_size - 1, total_pages)
-            for page_number in range(start_page, end_page + 1):
-                try:
-                    images = render_pdf_to_image(
-                        filename=source_path,
-                        dpi=env_config.PDF_RENDER_DPI,
-                        first_page=page_number,
-                        last_page=page_number,
-                        password=password,
-                        pdf_render_max_pixels_per_page=env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE,
-                    )
-                except PdfRenderTooLargeError as exc:
-                    raise UnprocessableEntityError(str(exc)) from exc
-                # The caller owns the yielded image and may retain it after iteration.
-                yield from cast(List[Image.Image], images)
-                del images
+        for page_number in range(1, total_pages + 1):
+            try:
+                images = render_pdf_to_image(
+                    filename=source_path,
+                    dpi=env_config.PDF_RENDER_DPI,
+                    first_page=page_number,
+                    last_page=page_number,
+                    password=password,
+                    pdf_render_max_pixels_per_page=env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE,
+                )
+            except PdfRenderTooLargeError as exc:
+                raise UnprocessableEntityError(str(exc)) from exc
+            # The caller owns the yielded image and may retain it after iteration.
+            yield from cast(List[Image.Image], images)
+            del images
 
 
 @contextmanager
 def _pdf_source_path(filename: str, file: Optional[bytes | IO[bytes]]) -> Iterator[str]:
-    """Materialize uploaded PDFs on disk with the existing stream-position semantics."""
+    """Yield a filesystem path for `filename` or a temporary on-disk copy of `file`.
+
+    A `BytesIO` cursor is restored after the copy and a `SpooledTemporaryFile` is left rewound.
+    """
     if file is None:
         yield filename
         return
