@@ -4,6 +4,18 @@
 
 - **Reject images whose frames decode to too many pixels instead of exhausting memory.** Each frame of a multi-frame TIFF is decoded to RGB, and `hi_res` holds every frame at once, but blank frames compress to almost nothing, so a few-hundred-KB file could decode to tens of GB. `partition_image()` now measures the image before partitioning it, without allocating or decoding pixels, and raises `UnprocessableEntityError` above `IMAGE_MAX_TOTAL_PIXELS` pixels (default 500,000,000). With `hi_res`, which decodes every frame, every frame is charged: TIFF and MPO frames from their headers, HEIF images from the container, and canvas-sized frames (e.g. APNG, animated WebP, GIF) from their count; otherwise only the first frame is measured.
 
+## 0.27.15
+
+### Fixes
+
+- **Reject CSV and TSV files that span too many cells instead of exhausting memory.** Pandas sizes the data-frame by the first record and pads every shorter record out to that width, so a few-KB file whose first line is a long run of delimiters could span millions of cells and use many GB in `partition_csv()` and `partition_tsv()`. The file's span is now measured by streaming it before Pandas reads it, and a file spanning more than `CSV_MAX_CELLS` cells (default 5,000,000) raises `UnprocessableEntityError`. A lone `"\r"` line ending is also converted to `"\n"` before Pandas reads the file: Pandas 2.x's C tokenizer read one followed by a whitespace-only line as 2^18 empty rows, so 5 bytes became 262,145 rows. `"\r\n"` is left as is. The file is streamed to Pandas rather than read into memory whole, and `partition_tsv()` still decompresses a compressed filename (e.g. `.tsv.gz`) and accepts a stream that cannot seek. When the delimiter is sniffed, it is now sniffed once, from the first non-blank line, and passed to Pandas, and a file with no usable delimiter is read as one column.
+
+## 0.27.14
+
+### Fixes
+
+- **Bound the work DOCX tables can demand through their declared layout grid.** `w:gridBefore`, `w:gridAfter` and `w:gridSpan` values were expanded into one entry per layout-grid position, so a few-KB document declaring millions of positions per row used GB of memory building `text_as_html`, and re-read a spanned cell's text and emphasis once per position. A table's grid size is now computed from those values without expanding them, and once a document's tables exceed `DOCX_TABLE_MAX_CELLS` grid positions in total (default 5,000,000), `text_as_html` is omitted for the rest with a warning; their text is still extracted. Each cell's text and emphasis are now read once, so a cell that spans or vertically merges across several grid positions no longer repeats its entries in `emphasized_text_contents`. A table whose grid values cannot be read omits `text_as_html` the same way, and a table paragraph whose formatting cannot be read contributes no emphasis, without stopping extraction.
+
 ## 0.27.13
 
 ### Fixes
