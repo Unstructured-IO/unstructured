@@ -2,6 +2,7 @@
 
 import base64
 import json
+import os
 import tracemalloc
 import zlib
 
@@ -82,13 +83,16 @@ def test_decode_keeps_existing_size_cap_at_exact_boundary(monkeypatch):
 
 
 def test_decode_releases_each_consumed_buffer_before_the_next_stage(monkeypatch):
-    size = 8 * 1024 * 1024
-    encoded = _encoded(json.dumps([{"type": "NarrativeText", "text": "A" * size}]).encode())
+    # -- Base64 text of random bytes stays large after compression, so a retained compressed
+    # -- buffer is as visible as a retained decompressed one.
+    text = base64.b64encode(os.urandom(6 * 1024 * 1024)).decode()
+    size = len(text)
+    encoded = _encoded(json.dumps([{"type": "NarrativeText", "text": text}]).encode())
     live_at_entry = {}
 
     def traced(name, stage):
         def wrapper(value):
-            live_at_entry[name] = tracemalloc.get_traced_memory()[0]
+            live_at_entry[name] = tracemalloc.get_traced_memory()[0] - baseline
             return stage(value)
 
         return wrapper
@@ -97,12 +101,16 @@ def test_decode_releases_each_consumed_buffer_before_the_next_stage(monkeypatch)
     monkeypatch.setattr(
         base, "elements_from_dicts", traced("elements_from_dicts", base.elements_from_dicts)
     )
-    tracemalloc.start()
+    was_tracing = tracemalloc.is_tracing()
+    if not was_tracing:
+        tracemalloc.start()
     try:
+        baseline = tracemalloc.get_traced_memory()[0]
         elements = base.elements_from_base64_gzipped_json(encoded)
     finally:
-        tracemalloc.stop()
-    assert len(elements[0].text) == size
+        if not was_tracing:
+            tracemalloc.stop()
+    assert elements[0].text == text
     # -- each stage starts with only its own input alive: the JSON text, then the parsed dicts --
     assert live_at_entry["json.loads"] < 1.5 * size
     assert live_at_entry["elements_from_dicts"] < 1.5 * size
