@@ -541,7 +541,15 @@ class _DocxPartitioner:
         millions, so `None` is returned once this document's tables exceed `DOCX_TABLE_MAX_CELLS`
         grid positions in total. The table's text is still extracted.
         """
-        n_grid_cells = sum(_row_grid_width(row) for row in table.rows)
+        try:
+            n_grid_cells = sum(_row_grid_width(row) for row in table.rows)
+        except Exception as e:
+            # -- e.g. a `w:gridSpan` value that is not a number; the grid size is unknown, so do
+            # -- not expand it. The table's text is still extracted from its physical cells. --
+            logging.warning(
+                f"Omitting text_as_html for a DOCX table with invalid layout-grid values: {e}"
+            )
+            return None
         if n_grid_cells > self._table_grid_cells_remaining:
             logging.warning(
                 f"Omitting text_as_html for a DOCX table spanning {n_grid_cells:,} layout-grid"
@@ -895,7 +903,8 @@ class _DocxPartitioner:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`.
 
         Each cell is visited once, like `._iter_table_texts()`, rather than once per layout-grid
-        position it spans.
+        position it spans. A paragraph whose formatting cannot be read (e.g. a `w:b` value that is
+        not a boolean) contributes no emphasis, and the rest of the table is unaffected.
         """
         for row in table.rows:
             for tc in row._tr.tc_lst:
@@ -903,7 +912,14 @@ class _DocxPartitioner:
                 if tc.vMerge == "continue":
                     continue
                 for paragraph in _Cell(tc, table).paragraphs:
-                    yield from self._iter_paragraph_emphasis(paragraph)
+                    # -- collect the paragraph's emphasis before yielding any, so a failure part
+                    # -- way through drops the whole paragraph and leaves no partial entries --
+                    try:
+                        emphases = list(self._iter_paragraph_emphasis(paragraph))
+                    except Exception as e:
+                        logging.warning(f"Skipping emphasis of a DOCX table paragraph due to: {e}")
+                        continue
+                    yield from emphases
 
     def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
         """Generate text of each cell in `table` stripped of leading and trailing whitespace.

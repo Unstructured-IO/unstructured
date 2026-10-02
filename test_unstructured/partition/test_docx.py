@@ -16,7 +16,7 @@ import pytest
 from docx.document import Document
 from docx.enum.section import WD_SECTION
 from docx.oxml import parse_xml
-from docx.oxml.ns import nsdecls
+from docx.oxml.ns import nsdecls, qn
 from docx.section import Section
 from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
@@ -1027,6 +1027,87 @@ def test_partition_docx_reads_a_spanned_cell_once(
     # -- emphasis is reported once per cell, not once per grid-position it spans --
     assert table.metadata.emphasized_text_contents == ["bold00", "bold01"]
     assert table.metadata.emphasized_text_tags == ["b", "b"]
+
+
+@pytest.mark.parametrize("grid_span_xml", ['<w:gridSpan {ns} w:val="bad"/>', "<w:gridSpan {ns}/>"])
+def test_partition_docx_keeps_the_text_of_a_table_with_an_invalid_grid_span(
+    grid_span_xml: str, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    # -- the second table spans 2 rows x (1 + 50) = 102 grid positions --
+    file_path = _write_docx_with_spanned_tables(tmp_path, n_tables=2, grid_span=50)
+    document = docx.Document(file_path)
+    bad_tc = document.tables[0].rows[0]._tr.tc_lst[1]
+    bad_tc.tcPr.remove(bad_tc.tcPr.find(qn("w:gridSpan")))
+    bad_tc.tcPr.append(parse_xml(grid_span_xml.format(ns=nsdecls("w"))))
+    document.save(file_path)
+    # -- the table with the invalid span uses none of the budget --
+    monkeypatch.setenv("DOCX_TABLE_MAX_CELLS", "102")
+
+    first, second = partition_docx(file_path)
+
+    assert first.text == "t0r0 bold00 t0r1 bold01"
+    assert first.metadata.text_as_html is None
+    assert second.metadata.text_as_html is not None
+    assert 'colspan="50"' in second.metadata.text_as_html
+
+
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+@pytest.mark.parametrize("tag", ["b", "i"])
+def test_partition_docx_skips_table_emphasis_whose_formatting_cannot_be_read(
+    tag: str, infer_table_structure: bool, tmp_path: pathlib.Path
+):
+    document = docx.Document()
+    table = document.add_table(rows=1, cols=2)
+    bad_run = table.cell(0, 0).paragraphs[0].add_run("unreadable")
+    bad_run._r.get_or_add_rPr().append(parse_xml(f'<w:{tag} {nsdecls("w")} w:val="bad"/>'))
+    table.cell(0, 1).paragraphs[0].add_run("readable").bold = True
+    document.add_paragraph("after the table")
+    file_path = str(tmp_path / "bad-emphasis.docx")
+    document.save(file_path)
+
+    elements = partition_docx(file_path, infer_table_structure=infer_table_structure)
+
+    assert [e.text for e in elements] == ["unreadable readable", "after the table"]
+    assert elements[0].metadata.emphasized_text_contents == ["readable"]
+    assert elements[0].metadata.emphasized_text_tags == ["b"]
+
+
+def test_partition_docx_reports_emphasis_of_a_vertically_merged_cell_once(tmp_path: pathlib.Path):
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    merged = table.cell(0, 0).merge(table.cell(2, 0))
+    merged.paragraphs[0].add_run("merged").bold = True
+    for r in range(3):
+        table.cell(r, 1).text = f"r{r}"
+    file_path = str(tmp_path / "vmerge.docx")
+    document.save(file_path)
+
+    (table_element,) = partition_docx(file_path)
+
+    assert table_element.metadata.emphasized_text_contents == ["merged"]
+    assert 'rowspan="3"' in (table_element.metadata.text_as_html or "")
+
+
+def test_partition_docx_does_not_expand_a_large_span_in_a_nested_table(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("DOCX_TABLE_MAX_CELLS", raising=False)
+    document = docx.Document()
+    outer = document.add_table(rows=1, cols=1)
+    outer.cell(0, 0).text = "outer"
+    nested = outer.cell(0, 0).add_table(rows=1, cols=2)
+    nested.cell(0, 0).text = "nested"
+    nested.cell(0, 1).text = "wide"
+    nested.rows[0]._tr.tc_lst[1].get_or_add_tcPr().append(
+        parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="10000000"/>')
+    )
+    file_path = str(tmp_path / "nested.docx")
+    document.save(file_path)
+
+    (table_element,) = partition_docx(file_path)
+
+    assert table_element.text == "outer nested wide"
+    assert "nested wide" in (table_element.metadata.text_as_html or "")
 
 
 def test_partition_docx_grabs_emphasized_texts(
