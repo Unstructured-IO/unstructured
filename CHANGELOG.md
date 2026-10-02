@@ -1,8 +1,14 @@
-## 0.27.13-dev0
+## 0.27.14-dev0
 
 ### Maintenance
 
-- **Start the next development cycle after 0.27.12.** CI maintenance uses development metadata rather than reusing an already released package version. This does not declare a stable package release.
+- **Start the next development cycle after 0.27.13.** CI maintenance uses development metadata rather than reusing an already released package version. This does not declare a stable package release.
+
+## 0.27.13
+
+### Fixes
+
+- **Bound CI dependency downloads.** System-package downloads now have inactivity timeouts and bounded retries, and dependency setup is reported separately from tests. Package installation is kept outside the download timeout.
 
 ## 0.27.12
 
