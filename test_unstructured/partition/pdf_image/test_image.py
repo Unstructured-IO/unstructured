@@ -3,7 +3,10 @@ from __future__ import annotations
 import io
 import os
 import pathlib
+import struct
 import tempfile
+import time
+import zlib
 from typing import Any, Callable
 from unittest import mock
 
@@ -850,6 +853,62 @@ def test_check_image_max_pixels_exceeded_charges_every_frame_without_decoding_an
     assert pixel_allocations == []
 
 
+def _apng_declaring_frames(n_frames: int) -> bytes:
+    """A valid two-frame 1x1 APNG whose `acTL` chunk declares `n_frames` frames instead."""
+    buffer = io.BytesIO()
+    frames = _distinct_frames("RGB", (2, 1), 2)
+    frames[0].save(buffer, format="PNG", save_all=True, append_images=frames[1:])
+    data = buffer.getvalue()
+    i = data.index(b"acTL")
+    # -- chunk: 4-byte length, type, data (num_frames, num_plays), CRC over type + data --
+    body = b"acTL" + struct.pack(">II", n_frames, 0)
+    return (
+        data[: i - 4]
+        + struct.pack(">I", 8)
+        + body
+        + struct.pack(">I", zlib.crc32(body))
+        + (data[i + 4 + 8 + 4 :])
+    )
+
+
+def test_check_image_max_pixels_exceeded_does_not_iterate_a_declared_frame_count(
+    monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+):
+    monkeypatch.delenv("IMAGE_MAX_TOTAL_PIXELS", raising=False)  # -- default limit of 5e8 --
+    # -- a few hundred bytes declaring 2^31 - 1 frames of 2 x 1 pixels --
+    file = io.BytesIO(_apng_declaring_frames(2**31 - 1))
+    pixel_allocations = request.getfixturevalue("pixel_allocations")
+
+    started = time.monotonic()
+    with pytest.raises(
+        UnprocessableEntityError, match="first 250,000,001 frame.* 500,000,002 pixels"
+    ):
+        pdf.check_image_max_pixels_exceeded(file=file)
+
+    # -- constant work: a loop over the declared frames would take minutes --
+    assert time.monotonic() - started < 2
+    assert pixel_allocations == []
+
+
+def test_check_image_max_pixels_exceeded_leaves_the_file_open_at_its_position_when_reading_fails(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    with open(_write_tiff(tmp_path, [(10, 10)] * 3), "rb") as f:
+        file = io.BytesIO(f.read())
+    file.seek(3)
+
+    def failing_seek(self: TiffImagePlugin.TiffImageFile, frame: int) -> None:
+        raise OSError("truncated frame header")
+
+    monkeypatch.setattr(TiffImagePlugin.TiffImageFile, "seek", failing_seek)
+
+    with pytest.raises(OSError, match="truncated frame header"):
+        pdf.check_image_max_pixels_exceeded(file=file)
+
+    assert not file.closed
+    assert file.tell() == 3
+
+
 def test_check_image_max_pixels_exceeded_charges_only_the_first_frame_unless_all_frames(
     tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ):
@@ -877,17 +936,40 @@ def test_check_image_max_pixels_exceeded_leaves_a_rejected_file_open_at_its_posi
 
 
 @pytest.mark.parametrize(
-    ("strategy", "partitioner_name", "expected_all_frames"),
+    ("strategy", "missing_dependency", "partitioner_name", "expected_all_frames"),
     [
-        (PartitionStrategy.HI_RES, "_partition_pdf_or_image_local", True),
-        (PartitionStrategy.OCR_ONLY, "_partition_pdf_or_image_with_ocr", False),
+        (PartitionStrategy.HI_RES, None, "_partition_pdf_or_image_local", True),
+        (PartitionStrategy.OCR_ONLY, None, "_partition_pdf_or_image_with_ocr", False),
+        # -- auto resolves to hi_res for an image --
+        (PartitionStrategy.AUTO, None, "_partition_pdf_or_image_local", True),
+        # -- the limit follows the strategy a missing dependency falls back to --
+        (
+            PartitionStrategy.HI_RES,
+            "unstructured_inference",
+            "_partition_pdf_or_image_with_ocr",
+            False,
+        ),
+        (
+            PartitionStrategy.OCR_ONLY,
+            "unstructured_pytesseract",
+            "_partition_pdf_or_image_local",
+            True,
+        ),
     ],
 )
 def test_partition_image_measures_every_frame_only_for_hi_res(
-    strategy: str, partitioner_name: str, expected_all_frames: bool, mocker: MockFixture
+    strategy: str,
+    missing_dependency: str | None,
+    partitioner_name: str,
+    expected_all_frames: bool,
+    mocker: MockFixture,
 ):
     check_ = mocker.patch.object(pdf, "check_image_max_pixels_exceeded")
     mocker.patch.object(pdf, partitioner_name, return_value=[])
+    mocker.patch(
+        "unstructured.partition.strategies.dependency_exists",
+        side_effect=lambda name: name != missing_dependency,
+    )
     file_path = example_doc_path("img/layout-parser-paper-fast.jpg")
 
     pdf.partition_pdf_or_image(file_path, is_image=True, strategy=strategy)

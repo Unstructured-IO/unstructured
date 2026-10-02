@@ -3,7 +3,6 @@ from __future__ import annotations
 import contextlib
 import copy
 import io
-import itertools
 import os
 import re
 import warnings
@@ -652,10 +651,15 @@ def check_image_max_pixels_exceeded(
     hi_res decodes each frame of a multi-frame image to RGB and holds every frame at once, but blank
     frames compress to almost nothing, so a few-KB file can decode to GB. Without `all_frames`
     only the first frame is charged, its size read from the image header by `Image.open()`. With
-    it every frame is charged, its size found by `_iter_frame_sizes()` without allocating or
-    decoding any pixels.
+    it every frame is charged, sized by `_iter_frame_runs()` without decoding any frame. The work
+    is bounded by the frames physically in the file, not by a frame count the file declares.
 
-    `file` is left open, at the position it had.
+    This bounds the pixels partitioning will decode, not the memory of the process: a native
+    decoder may still allocate while opening the file (e.g. libwebp's canvas), as it does without
+    this check.
+
+    `file` is left open, at the position it had, whether the image is admitted, rejected or fails
+    to be read.
     """
     max_pixels = env_config.IMAGE_MAX_TOTAL_PIXELS
     if isinstance(file, bytes):
@@ -671,12 +675,16 @@ def check_image_max_pixels_exceeded(
 
     try:
         with PILImage.open(file if file is not None else filename) as image:
-            frame_sizes = _iter_frame_sizes(image) if all_frames else iter([image.size])
-            total_pixels = 0
-            for n_frames, (width, height) in enumerate(frame_sizes, start=1):
-                total_pixels += width * height
-                if total_pixels > max_pixels:
-                    raise_limit_exceeded(n_frames, total_pixels)
+            runs = _iter_frame_runs(image) if all_frames else iter([(1, image.size)])
+            n_seen, total_pixels = 0, 0
+            for n_frames, (width, height) in runs:
+                frame_pixels = width * height
+                if frame_pixels and total_pixels + n_frames * frame_pixels > max_pixels:
+                    # -- the frame of this run that takes the total past the limit --
+                    n_over = (max_pixels - total_pixels) // frame_pixels + 1
+                    raise_limit_exceeded(n_seen + n_over, total_pixels + n_over * frame_pixels)
+                n_seen += n_frames
+                total_pixels += n_frames * frame_pixels
     except PILImage.DecompressionBombError as e:
         # -- PIL refuses a single frame over twice `MAX_IMAGE_PIXELS` at open or seek --
         raise UnprocessableEntityError(f"Image has too many pixels: {e}") from e
@@ -688,27 +696,29 @@ def check_image_max_pixels_exceeded(
             file.seek(start)
 
 
-def _iter_frame_sizes(image: PILImage.Image) -> Iterator[tuple[int, int]]:
-    """Generate the `(width, height)` of each frame of `image`, without decoding any of them.
+def _iter_frame_runs(image: PILImage.Image) -> Iterator[tuple[int, tuple[int, int]]]:
+    """Generate `(n_frames, (width, height))` for each run of same-sized frames of `image`.
 
-    A format's `seek()` can allocate or decode the frame it moves to (pi-heif allocates it; APNG
-    and GIF load it), so frames are visited only where that is metadata-only:
+    Sizes are found without decoding any frame. A format's `seek()` can allocate or decode the
+    frame it moves to (pi-heif allocates it; APNG and GIF load it), so frames are visited only
+    where that is metadata-only:
 
-    - TIFF and MPO frames can differ in size; their `seek()` only reads the frame's header (IFD
-      or MP entry), so each frame is visited for its size;
-    - pi-heif reads the size of every image in a HEIF container when it opens it;
-    - the frames of other formats (e.g. APNG, animated WebP, GIF) are composited onto a canvas
-      the size of the image, and Pillow counts them from metadata, so each is charged that size.
+    - TIFF and MPO frames can differ in size; their `seek()` only reads the frame's header (IFD or
+      MP entry), so each frame is visited and is a run of one;
+    - pi-heif reads the size of every image in a HEIF container when it opens it, one run each;
+    - the frames of other formats (e.g. APNG, animated WebP, GIF) are composited onto a canvas the
+      size of the image, so they are one run of `n_frames` frames. `n_frames` can be a count the
+      file merely declares (APNG's `acTL` allows 2^31), so it is never iterated.
     """
     if image.format in ("TIFF", "MPO"):
         for frame in ImageSequence.Iterator(image):
-            yield frame.size
+            yield 1, frame.size
         return
     if image.format == "HEIF" and (heif_file := getattr(image, "_heif_file", None)) is not None:
         for heif_image in heif_file:
-            yield heif_image.size
+            yield 1, heif_image.size
         return
-    yield from itertools.repeat(image.size, getattr(image, "n_frames", 1))
+    yield getattr(image, "n_frames", 1), image.size
 
 
 def is_pdf_too_complex(
