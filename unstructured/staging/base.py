@@ -281,7 +281,10 @@ def _has_large_string(value: Any) -> bool:
     if isinstance(value, str):
         return len(value) > _JSON_STRING_FRAGMENT_SIZE
     if isinstance(value, dict):
-        return any(_has_large_string(item) for item in cast("dict[Any, Any]", value).values())
+        return any(
+            _has_large_string(key) or _has_large_string(item)
+            for key, item in cast("dict[Any, Any]", value).items()
+        )
     if isinstance(value, (list, tuple)):
         return any(_has_large_string(item) for item in cast("Sequence[Any]", value))
     return False

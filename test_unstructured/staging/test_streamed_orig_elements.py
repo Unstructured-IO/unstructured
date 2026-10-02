@@ -34,7 +34,11 @@ def test_json_without_large_strings_is_encoded_in_one_fragment():
 
 
 def test_json_fragments_stay_bounded_around_large_strings():
-    value = {"metadata": {"image_base64": "x" * 300000, "page_number": 1}, "text": "small"}
+    value = {
+        "metadata": {"image_base64": "x" * 300000, "page_number": 1},
+        "record_locator": {"k" * 300000: 1},
+        "text": "small",
+    }
     fragments = list(base._iter_json_fragments(value))
     assert "".join(fragments) == json.dumps(value, sort_keys=True)
     assert max(len(fragment) for fragment in fragments) <= 65536
