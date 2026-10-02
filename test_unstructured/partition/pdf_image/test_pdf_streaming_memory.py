@@ -198,3 +198,13 @@ def test_ocr_only_accepts_any_readable_seekable_stream():
     assert [element.text for element in actual] == [element.text for element in expected]
     assert not source.closed
     assert source.tell() == 0
+
+
+def test_nameless_buffered_stream_is_copied_through_read_and_seek():
+    payload = b"document" * 300000
+    source = io.BufferedReader(io.BytesIO(payload))
+    source.seek(3)
+    with pdf_image_utils._pdf_source_path("", source) as copied_path:
+        assert Path(copied_path).read_bytes() == payload
+    assert not source.closed
+    assert source.tell() == 0

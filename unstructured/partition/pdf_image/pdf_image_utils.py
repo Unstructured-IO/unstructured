@@ -427,7 +427,7 @@ def _pdf_source_path(filename: str, file: Optional[bytes | IO[bytes]]) -> Iterat
     """Yield a filesystem path for `filename` or a temporary on-disk copy of `file`.
 
     Any readable, seekable `file` is accepted. A `BytesIO` cursor is restored after the copy and
-    other streams are left rewound; buffered files on disk are re-read by name.
+    other streams are left rewound; buffered files with a path name are re-read from that path.
     """
     if file is None:
         yield filename
@@ -437,7 +437,9 @@ def _pdf_source_path(filename: str, file: Optional[bytes | IO[bytes]]) -> Iterat
         with open(path, "wb") as destination:
             if isinstance(file, bytes):
                 destination.write(file)
-            elif isinstance(file, (TextIOWrapper, BufferedReader)):
+            elif isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
+                getattr(file, "name", None), str
+            ):
                 with open(file.name, "rb") as source:
                     shutil.copyfileobj(source, destination, length=1024 * 1024)
             elif callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
