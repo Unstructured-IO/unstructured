@@ -7,7 +7,6 @@ unlike the `.ppt` format which was binary and proprietary.
 from __future__ import annotations
 
 from functools import cached_property
-from tempfile import SpooledTemporaryFile
 from typing import IO, Any, Iterator, Protocol, Sequence
 
 import pptx
@@ -35,6 +34,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
+from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_email_address,
@@ -449,9 +449,7 @@ class PptxPartitionerOptions:
             return self._file_path
 
         if self._file:
-            if isinstance(self._file, SpooledTemporaryFile):
-                self._file.seek(0)
-            return self._file
+            return rewind_if_spooled(self._file)
 
         raise ValueError(
             "No PPTX document specified, either `filename` or `file` argument must be provided"

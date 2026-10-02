@@ -10,7 +10,7 @@ from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import (
     exactly_one,
-    spooled_to_bytes_io_if_needed,
+    rewind_if_spooled,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.telemetry import partition_runtime_telemetry
@@ -49,7 +49,7 @@ def partition_tsv(
         assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
-        f = spooled_to_bytes_io_if_needed(file)
+        f = rewind_if_spooled(file)
         dataframe = pd.read_csv(f, sep="\t", header=header)
 
     html_table = HtmlTable.from_html_text(
