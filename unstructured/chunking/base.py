@@ -21,6 +21,7 @@ from unstructured.documents.elements import (
     ConsolidationStrategy,
     Element,
     ElementMetadata,
+    Image,
     Table,
     TableChunk,
     Title,
@@ -523,6 +524,55 @@ class PreChunker:
         return any(semantic_boundaries)
 
 
+class _MetadataOnlyImage(Image):
+    """Consolidation inputs for an empty-image run when originals are excluded."""
+
+    def __init__(self, image: Image):
+        super().__init__(text="")
+        self.field_values: dict[str, list[Any]] = {}
+        self._unique_values: dict[str, dict[Any, None]] = {}
+        self._record_ids: dict[str, dict[str, set[Any]]] = {}
+        self.add(image)
+
+    def add(self, image: Image) -> None:
+        strategies = ConsolidationStrategy.field_consolidation_strategies()
+        CS = ConsolidationStrategy
+        for name, value in image.metadata.known_fields.items():
+            if value is None:
+                continue
+            strategy = strategies[name]
+            if strategy is CS.DROP:
+                continue
+            if strategy is CS.FIRST:
+                self.field_values.setdefault(name, [value])
+            elif strategy is CS.LIST_CONCATENATE:
+                self.field_values.setdefault(name, [[]])[0].extend(value)
+            elif strategy is CS.LIST_UNIQUE:
+                unique = self._unique_values.setdefault(name, {})
+                kept = self.field_values.setdefault(name, [[]])[0]
+                for item in value:
+                    if item not in unique:
+                        unique[item] = None
+                        kept.append(item)
+            elif strategy is CS.STRING_CONCATENATE:
+                # Keep individual values: stripping a partially joined string would lose
+                # the separators contributed by empty values at either end of a run.
+                self.field_values.setdefault(name, []).append(value)
+            elif strategy is CS.DICT_LIST_UNIQUE:
+                merged = self.field_values.setdefault(name, [{}])[0]
+                record_ids = self._record_ids.setdefault(name, {})
+                for key, records in value.items():
+                    kept = merged.setdefault(key, [])
+                    seen = record_ids.setdefault(key, set())
+                    for record in records:
+                        record_id = tuple(sorted(record.items()))
+                        if record_id not in seen:
+                            seen.add(record_id)
+                            kept.append(record)
+            else:
+                raise NotImplementedError(f"metadata field {name!r} has no consolidation strategy")
+
+
 class PreChunkBuilder:
     """An element accumulator suitable for incrementally forming a pre-chunk.
 
@@ -562,7 +612,13 @@ class PreChunkBuilder:
             self._text_segments = []
             self._text_len = 0
 
-        self._elements.append(element)
+        if not self._opts.include_orig_elements and isinstance(element, Image) and not element.text:
+            if self._elements and isinstance(self._elements[-1], _MetadataOnlyImage):
+                self._elements[-1].add(element)
+            else:
+                self._elements.append(_MetadataOnlyImage(element))
+        else:
+            self._elements.append(element)
         if element.text:
             self._text_segments.append(element.text)
             # -- only track char-based length; token-based length computed on demand --
@@ -859,6 +915,10 @@ class _Chunker:
 
         # -- collect all non-None field values in a list for each field, in element-order --
         for e in self._elements:
+            if isinstance(e, _MetadataOnlyImage):
+                for field_name, values in e.field_values.items():
+                    field_values[field_name].extend(values)
+                continue
             for field_name, value in iter_populated_fields(e.metadata):
                 field_values[field_name].append(value)
 

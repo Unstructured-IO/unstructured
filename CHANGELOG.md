@@ -1,3 +1,9 @@
+## 0.27.14
+
+### Fixes
+
+- **Bound chunking memory for empty image streams.** When `include_orig_elements=False`, consolidate empty-image metadata incrementally and release image payloads that are excluded from chunk metadata. Preserve chunk boundaries and consolidation order. Serialize original elements incrementally, spilling compressed data above 1 MiB to temporary disk instead of retaining the complete original-element graph and JSON representation. Original-element identity and transport bytes remain unchanged.
+
 ## 0.27.11
 
 ### Fixes
