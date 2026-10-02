@@ -274,12 +274,30 @@ def elements_to_base64_gzipped_json(elements: Iterable[Element]) -> str:
         )
 
 
-def _iter_json_fragments(value: Any) -> Iterator[str]:
-    """Emit default, sorted-key JSON while escaping large strings in bounded fragments."""
+_JSON_STRING_FRAGMENT_SIZE = 65536
+
+
+def _has_large_string(value: Any) -> bool:
     if isinstance(value, str):
+        return len(value) > _JSON_STRING_FRAGMENT_SIZE
+    if isinstance(value, dict):
+        return any(_has_large_string(item) for item in cast("dict[Any, Any]", value).values())
+    if isinstance(value, (list, tuple)):
+        return any(_has_large_string(item) for item in cast("Sequence[Any]", value))
+    return False
+
+
+def _iter_json_fragments(value: Any) -> Iterator[str]:
+    """Emit default, sorted-key JSON while escaping large strings in bounded fragments.
+
+    Values without a large string are encoded in one call to the standard encoder.
+    """
+    if not _has_large_string(value):
+        yield json.dumps(value, sort_keys=True)
+    elif isinstance(value, str):
         yield '"'
-        for start in range(0, len(value), 65536):
-            yield json.dumps(value[start : start + 65536])[1:-1]
+        for start in range(0, len(value), _JSON_STRING_FRAGMENT_SIZE):
+            yield json.dumps(value[start : start + _JSON_STRING_FRAGMENT_SIZE])[1:-1]
         yield '"'
     elif isinstance(value, (list, tuple)):
         yield "["
@@ -288,7 +306,7 @@ def _iter_json_fragments(value: Any) -> Iterator[str]:
                 yield ", "
             yield from _iter_json_fragments(item)
         yield "]"
-    elif isinstance(value, dict):
+    else:
         yield "{"
         for index, (key, item) in enumerate(sorted(value.items())):
             if index:
@@ -303,8 +321,6 @@ def _iter_json_fragments(value: Any) -> Iterator[str]:
             yield ": "
             yield from _iter_json_fragments(item)
         yield "}"
-    else:
-        yield json.dumps(value)
 
 
 def elements_to_dicts(elements: Iterable[Element]) -> list[dict[str, Any]]:

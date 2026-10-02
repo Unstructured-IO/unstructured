@@ -28,6 +28,18 @@ def test_fragmented_json_is_byte_identical_to_the_sorted_standard_encoder(value)
     assert "".join(base._iter_json_fragments(value)) == json.dumps(value, sort_keys=True)
 
 
+def test_json_without_large_strings_is_encoded_in_one_fragment():
+    value = {"b": [1, 2.5, None], "a": {"c": "text"}}
+    assert list(base._iter_json_fragments(value)) == [json.dumps(value, sort_keys=True)]
+
+
+def test_json_fragments_stay_bounded_around_large_strings():
+    value = {"metadata": {"image_base64": "x" * 300000, "page_number": 1}, "text": "small"}
+    fragments = list(base._iter_json_fragments(value))
+    assert "".join(fragments) == json.dumps(value, sort_keys=True)
+    assert max(len(fragment) for fragment in fragments) <= 65536
+
+
 @pytest.mark.parametrize("count", [0, 1, 30])
 def test_streaming_compression_preserves_existing_bytes_and_input_metadata(count):
     elements = [
@@ -91,8 +103,8 @@ def test_metadata_json_preserves_original_and_continuation_field_order(empty):
         orig_elements=[] if empty else [NarrativeText("original", element_id="original")],
     )
     metadata.is_continuation = True
-    # Nonempty originals keep their insertion position. Empty originals historically
-    # moved to the end because empty list fields are omitted before serialization.
+    # Nonempty originals keep their insertion position. Empty originals are serialized last
+    # because empty list fields are omitted before the serialized originals are added.
     assert list(metadata.to_dict()) == (
         ["filename", "is_continuation", "orig_elements"]
         if empty

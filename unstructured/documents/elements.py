@@ -430,9 +430,9 @@ class ElementMetadata:
         from unstructured.staging.base import elements_to_base64_gzipped_json
 
         # Original elements are serialized separately, so copying that entire object graph
-        # would only create a temporary copy that is immediately replaced. Keep a placeholder
-        # for nonempty originals to preserve field order; empty lists historically moved to
-        # the end when they were removed below and then serialized.
+        # would only create a temporary copy that is immediately replaced. A placeholder keeps
+        # nonempty originals in field order; empty originals are dropped below with the other
+        # empty lists and appended last.
         meta_dict = copy.deepcopy(
             {
                 key: None if key == "orig_elements" else value
