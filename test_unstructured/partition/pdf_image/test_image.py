@@ -4,10 +4,11 @@ import io
 import os
 import pathlib
 import tempfile
-from typing import Any
+from typing import Any, Callable
 from unittest import mock
 
 import pytest
+from pi_heif import register_heif_opener
 from PIL import Image, ImageFile, TiffImagePlugin
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout
@@ -788,19 +789,62 @@ def test_check_image_max_pixels_exceeded_stops_at_the_frame_that_exceeds_the_lim
     assert max(call.args[1] for call in seek_.call_args_list) == 1
 
 
-def test_check_image_max_pixels_exceeded_charges_only_the_first_frame_of_other_formats(
-    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+def _save_frames(tmp_path: pathlib.Path, format: str, frames: list[Image.Image]) -> str:
+    file_path = str(tmp_path / f"frames.{format.lower()}")
+    frames[0].save(file_path, format=format, save_all=True, append_images=frames[1:])
+    return file_path
+
+
+def _distinct_frames(mode: str, size: tuple[int, int], n: int) -> list[Image.Image]:
+    """`n` frames that differ, so an encoder does not merge them."""
+    frames = []
+    for i in range(n):
+        frame = Image.new(mode, size, 0)
+        frame.putpixel((i, 0), 255 if mode != "P" else i + 1)
+        frames.append(frame)
+    return frames
+
+
+@pytest.mark.parametrize(
+    ("make_file", "n_frames", "total_pixels"),
+    [
+        # -- frames composited onto the canvas, counted from metadata --
+        (lambda p: _save_frames(p, "PNG", _distinct_frames("RGB", (40, 40), 3)), 3, 3 * 1600),
+        (lambda p: _save_frames(p, "WEBP", _distinct_frames("RGB", (40, 40), 3)), 3, 3 * 1600),
+        (lambda p: _save_frames(p, "GIF", _distinct_frames("P", (40, 30), 3)), 3, 3 * 1200),
+        # -- frames of different sizes, read from each frame's header --
+        (
+            lambda p: _save_frames(
+                p, "MPO", [Image.new("RGB", (40, 30)), Image.new("RGB", (400, 300))]
+            ),
+            2,
+            40 * 30 + 400 * 300,
+        ),
+        # -- images of different sizes, read from the HEIF container --
+        (
+            lambda p: example_doc_path("img/multi-image-64x48-640x480.heic"),
+            2,
+            64 * 48 + 640 * 480,
+        ),
+    ],
+    ids=["apng", "webp", "gif", "mpo", "heif"],
+)
+def test_check_image_max_pixels_exceeded_charges_every_frame_without_decoding_any(
+    make_file: Callable[[pathlib.Path], str],
+    n_frames: int,
+    total_pixels: int,
+    tmp_path: pathlib.Path,
+    monkeypatch: pytest.MonkeyPatch,
+    request: pytest.FixtureRequest,
 ):
-    # -- an APNG's seek() decodes the frame, so only the first 40x40 frame is measured --
-    frames = [Image.new("RGB", (40, 40), (i, 0, 0)) for i in range(3)]
-    file_path = str(tmp_path / "animated.png")
-    frames[0].save(file_path, save_all=True, append_images=frames[1:])
+    register_heif_opener()
+    file_path = make_file(tmp_path)
     pixel_allocations = request.getfixturevalue("pixel_allocations")
 
-    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "1600")
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels))
     pdf.check_image_max_pixels_exceeded(filename=file_path)
-    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "1599")
-    with pytest.raises(UnprocessableEntityError, match="first 1 frame"):
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels - 1))
+    with pytest.raises(UnprocessableEntityError, match=f"first {n_frames} frame"):
         pdf.check_image_max_pixels_exceeded(filename=file_path)
 
     assert pixel_allocations == []

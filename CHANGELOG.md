@@ -2,7 +2,7 @@
 
 ### Fixes
 
-- **Reject images whose frames decode to too many pixels instead of exhausting memory.** Each frame of a multi-frame TIFF is decoded to RGB, and `hi_res` holds every frame at once, but blank frames compress to almost nothing, so a few-hundred-KB file could decode to tens of GB. `partition_image()` now measures the image before partitioning it, without allocating or decoding pixels, and raises `UnprocessableEntityError` above `IMAGE_MAX_TOTAL_PIXELS` pixels (default 500,000,000). With `hi_res` a TIFF's frames are summed from their headers; otherwise, and for formats whose frames cannot be measured without decoding them, the first frame is measured.
+- **Reject images whose frames decode to too many pixels instead of exhausting memory.** Each frame of a multi-frame TIFF is decoded to RGB, and `hi_res` holds every frame at once, but blank frames compress to almost nothing, so a few-hundred-KB file could decode to tens of GB. `partition_image()` now measures the image before partitioning it, without allocating or decoding pixels, and raises `UnprocessableEntityError` above `IMAGE_MAX_TOTAL_PIXELS` pixels (default 500,000,000). With `hi_res`, which decodes every frame, every frame is charged: TIFF and MPO frames from their headers, HEIF images from the container, and canvas-sized frames (e.g. APNG, animated WebP, GIF) from their count; otherwise only the first frame is measured.
 
 ## 0.27.11
 
