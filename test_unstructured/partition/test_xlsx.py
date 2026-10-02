@@ -307,8 +307,9 @@ def test_partition_xlsx_with_more_than_1k_cells():
 
 
 def test_partition_xlsx_rejects_a_stray_far_cell_before_pandas_reads_it(
-    tmp_path: Path, mocker: MockerFixture
+    tmp_path: Path, mocker: MockerFixture, monkeypatch: pytest.MonkeyPatch
 ):
+    monkeypatch.delenv("XLSX_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
     # -- one cell at row 1M makes Pandas allocate 1M x 5 cells from a few-KB file --
     file_path = _write_xlsx(tmp_path, {"Sheet": {(1, 1): "a", (2, 3): "b", (1_048_576, 5): "c"}})
     read_excel_ = mocker.patch.object(pd, "read_excel")
@@ -319,7 +320,10 @@ def test_partition_xlsx_rejects_a_stray_far_cell_before_pandas_reads_it(
     read_excel_.assert_not_called()
 
 
-def test_partition_xlsx_partitions_a_stray_far_cell_within_the_limit(tmp_path: Path):
+def test_partition_xlsx_partitions_a_stray_far_cell_within_the_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("XLSX_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
     file_path = _write_xlsx(tmp_path, {"Sheet": {(1, 1): "a", (1, 2): "b", (200_000, 3): "c"}})
 
     elements = partition_xlsx(file_path)
@@ -347,7 +351,9 @@ def test_partition_xlsx_limits_cells_summed_across_worksheets(
 def test_partition_xlsx_applies_the_cell_limit_to_xls_files(
     max_cells: str | None, raises: bool, monkeypatch: pytest.MonkeyPatch
 ):
-    if max_cells is not None:
+    if max_cells is None:
+        monkeypatch.delenv("XLSX_MAX_CELLS", raising=False)
+    else:
         monkeypatch.setenv("XLSX_MAX_CELLS", max_cells)
 
     if raises:
