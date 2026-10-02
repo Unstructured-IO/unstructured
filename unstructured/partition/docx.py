@@ -1086,9 +1086,14 @@ class _DocxPartitioner:
 
 
 def _row_grid_width(row: _Row) -> int:
-    """The number of layout-grid positions `row` declares, without expanding any of them."""
+    """The number of layout-grid positions `row` declares, without expanding any of them.
+
+    A malformed negative count expands to no positions, so it counts as 0 rather than offsetting
+    the positive counts it would otherwise cancel.
+    """
     tr = row._tr
-    return tr.grid_before + sum(tc.grid_span for tc in tr.tc_lst) + tr.grid_after
+    counts = [tr.grid_before, *(tc.grid_span for tc in tr.tc_lst), tr.grid_after]
+    return sum(max(count, 0) for count in counts)
 
 
 # ================================================================================================

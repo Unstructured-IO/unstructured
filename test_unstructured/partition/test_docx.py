@@ -969,7 +969,15 @@ def _write_docx_with_spanned_tables(
     return file_path
 
 
-@pytest.mark.parametrize(("grid_span", "grid_before"), [(10_000_000, 0), (1, 10_000_000)])
+@pytest.mark.parametrize(
+    ("grid_span", "grid_before"),
+    [
+        (10_000_000, 0),
+        (1, 10_000_000),
+        # -- a negative count expands to nothing and must not cancel the positive span --
+        (10_000_000, -10_000_000),
+    ],
+)
 def test_partition_docx_omits_html_for_a_table_whose_grid_is_too_large(
     grid_span: int, grid_before: int, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ):
