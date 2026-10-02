@@ -2,7 +2,7 @@
 
 ### Fixes
 
-- **Bound PDF OCR upload and render memory.** Copy uploaded OCR inputs to temporary files in 1 MiB blocks, render OCR-only PDFs one page at a time, and close owned page images after OCR. Uploads may be any readable, seekable stream. Preserve native rendered pixels, image metadata, output order and caller-owned upload streams. Large uploaded PDFs now use temporary disk instead of a full-size in-memory copy; retained output still scales with extracted content.
+- **Bound PDF OCR upload and render memory.** Copy uploaded OCR inputs to temporary files in 1 MiB blocks, render OCR-only PDFs one page at a time, and close owned page images after OCR. Uploads may be any readable, seekable stream. Preserve native rendered pixels, image metadata, output order and caller-owned upload streams. OCR rendering reads uploads from temporary disk instead of holding a full-size in-memory copy; retained output still scales with extracted content.
 
 ## 0.27.11
 
