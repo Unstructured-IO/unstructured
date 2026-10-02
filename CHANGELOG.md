@@ -1,3 +1,9 @@
+## 0.27.13
+
+### Fixes
+
+- **Partition spreadsheets whose only far-away cells are below the data instead of rejecting them.** A worksheet with a small table and one value near row 1,048,576 spans over a million rows, so it was rejected by `XLSX_MAX_CELLS` (or, without the limit, read as a dense data-frame of empty rows). XLSX worksheets are now read with each run of empty rows collapsed to a single empty row, and the cell limit measures that compacted span. Partitioner output is unchanged: one empty row still separates the same tables, and subtables never contain an all-empty row. A 2 MB customer workbook with 61 values and one at row 1,048,552 now partitions in under a second using ~100 MB.
+
 ## 0.27.12
 
 ### Fixes
