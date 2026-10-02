@@ -1,3 +1,9 @@
+## 0.27.12
+
+### Fixes
+
+- **Release image extraction buffers after each crop.** Image and PDF figure extraction closes owned decoded pages, crops, and JPEG buffers promptly, and copies image uploads to its existing temporary file in bounded chunks. JPEG payloads, saved files, metadata, and caller-owned streams retain their existing behavior.
+
 ## 0.27.11
 
 ### Fixes
