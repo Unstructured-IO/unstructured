@@ -10,6 +10,9 @@ Run from the repository root:
 
 Use ``--case`` to run one generated shape, or ``--work-dir`` to keep the generated
 XLSX files for inspection.
+
+Peak RSS is sampled every 5 ms while detection runs, so short-lived allocations
+between samples can be missed; treat it as a lower bound on the true peak.
 """
 
 from __future__ import annotations
@@ -87,7 +90,10 @@ def main() -> None:
 
     with _workspace(args.work_dir) as work_dir:
         print(f"Generated worksheet directory: {work_dir}")
-        print("case,algorithm,components,seconds,baseline_rss_mb,peak_rss_mb,peak_delta_mb")
+        print(
+            "case,algorithm,components,seconds,baseline_rss_mb,"
+            "sampled_peak_rss_mb,sampled_peak_delta_mb"
+        )
 
         for case in cases:
             worksheet_path = _write_worksheet(case, work_dir, args.storage)
@@ -103,6 +109,13 @@ def main() -> None:
                 )
 
 
+def _positive_int(value: str) -> int:
+    number = int(value)
+    if number < 1:
+        raise argparse.ArgumentTypeError(f"must be a positive integer, got {value}")
+    return number
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -112,7 +125,7 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--repeat",
-        type=int,
+        type=_positive_int,
         default=3,
         help="Number of times to repeat each connected-components measurement.",
     )
@@ -282,12 +295,14 @@ def _measure(benchmark_function: Callable[[], list[_ConnectedComponent]]) -> Mea
 
     sampler = threading.Thread(target=sample_rss)
     sampler.start()
-    start_time = time.perf_counter()
-    components = benchmark_function()
-    seconds = time.perf_counter() - start_time
-    peak_rss = max(peak_rss, process.memory_info().rss)
-    stop_sampling.set()
-    sampler.join()
+    try:
+        start_time = time.perf_counter()
+        components = benchmark_function()
+        seconds = time.perf_counter() - start_time
+        peak_rss = max(peak_rss, process.memory_info().rss)
+    finally:
+        stop_sampling.set()
+        sampler.join()
 
     return Measurement(
         seconds=seconds,
