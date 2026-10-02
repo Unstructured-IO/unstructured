@@ -89,12 +89,13 @@ def partition_csv(
 def read_delimited_text(
     file: IO[bytes], *, sep: str | None, header: int | None, encoding: str | None
 ) -> pd.DataFrame:
-    """Read delimited text from `file` into a data-frame, with its line endings normalized.
+    """Read delimited text from `file` into a data-frame, with each lone "\r" made a "\n".
 
-    Pandas 2.x's C tokenizer mishandles a "\r" line ending followed by a whitespace-only line
+    Pandas 2.x's C tokenizer mishandles a lone "\r" line ending followed by a whitespace-only line
     while skipping blank lines: it emits 2^18 empty rows for each, so a few bytes become millions
-    of rows inside `pd.read_csv()`, before any limit can be checked. Every line ending is therefore
-    converted to "\n" (including inside quoted fields) and given to Pandas as its only terminator.
+    of rows inside `pd.read_csv()`, before any limit can be checked. A "\r" not followed by "\n" is
+    therefore converted to "\n" first. "\r\n" is left alone, so text inside quoted fields of a
+    "\r\n" file is unchanged.
 
     When `sep` is `None` the delimiter is sniffed from the first line by `_sniff_delimiter()`, the
     same way `check_cell_count()` measures it, rather than leaving Pandas to sniff its own.
@@ -103,19 +104,22 @@ def read_delimited_text(
     # -- like Pandas, drop a UTF-8 byte-order mark --
     if codecs.lookup(encoding).name == "utf-8":
         encoding = "utf-8-sig"
-    text = _normalize_line_endings(file.read().decode(encoding))
+    text = _LONE_CARRIAGE_RETURN.sub("\n", file.read().decode(encoding))
 
     if sep is None:
-        sep = _sniff_delimiter(text[: text.find("\n") + 1] if "\n" in text else text)
+        first_line = text[: text.find("\n") + 1] if "\n" in text else text
+        sep = _sniff_delimiter(_normalize_line_endings(first_line))
         if sep is None:
             # -- no usable delimiter, so the file is one column; split on a character it lacks --
             sep = next((c for c in _ABSENT_DELIMITER_CANDIDATES if c not in text), None)
             if sep is None:
                 raise UnprocessableEntityError("Could not determine the delimiter of the file.")
-        # -- the C engine does not sniff and the Python engine needs no custom line terminator,
-        # -- so keep the Python engine this path has always used --
+        # -- the C engine does not sniff, so keep the Python engine this path has always used --
         return pd.read_csv(io.StringIO(text), sep=sep, header=header, engine="python")
-    return pd.read_csv(io.StringIO(text), sep=sep, header=header, lineterminator="\n")
+    return pd.read_csv(io.StringIO(text), sep=sep, header=header)
+
+
+_LONE_CARRIAGE_RETURN = re.compile("\r(?!\n)")
 
 
 def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | None) -> None:
@@ -124,8 +128,8 @@ def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | Non
     Pandas sizes the data-frame by the first record and pads every shorter record out to that
     width, so a tiny file whose first line is a long run of delimiters can span millions of cells.
     The span is measured here before Pandas allocates anything, reading `file` in fixed-size chunks
-    from its current position, with line endings normalized as `read_delimited_text()` does, and
-    the scan stops as soon as the limit is passed:
+    from its current position, with each line ending counted as one "\n", and the scan stops as
+    soon as the limit is passed:
 
     - columns are the fields of the first record, counted with Pandas' quoting rules without
       building the fields;
