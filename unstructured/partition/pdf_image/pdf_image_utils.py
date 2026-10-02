@@ -426,7 +426,8 @@ def convert_pdf_to_images(
 def _pdf_source_path(filename: str, file: Optional[bytes | IO[bytes]]) -> Iterator[str]:
     """Yield a filesystem path for `filename` or a temporary on-disk copy of `file`.
 
-    A `BytesIO` cursor is restored after the copy and a `SpooledTemporaryFile` is left rewound.
+    Any readable, seekable `file` is accepted. A `BytesIO` cursor is restored after the copy and
+    other streams are left rewound; buffered files on disk are re-read by name.
     """
     if file is None:
         yield filename
@@ -436,16 +437,16 @@ def _pdf_source_path(filename: str, file: Optional[bytes | IO[bytes]]) -> Iterat
         with open(path, "wb") as destination:
             if isinstance(file, bytes):
                 destination.write(file)
-            elif isinstance(file, (BytesIO, tempfile.SpooledTemporaryFile)):
-                position = 0 if isinstance(file, tempfile.SpooledTemporaryFile) else file.tell()
+            elif isinstance(file, (TextIOWrapper, BufferedReader)):
+                with open(file.name, "rb") as source:
+                    shutil.copyfileobj(source, destination, length=1024 * 1024)
+            elif callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
+                position = file.tell() if isinstance(file, BytesIO) else 0
                 try:
                     file.seek(0)
                     shutil.copyfileobj(file, destination, length=1024 * 1024)
                 finally:
                     file.seek(position)
-            elif isinstance(file, (TextIOWrapper, BufferedReader)):
-                with open(file.name, "rb") as source:
-                    shutil.copyfileobj(source, destination, length=1024 * 1024)
             else:
                 raise ValueError("Invalid file-like object type")
         yield path

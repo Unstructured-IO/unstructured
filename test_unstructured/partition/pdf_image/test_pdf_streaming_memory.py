@@ -162,3 +162,39 @@ def test_single_page_render_matches_native_batch_pixels_and_metadata(fixture):
         assert candidate.tobytes() == baseline.tobytes()
         baseline.close()
         candidate.close()
+
+
+class ReadSeekStream(io.RawIOBase):
+    """A readable, seekable stream that is not a `BytesIO`, spool or buffered file."""
+
+    def __init__(self, payload: bytes):
+        self._buffer = io.BytesIO(payload)
+
+    def readable(self):
+        return True
+
+    def seekable(self):
+        return True
+
+    def readinto(self, buffer):
+        return self._buffer.readinto(buffer)
+
+    def seek(self, offset, whence=io.SEEK_SET):
+        return self._buffer.seek(offset, whence)
+
+    def tell(self):
+        return self._buffer.tell()
+
+
+def test_ocr_only_accepts_any_readable_seekable_stream():
+    from test_unstructured.unit_utils import example_doc_path
+    from unstructured.partition import pdf
+
+    path = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    expected = pdf._partition_pdf_or_image_with_ocr(filename=path)
+    source = ReadSeekStream(Path(path).read_bytes())
+    source.seek(5)
+    actual = pdf._partition_pdf_or_image_with_ocr(file=source)
+    assert [element.text for element in actual] == [element.text for element in expected]
+    assert not source.closed
+    assert source.tell() == 0
