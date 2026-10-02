@@ -199,11 +199,12 @@ def save_elements(
             try:
                 image_path = image_paths[page_index]
                 # The crop owns its pixels; release the decoded page before encoding it.
-                with Image.open(image_path) as image:
-                    try:
-                        cropped_image = image.crop(padded_bbox)
-                    finally:
-                        image.close()
+                # Image.close() frees the pixel data, which the context manager does not.
+                image = Image.open(image_path)
+                try:
+                    cropped_image = image.crop(padded_bbox)
+                finally:
+                    image.close()
                 try:
                     # PNG images with transparency need conversion before JPEG encoding.
                     if cropped_image.mode == "RGBA":

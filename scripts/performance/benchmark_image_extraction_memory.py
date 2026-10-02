@@ -1,4 +1,4 @@
-"""Measure actual PIL image extraction; output hashes compare main and candidate.
+"""Measure peak memory of PIL image extraction and hash its output for cross-checkout comparison.
 
 Run with PYTHONPATH pointing at the desired library checkout. The deterministic
 100-megapixel BMP is written a row at a time, so fixture generation is bounded.
