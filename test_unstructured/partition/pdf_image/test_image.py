@@ -979,11 +979,30 @@ def test_check_image_max_pixels_exceeded_charges_a_gif_canvas_that_grows(
     assert pixel_allocations == []
 
 
+def test_check_image_max_pixels_exceeded_reads_a_gif_from_offset_0_like_pillow(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- `Image.open()` reads a stream from offset 0 whatever its position, so the frames must be
+    # -- measured from there too; read from the caller's position they would be misaligned --
+    data = _gif_with_frames((10, 10), [(0, 0, 10, 10), (0, 0, 100, 80), (0, 0, 10, 10)])
+    total_pixels = 10 * 10 + 2 * 100 * 80
+    file = io.BytesIO(data)
+    file.seek(20)
+
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels))
+    pdf.check_image_max_pixels_exceeded(file=file)
+    assert file.tell() == 20
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels - 1))
+    with pytest.raises(UnprocessableEntityError, match=f"first 3 frame.* {total_pixels:,} pixels"):
+        pdf.check_image_max_pixels_exceeded(file=file)
+    assert file.tell() == 20
+
+
 def test_iter_frame_runs_charges_a_declared_frame_count_as_one_run():
     # -- deterministic work: the 2^31 - 1 frames an APNG declares are one run, never a loop --
     file = io.BytesIO(_apng_declaring_frames(2**31 - 1))
     with Image.open(file) as image:
-        runs = list(pdf._iter_frame_runs(image, file, 0))
+        runs = list(pdf._iter_frame_runs(image, file))
 
     assert runs == [(2**31 - 1, (2, 1))]
 

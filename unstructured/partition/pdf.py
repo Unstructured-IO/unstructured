@@ -677,7 +677,7 @@ def check_image_max_pixels_exceeded(
     try:
         with PILImage.open(file if file is not None else filename) as image:
             source = file if file is not None else filename
-            runs = _iter_frame_runs(image, source, start) if all_frames else iter([(1, image.size)])
+            runs = _iter_frame_runs(image, source) if all_frames else iter([(1, image.size)])
             n_seen, total_pixels = 0, 0
             for n_frames, (width, height) in runs:
                 frame_pixels = width * height
@@ -699,7 +699,7 @@ def check_image_max_pixels_exceeded(
 
 
 def _iter_frame_runs(
-    image: PILImage.Image, source: IO[bytes] | str, start: int
+    image: PILImage.Image, source: IO[bytes] | str
 ) -> Iterator[tuple[int, tuple[int, int]]]:
     """Generate `(n_frames, (width, height))` for each run of same-sized frames of `image`.
 
@@ -712,7 +712,8 @@ def _iter_frame_runs(
     - pi-heif reads the size of every image in a HEIF container when it opens it, one run each;
     - a GIF frame is decoded onto a canvas that grows to fit any frame extending past it, which
       Pillow's frame count does not see, so `_iter_gif_canvas_sizes()` reads each frame's
-      descriptor from `source` (read from `start` when it is a stream);
+      descriptor from `source`. A stream is read from its start, as `Image.open()` reads it from
+      offset 0 whatever its position;
     - the frames of other formats (e.g. APNG, animated WebP) are composited onto a canvas the size
       of the image, so they are one run of `n_frames` frames. `n_frames` can be a count the file
       merely declares (APNG's `acTL` allows 2^31), so it is never iterated.
@@ -730,7 +731,7 @@ def _iter_frame_runs(
             with open(source, "rb") as f:
                 yield from ((1, size) for size in _iter_gif_canvas_sizes(f))
         else:
-            source.seek(start)
+            source.seek(0)
             yield from ((1, size) for size in _iter_gif_canvas_sizes(source))
         return
     yield getattr(image, "n_frames", 1), image.size
