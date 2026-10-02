@@ -665,6 +665,9 @@ def check_image_max_pixels_exceeded(
                         f" frames (IMAGE_MAX_TOTAL_PIXELS): its first {n_frames:,} frame(s) hold"
                         f" {total_pixels:,} pixels."
                     )
+    except PILImage.DecompressionBombError as e:
+        # -- PIL refuses a single frame over twice `MAX_IMAGE_PIXELS` at open or seek --
+        raise UnprocessableEntityError(f"Image has too many pixels: {e}") from e
     except UnidentifiedImageError:
         # -- not an image PIL can read; nothing will decode it, so leave the error to the caller --
         return

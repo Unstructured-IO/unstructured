@@ -718,6 +718,17 @@ def test_check_image_max_pixels_exceeded_sums_pixels_across_frames(
         check()
 
 
+def test_check_image_max_pixels_exceeded_reports_a_decompression_bomb_frame_as_unprocessable(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    # -- PIL refuses to open a frame over twice `MAX_IMAGE_PIXELS` --
+    file_path = _write_multi_frame_tiff(tmp_path, n_frames=1, side=100)
+    monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 1000)
+
+    with pytest.raises(UnprocessableEntityError, match="too many pixels"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path)
+
+
 def test_check_image_max_pixels_exceeded_ignores_a_file_that_is_not_an_image():
     pdf.check_image_max_pixels_exceeded(file=b"not an image")
 
