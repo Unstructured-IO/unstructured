@@ -20,11 +20,19 @@ from unstructured.documents.elements import ElementMetadata, Image
 from unstructured.partition.pdf_image.pdf_image_utils import save_elements
 
 
+def _positive_int(value: str) -> int:
+    """Accept only positive dimensions and extraction counts."""
+    result = int(value)
+    if result <= 0:
+        raise argparse.ArgumentTypeError("must be greater than zero")
+    return result
+
+
 def main() -> None:
     """Extract full-page figures from one high-resolution raster upload."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--side", type=int, default=10000)
-    parser.add_argument("--count", type=int, default=2)
+    parser.add_argument("--side", type=_positive_int, default=10000)
+    parser.add_argument("--count", type=_positive_int, default=2)
     args = parser.parse_args()
     side = args.side
     stride = (side * 3 + 3) // 4 * 4
