@@ -7,8 +7,11 @@ from __future__ import annotations
 import io
 import sys
 import tempfile
+from pathlib import Path
 from typing import Any
 
+import networkx as nx
+import numpy as np
 import pandas as pd
 import pandas.testing as pdt
 import pytest
@@ -31,6 +34,7 @@ from unstructured.documents.elements import ListItem, Table, Text, Title
 from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.xlsx import (
     _ConnectedComponent,
+    _ConnectedComponents,
     _SubtableParser,
     _XlsxPartitionerOptions,
     partition_xlsx,
@@ -297,6 +301,91 @@ def test_partition_xlsx_with_more_than_1k_cells():
         sys.setrecursionlimit(old_recursion_limit)
 
 
+def test_partition_xlsx_generated_dense_table_preserves_text_and_html(tmp_path: Path):
+    xlsx_path = _write_generated_xlsx(
+        tmp_path,
+        [
+            ["Team", "Location", "Stanley Cups"],
+            ["Blues", "STL", 1],
+            ["Flyers", "PHI", 2],
+        ],
+    )
+
+    elements = partition_xlsx(str(xlsx_path))
+
+    assert elements == [Table("Team Location Stanley Cups Blues STL 1 Flyers PHI 2")]
+    assert elements[0].metadata.text_as_html == (
+        "<table>"
+        "<tr><td>Team</td><td>Location</td><td>Stanley Cups</td></tr>"
+        "<tr><td>Blues</td><td>STL</td><td>1</td></tr>"
+        "<tr><td>Flyers</td><td>PHI</td><td>2</td></tr>"
+        "</table>"
+    )
+    assert elements[0].metadata.page_name == "Sheet1"
+    assert elements[0].metadata.page_number == 1
+
+
+def test_partition_xlsx_generated_sparse_far_edge_cells_preserves_text_and_html(tmp_path: Path):
+    rows = [[None for _ in range(10)] for _ in range(8)]
+    rows[0][0] = "Far Edge Title"
+    rows[6][8] = "Key"
+    rows[6][9] = "Value"
+    rows[7][8] = "answer"
+    rows[7][9] = 42
+    xlsx_path = _write_generated_xlsx(tmp_path, rows)
+
+    elements = partition_xlsx(str(xlsx_path))
+
+    assert elements == [Title("Far Edge Title"), Table("Key Value answer 42")]
+    assert elements[1].metadata.text_as_html == (
+        "<table><tr><td>Key</td><td>Value</td></tr><tr><td>answer</td><td>42</td></tr></table>"
+    )
+
+
+def test_partition_xlsx_generated_separated_blocks_and_single_cell_rows(tmp_path: Path):
+    xlsx_path = _write_generated_xlsx(
+        tmp_path,
+        [
+            ["North Report", None, None, None, None, None],
+            ["Region", "Revenue", None, None, None, None],
+            ["North", 100, None, None, None, None],
+            [None, "Reviewed", None, None, None, None],
+            [None, None, None, None, None, None],
+            [None, None, None, "South Report", None, None],
+            [None, None, None, "Region", "Revenue", None],
+            [None, None, None, "EU", 200, None],
+            [None, None, None, None, "Approved", None],
+            [None, None, None, None, None, None],
+            ["A", "B", None, None, "C", "D"],
+            [1, 2, None, None, 3, 4],
+        ],
+    )
+
+    elements = partition_xlsx(str(xlsx_path))
+
+    assert elements == [
+        Title("North Report"),
+        Table("Region Revenue North 100"),
+        Title("Reviewed"),
+        Title("South Report"),
+        Table("Region Revenue EU 200"),
+        Title("Approved"),
+        Table("A B C D 1 2 3 4"),
+    ]
+    assert elements[1].metadata.text_as_html == (
+        "<table><tr><td>Region</td><td>Revenue</td></tr><tr><td>North</td><td>100</td></tr></table>"
+    )
+    assert elements[4].metadata.text_as_html == (
+        "<table><tr><td>Region</td><td>Revenue</td></tr><tr><td>EU</td><td>200</td></tr></table>"
+    )
+    assert elements[6].metadata.text_as_html == (
+        "<table>"
+        "<tr><td>A</td><td>B</td><td/><td/><td>C</td><td>D</td></tr>"
+        "<tr><td>1</td><td>2</td><td/><td/><td>3</td><td>4</td></tr>"
+        "</table>"
+    )
+
+
 # ================================================================================================
 # OTHER ARGS
 # ================================================================================================
@@ -340,6 +429,12 @@ def test_partition_xlsx_with_find_subtables_False_and_infer_table_structure_Fals
 # These test components used by `partition_xlsx()` in isolation such that all edge cases can be
 # exercised.
 # ------------------------------------------------------------------------------------------------
+
+
+def _write_generated_xlsx(tmp_path: Path, rows: list[list[Any]]) -> Path:
+    xlsx_path = tmp_path / "generated.xlsx"
+    pd.DataFrame(rows).to_excel(xlsx_path, index=False, header=False)
+    return xlsx_path
 
 
 class Describe_XlsxPartitionerOptions:
@@ -612,3 +707,84 @@ class Describe_SubtableParser:
         )
 
         assert trailing_single_cell_row_texts == expected_value
+
+
+def _legacy_xlsx_components(worksheet_df):
+    """Original dense graph implementation, retained only as a compatibility oracle."""
+    rows, cols = worksheet_df.shape
+    graph = nx.grid_2d_graph(rows, cols)
+    graph.remove_nodes_from(
+        (row, col)
+        for row in range(rows)
+        for col in range(cols)
+        if pd.isna(worksheet_df.iloc[row, col])
+    )
+    return list(
+        _ConnectedComponents(worksheet_df)._merge_overlapping_tables(
+            [_ConnectedComponent(worksheet_df, cells) for cells in nx.connected_components(graph)]
+        )
+    )
+
+
+def test_sparse_xlsx_matches_legacy_for_every_three_by_three_occupancy():
+    # Exhaustive shapes cover diagonal separation, holes, bridges, and row-overlap merging.
+    for bits in range(1 << 9):
+        frame = pd.DataFrame(
+            [
+                ["value" if bits & (1 << (row * 3 + col)) else None for col in range(3)]
+                for row in range(3)
+            ]
+        )
+        actual = list(_ConnectedComponents(frame))
+        expected = _legacy_xlsx_components(frame)
+        assert [c._cell_coordinate_set for c in actual] == [
+            c._cell_coordinate_set for c in expected
+        ], bits
+
+
+@pytest.mark.parametrize("include_header", [False, True])
+@pytest.mark.parametrize("infer_table_structure", [False, True])
+def test_sparse_xlsx_serialized_output_matches_legacy(
+    tmp_path, monkeypatch, include_header, infer_table_structure
+):
+    rng = np.random.default_rng(4357)
+    path = tmp_path / "compatibility.xlsx"
+    with pd.ExcelWriter(path) as writer:
+        for index, density in enumerate([0.0, 0.05, 0.3, 0.7, 1.0]):
+            values = rng.choice([None, "", "text", 0, False, 3.5], size=(12, 9))
+            values[rng.random((12, 9)) > density] = None
+            pd.DataFrame(values).to_excel(
+                writer, sheet_name=f"case{index}", index=False, header=False
+            )
+    kwargs = {"include_header": include_header, "infer_table_structure": infer_table_structure}
+    actual = [element.to_dict() for element in partition_xlsx(str(path), **kwargs)]
+    monkeypatch.setattr(
+        _ConnectedComponents,
+        "_connected_components",
+        property(lambda self: _legacy_xlsx_components(self._worksheet_df)),
+    )
+    expected = [element.to_dict() for element in partition_xlsx(str(path), **kwargs)]
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "stanley-cups.xlsx",
+        "emoji.xlsx",
+        "empty.xlsx",
+        "more-than-1k-cells.xlsx",
+        "xlsx-subtable-cases.xlsx",
+        "language-docs/eng_spa.xlsx",
+    ],
+)
+def test_sparse_xlsx_existing_workbook_output_matches_legacy(filename, monkeypatch):
+    path = str(Path("example-docs") / filename)
+    actual = [element.to_dict() for element in partition_xlsx(path)]
+    monkeypatch.setattr(
+        _ConnectedComponents,
+        "_connected_components",
+        property(lambda self: _legacy_xlsx_components(self._worksheet_df)),
+    )
+    expected = [element.to_dict() for element in partition_xlsx(path)]
+    assert actual == expected
