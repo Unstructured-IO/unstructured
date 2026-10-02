@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
@@ -77,12 +78,13 @@ def process_data_with_ocr(
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
-    data_bytes = data if isinstance(data, bytes) else data.read()
-
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
         with open(tmp_file_path, "wb") as tmp_file:
-            tmp_file.write(data_bytes)
+            if isinstance(data, bytes):
+                tmp_file.write(data)
+            else:
+                shutil.copyfileobj(data, tmp_file, length=1024 * 1024)
 
         merged_layouts = process_file_with_ocr(
             filename=tmp_file_path,
