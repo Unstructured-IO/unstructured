@@ -1,4 +1,4 @@
-## 0.27.11
+## 0.27.13
 
 ### Fixes
 
@@ -6,6 +6,18 @@
   replaces element IDs or stored metadata with attributes from the JSON container. Explicit
   `metadata_filename` and `metadata_last_modified` overrides remain supported, while arbitrary
   JSON continues to receive JSON source metadata and deterministic IDs.
+
+## 0.27.12
+
+### Fixes
+
+- **Reject spreadsheets whose worksheets span too many cells instead of exhausting memory.** `partition_xlsx()` read each worksheet into a dense data-frame sized by its farthest populated cell, so a few-KB XLSX or XLS file with one far-away cell could grow to millions of cells and use tens of GB. The span of every worksheet is now measured before it is read, streaming the file without materializing cells, and a workbook spanning more than `XLSX_MAX_CELLS` cells in total (default 5,000,000) raises `UnprocessableEntityError`. Subtable detection also now builds its graph from populated cells only, so sparse worksheets within the limit use far less memory.
+
+## 0.27.11
+
+### Fixes
+
+- **Keep the labels of auto-numbered DOCX lists.** Word computes labels such as `1.`, `a)` and `iv.` from `numbering.xml` at render time, so `partition_docx()` returned `ListItem` text without them. The label is now prefixed to the item text, resolved from the paragraph or its style chain and counted per level in document order. Bullets stay unprefixed and numbering that cannot be resolved falls back to the previous text.
 
 ## 0.27.10
 
