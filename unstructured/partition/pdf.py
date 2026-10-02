@@ -15,6 +15,7 @@ from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
+from PIL import ImageSequence, UnidentifiedImageError
 from pypdf import PdfReader
 from pypdf.errors import LimitReachedError
 from pypdf.generic import ArrayObject, IndirectObject
@@ -305,6 +306,9 @@ def partition_pdf_or_image(
     register_heif_opener()
 
     validate_strategy(strategy, is_image)
+
+    if is_image:
+        check_image_max_pixels_exceeded(filename=filename, file=file)
 
     last_modified = get_last_modified_date(filename) if filename else None
     pdfminer_config = PDFMinerConfig(
@@ -632,6 +636,41 @@ def check_pdf_hi_res_max_pages_exceeded(
             raise PageCountExceededError(
                 document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
             )
+
+
+def check_image_max_pixels_exceeded(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+) -> None:
+    """Raise `UnprocessableEntityError` when the image's frames exceed `IMAGE_MAX_TOTAL_PIXELS`.
+
+    Each frame of a multi-frame image (e.g. TIFF) is decoded to RGB, and hi_res holds every frame
+    at once, but blank frames compress to almost nothing, so a few-KB file can decode to GB. Frame
+    sizes are read from the frame headers here without decoding any pixels.
+    """
+    max_pixels = env_config.IMAGE_MAX_TOTAL_PIXELS
+    if isinstance(file, bytes):
+        file = io.BytesIO(file)
+    start = file.tell() if file is not None else 0
+
+    try:
+        with PILImage.open(file if file is not None else filename) as image:
+            total_pixels = 0
+            # -- seeking to a frame parses its header; pixels are decoded only on `.load()` --
+            for n_frames, frame in enumerate(ImageSequence.Iterator(image), start=1):
+                total_pixels += frame.width * frame.height
+                if total_pixels > max_pixels:
+                    raise UnprocessableEntityError(
+                        f"Image exceeds the maximum of {max_pixels:,} pixels summed across its"
+                        f" frames (IMAGE_MAX_TOTAL_PIXELS): its first {n_frames:,} frame(s) hold"
+                        f" {total_pixels:,} pixels."
+                    )
+    except UnidentifiedImageError:
+        # -- not an image PIL can read; nothing will decode it, so leave the error to the caller --
+        return
+    finally:
+        if file is not None:
+            file.seek(start)
 
 
 def is_pdf_too_complex(

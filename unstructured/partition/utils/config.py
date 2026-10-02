@@ -328,5 +328,10 @@ class ENVConfig:
         """Maximum rendered pixels allowed for a single PDF page"""
         return self._get_int("PDF_RENDER_MAX_PIXELS_PER_PAGE", 1_000_000_000)
 
+    @property
+    def IMAGE_MAX_TOTAL_PIXELS(self) -> int:
+        """Maximum pixels, summed across all frames, an image file may decode to"""
+        return self._get_int("IMAGE_MAX_TOTAL_PIXELS", 500_000_000)
+
 
 env_config = ENVConfig()
