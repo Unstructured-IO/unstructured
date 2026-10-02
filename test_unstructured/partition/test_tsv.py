@@ -20,6 +20,7 @@ from test_unstructured.partition.test_constants import (
 )
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
+from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Table
 from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.tsv import partition_tsv
@@ -254,3 +255,34 @@ def test_partition_tsv_reads_a_stream_that_cannot_seek():
     (table,) = partition_tsv(file=io.BufferedReader(Pipe(b"a\tb\n1\t2\n")))
 
     assert table.text == "a b 1 2"
+
+
+def test_partition_tsv_counts_every_implicit_index_column_before_pandas_reads(
+    tmp_path: Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    # -- a 1-field header, a 100-field first data row (99 implicit-index columns) and a ragged
+    # -- tail: Pandas builds 1,002 rows x 100 columns --
+    file_path = tmp_path / "index.tsv"
+    file_path.write_text("h\n" + "\t".join(f"v{i}" for i in range(100)) + "\n" + "a\n" * 1000)
+    monkeypatch.setenv("CSV_MAX_CELLS", str(1002 * 100 - 1))
+    read_csv_ = mocker.patch.object(pd, "read_csv")
+
+    with pytest.raises(UnprocessableEntityError, match="100 columns"):
+        partition_tsv(str(file_path), include_header=True)
+
+    read_csv_.assert_not_called()
+
+
+def test_partition_tsv_with_implicit_index_columns_matches_pandas_within_the_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("CSV_MAX_CELLS", raising=False)
+    file_path = tmp_path / "index.tsv"
+    file_path.write_text("h\n" + "x\ty\tz\n" + "a\n" * 3)
+
+    (table,) = partition_tsv(str(file_path), include_header=True)
+
+    expected = pd.read_csv(file_path, sep="\t", header=0).to_html(
+        index=False, header=True, na_rep=""
+    )
+    assert table.text == HtmlTable.from_html_text(expected).text

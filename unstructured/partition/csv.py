@@ -127,8 +127,15 @@ def check_cell_count(
     - rows are counted as line terminators after it. That is an upper bound, since blank lines and
       newlines inside quoted fields count too, so the scan can over-count but never under-count.
 
-    With `header`, the first record is the header, and Pandas accepts data rows one field wider
-    than it (using the extra field as an implicit index), so one more column is counted.
+    With `header`, the first record is the header, and Pandas makes the fields a data row has
+    beyond it an implicit index: its C engine takes their number from the first data row, and its
+    Python engine also from the second, which can make the first data row the index names. So the
+    columns are the widest of the header and the first two data records, each measured the same
+    way; any later, wider row is an error in Pandas.
+
+    This is a conservative estimate of the cells Pandas will build, not a bound on memory or bytes
+    read: blank lines held while sniffing, or a stream spooled because it cannot seek, still take
+    space in proportion to the input.
     """
     max_cells = env_config.CSV_MAX_CELLS
     chunks = (_normalize_line_endings(c) for c in _iter_decoded_chunks(file, encoding))
@@ -151,11 +158,22 @@ def check_cell_count(
     )
     if n_cols == 0:
         return
-    n_cols += header
+    n_rows = 1
 
-    # -- the first record is row 1; each later "\n" ends a row, and so does end-of-file when the
-    # -- last line is unterminated --
-    n_rows, unterminated = 1, False
+    if header:
+        # -- the first two data records decide how many implicit-index columns Pandas adds --
+        for _ in range(2):
+            width, chunks = _first_record_width(
+                chunks, delimiter, python_engine, max_cells, raise_limit_exceeded
+            )
+            if width == 0:
+                return
+            n_rows, n_cols = n_rows + 1, max(n_cols, width)
+            if n_rows * n_cols > max_cells:
+                raise_limit_exceeded(n_rows, n_cols)
+
+    # -- each later "\n" ends a row, and so does end-of-file when the last line is unterminated --
+    unterminated = False
     for chunk in chunks:
         if n_terminators := chunk.count("\n"):
             n_rows += n_terminators

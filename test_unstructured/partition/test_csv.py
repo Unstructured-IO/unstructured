@@ -598,3 +598,20 @@ def test_peek_first_non_blank_line_completes_a_line_across_a_chunk_of_only_a_hel
 
     assert reader.peek_first_non_blank_line() == "a\r\n"
     assert reader.read() == "a\r\nb\n"
+
+
+def test_partition_csv_counts_index_names_the_python_engine_infers(
+    mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    # -- the context's sniffer only tries ",;|", so this tab-delimited file is read by Pandas'
+    # -- Python engine. Its second data row is as wide as the first plus the header, so Pandas
+    # -- makes the first data row the index names: 3 columns, from a 2-field header --
+    data = b"a\tb\nidx\ni\t1\t2\n" + b"j\t3\t4\n" * 10
+    pandas_cells = 13 * 3
+    monkeypatch.setenv("CSV_MAX_CELLS", str(pandas_cells - 1))
+    read_csv_ = mocker.patch.object(pd, "read_csv")
+
+    with pytest.raises(UnprocessableEntityError, match="3 columns"):
+        partition_csv(file=io.BytesIO(data), include_header=True)
+
+    read_csv_.assert_not_called()
