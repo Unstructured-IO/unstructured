@@ -5,6 +5,7 @@ from __future__ import annotations
 import itertools
 import logging
 import os
+import re
 import tempfile
 import zipfile
 from functools import cached_property
@@ -13,6 +14,7 @@ from typing import IO, Any, Iterator, Protocol, Type
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
+from docx.oxml.ns import nsmap, qn
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.section import Section, _Footer, _Header
@@ -22,6 +24,7 @@ from docx.text.hyperlink import Hyperlink
 from docx.text.pagebreak import RenderedPageBreak
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
+from lxml import etree
 from typing_extensions import TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
@@ -442,12 +445,17 @@ class _DocxPartitioner:
             elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
                 yield from self._iter_table_element(block_item)
 
-    def _classify_paragraph_to_element(self, paragraph: Paragraph) -> Iterator[Element]:
+    def _classify_paragraph_to_element(
+        self, paragraph: Paragraph, is_continuation: bool = False
+    ) -> Iterator[Element]:
         """Generate zero-or-one document element for `paragraph`.
 
         In Word, an empty paragraph is commonly used for inter-paragraph spacing. An empty paragraph
         does not contribute to the document-element stream and will not cause an element to be
         emitted.
+
+        `is_continuation` is True for a fragment of a paragraph split by a page-break, other than
+        the first. Such a fragment is part of a list-item already labeled and gets no label.
         """
         text = "".join(
             e.text
@@ -455,6 +463,8 @@ class _DocxPartitioner:
                 "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
             )
         )
+
+        label = "" if is_continuation else self._list_labels.label(paragraph)
 
         # -- blank paragraphs are commonly used for spacing between paragraphs and do not
         # -- contribute to the document-element stream
@@ -468,8 +478,14 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
+                if label and metadata.links:
+                    shift = len(label) + 1
+                    metadata.links = [
+                        {**link, "start_index": link["start_index"] + shift}
+                        for link in metadata.links
+                    ]
                 yield ListItem(
-                    text=clean_text,
+                    text=f"{label} {clean_text}" if label else clean_text,
                     metadata=metadata,
                     detection_origin=DETECTION_ORIGIN,
                 )
@@ -628,7 +644,19 @@ class _DocxPartitioner:
         if is_bulleted_text(paragraph.text):
             return True
 
-        return "<w:numPr>" in paragraph._p.xml
+        if "<w:numPr>" in paragraph._p.xml:
+            return True
+
+        if not self._list_labels.has_style_numbering(paragraph):
+            return False
+
+        style_type = self._style_based_element_type(paragraph)
+        return style_type is None or style_type is ListItem
+
+    @cached_property
+    def _list_labels(self) -> _ListLabels:
+        """Auto-numbering label renderer, holding list counters for this partitioning run."""
+        return _ListLabels(self._document)
 
     def _iter_paragraph_elements(self, paragraph: Paragraph) -> Iterator[Element]:
         """Generate zero-or-more document elements for `paragraph`.
@@ -670,10 +698,12 @@ class _DocxPartitioner:
             if following_paragraph_fragment:
                 yield from iter_paragraph_items(following_paragraph_fragment)
 
+        seen_fragment = False
         for item in iter_paragraph_items(paragraph):
             if isinstance(item, Paragraph):
-                yield from self._classify_paragraph_to_element(item)
+                yield from self._classify_paragraph_to_element(item, seen_fragment)
                 yield from self._iter_paragraph_images(item)
+                seen_fragment = True
             else:
                 yield from self._opts.increment_page_number()
 
@@ -798,6 +828,7 @@ class _DocxPartitioner:
 
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
+        self._advance_table_numbering(table)
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table.
         html_table = (
@@ -818,6 +849,21 @@ class _DocxPartitioner:
                 emphasized_text_tags=emphasized_text_tags or None,
             ),
         )
+
+    def _advance_table_numbering(self, table: DocxTable) -> None:
+        """Advance the list counters for each numbered paragraph in `table`, in document order.
+
+        Table text is not labeled, but Word counts its numbered paragraphs like any other.
+        """
+        for row in table.rows:
+            for tc in row._tr.tc_lst:
+                if tc.vMerge == "continue":
+                    continue
+                for block_item in _Cell(tc, table).iter_inner_content():
+                    if isinstance(block_item, Paragraph):
+                        self._list_labels.label(block_item)
+                    else:
+                        self._advance_table_numbering(block_item)
 
     def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
@@ -1015,6 +1061,233 @@ class _DocxPartitioner:
 # ================================================================================================
 # SUB-PARTITIONERS
 # ================================================================================================
+
+
+class _ListLabels:
+    """Renders the label Word displays for an auto-numbered paragraph, e.g. "1." or "a)".
+
+    Word stores the numbering definition in `numbering.xml` (bound to a paragraph by `w:numPr`,
+    directly or through its style chain) and computes each label at render time. This object
+    resolves that definition and keeps the running counters, so `.label()` must be called once per
+    numbered paragraph, in document order. It never raises; a paragraph whose numbering cannot be
+    resolved gets no label.
+    """
+
+    def __init__(self, document: Document):
+        try:
+            self._numbering = document.part.numbering_part.element
+        except Exception:
+            self._numbering = None
+        self._nums: dict[str, Any] = {}
+        self._abstracts: dict[str, Any] = {}
+        if self._numbering is not None:
+            for num in self._numbering.findall(qn("w:num")):
+                self._nums.setdefault(num.get(qn("w:numId")), num)
+            for abstract in self._numbering.findall(qn("w:abstractNum")):
+                self._abstracts.setdefault(abstract.get(qn("w:abstractNumId")), abstract)
+        self._levels: dict[tuple[str, int], Any | None] = {}
+        self._counters: dict[str, list[int | None]] = {}
+        self._restarted: set[tuple[str, int]] = set()
+
+    def has_style_numbering(self, paragraph: Paragraph) -> bool:
+        """True when `paragraph` gets its numbering from its style chain rather than directly."""
+        try:
+            return self._style_num_pr(paragraph)[0] not in (None, "0")
+        except Exception:
+            return False
+
+    def label(self, paragraph: Paragraph) -> str:
+        """The label for `paragraph`, advancing the list counters; "" when it has none."""
+        if self._numbering is None:
+            return ""
+        try:
+            return self._render_label(paragraph)
+        except Exception:
+            logging.warning("Could not resolve list numbering for a paragraph", exc_info=True)
+            return ""
+
+    def _render_label(self, paragraph: Paragraph) -> str:
+        num_id, ilvl, style_id = self._resolve_num_pr(paragraph)
+        if num_id in (None, "0"):
+            return ""
+        num = self._nums.get(num_id)
+        if num is None:
+            return ""
+        abstract_id = self._val(num, "w:abstractNumId")
+        abstract = self._abstracts.get(abstract_id)
+        if abstract is None:
+            return ""
+
+        if ilvl is None:
+            linked = (
+                self._xpath(abstract, f'./w:lvl[w:pStyle/@w:val="{style_id}"]/@w:ilvl')
+                if style_id is not None
+                else []
+            )
+            ilvl = int(linked[0]) if linked else 0
+        if not 0 <= ilvl <= _MAX_LIST_LEVEL:
+            return ""
+        lvl = self._level(num, abstract, ilvl)
+        if lvl is None:
+            return ""
+
+        counters = self._counters.setdefault(abstract_id, [None] * (_MAX_LIST_LEVEL + 1))
+        has_override = bool(num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride'))
+        if has_override and (num_id, ilvl) not in self._restarted:
+            self._restarted.add((num_id, ilvl))
+            counters[ilvl] = self._level_start(num, lvl, ilvl)
+        elif counters[ilvl] is None:
+            counters[ilvl] = self._level_start(num, lvl, ilvl)
+        else:
+            counters[ilvl] += 1
+        for deeper in range(ilvl + 1, _MAX_LIST_LEVEL + 1):
+            deeper_lvl = self._level(num, abstract, deeper)
+            restart = None if deeper_lvl is None else self._val(deeper_lvl, "w:lvlRestart")
+            if restart is None or (restart != "0" and ilvl < int(restart)):
+                counters[deeper] = None
+
+        if self._val(lvl, "w:numFmt") in ("bullet", "none"):
+            return ""
+
+        def render_placeholder(match: re.Match[str]) -> str:
+            level = int(match.group(1)) - 1
+            if level > ilvl:
+                return ""
+            referenced = self._level(num, abstract, level)
+            if referenced is None:
+                return ""
+            count = counters[level]
+            return self._format_number(
+                self._level_start(num, referenced, level) if count is None else count,
+                self._val(referenced, "w:numFmt") or "decimal",
+            )
+
+        try:
+            return re.sub(r"%(\d)", render_placeholder, self._val(lvl, "w:lvlText") or "").strip()
+        except _UnrenderableLabel:
+            return ""
+
+    def _resolve_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
+        """The `(numId, ilvl, style_id)` in effect for `paragraph`, `None` for any not specified.
+
+        The paragraph's own `w:numPr` takes precedence over that of its style chain. `style_id` is
+        the style that supplied the `numId`.
+        """
+        own_num_id, own_ilvl = self._num_pr_values(paragraph._p.xpath("./w:pPr/w:numPr"))
+        style_num_id, style_ilvl, style_id = self._style_num_pr(paragraph)
+        num_id = own_num_id if own_num_id is not None else style_num_id
+        ilvl = own_ilvl if own_ilvl is not None else style_ilvl
+        return num_id, ilvl, style_id if own_num_id is None else None
+
+    def _style_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
+        """The `(numId, ilvl, style_id)` the paragraph's style chain (`basedOn`) provides."""
+        num_id: str | None = None
+        ilvl: int | None = None
+        style_id: str | None = None
+        style = paragraph.style
+        seen: set[str] = set()
+        while style is not None and style.style_id not in seen:
+            seen.add(style.style_id)
+            style_num_id, style_ilvl = self._num_pr_values(style.element.xpath("./w:pPr/w:numPr"))
+            if num_id is None and style_num_id is not None:
+                num_id, style_id = style_num_id, style.style_id
+            if ilvl is None:
+                ilvl = style_ilvl
+            style = style.base_style
+        return num_id, ilvl, style_id
+
+    def _num_pr_values(self, num_prs: list[Any]) -> tuple[str | None, int | None]:
+        """The `(numId, ilvl)` of the first `w:numPr` in `num_prs`, `None` for any absent."""
+        if not num_prs:
+            return None, None
+        ilvl = self._val(num_prs[0], "w:ilvl")
+        return self._val(num_prs[0], "w:numId"), None if ilvl is None else int(float(ilvl))
+
+    @staticmethod
+    def _val(element: Any, child_tag: str) -> str | None:
+        """The `w:val` attribute of the `child_tag` child of `element`, None when absent."""
+        child = element.find(qn(child_tag))
+        return None if child is None else child.get(qn("w:val"))
+
+    def _level(self, num: Any, abstract: Any, ilvl: int) -> Any | None:
+        """The `w:lvl` definition in effect for `ilvl` of `num`, None when undefined."""
+        key = (num.get(qn("w:numId")), ilvl)
+        if key not in self._levels:
+            found = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:lvl') or self._xpath(
+                abstract, f'./w:lvl[@w:ilvl="{ilvl}"]'
+            )
+            self._levels[key] = found[0] if found else None
+        return self._levels[key]
+
+    @staticmethod
+    def _xpath(element: Any, expression: str) -> list[Any]:
+        """Evaluate `expression` on `element`, which may be a plain lxml element."""
+        return etree.XPath(expression, namespaces=nsmap)(element)
+
+    def _level_start(self, num: Any, lvl: Any, ilvl: int) -> int:
+        """The value level `ilvl` of `num` starts, or restarts, at."""
+        override = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride/@w:val')
+        return int(override[0]) if override else self._start(lvl)
+
+    def _start(self, lvl: Any) -> int:
+        start = self._val(lvl, "w:start")
+        return 1 if start is None else int(start)
+
+    @staticmethod
+    def _format_number(value: int, num_fmt: str) -> str:
+        """`value` rendered in the Word number format `num_fmt`.
+
+        Raises `_UnrenderableLabel` for a format or value this cannot render as Word does.
+        """
+        if not 0 <= value <= _MAX_LIST_NUMBER:
+            raise _UnrenderableLabel
+        if num_fmt == "decimal":
+            return str(value)
+        if num_fmt == "decimalZero":
+            return f"{value:02d}"
+        if num_fmt in ("lowerLetter", "upperLetter") and value > 0:
+            letters = chr(ord("a") + (value - 1) % 26) * ((value - 1) // 26 + 1)
+            return letters if num_fmt == "lowerLetter" else letters.upper()
+        if num_fmt in ("lowerRoman", "upperRoman") and 0 < value < 4000:
+            roman = ""
+            for numeral, size in _ROMAN_NUMERALS:
+                count, value = divmod(value, size)
+                roman += numeral * count
+            return roman.lower() if num_fmt == "lowerRoman" else roman
+        if num_fmt == "ordinal":
+            suffix = (
+                "th"
+                if 10 <= value % 100 <= 20
+                else {1: "st", 2: "nd", 3: "rd"}.get(value % 10, "th")
+            )
+            return f"{value}{suffix}"
+        if num_fmt == "decimalEnclosedCircle":
+            return chr(0x2460 + value - 1) if 1 <= value <= 20 else str(value)
+        raise _UnrenderableLabel
+
+
+class _UnrenderableLabel(Exception):
+    """A list label whose number format or value cannot be rendered the way Word does."""
+
+
+_MAX_LIST_LEVEL = 8
+_MAX_LIST_NUMBER = 32767
+
+_ROMAN_NUMERALS = (
+    ("M", 1000),
+    ("CM", 900),
+    ("D", 500),
+    ("CD", 400),
+    ("C", 100),
+    ("XC", 90),
+    ("L", 50),
+    ("XL", 40),
+    ("X", 10),
+    ("IX", 9),
+    ("V", 5),
+    ("IV", 4),
+    ("I", 1),
+)
 
 
 class _NullPicturePartitioner:

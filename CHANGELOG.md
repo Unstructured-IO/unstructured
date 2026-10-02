@@ -1,10 +1,16 @@
-## 0.27.11
+## 0.27.12
 
 ### Fixes
 
 - **Avoid copying spooled uploads into memory**: `detect_filetype()` and the DOCX, PPTX, and shared partitioning paths now read `SpooledTemporaryFile` inputs in place instead of copying their complete contents into `BytesIO`. Large uploads remain disk-backed, avoiding a document-sized heap allocation without changing the partition API. A spooled file passed to `detect_filetype()` is still returned at read position 0.
 - **Use `metadata_file_path` when a file's name is not a path**: a temporary file, including a rolled-over `SpooledTemporaryFile`, can report an integer file descriptor as its `.name`. File-type detection now ignores non-string names and falls back to `metadata_file_path` for the filename extension instead of raising `TypeError`.
 - **Read any seekable binary stream in `convert_to_bytes()`**: streams such as `tempfile.TemporaryFile()` or file-like wrappers previously raised `ValueError("Invalid file-like object type")` from text-encoding detection and PDF page rendering. Any object with `read()` and `seek()` is now read from the start and rewound.
+
+## 0.27.11
+
+### Fixes
+
+- **Keep the labels of auto-numbered DOCX lists.** Word computes labels such as `1.`, `a)` and `iv.` from `numbering.xml` at render time, so `partition_docx()` returned `ListItem` text without them. The label is now prefixed to the item text, resolved from the paragraph or its style chain and counted per level in document order. Bullets stay unprefixed and numbering that cannot be resolved falls back to the previous text.
 
 ## 0.27.10
 
