@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import io
+from pathlib import Path
 
+import pandas as pd
 import pytest
 from pytest_mock import MockFixture
 
@@ -28,6 +30,7 @@ from test_unstructured.unit_utils import (
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
+from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.csv import _CsvPartitioningContext, partition_csv
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
@@ -209,6 +212,56 @@ def test_partition_csv_header():
     table = elements[0]
     assert table.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
     assert table.metadata.text_as_html is not None
+
+
+# -- cell-count limit ----------------------------------------------------------------------------
+
+
+def test_partition_csv_rejects_a_wide_first_line_before_pandas_reads_it(
+    tmp_path: Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("CSV_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
+    # -- Pandas pads every row out to the first line's 5,000 fields: 25M cells from 15KB --
+    file_path = tmp_path / "ragged.csv"
+    file_path.write_text("h" + "," * 4999 + "\n" + "a\n" * 5000)
+    read_csv_ = mocker.patch.object(pd, "read_csv")
+
+    with pytest.raises(UnprocessableEntityError, match="1,001 rows x 5,000 columns"):
+        partition_csv(str(file_path))
+
+    read_csv_.assert_not_called()
+
+
+@pytest.mark.parametrize("from_file", [False, True])
+@pytest.mark.parametrize(
+    ("content", "n_cells"),
+    [
+        # -- the context's restricted sniffer gives up on this one and Pandas sniffs it itself --
+        ("h" + "," * 99 + "\n" + "a\n" * 99, 100 * 100),
+        ("a;b;c\n1;2\n\n4\n", 3 * 3),  # -- blank lines are not counted --
+        # -- single-column file; Pandas sniffs "a" as the delimiter and reads 4 x 2 cells --
+        ("a\nb\nc\nd\n", 4 * 2),
+        ('"x,\ny",z\n1\n', 2 * 2),  # -- quoted delimiter and newline are not counted --
+    ],
+)
+def test_partition_csv_limits_the_cells_the_file_spans(
+    content: str, n_cells: int, from_file: bool, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = tmp_path / "table.csv"
+    file_path.write_text(content)
+
+    def partition():
+        if from_file:
+            with open(file_path, "rb") as f:
+                return partition_csv(file=f)
+        return partition_csv(str(file_path))
+
+    monkeypatch.setenv("CSV_MAX_CELLS", str(n_cells))
+    assert len(partition()) == 1
+
+    monkeypatch.setenv("CSV_MAX_CELLS", str(n_cells - 1))
+    with pytest.raises(UnprocessableEntityError, match="CSV_MAX_CELLS"):
+        partition()
 
 
 # ================================================================================================

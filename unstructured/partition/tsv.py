@@ -13,6 +13,7 @@ from unstructured.partition.common.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
+from unstructured.partition.csv import check_cell_count
 from unstructured.telemetry import partition_runtime_telemetry
 
 DETECTION_ORIGIN: str = "tsv"
@@ -44,12 +45,17 @@ def partition_tsv(
     header = 0 if include_header else None
 
     if filename:
+        with open(filename, "rb") as f:
+            check_cell_count(f, "\t", None)
         dataframe = pd.read_csv(filename, sep="\t", header=header)
     else:
         assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
         f = spooled_to_bytes_io_if_needed(file)
+        start = f.tell()
+        check_cell_count(f, "\t", None)
+        f.seek(start)
         dataframe = pd.read_csv(f, sep="\t", header=header)
 
     html_table = HtmlTable.from_html_text(

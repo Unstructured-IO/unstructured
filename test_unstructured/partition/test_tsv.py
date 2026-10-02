@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+import pandas as pd
 import pytest
 from pytest_mock import MockFixture
 
@@ -15,6 +18,7 @@ from test_unstructured.partition.test_constants import (
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Table
+from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.tsv import partition_tsv
 
 EXPECTED_FILETYPE = "text/tsv"
@@ -159,3 +163,43 @@ def test_partition_tsv_supports_chunking_strategy_while_partitioning():
 
     # The same chunks are returned if chunking elements or chunking during partitioning.
     assert chunk_elements == chunks
+
+
+# -- cell-count limit ----------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("from_file", [False, True])
+def test_partition_tsv_rejects_a_wide_first_line_before_pandas_reads_it(
+    from_file: bool, tmp_path: Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("CSV_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
+    # -- Pandas pads every row out to the first line's 5,000 fields: 25M cells from 15KB --
+    file_path = tmp_path / "ragged.tsv"
+    file_path.write_text("h" + "\t" * 4999 + "\n" + "a\n" * 5000)
+    read_csv_ = mocker.patch.object(pd, "read_csv")
+
+    with pytest.raises(UnprocessableEntityError, match="1,001 rows x 5,000 columns"):
+        if from_file:
+            with open(file_path, "rb") as f:
+                partition_tsv(file=f)
+        else:
+            partition_tsv(str(file_path))
+
+    read_csv_.assert_not_called()
+
+
+@pytest.mark.parametrize("from_file", [False, True])
+def test_partition_tsv_partitions_a_file_at_the_cell_limit(
+    from_file: bool, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.setenv("CSV_MAX_CELLS", "6")
+    file_path = tmp_path / "table.tsv"
+    file_path.write_text("a\tb\tc\n1\t2\n")
+
+    if from_file:
+        with open(file_path, "rb") as f:
+            elements = partition_tsv(file=f)
+    else:
+        elements = partition_tsv(str(file_path))
+
+    assert [e.text for e in elements] == ["a b c 1 2"]

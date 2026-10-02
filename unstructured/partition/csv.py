@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import codecs
 import contextlib
 import csv
+import itertools
 from functools import cached_property
 from typing import IO, Any, Iterator
 
@@ -10,8 +12,10 @@ import pandas as pd
 from unstructured.chunking import add_chunking_strategy
 from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Element, ElementMetadata, Table
+from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
+from unstructured.partition.utils.config import env_config
 from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
@@ -60,6 +64,8 @@ def partition_csv(
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
+        check_cell_count(file, ctx.delimiter, ctx.encoding)
+    with ctx.open() as file:
         read_kw: dict = {"header": ctx.header, "sep": ctx.delimiter, "encoding": ctx.encoding}
         # sep=None is not supported by the C engine; use Python engine to avoid ParserWarning.
         if ctx.delimiter is None:
@@ -78,6 +84,45 @@ def partition_csv(
 
     # -- a CSV file becomes a single `Table` element --
     return [Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
+
+
+def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | None) -> None:
+    """Raise `UnprocessableEntityError` when `file` would span more than `CSV_MAX_CELLS` cells.
+
+    Pandas sizes the data-frame by the first record and pads every shorter record out to that
+    width, so a tiny file whose first line is a long run of delimiters can span millions of cells.
+    The span is measured here by streaming the records, before Pandas allocates anything, and the
+    scan stops as soon as the limit is passed. `file` is read from its current position.
+    """
+    max_cells = env_config.CSV_MAX_CELLS
+    # -- `errors="replace"` so the scan never fails on a file Pandas would read --
+    lines: Iterator[str] = codecs.getreader(encoding or "utf-8")(file, errors="replace")
+
+    if delimiter is None:
+        # -- With `sep=None` Pandas sniffs the delimiter itself, from the first non-blank line
+        # -- and without restricting the candidates, so measure with the delimiter it will use.
+        first_line = next((line for line in lines if line.strip()), "")
+        try:
+            delimiter = csv.Sniffer().sniff(first_line).delimiter
+        except csv.Error:
+            delimiter = None
+        lines = itertools.chain([first_line], lines)
+
+    # -- a single-column file has no delimiter; any character absent from each line will do --
+    records = csv.reader(lines, delimiter=delimiter or "\n")
+
+    n_rows, n_cols = 0, 0
+    for record in records:
+        if not record:  # -- Pandas skips blank lines --
+            continue
+        if n_rows == 0:
+            n_cols = len(record)
+        n_rows += 1
+        if n_rows * n_cols > max_cells:
+            raise UnprocessableEntityError(
+                f"File exceeds the maximum of {max_cells:,} table cells (CSV_MAX_CELLS): it spans"
+                f" at least {n_rows:,} rows x {n_cols:,} columns."
+            )
 
 
 class _CsvPartitioningContext:
