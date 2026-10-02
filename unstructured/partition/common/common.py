@@ -398,7 +398,9 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
     if isinstance(file, BytesIO):
         return file.getvalue()
 
-    if isinstance(file, (TextIOWrapper, BufferedReader)):
+    if isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
+        getattr(file, "name", None), str
+    ):
         with open(file.name, "rb") as f:
             return f.read()
 
