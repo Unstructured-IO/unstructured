@@ -73,7 +73,7 @@ def test_serializing_chunk_metadata_does_not_deepcopy_its_original_element_graph
 
     def checked_deepcopy(value, *args, **kwargs):
         if isinstance(value, dict):
-            assert "orig_elements" not in value
+            assert value.get("orig_elements") is None
         return real_deepcopy(value, *args, **kwargs)
 
     monkeypatch.setattr(copy, "deepcopy", checked_deepcopy)
@@ -82,3 +82,19 @@ def test_serializing_chunk_metadata_does_not_deepcopy_its_original_element_graph
         == "original"
     )
     assert metadata.orig_elements[0] is original
+
+
+@pytest.mark.parametrize("empty", [False, True])
+def test_metadata_json_preserves_original_and_continuation_field_order(empty):
+    metadata = ElementMetadata(
+        filename="document.pdf",
+        orig_elements=[] if empty else [NarrativeText("original", element_id="original")],
+    )
+    metadata.is_continuation = True
+    # Nonempty originals keep their insertion position. Empty originals historically
+    # moved to the end because empty list fields are omitted before serialization.
+    assert list(metadata.to_dict()) == (
+        ["filename", "is_continuation", "orig_elements"]
+        if empty
+        else ["filename", "orig_elements", "is_continuation"]
+    )
