@@ -60,6 +60,7 @@
 
 ### Fixes
 
+- **`partition_md()` accepts an `encoding` argument.** It read the source through `read_txt_file()` without passing one and had no `encoding` parameter, so a caller's codec was swallowed by `**kwargs` (documented there as forwarded to `partition_html`). Charset detection covers a BOM-bearing payload, but a legacy single-byte codepage such as cp1252 is misread -- `Café naïve` decodes as `Café naďve` -- and there was no way to correct it, while the equivalent `partition_text()` call takes `encoding` and gets it right. The parameter is added after the existing ones so current positional calls keep binding as before, and omitting it preserves the detecting behavior.
 - **`GLOBAL_WORKING_PROCESS_DIR` no longer crashes on Windows.** Use `os.getpid()` when the POSIX-only `os.getpgid()` is unavailable.
 
 - **Preserve HTML table header semantics.** The v1 HTML parser now retains `<thead>`, `<tbody>`,
