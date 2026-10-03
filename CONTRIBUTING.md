@@ -127,7 +127,7 @@ The Unstructured Team
 
 If you're stumped 😓, here are some good examples of contribution guidelines:
 
-- The GitHub Docs [contribution guidelines](https://github.com/github/docs/blob/main/CONTRIBUTING.md).
+- The GitHub Docs [contribution guidelines](https://github.com/github/docs/blob/main/.github/CONTRIBUTING.md).
 - The Ruby on Rails [contribution guidelines](https://github.com/rails/rails/blob/main/CONTRIBUTING.md).
 - The Open Government [contribution guidelines](https://github.com/opengovernment/opengovernment/blob/master/CONTRIBUTING.md).
 - The MMOCR [contribution guidelines](https://mmocr.readthedocs.io/en/dev-1.x/notes/contribution_guide.html).
