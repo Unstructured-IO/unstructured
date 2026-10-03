@@ -175,13 +175,16 @@ def _get_non_duplicated_filename(dir, filename) -> str:
     return filename
 
 
-def _mean(scores: Union[pd.Series, List[float]], rounding: Optional[int] = 3) -> Union[float, None]:
+def _mean(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union[float, None]:
     """
     Find mean from the list. Returns None if no element in the list.
 
     Args:
         rounding (int): optional argument that allows user to define decimal points. Default at 3.
     """
+    # Filter out None values, as `_stdev` and `_pstdev` do: an unmeasured score is
+    # not a score, and statistics.mean raises on it rather than ignoring it.
+    scores = [score for score in scores if score is not None]
     if len(scores) == 0:
         return None
     mean = statistics.mean(scores)
