@@ -44,6 +44,8 @@
 
 ### Fixes
 
+- **Recognize a box nested in its parent when the tolerance is zero.** `is_parent_box()` compared the child with the origin whenever `add` was 0, so a box at `(10, 10, 20, 20)` inside `(0, 0, 100, 100)` was reported as not nested. A zero tolerance now checks the parent box itself. A positive tolerance still allows that many pixels of slack.
+
 - **Extract definition lists instead of discarding them**: `<dl>`, `<dt>` and `<dd>` were mapped to `RemovedBlock`, so `partition_html()` dropped every glossary and every Sphinx-generated API reference (each documented function with its parameters and return value) without an error. `<dl>` is now a list container, each `<dd>` definition a `ListItem` and each `<dt>` term an ordinary text block. The v2 (ontology) parser already kept definition lists.
 
 ## 0.27.9
