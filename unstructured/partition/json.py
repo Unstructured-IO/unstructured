@@ -139,6 +139,9 @@ def partition_json(
     elements = rehydrate_elements(value) if is_rehydration else elements_from_arbitrary_value(value)
 
     if is_rehydration:
+        if metadata_last_modified:
+            for element in elements:
+                element.metadata.last_modified = metadata_last_modified
         elements = _apply_chunking(
             elements,
             filename=filename,

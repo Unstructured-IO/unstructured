@@ -16,6 +16,7 @@ import pytest
 from docx.document import Document
 from docx.enum.section import WD_SECTION
 from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls, qn
 from docx.section import Section
 from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
@@ -939,6 +940,174 @@ def test_table_emphasis(
 
     assert emphasized_text_contents == expected_emphasized_text_contents
     assert emphasized_text_tags == expected_emphasized_text_tags
+
+
+# -- layout-grid limit ---------------------------------------------------------------------------
+
+
+def _write_docx_with_spanned_tables(
+    tmp_path: pathlib.Path, *, n_tables: int, grid_span: int, grid_before: int = 0
+) -> str:
+    """Write a DOCX with `n_tables` 2-row tables, the second cell of each row bold and spanning
+    `grid_span` layout-grid positions, each row starting `grid_before` positions late."""
+    document = docx.Document()
+    for t in range(n_tables):
+        table = document.add_table(rows=2, cols=2)
+        for r, row in enumerate(table.rows):
+            row.cells[0].text = f"t{t}r{r}"
+            row.cells[1].paragraphs[0].add_run(f"bold{t}{r}").bold = True
+            tr = row._tr
+            if grid_before:
+                tr.get_or_add_trPr().append(
+                    parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="{grid_before}"/>')
+                )
+            tr.tc_lst[1].get_or_add_tcPr().append(
+                parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="{grid_span}"/>')
+            )
+    file_path = str(tmp_path / "spanned.docx")
+    document.save(file_path)
+    return file_path
+
+
+@pytest.mark.parametrize(
+    ("grid_span", "grid_before"),
+    [
+        (10_000_000, 0),
+        (1, 10_000_000),
+        # -- a negative count expands to nothing and must not cancel the positive span --
+        (10_000_000, -10_000_000),
+    ],
+)
+def test_partition_docx_omits_html_for_a_table_whose_grid_is_too_large(
+    grid_span: int, grid_before: int, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("DOCX_TABLE_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
+    # -- 2 rows declaring 10M grid-positions each, from a file of a few dozen KB --
+    file_path = _write_docx_with_spanned_tables(
+        tmp_path, n_tables=1, grid_span=grid_span, grid_before=grid_before
+    )
+
+    (table,) = partition_docx(file_path)
+
+    assert isinstance(table, Table)
+    assert table.text == "t0r0 bold00 t0r1 bold01"
+    assert table.metadata.text_as_html is None
+    assert table.metadata.emphasized_text_contents == ["bold00", "bold01"]
+
+
+def test_partition_docx_limits_grid_cells_summed_across_tables(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    # -- each table spans 2 rows x (1 + 50) = 102 grid positions --
+    file_path = _write_docx_with_spanned_tables(tmp_path, n_tables=2, grid_span=50)
+    monkeypatch.setenv("DOCX_TABLE_MAX_CELLS", "203")
+
+    first, second = partition_docx(file_path)
+
+    assert first.metadata.text_as_html is not None
+    assert 'colspan="50"' in first.metadata.text_as_html
+    assert second.metadata.text_as_html is None
+    assert second.text == "t1r0 bold10 t1r1 bold11"
+
+
+def test_partition_docx_reads_a_spanned_cell_once(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("DOCX_TABLE_MAX_CELLS", raising=False)
+    file_path = _write_docx_with_spanned_tables(tmp_path, n_tables=1, grid_span=1000)
+
+    (table,) = partition_docx(file_path)
+
+    assert table.metadata.text_as_html == (
+        "<table>"
+        '<tr><td>t0r0</td><td colspan="1000">bold00</td></tr>'
+        '<tr><td>t0r1</td><td colspan="1000">bold01</td></tr>'
+        "</table>"
+    )
+    # -- emphasis is reported once per cell, not once per grid-position it spans --
+    assert table.metadata.emphasized_text_contents == ["bold00", "bold01"]
+    assert table.metadata.emphasized_text_tags == ["b", "b"]
+
+
+@pytest.mark.parametrize("grid_span_xml", ['<w:gridSpan {ns} w:val="bad"/>', "<w:gridSpan {ns}/>"])
+def test_partition_docx_keeps_the_text_of_a_table_with_an_invalid_grid_span(
+    grid_span_xml: str, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    # -- the second table spans 2 rows x (1 + 50) = 102 grid positions --
+    file_path = _write_docx_with_spanned_tables(tmp_path, n_tables=2, grid_span=50)
+    document = docx.Document(file_path)
+    bad_tc = document.tables[0].rows[0]._tr.tc_lst[1]
+    bad_tc.tcPr.remove(bad_tc.tcPr.find(qn("w:gridSpan")))
+    bad_tc.tcPr.append(parse_xml(grid_span_xml.format(ns=nsdecls("w"))))
+    document.save(file_path)
+    # -- the table with the invalid span uses none of the budget --
+    monkeypatch.setenv("DOCX_TABLE_MAX_CELLS", "102")
+
+    first, second = partition_docx(file_path)
+
+    assert first.text == "t0r0 bold00 t0r1 bold01"
+    assert first.metadata.text_as_html is None
+    assert second.metadata.text_as_html is not None
+    assert 'colspan="50"' in second.metadata.text_as_html
+
+
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+@pytest.mark.parametrize("tag", ["b", "i"])
+def test_partition_docx_skips_table_emphasis_whose_formatting_cannot_be_read(
+    tag: str, infer_table_structure: bool, tmp_path: pathlib.Path
+):
+    document = docx.Document()
+    table = document.add_table(rows=1, cols=2)
+    bad_run = table.cell(0, 0).paragraphs[0].add_run("unreadable")
+    bad_run._r.get_or_add_rPr().append(parse_xml(f'<w:{tag} {nsdecls("w")} w:val="bad"/>'))
+    table.cell(0, 1).paragraphs[0].add_run("readable").bold = True
+    document.add_paragraph("after the table")
+    file_path = str(tmp_path / "bad-emphasis.docx")
+    document.save(file_path)
+
+    elements = partition_docx(file_path, infer_table_structure=infer_table_structure)
+
+    assert [e.text for e in elements] == ["unreadable readable", "after the table"]
+    assert elements[0].metadata.emphasized_text_contents == ["readable"]
+    assert elements[0].metadata.emphasized_text_tags == ["b"]
+
+
+def test_partition_docx_reports_emphasis_of_a_vertically_merged_cell_once(tmp_path: pathlib.Path):
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    merged = table.cell(0, 0).merge(table.cell(2, 0))
+    merged.paragraphs[0].add_run("merged").bold = True
+    for r in range(3):
+        table.cell(r, 1).text = f"r{r}"
+    file_path = str(tmp_path / "vmerge.docx")
+    document.save(file_path)
+
+    (table_element,) = partition_docx(file_path)
+
+    assert table_element.metadata.emphasized_text_contents == ["merged"]
+    assert 'rowspan="3"' in (table_element.metadata.text_as_html or "")
+
+
+def test_partition_docx_does_not_expand_a_large_span_in_a_nested_table(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("DOCX_TABLE_MAX_CELLS", raising=False)
+    document = docx.Document()
+    outer = document.add_table(rows=1, cols=1)
+    outer.cell(0, 0).text = "outer"
+    nested = outer.cell(0, 0).add_table(rows=1, cols=2)
+    nested.cell(0, 0).text = "nested"
+    nested.cell(0, 1).text = "wide"
+    nested.rows[0]._tr.tc_lst[1].get_or_add_tcPr().append(
+        parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="10000000"/>')
+    )
+    file_path = str(tmp_path / "nested.docx")
+    document.save(file_path)
+
+    (table_element,) = partition_docx(file_path)
+
+    assert table_element.text == "outer nested wide"
+    assert "nested wide" in (table_element.metadata.text_as_html or "")
 
 
 def test_partition_docx_grabs_emphasized_texts(

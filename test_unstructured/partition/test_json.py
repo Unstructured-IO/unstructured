@@ -372,6 +372,31 @@ def test_partition_json_arbitrary_chunks_preserve_last_modified_on_orig_elements
     )
 
 
+@pytest.mark.parametrize("strategy", ["basic", "by_title"])
+@pytest.mark.parametrize("stored_timestamp", [None, "2019-01-01T00:00:00"])
+@pytest.mark.parametrize("override", [None, "2020-07-05T09:24:28"])
+def test_partition_json_rehydrated_chunks_preserve_original_timestamps(
+    strategy, stored_timestamp, override
+):
+    source = Text(
+        "Saved document content.", metadata=ElementMetadata(last_modified=stored_timestamp)
+    )
+    chunks = partition_json(
+        text=elements_to_json([source]),
+        metadata_last_modified=override,
+        chunking_strategy=strategy,
+    )
+    expected = override or stored_timestamp
+    for elements in (chunks, elements_from_json(text=elements_to_json(chunks))):
+        assert elements
+        assert all(element.metadata.last_modified == expected for element in elements)
+        originals = [
+            original for chunk in elements for original in chunk.metadata.orig_elements or []
+        ]
+        assert originals
+        assert all(original.metadata.last_modified == expected for original in originals)
+
+
 def test_partition_json_from_file_gets_last_modified_None():
     with open("example-docs/spring-weather.html.json", "rb") as f:
         elements = partition_json(file=f)
