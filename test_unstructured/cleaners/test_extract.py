@@ -19,6 +19,16 @@ def test_get_indexed_match_raises_with_index_too_high():
         extract._get_indexed_match("BLAH BLAH BLAH", "BLAH", 4)
 
 
+def test_get_indexed_match_no_match_raises_clear_error():
+    with pytest.raises(ValueError, match="not found"):
+        extract._get_indexed_match("BLAH BLAH BLAH", "XYZ")
+
+
+def test_extract_text_before_no_match_raises_clear_error():
+    with pytest.raises(ValueError, match="not found"):
+        extract.extract_text_before("BLAH BLAH BLAH", "XYZ")
+
+
 def test_extract_text_before():
     text = "Teacher: BLAH BLAH BLAH; Student: BLAH BLAH BLAH!"
     assert extract.extract_text_before(text, "BLAH", 1) == "Teacher: BLAH"
