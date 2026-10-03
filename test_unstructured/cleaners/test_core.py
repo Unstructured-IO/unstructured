@@ -411,3 +411,17 @@ def test_clean(text, extra_whitespace, dashes, bullets, lowercase, trailing_punc
 def test_bytes_string_to_string():
     text = "\xe6\xaf\x8f\xe6\x97\xa5\xe6\x96\xb0\xe9\x97\xbb"
     assert core.bytes_string_to_string(text, "utf-8") == "每日新闻"
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("The extracted text is a re-\nsearch project", "The extracted text is a research project"),
+        ("This is a hyphen- ated word", "This is a hyphenated word"),
+        ("A tab-\tseparated split", "A tabseparated split"),
+        ("Auto-\nmatic and re-\nboot in one string", "Automatic and reboot in one string"),
+        ("No hyphenation here at all", "No hyphenation here at all"),
+    ],
+)
+def test_clean_newline(text, expected):
+    assert core.clean_newline(text) == expected
