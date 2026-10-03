@@ -60,6 +60,7 @@
 
 ### Fixes
 
+- **`partition_via_api()` now sends the `content_type` it accepts.** The parameter has been part of the signature since the helper was introduced and is documented as "a string defining the file content in MIME type", but it was never read: the `shared.Files` object was built from `content` and `file_name` only, so the caller's MIME type never reached the API and the server fell back to sniffing the file name. `shared.Files` has a `content_type` field, which is now populated when the caller supplies one; omitting it leaves the field unset so the existing inference is unchanged.
 - **`GLOBAL_WORKING_PROCESS_DIR` no longer crashes on Windows.** Use `os.getpid()` when the POSIX-only `os.getpgid()` is unavailable.
 
 - **Preserve HTML table header semantics.** The v1 HTML parser now retains `<thead>`, `<tbody>`,
