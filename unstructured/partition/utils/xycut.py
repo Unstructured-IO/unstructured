@@ -93,7 +93,7 @@ def split_projection_profile(arr_values: np.ndarray, min_value: float, min_gap: 
     return arr_start, arr_end
 
 
-def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
+def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int], rtl: bool = False):
     """
 
     Args:
@@ -101,6 +101,10 @@ def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
         indices: during the recursion process, the index of box in the original data
          is always represented.
         res: save output
+        rtl: when True, column groups within a row are visited right-to-left instead
+         of left-to-right, matching the reading order of right-to-left scripts (e.g.
+         Arabic, Hebrew). Row order (top-to-bottom) is unaffected, since that's the
+         same for LTR and RTL documents.
 
     """
     # project to the y-axis
@@ -139,26 +143,34 @@ def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
         arr_x0, arr_x1 = pos_x
         if len(arr_x0) == 1:
             # x-direction cannot be divided
-            res.extend(x_sorted_indices_chunk)
+            res.extend(reversed(x_sorted_indices_chunk) if rtl else x_sorted_indices_chunk)
             continue
 
         # can be separated in the x-direction and continue to call recursively
-        for c0, c1 in zip(arr_x0, arr_x1):
+        x_groups = zip(arr_x0, arr_x1)
+        for c0, c1 in reversed(list(x_groups)) if rtl else x_groups:
             _indices = (c0 <= x_sorted_boxes_chunk[:, 0]) & (x_sorted_boxes_chunk[:, 0] < c1)
             recursive_xy_cut(
                 x_sorted_boxes_chunk[_indices],
                 x_sorted_indices_chunk[_indices],
                 res,
+                rtl=rtl,
             )
 
 
-def recursive_xy_cut_swapped(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
+def recursive_xy_cut_swapped(
+    boxes: np.ndarray, indices: np.ndarray, res: List[int], rtl: bool = False
+):
     """
     Args:
         boxes: (N, 4) - Numpy array representing bounding boxes with shape (N, 4)
         where each row is (left, top, right, bottom)
         indices: An array representing indices that correspond to boxes in the original data
         res: A list to save the output results
+        rtl: when True, the x-axis column segments are visited right-to-left instead
+         of left-to-right, matching the reading order of right-to-left scripts (e.g.
+         Arabic, Hebrew). The y-axis (top-to-bottom) order within each column is
+         unaffected, since that's the same for LTR and RTL documents.
     """
 
     # Sort the bounding boxes based on x-coordinates (flipped)
@@ -177,7 +189,8 @@ def recursive_xy_cut_swapped(boxes: np.ndarray, indices: np.ndarray, res: List[i
     arr_x0, arr_x1 = pos_x
 
     # Loop over the segments obtained from the x-axis projection
-    for c0, c1 in zip(arr_x0, arr_x1):
+    x_groups = zip(arr_x0, arr_x1)
+    for c0, c1 in reversed(list(x_groups)) if rtl else x_groups:
         # Obtain sub-boxes in the x-axis segment
         _indices = (c0 <= x_sorted_boxes[:, 0]) & (x_sorted_boxes[:, 0] < c1)
         x_sorted_boxes_chunk = x_sorted_boxes[_indices]
@@ -209,6 +222,7 @@ def recursive_xy_cut_swapped(boxes: np.ndarray, indices: np.ndarray, res: List[i
                 y_sorted_boxes_chunk[_indices],
                 y_sorted_indices_chunk[_indices],
                 res,
+                rtl=rtl,
             )
 
 
