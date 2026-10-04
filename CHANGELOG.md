@@ -1,3 +1,9 @@
+## 0.27.18
+
+### Fixes
+
+- Preserve caller metadata in `stage_for_prodigy()`. Repeated JSON or CSV exports now accept the same metadata, and elements sharing a metadata dictionary keep their own IDs.
+
 ## 0.27.17
 
 ### Fixes
