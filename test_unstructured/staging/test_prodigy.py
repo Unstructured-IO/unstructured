@@ -96,6 +96,45 @@ def test_convert_to_prodigy_data_with_valid_metadata(elements, valid_metadata):
     assert prodigy_data[1]["meta"] == {"id": elements[1].id, **valid_metadata[1]}
 
 
+@pytest.mark.parametrize(
+    "metadata",
+    [[{}, {}], [{"category": "title"}, {"category": "paragraph"}]],
+)
+def test_convert_to_prodigy_data_preserves_metadata(elements, metadata):
+    original_metadata = [metadatum.copy() for metadatum in metadata]
+
+    prodigy_data = prodigy.stage_for_prodigy(elements, metadata)
+
+    assert metadata == original_metadata
+    assert [data["meta"] for data in prodigy_data] == [
+        {**metadatum, "id": element.id} for element, metadatum in zip(elements, original_metadata)
+    ]
+
+    prodigy_data[0]["meta"]["category"] = "changed"
+    assert metadata == original_metadata
+
+
+@pytest.mark.parametrize("stage", [prodigy.stage_for_prodigy, prodigy.stage_csv_for_prodigy])
+def test_convert_to_prodigy_data_allows_metadata_reuse(elements, valid_metadata, stage):
+    expected = stage(elements, [metadatum.copy() for metadatum in valid_metadata])
+
+    prodigy.stage_for_prodigy(elements, valid_metadata)
+
+    assert stage(elements, valid_metadata) == expected
+
+
+@pytest.mark.parametrize("shared_metadata", [{}, {"category": "paragraph"}])
+def test_convert_to_prodigy_data_with_shared_metadata(elements, shared_metadata):
+    original_metadata = shared_metadata.copy()
+
+    prodigy_data = prodigy.stage_for_prodigy(elements, [shared_metadata] * len(elements))
+
+    assert [data["meta"]["id"] for data in prodigy_data] == [element.id for element in elements]
+    prodigy_data[0]["meta"]["category"] = "changed"
+    assert prodigy_data[1]["meta"] == {**original_metadata, "id": elements[1].id}
+    assert shared_metadata == original_metadata
+
+
 def test_stage_csv_for_prodigy(elements, output_csv_file):
     with open(output_csv_file, "w+") as csv_file:
         prodigy_csv_string = prodigy.stage_csv_for_prodigy(elements)
