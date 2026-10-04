@@ -343,5 +343,10 @@ class ENVConfig:
         """Maximum `rows x columns` cells a CSV or TSV file may span"""
         return self._get_int("CSV_MAX_CELLS", 5_000_000)
 
+    @property
+    def IMAGE_MAX_TOTAL_PIXELS(self) -> int:
+        """Maximum pixels, summed across all frames, an image file may decode to"""
+        return self._get_int("IMAGE_MAX_TOTAL_PIXELS", 500_000_000)
+
 
 env_config = ENVConfig()
