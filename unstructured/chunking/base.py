@@ -702,13 +702,15 @@ class PreChunk:
             self._elements, pre_chunk._elements
         ):
             return False
-        if len(self._text) >= self._opts.combine_text_under_n_chars:
+        # -- both thresholds below are expressed in the configured units, so the text has to be
+        # -- sized in those units too; `measure()` is `len()` in character mode --
+        if self._opts.measure(self._text) >= self._opts.combine_text_under_n_chars:
             return False
         # -- avoid duplicating length computations by doing a trial-combine which is just as
         # -- efficient and definitely more robust than hoping two different computations of combined
         # -- length continue to get the same answer as the code evolves. Only possible because
         # -- `.combine()` is non-mutating.
-        combined_len = len(self.combine(pre_chunk)._text)
+        combined_len = self._opts.measure(self.combine(pre_chunk)._text)
 
         return combined_len <= self._opts.hard_max
 
