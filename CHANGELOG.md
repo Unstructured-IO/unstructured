@@ -1,8 +1,20 @@
-## 0.27.17
+## 0.27.19
 
 ### Fixes
 
 - **Charge each GIF frame at the canvas size Pillow decodes it at.** A GIF frame that extends past the logical screen grows the canvas every later frame is decoded onto, but the image pixel limit charged every frame at the first frame's size, so a small first frame followed by a large one was undercounted. With `hi_res`, the frames of a GIF are now measured by reading each frame descriptor's position and size, skipping color tables and image data without decoding them.
+
+## 0.27.18
+
+### Fixes
+
+- **Fix `ValueError: Coordinate 'lower' is less than 'upper'` when extracting figure/table images**: `save_elements` assumed `points[0]`/`points[2]` were always the top-left/bottom-right corners in screen orientation. For elements whose coordinates carried (or were converted from) a y-up orientation, that ordering inverted the PIL crop box and raised the error, which was then silently swallowed and the image dropped. The crop box is now derived from the extent (min/max) of all coordinate points, so it is always valid regardless of point ordering.
+
+## 0.27.17
+
+### Fixes
+
+- **Serializing a chunk copied its `orig_elements` twice and threw both copies away.** `ElementMetadata.to_dict()` deep-copied every metadata field before replacing `coordinates`, `data_source`, `orig_elements` and `key_value_pairs` with their serialized form, and `_fix_metadata_field_precision()` copied each element again to round coordinates and `detection_class_prob` that most elements do not carry. On a chunk, `orig_elements` holds every source element of that chunk, so both copies duplicated the document. Serializing chunks is now roughly 4x to 6x faster through `to_dict()` and 6x to 10x faster through `elements_to_json()`; `elements_to_json()` on elements with no `orig_elements` is about 3x faster. **Behavior change:** `Element.id` mints a uuid on first access and caches it on that element, so the discarded copies used to take the new ids with them and consecutive serializations of one chunk reported different `element_id`s for the same source elements. Ids are now minted on the caller's element and are stable across calls, in `elements_to_json()` and `elements_to_ndjson()` as well as inside `orig_elements`. Elements given an explicit or hash-derived id were never affected.
 
 ## 0.27.16
 
