@@ -143,6 +143,36 @@ class EmailPartitioningContext:
         return self.msg.get_body(preferencelist=self.content_type_preference)
 
     @cached_property
+    def body_parts(self) -> list[MIMEPart]:
+        """The message parts that together carry the textual email message, in order.
+
+        Usually this is `.body_part` alone. A mail client shows a `multipart/mixed` part as its
+        inline parts one after the other, though, and some messages spread their text over
+        several of them: Apple Mail sends a message with a file placed inside its text as an HTML
+        part, the file, and another HTML part, and a mailing list appends its footer as a part of
+        its own. `.body_part` is only the first of these. When it is shown by a `multipart/mixed`
+        part, each inline text, alternative or related part of that `multipart/mixed` contributes
+        its own body part here.
+        """
+        body_part = self.body_part
+        if body_part is None:
+            return []
+
+        container = _mixed_part_showing(self.msg, body_part)
+        if container is None:
+            return [body_part]
+
+        body_parts: list[MIMEPart] = []
+        for part in container.iter_parts():
+            if not _is_body_like(part):
+                continue
+            # -- `get_body()` returns `None` for an attached file --
+            part_body = part.get_body(preferencelist=self.content_type_preference)
+            if part_body is not None:
+                body_parts.append(part_body)
+        return body_parts
+
+    @cached_property
     def cc_addresses(self) -> list[str] | None:
         """The "carbon-copy" Cc: addresses of the message."""
         ccs = self.msg.get_all("Cc")
@@ -342,16 +372,20 @@ class _EmailPartitioner:
             return
 
         for attachment in self._ctx.msg.iter_attachments():
+            # -- `iter_attachments()` passes over only the first body-like part of each kind, so a
+            # -- later one can be, or hold, a part the body above was read from --
+            if any(_holds(attachment, part) for part in self._ctx.body_parts):
+                continue
             yield from _AttachmentPartitioner.iter_elements(attachment, self._ctx)
 
     def _iter_email_body_elements(self) -> Iterator[Element]:
         """Generate document elements from the email body."""
-        body_part = self._ctx.body_part
-
         # -- it's possible to have no body part; that translates to zero elements --
-        if body_part is None:
-            return
+        for body_part in self._ctx.body_parts:
+            yield from self._iter_body_part_elements(body_part)
 
+    def _iter_body_part_elements(self, body_part: MIMEPart) -> Iterator[Element]:
+        """Generate document elements from one part of the email body."""
         content_type = body_part.get_content_type()
         content = body_part.get_content()
         assert isinstance(content, str)
@@ -445,3 +479,41 @@ class _AttachmentPartitioner:
 
         assert isinstance(content, bytes)
         return content
+
+
+def _holds(part: MIMEPart, target: MIMEPart) -> bool:
+    """True when `part` is `target` or has it among its nested parts."""
+    return part is target or any(_holds(child, target) for child in part.iter_parts())
+
+
+def _is_body_like(part: MIMEPart) -> bool:
+    """True when `part` is of a kind `iter_attachments()` takes for message text, not a file."""
+    return part.get_content_type() in (
+        "text/plain",
+        "text/html",
+        "multipart/alternative",
+        "multipart/related",
+    )
+
+
+def _mixed_part_showing(part: MIMEPart, target: MIMEPart) -> MIMEPart | None:
+    """The `multipart/mixed` part in `part` that shows `target` as one of its inline parts.
+
+    `target` is shown by a `multipart/mixed` part when it is one of its parts or sits inside one
+    through alternative and related parts only. `None` when no `multipart/mixed` part shows it.
+    """
+    for child in part.iter_parts():
+        if part.get_content_type() == "multipart/mixed" and _shows(child, target):
+            return part
+        if (found := _mixed_part_showing(child, target)) is not None:
+            return found
+    return None
+
+
+def _shows(part: MIMEPart, target: MIMEPart) -> bool:
+    """True when `part` is `target`, or holds it through alternative and related parts only."""
+    if part is target:
+        return True
+    if part.get_content_type() not in ("multipart/alternative", "multipart/related"):
+        return False
+    return any(_shows(child, target) for child in part.iter_parts())
