@@ -7,7 +7,9 @@ from functools import cached_property
 from typing import IO, Any, Iterator, Optional
 
 import numpy as np
+import openpyxl
 import pandas as pd
+import xlrd
 from msoffcrypto import OfficeFile
 from msoffcrypto.exceptions import FileFormatError
 from typing_extensions import Self, TypeAlias
@@ -33,11 +35,15 @@ from unstructured.partition.text_type import (
     is_possible_numbered_list,
     is_possible_title,
 )
+from unstructured.partition.utils.config import env_config
 from unstructured.telemetry import partition_runtime_telemetry
 
 _CellCoordinate: TypeAlias = "tuple[int, int]"
 
 DETECTION_ORIGIN: str = "xlsx"
+
+_ZIP_SIGNATURE = b"PK\x03\x04"
+_OLE_SIGNATURE = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
 
 @partition_runtime_telemetry("xlsx")
@@ -198,9 +204,28 @@ class _XlsxPartitionerOptions:
         if office_file.is_encrypted():
             raise UnprocessableEntityError("XLSX file is password protected.")
 
+        # -- Pandas allocates a dense data-frame spanning every worksheet out to its farthest
+        # -- populated cell, so a tiny file with one far-away cell can exhaust memory. Measure
+        # -- that span cheaply before reading, and pin the engine to the one that was measured.
+        engine = self._excel_engine
+        _check_worksheet_cell_count(self._file_bytes, engine, env_config.XLSX_MAX_CELLS)
+
         return pd.read_excel(
-            io.BytesIO(self._file_bytes), sheet_name=None, header=self.header_row_idx
+            io.BytesIO(self._file_bytes),
+            sheet_name=None,
+            header=self.header_row_idx,
+            engine=engine,
         )
+
+    @cached_property
+    def _excel_engine(self) -> str:
+        """The Pandas engine for this file: "openpyxl" for XLSX (zip), "xlrd" for XLS (OLE)."""
+        file_bytes = self._file_bytes
+        if file_bytes.startswith(_ZIP_SIGNATURE):
+            return "openpyxl"
+        if file_bytes.startswith(_OLE_SIGNATURE):
+            return "xlrd"
+        raise UnprocessableEntityError("Not a valid XLSX or XLS file.")
 
     @cached_property
     def _file_bytes(self) -> bytes:
@@ -454,6 +479,76 @@ class _SubtableParser:
                 next_row_idx -= 1
 
         return tuple(reversed(list(iter_trailing_single_cell_row_indices())))
+
+
+def _cell_coordinates(rows: np.ndarray, cols: np.ndarray) -> Iterator[_CellCoordinate]:
+    """Generate `(row, col)` cell-coordinates as Python ints from parallel index arrays."""
+    return zip(rows.tolist(), cols.tolist())
+
+
+def _check_worksheet_cell_count(file_bytes: bytes, engine: str, max_cells: int) -> None:
+    """Raise `UnprocessableEntityError` when the worksheets' data-frames would exceed `max_cells`.
+
+    The count is the sum across worksheets of the `rows x columns` shape Pandas would allocate,
+    measured without materializing any cells. It raises as soon as the running total passes
+    `max_cells`, so the scan itself never reads further than needed.
+    """
+    total_cells = 0
+    cells_by_sheet: dict[int, int] = {}
+    for sheet_idx, sheet_name, n_rows, n_cols in _iter_worksheet_shapes(file_bytes, engine):
+        # -- a later shape for the same worksheet supersedes the earlier, partial one --
+        total_cells += n_rows * n_cols - cells_by_sheet.get(sheet_idx, 0)
+        cells_by_sheet[sheet_idx] = n_rows * n_cols
+        if total_cells > max_cells:
+            raise UnprocessableEntityError(
+                f"Spreadsheet exceeds the maximum of {max_cells:,} worksheet cells"
+                f" (XLSX_MAX_CELLS): worksheet '{sheet_name}' spans at least {n_rows:,} rows"
+                f" x {n_cols:,} columns."
+            )
+
+
+def _iter_worksheet_shapes(file_bytes: bytes, engine: str) -> Iterator[tuple[int, str, int, int]]:
+    """Generate `(sheet_idx, sheet_name, n_rows, n_cols)` per worksheet, as Pandas would shape it.
+
+    For XLSX the shape grows while the worksheet is streamed, so a partial shape is generated each
+    time it grows and the caller can stop early. The last shape generated for each worksheet is its
+    full shape.
+    """
+    if engine == "xlrd":
+        # -- Pandas' xlrd reader does not trim, its data-frame is exactly `nrows x ncols`. Ragged
+        # -- rows and on-demand loading keep this scan proportional to the populated cells.
+        book = xlrd.open_workbook(file_contents=file_bytes, on_demand=True, ragged_rows=True)
+        try:
+            for sheet_idx in range(book.nsheets):
+                sheet = book.sheet_by_index(sheet_idx)
+                yield sheet_idx, sheet.name, sheet.nrows, sheet.ncols
+                book.unload_sheet(sheet_idx)
+        finally:
+            book.release_resources()
+        return
+
+    # -- Load exactly as Pandas does. Its openpyxl reader ignores the stored `<dimension>` and trims
+    # -- trailing empty rows and cells, so the shape spans the last row and column with a value.
+    # -- Read-only mode streams the XML and generates rows missing from it as empty tuples, so
+    # -- the gap before a far-away cell costs next to nothing.
+    workbook = openpyxl.load_workbook(
+        io.BytesIO(file_bytes), read_only=True, data_only=True, keep_links=False
+    )
+    try:
+        for sheet_idx, worksheet in enumerate(workbook.worksheets):
+            worksheet.reset_dimensions()  # pyright: ignore[reportAttributeAccessIssue]
+            n_rows, n_cols = 0, 0
+            for row in worksheet.iter_rows():
+                # -- the last cell in this row holding a value, if any --
+                last_cell = next((c for c in reversed(row) if c.value not in (None, "")), None)
+                if last_cell is None:
+                    continue
+                n_rows = last_cell.row
+                n_cols = max(n_cols, last_cell.column)
+                yield sheet_idx, worksheet.title, n_rows, n_cols
+            yield sheet_idx, worksheet.title, n_rows, n_cols
+    finally:
+        workbook.close()
 
 
 def _create_element(text: str) -> Element:
