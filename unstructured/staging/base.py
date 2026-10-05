@@ -6,7 +6,7 @@ import io
 import json
 import re
 import zlib
-from copy import deepcopy
+from copy import copy
 from datetime import datetime
 from typing import Any, Iterable, Optional, Sequence, cast
 
@@ -14,6 +14,7 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
+    CoordinatesMetadata,
     Element,
     ElementMetadata,
     Formula,
@@ -489,19 +490,39 @@ def elements_to_ndjson(
 
 
 def _fix_metadata_field_precision(elements: Iterable[Element]) -> list[Element]:
+    """Round `coordinates` and `detection_class_prob` for serialization.
+
+    An element with neither field is returned as-is, the caller's own object. Any other element is
+    returned as a shallow copy with its own metadata copy; the caller's element is not modified.
+    """
     out_elements: list[Element] = []
     for element in elements:
-        el = deepcopy(element)
+        # -- the copy exists only so the two fields below can be rounded without touching the
+        # -- caller's element; most elements carry neither, and this runs over every element of
+        # -- every serialized document --
+        if not element.metadata.coordinates and not element.metadata.detection_class_prob:
+            out_elements.append(element)
+            continue
+
+        # -- mint the id on the caller's element first. `Element.id` caches on first access, so
+        # -- without this the copy below takes a fresh uuid with it and every call reports a
+        # -- different `element_id` for the same element --
+        _ = element.id
+        el = copy(element)
+        el.metadata = copy(element.metadata)
         if el.metadata.coordinates:
-            precision = 1 if isinstance(el.metadata.coordinates.system, PixelSpace) else 2
-            points = el.metadata.coordinates.points
+            coordinates = el.metadata.coordinates
+            precision = 1 if isinstance(coordinates.system, PixelSpace) else 2
+            points = coordinates.points
             assert points is not None
             rounded_points: list[Point] = []
             for point in points:
                 x, y = point
                 rounded_point = (round(x, precision), round(y, precision))
                 rounded_points.append(rounded_point)
-            el.metadata.coordinates.points = tuple(rounded_points)
+            el.metadata.coordinates = CoordinatesMetadata(
+                points=tuple(rounded_points), system=coordinates.system
+            )
 
         if el.metadata.detection_class_prob:
             el.metadata.detection_class_prob = round(el.metadata.detection_class_prob, 5)
