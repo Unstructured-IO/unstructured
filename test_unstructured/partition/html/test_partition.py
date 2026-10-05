@@ -1683,3 +1683,213 @@ def test_partition_html_extracts_a_sphinx_style_api_reference():
         "Returns",
         "An open connection object.",
     ]
+
+
+# -- disclosure widgets (`<details>`/`<summary>`) -------------------------------------------------
+
+
+def test_partition_html_extracts_details_and_summary_content():
+    """`<details>` and `<summary>` were mapped to `RemovedBlock`, so an accordion vanished.
+
+    FAQ pages are commonly built this way, and every question and answer was dropped silently --
+    the caller got a shorter element list, not an error. See #3919.
+    """
+    html_text = (
+        "<html><body>"
+        "<h1>Support FAQ</h1>"
+        "<details><summary>Which Bluetooth profiles are supported?</summary>"
+        "<p>Your device supports A2DP and HFP profiles.</p></details>"
+        "<details open><summary>How do I pair my hearing aid?</summary>"
+        "<p>Open settings and select Bluetooth.</p></details>"
+        "</body></html>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [(type(e).__name__, e.text) for e in elements] == [
+        ("Title", "Support FAQ"),
+        ("Title", "Which Bluetooth profiles are supported?"),
+        ("NarrativeText", "Your device supports A2DP and HFP profiles."),
+        ("Title", "How do I pair my hearing aid?"),
+        ("NarrativeText", "Open settings and select Bluetooth."),
+    ]
+
+
+def test_partition_html_makes_a_summary_start_its_own_chunk_section():
+    """The reason the element type matters: `chunk_by_title` opens a new section at a `Title`.
+
+    Two unrelated Q&A pairs land in separate chunks instead of one blended chunk. Small sections
+    are still merged under the default `combine_text_under_n_chars`, so that is disabled here to
+    isolate the sectioning behaviour rather than the merging.
+    """
+    html_text = (
+        "<html><body>"
+        "<details><summary>First question?</summary><p>First answer.</p></details>"
+        "<details><summary>Second question?</summary><p>Second answer.</p></details>"
+        "</body></html>"
+    )
+
+    chunks = chunk_by_title(
+        partition_html(text=html_text), max_characters=200, combine_text_under_n_chars=0
+    )
+
+    assert [c.text for c in chunks] == [
+        "First question?\n\nFirst answer.",
+        "Second question?\n\nSecond answer.",
+    ]
+
+
+def test_partition_html_extracts_a_details_block_that_has_no_summary():
+    html_text = "<html><body><details><p>Just the body.</p></details></body></html>"
+
+    assert [e.text for e in partition_html(text=html_text)] == ["Just the body."]
+
+
+def test_partition_html_extracts_nested_details_blocks():
+    html_text = (
+        "<html><body><details><summary>Outer</summary>"
+        "<details><summary>Inner</summary><p>Innermost body.</p></details>"
+        "</details></body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        ("Title", "Outer"),
+        ("Title", "Inner"),
+        ("Text", "Innermost body."),
+    ]
+
+
+def test_partition_html_keeps_a_summary_a_title_after_a_leading_image():
+    """An expand/collapse icon before the label must not demote the label to `Text`.
+
+    Otherwise `chunk_by_title()` sees no boundary and merges the second entry into the first.
+    """
+    html_text = (
+        "<html><body>"
+        "<details><summary>First question?</summary><p>First answer.</p></details>"
+        '<details><summary><img src="/chevron.svg" alt="">Second question?</summary>'
+        "<p>Second answer.</p></details>"
+        "</body></html>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [(type(e).__name__, e.text) for e in elements] == [
+        ("Title", "First question?"),
+        ("Text", "First answer."),
+        ("Image", ""),
+        ("Title", "Second question?"),
+        ("Text", "Second answer."),
+    ]
+    chunks = chunk_by_title(elements, max_characters=200, combine_text_under_n_chars=0)
+    assert [c.text for c in chunks] == [
+        "First question?\n\nFirst answer.",
+        "Second question?\n\nSecond answer.",
+    ]
+
+
+@pytest.mark.parametrize("wrapper", ["p", "div"])
+def test_partition_html_keeps_a_block_wrapped_summary_a_title(wrapper: str):
+    html_text = (
+        f"<html><body><details><summary><{wrapper}>Wrapped question?</{wrapper}></summary>"
+        "<p>Answer.</p></details></body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        ("Title", "Wrapped question?"),
+        ("Text", "Answer."),
+    ]
+
+
+def test_partition_html_does_not_repeat_a_heading_nested_in_a_summary():
+    html_text = (
+        "<html><body><details><summary><h3>Heading question?</h3></summary>"
+        "<p>Answer.</p></details></body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        ("Title", "Heading question?"),
+        ("Text", "Answer."),
+    ]
+
+
+def test_partition_html_keeps_text_after_a_summary_out_of_its_title():
+    html_text = (
+        "<html><body><details><summary>Label</summary>Loose body text that follows"
+        "<p>Body paragraph.</p></details></body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        ("Title", "Label"),
+        ("NarrativeText", "Loose body text that follows"),
+        ("Text", "Body paragraph."),
+    ]
+
+
+def test_partition_html_keeps_annotations_and_page_number_on_a_summary_title():
+    html_text = (
+        '<html><body><details data-page-number="3"><summary><img src="/i.svg" alt="">'
+        '<div>How do I <b>reset</b> my <a href="/reset">password</a>?</div></summary>'
+        "<p>Use the link.</p></details></body></html>"
+    )
+
+    title = next(e for e in partition_html(text=html_text) if e.text.startswith("How do I"))
+
+    assert isinstance(title, Title)
+    assert title.text == "How do I reset my password?"
+    assert title.metadata.emphasized_text_contents == ["reset"]
+    assert title.metadata.emphasized_text_tags == ["b"]
+    assert title.metadata.link_texts == ["password"]
+    assert title.metadata.link_urls == ["/reset"]
+    assert title.metadata.page_number == 3
+
+
+def test_partition_html_nests_a_summary_under_the_heading_before_it():
+    html_text = (
+        "<html><body><h2>FAQ</h2>"
+        "<details><summary>Which profiles are supported?</summary>"
+        "<p>Your device supports A2DP and HFP profiles.</p></details>"
+        "<h2>Shipping</h2><p>Orders ship within two business days.</p></body></html>"
+    )
+
+    faq, question, answer, shipping, shipping_text = partition_html(text=html_text)
+
+    assert question.text == "Which profiles are supported?"
+    assert question.metadata.parent_id == faq.id
+    assert answer.metadata.parent_id == question.id
+    # -- the next heading of the same level is not swallowed by the summary --
+    assert shipping.metadata.parent_id is None
+    assert shipping_text.metadata.parent_id == shipping.id
+    assert [e.metadata.category_depth for e in (faq, question, shipping)] == [1, 6, 1]
+
+
+def test_partition_html_nests_a_nested_details_summary_under_its_parent_summary():
+    html_text = (
+        "<html><body><details><summary>Outer question?</summary>"
+        "<p>The outer answer goes here.</p>"
+        "<details><summary>Inner question?</summary><p>The inner answer goes here.</p></details>"
+        "</details></body></html>"
+    )
+
+    outer, outer_answer, inner, inner_answer = partition_html(text=html_text)
+
+    assert outer.metadata.parent_id is None
+    assert outer_answer.metadata.parent_id == outer.id
+    assert inner.metadata.parent_id == outer.id
+    assert inner_answer.metadata.parent_id == inner.id
+    assert [outer.metadata.category_depth, inner.metadata.category_depth] == [6, 7]
+
+
+def test_partition_html_places_a_wrapped_summary_label_like_a_plain_one():
+    html_text = (
+        "<html><body><h3>Billing</h3>"
+        "<details><summary><p>Can I get a refund?</p></summary>"
+        "<p>Refunds are issued within thirty days.</p></details></body></html>"
+    )
+
+    billing, question, answer = partition_html(text=html_text)
+
+    assert question.text == "Can I get a refund?"
+    assert question.metadata.category_depth == 6
+    assert question.metadata.parent_id == billing.id
+    assert answer.metadata.parent_id == question.id

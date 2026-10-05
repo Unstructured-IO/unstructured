@@ -281,13 +281,29 @@ class _ElementAccumulator:
         Delegates to the shared `category_depth_from_html_tag` helper so the v1 and v2 (ontology)
         HTML parsers compute `category_depth` identically.
         """
+        tag = self._element.tag
         list_ancestor_count = (
             len([e for e in self._element.iterancestors() if e.tag in ("dl", "ol", "ul")])
-            if self._element.tag in ("li", "dd")
+            if tag in ("li", "dd")
             else 0
         )
+        details_ancestor_count = 0
+        if ElementCls is Title:
+            # -- text anywhere in a `<summary>` label, such as inside a wrapping `<p>`, is placed by
+            # -- the `<details>` nesting of that label rather than by its own tag --
+            summary = (
+                self._element
+                if tag == "summary"
+                else next(self._element.iterancestors("summary"), None)
+            )
+            if summary is not None:
+                tag = "summary"
+                details_ancestor_count = sum(1 for _ in summary.iterancestors("details"))
         return category_depth_from_html_tag(
-            ElementCls, self._element.tag, list_ancestor_count=list_ancestor_count
+            ElementCls,
+            tag,
+            list_ancestor_count=list_ancestor_count,
+            details_ancestor_count=details_ancestor_count,
         )
 
     @property
@@ -456,6 +472,31 @@ class Heading(Flow):
     """
 
     _ElementCls = Title
+
+
+class Summary(Heading):
+    """A `<summary>` element, the visible label of a `<details>` disclosure widget.
+
+    The label is a `Title` even when it follows an image (such as an expand/collapse icon) or is
+    wrapped in an ordinary block like `<p>` or `<div>`, so each widget still starts a new section
+    when chunking by title.
+    """
+
+    def iter_elements(self) -> Iterator[Element]:
+        yield from self._iter_label_elements(self)
+
+    def _iter_label_elements(self, block: Flow) -> Iterator[Element]:
+        """Generate the elements in `block`, making every run of its text a `Title`."""
+        q: deque[Flow | Phrasing] = deque(block)
+        yield from block._element_from_text_or_tail(block.text or "", q, Title)
+        while q:
+            child = cast(Flow, q.popleft())
+            # -- descend into a plain wrapper; an image, heading, table, etc. keeps its own type --
+            if type(child) in (Flow, BlockItem):
+                yield from self._iter_label_elements(child)
+            else:
+                yield from child.iter_elements()
+            yield from block._element_from_text_or_tail(child.tail or "", q, Title)
 
 
 class ListBlock(Flow):
@@ -1076,8 +1117,10 @@ element_class_lookup.get_namespace(None).update(
         # -- removed phrasing --
         "button": RemovedPhrasing,
         "label": RemovedPhrasing,
+        # -- disclosure widget: `<summary>` is its heading, the rest is ordinary flow content --
+        "details": Flow,
+        "summary": Summary,
         # -- removed block --
-        "details": RemovedBlock,  # -- likely boilerplate --
         "figure": RemovedBlock,
         "hr": RemovedBlock,
         "nav": RemovedBlock,
@@ -1085,6 +1128,5 @@ element_class_lookup.get_namespace(None).update(
         # -- removed form-related --
         "form": RemovedBlock,
         "input": RemovedBlock,
-        "summary": RemovedBlock,  # -- child of `details`
     }
 )
