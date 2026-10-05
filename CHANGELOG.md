@@ -2,7 +2,7 @@
 
 ### Fixes
 
-- **Extract `<figure>` content instead of discarding it**: `<figure>` was mapped to `RemovedBlock`, so `partition_html()` dropped every figure together with its image and `<figcaption>`, including every Wikipedia thumbnail. A figure is now an ordinary container: its image becomes an `Image` element (with `image_url`), a code listing or table inside it is kept, and the `<figcaption>` becomes a `FigureCaption`, as hi_res PDF partitioning emits for a picture and its caption. Resolves #3606.
+- **Extract `<figure>` content instead of discarding it**: `<figure>` was mapped to `RemovedBlock`, so `partition_html()` dropped every figure together with its image and `<figcaption>`, including every Wikipedia thumbnail. A figure is now an ordinary container: its image becomes an `Image` element (with `image_url`), a code listing or table inside it is kept, and the `<figcaption>` becomes a `FigureCaption`, as hi_res PDF partitioning emits for a picture and its caption. `Image` and `CodeSnippet` are now valid children of a `Title` or `Header` in `set_element_hierarchy()`, so an image or code listing no longer ends the heading's section for the elements after it, in any document type. An HTML element's `page_number` now also comes from a `data-page-number` above an inline ancestor such as `<a>`, and a caption wrapped in a `<p>` keeps that `<p>`'s page. Resolves #3606.
 
 ## 0.27.18
 

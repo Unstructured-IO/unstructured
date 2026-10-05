@@ -76,6 +76,7 @@ Other background
 from __future__ import annotations
 
 import html
+import itertools
 import re
 from collections import defaultdict, deque
 from functools import cached_property
@@ -351,16 +352,18 @@ class Flow(etree.ElementBase):
 
     @cached_property
     def _page_number(self) -> int | None:
-        """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute."""
-        page_attr = self.get("data-page-number")
-        if page_attr is not None:
+        """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute.
+
+        Phrasing ancestors are included, so an image inside an `<a>` gets its container's page.
+        """
+        for element in itertools.chain((self,), self.iterancestors()):
+            page_attr = element.get("data-page-number")
+            if page_attr is None:
+                continue
             try:
                 return int(page_attr)
             except (ValueError, TypeError):
-                pass
-        parent = self.getparent()
-        if parent is not None and isinstance(parent, Flow):
-            return parent._page_number
+                continue
         return None
 
     def iter_elements(self) -> Iterator[Element]:
@@ -481,9 +484,11 @@ class FigureCaptionBlock(Flow):
                 and not (child.tail or "").strip()
                 and all(node.is_phrasing for node in child.iterdescendants())
             ):
-                yield from self._element_from_text_or_tail(
+                for element in self._element_from_text_or_tail(
                     child.text or "", deque(child), FigureCaption
-                )
+                ):
+                    element.metadata.page_number = child._page_number
+                    yield element
                 return
 
         yield from super().iter_elements()

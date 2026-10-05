@@ -66,6 +66,8 @@ HIERARCHY_RULE_SET = {
         "FigureCaption",
         "CheckBox",
         "Table",
+        "Image",
+        "CodeSnippet",
     ],
     "Header": [
         "Title",
@@ -78,6 +80,8 @@ HIERARCHY_RULE_SET = {
         "FigureCaption",
         "CheckBox",
         "Table",
+        "Image",
+        "CodeSnippet",
     ],
 }
 

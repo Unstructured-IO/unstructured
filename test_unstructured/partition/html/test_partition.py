@@ -28,7 +28,10 @@ from unstructured.documents.elements import (
     Address,
     CodeSnippet,
     CompositeElement,
+    Element,
     ElementType,
+    FigureCaption,
+    Image,
     ListItem,
     NarrativeText,
     Table,
@@ -1744,3 +1747,43 @@ def test_partition_html_keeps_a_block_wrapped_figcaption_a_figure_caption():
         ("Image", "C"),
         ("FigureCaption", "Wrapped caption text."),
     ]
+
+
+@pytest.mark.parametrize(
+    ("figure_content", "ElementCls"),
+    [('<img src="/diagram.png" alt="Pipeline diagram">', Image), ("<pre>x = 1</pre>", CodeSnippet)],
+)
+def test_partition_html_keeps_the_heading_as_parent_across_a_figure(
+    figure_content: str, ElementCls: type[Element]
+):
+    html_text = (
+        f"<html><body><h1>Section</h1><figure>{figure_content}"
+        "<figcaption>Figure 1. The pipeline.</figcaption></figure>"
+        "<p>The pipeline has three stages.</p>"
+        "<h2>Subsection</h2><p>Each stage is described below.</p></body></html>"
+    )
+
+    section, content, caption, after, subsection, subsection_text = partition_html(text=html_text)
+
+    assert isinstance(content, ElementCls)
+    assert content.metadata.parent_id == section.id
+    assert caption.metadata.parent_id == section.id
+    assert after.metadata.parent_id == section.id
+    assert subsection.metadata.parent_id == section.id
+    assert subsection_text.metadata.parent_id == subsection.id
+
+
+def test_partition_html_gives_figure_elements_their_own_page_number():
+    html_text = (
+        '<html><body><div data-page-number="7"><figure>'
+        '<a href="/full.png"><img src="/thumb.png" alt="Thumbnail"></a>'
+        '<figcaption><p data-page-number="8">A caption that sits on the next page.</p>'
+        "</figcaption></figure></div></body></html>"
+    )
+
+    image, caption = partition_html(text=html_text)
+
+    assert isinstance(image, Image)
+    assert image.metadata.page_number == 7
+    assert isinstance(caption, FigureCaption)
+    assert caption.metadata.page_number == 8
