@@ -1,4 +1,4 @@
-## Unreleased
+## 0.27.25
 
 - Reject HTTP error responses before URL partitioning so error pages are not ingested as documents.
 
