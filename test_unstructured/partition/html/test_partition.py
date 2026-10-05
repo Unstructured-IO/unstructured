@@ -28,7 +28,10 @@ from unstructured.documents.elements import (
     Address,
     CodeSnippet,
     CompositeElement,
+    Element,
     ElementType,
+    FigureCaption,
+    Image,
     ListItem,
     NarrativeText,
     Table,
@@ -1683,3 +1686,104 @@ def test_partition_html_extracts_a_sphinx_style_api_reference():
         "Returns",
         "An open connection object.",
     ]
+
+
+# -- figures (`<figure>`) -------------------------------------------------------------------------
+
+
+def test_partition_html_extracts_a_figure_image_and_its_caption():
+    """`<figure>` was `RemovedBlock`, so the image and its `<figcaption>` were both dropped.
+
+    Wikipedia wraps every thumbnail this way (#3606).
+    """
+    html_text = (
+        "<html><body><p>Intro.</p>"
+        '<figure typeof="mw:File/Thumb"><a href="/wiki/File:Tonnetz.svg">'
+        '<img src="//upload.wikimedia.org/tonnetz.svg" alt="Tonnetz diagram"></a>'
+        '<figcaption>The <a href="/wiki/Tonnetz">Tonnetz</a>, minor as upside-down major'
+        "</figcaption></figure></body></html>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [(type(e).__name__, e.text) for e in elements] == [
+        ("Text", "Intro."),
+        ("Image", "Tonnetz diagram"),
+        ("FigureCaption", "The Tonnetz, minor as upside-down major"),
+    ]
+    assert elements[1].metadata.image_url == "//upload.wikimedia.org/tonnetz.svg"
+    assert elements[2].metadata.link_texts == ["Tonnetz"]
+    assert elements[2].metadata.link_urls == ["/wiki/Tonnetz"]
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        ("<pre>x = 1</pre>", ("CodeSnippet", "x = 1")),
+        ("<table><tr><td>Q1</td><td>10</td></tr></table>", ("Table", "Q1 10")),
+    ],
+)
+def test_partition_html_keeps_non_image_figure_content_and_caption(
+    content: str, expected: tuple[str, str]
+):
+    html_text = (
+        f"<html><body><figure>{content}<figcaption>Caption text.</figcaption></figure>"
+        "</body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        expected,
+        ("FigureCaption", "Caption text."),
+    ]
+
+
+def test_partition_html_keeps_a_block_wrapped_figcaption_a_figure_caption():
+    html_text = (
+        '<html><body><figure><img src="/c.png" alt="C">'
+        "<figcaption><p>Wrapped caption text.</p></figcaption></figure></body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        ("Image", "C"),
+        ("FigureCaption", "Wrapped caption text."),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("figure_content", "ElementCls"),
+    [('<img src="/diagram.png" alt="Pipeline diagram">', Image), ("<pre>x = 1</pre>", CodeSnippet)],
+)
+def test_partition_html_keeps_the_heading_as_parent_across_a_figure(
+    figure_content: str, ElementCls: type[Element]
+):
+    html_text = (
+        f"<html><body><h1>Section</h1><figure>{figure_content}"
+        "<figcaption>Figure 1. The pipeline.</figcaption></figure>"
+        "<p>The pipeline has three stages.</p>"
+        "<h2>Subsection</h2><p>Each stage is described below.</p></body></html>"
+    )
+
+    section, content, caption, after, subsection, subsection_text = partition_html(text=html_text)
+
+    assert isinstance(content, ElementCls)
+    assert content.metadata.parent_id == section.id
+    assert caption.metadata.parent_id == section.id
+    assert after.metadata.parent_id == section.id
+    assert subsection.metadata.parent_id == section.id
+    assert subsection_text.metadata.parent_id == subsection.id
+
+
+def test_partition_html_gives_figure_elements_their_own_page_number():
+    html_text = (
+        '<html><body><div data-page-number="7"><figure>'
+        '<a href="/full.png"><img src="/thumb.png" alt="Thumbnail"></a>'
+        '<figcaption><p data-page-number="8">A caption that sits on the next page.</p>'
+        "</figcaption></figure></div></body></html>"
+    )
+
+    image, caption = partition_html(text=html_text)
+
+    assert isinstance(image, Image)
+    assert image.metadata.page_number == 7
+    assert isinstance(caption, FigureCaption)
+    assert caption.metadata.page_number == 8

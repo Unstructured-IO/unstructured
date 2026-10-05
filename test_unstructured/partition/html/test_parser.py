@@ -749,17 +749,16 @@ class DescribePre:
 class DescribeRemovedBlock:
     """Isolated unit-test suite for `unstructured.partition.html.parser.RemovedBlock`.
 
-    This class is used for block level items we want to skip like `<hr/>` and `<figure>`.
+    This class is used for block level items we want to skip like `<hr/>` and `<nav>`.
     """
 
     def it_is_skipped_during_parsing(self):
         html_text = """
           <div>
             <hr/>
-            <figure>
-              <img src="/media/cc0-images/elephant-660-480.jpg" alt="Elephant at sunset" />
-              <figcaption>An elephant at sunset</figcaption>
-            </figure>
+            <nav>
+              <a href="/">Home</a> <a href="/about">About</a>
+            </nav>
             <p>Content we want.</p>
           </div>
           """
