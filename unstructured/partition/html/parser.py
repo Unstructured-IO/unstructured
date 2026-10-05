@@ -281,13 +281,29 @@ class _ElementAccumulator:
         Delegates to the shared `category_depth_from_html_tag` helper so the v1 and v2 (ontology)
         HTML parsers compute `category_depth` identically.
         """
+        tag = self._element.tag
         list_ancestor_count = (
             len([e for e in self._element.iterancestors() if e.tag in ("dl", "ol", "ul")])
-            if self._element.tag in ("li", "dd")
+            if tag in ("li", "dd")
             else 0
         )
+        details_ancestor_count = 0
+        if ElementCls is Title:
+            # -- text anywhere in a `<summary>` label, such as inside a wrapping `<p>`, is placed by
+            # -- the `<details>` nesting of that label rather than by its own tag --
+            summary = (
+                self._element
+                if tag == "summary"
+                else next(self._element.iterancestors("summary"), None)
+            )
+            if summary is not None:
+                tag = "summary"
+                details_ancestor_count = sum(1 for _ in summary.iterancestors("details"))
         return category_depth_from_html_tag(
-            ElementCls, self._element.tag, list_ancestor_count=list_ancestor_count
+            ElementCls,
+            tag,
+            list_ancestor_count=list_ancestor_count,
+            details_ancestor_count=details_ancestor_count,
         )
 
     @property

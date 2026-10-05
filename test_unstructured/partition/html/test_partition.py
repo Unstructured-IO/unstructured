@@ -1842,3 +1842,54 @@ def test_partition_html_keeps_annotations_and_page_number_on_a_summary_title():
     assert title.metadata.link_texts == ["password"]
     assert title.metadata.link_urls == ["/reset"]
     assert title.metadata.page_number == 3
+
+
+def test_partition_html_nests_a_summary_under_the_heading_before_it():
+    html_text = (
+        "<html><body><h2>FAQ</h2>"
+        "<details><summary>Which profiles are supported?</summary>"
+        "<p>Your device supports A2DP and HFP profiles.</p></details>"
+        "<h2>Shipping</h2><p>Orders ship within two business days.</p></body></html>"
+    )
+
+    faq, question, answer, shipping, shipping_text = partition_html(text=html_text)
+
+    assert question.text == "Which profiles are supported?"
+    assert question.metadata.parent_id == faq.id
+    assert answer.metadata.parent_id == question.id
+    # -- the next heading of the same level is not swallowed by the summary --
+    assert shipping.metadata.parent_id is None
+    assert shipping_text.metadata.parent_id == shipping.id
+    assert [e.metadata.category_depth for e in (faq, question, shipping)] == [1, 6, 1]
+
+
+def test_partition_html_nests_a_nested_details_summary_under_its_parent_summary():
+    html_text = (
+        "<html><body><details><summary>Outer question?</summary>"
+        "<p>The outer answer goes here.</p>"
+        "<details><summary>Inner question?</summary><p>The inner answer goes here.</p></details>"
+        "</details></body></html>"
+    )
+
+    outer, outer_answer, inner, inner_answer = partition_html(text=html_text)
+
+    assert outer.metadata.parent_id is None
+    assert outer_answer.metadata.parent_id == outer.id
+    assert inner.metadata.parent_id == outer.id
+    assert inner_answer.metadata.parent_id == inner.id
+    assert [outer.metadata.category_depth, inner.metadata.category_depth] == [6, 7]
+
+
+def test_partition_html_places_a_wrapped_summary_label_like_a_plain_one():
+    html_text = (
+        "<html><body><h3>Billing</h3>"
+        "<details><summary><p>Can I get a refund?</p></summary>"
+        "<p>Refunds are issued within thirty days.</p></details></body></html>"
+    )
+
+    billing, question, answer = partition_html(text=html_text)
+
+    assert question.text == "Can I get a refund?"
+    assert question.metadata.category_depth == 6
+    assert question.metadata.parent_id == billing.id
+    assert answer.metadata.parent_id == question.id
