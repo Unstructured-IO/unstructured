@@ -1,10 +1,84 @@
-## 0.27.8-dev0
-
-### Fixes
+## Unreleased
 
 - Reject HTTP error responses before URL partitioning so error pages are not ingested as documents.
 
+## 0.27.18
+
 ### Fixes
+
+- **Fix `ValueError: Coordinate 'lower' is less than 'upper'` when extracting figure/table images**: `save_elements` assumed `points[0]`/`points[2]` were always the top-left/bottom-right corners in screen orientation. For elements whose coordinates carried (or were converted from) a y-up orientation, that ordering inverted the PIL crop box and raised the error, which was then silently swallowed and the image dropped. The crop box is now derived from the extent (min/max) of all coordinate points, so it is always valid regardless of point ordering.
+
+## 0.27.17
+
+### Fixes
+
+- **Serializing a chunk copied its `orig_elements` twice and threw both copies away.** `ElementMetadata.to_dict()` deep-copied every metadata field before replacing `coordinates`, `data_source`, `orig_elements` and `key_value_pairs` with their serialized form, and `_fix_metadata_field_precision()` copied each element again to round coordinates and `detection_class_prob` that most elements do not carry. On a chunk, `orig_elements` holds every source element of that chunk, so both copies duplicated the document. Serializing chunks is now roughly 4x to 6x faster through `to_dict()` and 6x to 10x faster through `elements_to_json()`; `elements_to_json()` on elements with no `orig_elements` is about 3x faster. **Behavior change:** `Element.id` mints a uuid on first access and caches it on that element, so the discarded copies used to take the new ids with them and consecutive serializations of one chunk reported different `element_id`s for the same source elements. Ids are now minted on the caller's element and are stable across calls, in `elements_to_json()` and `elements_to_ndjson()` as well as inside `orig_elements`. Elements given an explicit or hash-derived id were never affected.
+
+## 0.27.16
+
+### Fixes
+
+- **Reject images whose frames decode to too many pixels instead of exhausting memory.** Each frame of a multi-frame TIFF is decoded to RGB, and `hi_res` holds every frame at once, but blank frames compress to almost nothing, so a few-hundred-KB file could decode to tens of GB. `partition_image()` now measures the image before partitioning it, without allocating or decoding pixels, and raises `UnprocessableEntityError` above `IMAGE_MAX_TOTAL_PIXELS` pixels (default 500,000,000). With `hi_res`, which decodes every frame, every frame is charged: TIFF and MPO frames from their headers, HEIF images from the container, and canvas-sized frames (e.g. APNG, animated WebP, GIF) from their count; otherwise only the first frame is measured.
+
+## 0.27.15
+
+### Fixes
+
+- **Reject CSV and TSV files that span too many cells instead of exhausting memory.** Pandas sizes the data-frame by the first record and pads every shorter record out to that width, so a few-KB file whose first line is a long run of delimiters could span millions of cells and use many GB in `partition_csv()` and `partition_tsv()`. The file's span is now measured by streaming it before Pandas reads it, and a file spanning more than `CSV_MAX_CELLS` cells (default 5,000,000) raises `UnprocessableEntityError`. A lone `"\r"` line ending is also converted to `"\n"` before Pandas reads the file: Pandas 2.x's C tokenizer read one followed by a whitespace-only line as 2^18 empty rows, so 5 bytes became 262,145 rows. `"\r\n"` is left as is. The file is streamed to Pandas rather than read into memory whole, and `partition_tsv()` still decompresses a compressed filename (e.g. `.tsv.gz`) and accepts a stream that cannot seek. When the delimiter is sniffed, it is now sniffed once, from the first non-blank line, and passed to Pandas, and a file with no usable delimiter is read as one column.
+
+## 0.27.14
+
+### Fixes
+
+- **Bound the work DOCX tables can demand through their declared layout grid.** `w:gridBefore`, `w:gridAfter` and `w:gridSpan` values were expanded into one entry per layout-grid position, so a few-KB document declaring millions of positions per row used GB of memory building `text_as_html`, and re-read a spanned cell's text and emphasis once per position. A table's grid size is now computed from those values without expanding them, and once a document's tables exceed `DOCX_TABLE_MAX_CELLS` grid positions in total (default 5,000,000), `text_as_html` is omitted for the rest with a warning; their text is still extracted. Each cell's text and emphasis are now read once, so a cell that spans or vertically merges across several grid positions no longer repeats its entries in `emphasized_text_contents`. A table whose grid values cannot be read omits `text_as_html` the same way, and a table paragraph whose formatting cannot be read contributes no emphasis, without stopping extraction.
+
+## 0.27.13
+
+### Fixes
+
+- **Bound CI dependency downloads.** System-package downloads now have inactivity timeouts and bounded retries, and dependency setup is reported separately from tests. Package installation is kept outside the download timeout.
+
+## 0.27.12
+
+### Fixes
+
+- **Reject spreadsheets whose worksheets span too many cells instead of exhausting memory.** `partition_xlsx()` read each worksheet into a dense data-frame sized by its farthest populated cell, so a few-KB XLSX or XLS file with one far-away cell could grow to millions of cells and use tens of GB. The span of every worksheet is now measured before it is read, streaming the file without materializing cells, and a workbook spanning more than `XLSX_MAX_CELLS` cells in total (default 5,000,000) raises `UnprocessableEntityError`. Subtable detection also now builds its graph from populated cells only, so sparse worksheets within the limit use far less memory.
+
+## 0.27.11
+
+### Fixes
+
+- **Keep the labels of auto-numbered DOCX lists.** Word computes labels such as `1.`, `a)` and `iv.` from `numbering.xml` at render time, so `partition_docx()` returned `ListItem` text without them. The label is now prefixed to the item text, resolved from the paragraph or its style chain and counted per level in document order. Bullets stay unprefixed and numbering that cannot be resolved falls back to the previous text.
+
+## 0.27.10
+
+### Fixes
+
+- **Extract definition lists instead of discarding them**: `<dl>`, `<dt>` and `<dd>` were mapped to `RemovedBlock`, so `partition_html()` dropped every glossary and every Sphinx-generated API reference (each documented function with its parameters and return value) without an error. `<dl>` is now a list container, each `<dd>` definition a `ListItem` and each `<dt>` term an ordinary text block. The v2 (ontology) parser already kept definition lists.
+
+## 0.27.9
+
+### Fixes
+
+- **Keep active rowspans across oversized table-cell splits.** Continuation rows retain their covering columns and place new cells correctly as shorter spans expire. When a covering cell cannot fit beside an oversized row, its text is not split again for every covered row. A `rowspan="0"` remains scoped to its original table section. Sparse tables with many span expirations are processed without repeatedly scanning every active span.
+
+## 0.27.8
+
+### Enhancements
+
+- **Reuse spaCy results across tokenization helpers.** Cache the processed `Doc` for text up to 8,192 characters so sentence, word, and part-of-speech tokenization run the spaCy pipeline only once per distinct text.
+
+### Fixes
+
+- **`GLOBAL_WORKING_PROCESS_DIR` no longer crashes on Windows.** Use `os.getpid()` when the POSIX-only `os.getpgid()` is unavailable.
+
+- **Preserve HTML table header semantics.** The v1 HTML parser now retains `<thead>`, `<tbody>`,
+  and `<tfoot>` row groups and preserves `<th>` cells in `Table.metadata.text_as_html`. Table text,
+  nested content extraction, and attribute sanitization are unchanged. Chunking now detects and
+  repeats eligible v1 HTML header rows by default; `repeat_table_headers=False` disables header
+  repetition. Split-table chunk text now treats `<br>` as a word boundary for all table sources.
+
+- **Recognize HTML and Markdown loose-list items.** A list item containing a single ordinary text block (such as `<li><p>text</p></li>`) now produces a `ListItem`, preserving inline annotations and list depth. Multi-paragraph items and specialized blocks retain their existing behavior. Resolves #3499.
 
 - **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
 

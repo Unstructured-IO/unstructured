@@ -208,6 +208,15 @@ class DescribeSanitizeStyleAttribute:
 
 
 class DescribeSanitizeHtmlFragment:
+    def it_preserves_all_table_row_group_tags(self):
+        table = (
+            "<table><thead><tr><th>H</th></tr></thead>"
+            "<tbody><tr><td>B</td></tr></tbody>"
+            "<tfoot><tr><td>F</td></tr></tfoot></table>"
+        )
+
+        assert sanitize_html_fragment(table) == table
+
     def it_strips_event_handlers(self):
         assert "onerror" not in sanitize_html_fragment('<img src="x" onerror="alert(1)">')
         assert "onmouseover" not in sanitize_html_fragment('<p onmouseover="alert(1)">hi</p>')
