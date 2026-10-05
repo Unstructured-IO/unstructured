@@ -1011,3 +1011,72 @@ def test_element_to_md_with_none_mime_type():
     result = base.element_to_md(image_element)
     assert "![Test Image](data:image/*" in result
     assert "base64," in result
+
+
+def test_fix_metadata_field_precision_leaves_elements_with_nothing_to_round_alone():
+    """Copying an element to round fields it does not have is waste.
+
+    Both `elements_to_json()` and `orig_elements` serialization run this over every element, so the
+    copy was paid on every element of every document, not only the ones carrying coordinates.
+    """
+    element = Text("Lorem Ipsum")
+    assert element.metadata.coordinates is None
+    assert element.metadata.detection_class_prob is None
+
+    (result,) = base._fix_metadata_field_precision([element])
+
+    assert result is element
+
+
+def test_fix_metadata_field_precision_rounds_a_copy_and_leaves_the_callers_element_unrounded():
+    element = Text(
+        "Lorem",
+        metadata=ElementMetadata(
+            coordinates=CoordinatesMetadata(
+                points=((1.23456, 2.34567), (3.45678, 4.56789)),
+                system=CoordinateSystem(width=10, height=10),
+            ),
+            detection_class_prob=0.123456789,
+        ),
+    )
+
+    (result,) = base._fix_metadata_field_precision([element])
+
+    assert result.metadata.coordinates.points == ((1.23, 2.35), (3.46, 4.57))
+    assert result.metadata.detection_class_prob == 0.12346
+    assert element.metadata.coordinates.points == ((1.23456, 2.34567), (3.45678, 4.56789))
+    assert element.metadata.detection_class_prob == 0.123456789
+
+
+@pytest.mark.parametrize(
+    "rounded_field",
+    [
+        {
+            "coordinates": CoordinatesMetadata(
+                points=((1.23456, 2.34567), (3.45678, 4.56789)),
+                system=CoordinateSystem(width=10, height=10),
+            )
+        },
+        {"detection_class_prob": 0.123456789},
+    ],
+    ids=["coordinates", "detection_class_prob"],
+)
+def test_elements_to_json_keeps_orig_elements_ids_stable_for_an_element_it_rounds(rounded_field):
+    """Rounding a parent's precision must not re-mint the ids of the elements it carries.
+
+    `Element.id` caches on first access, so copying the parent's `orig_elements` subtree gave the
+    nested elements a fresh uuid on every call.
+    """
+    child = Text("Ipsum")
+    parent = Text("Lorem", metadata=ElementMetadata(orig_elements=[child], **rounded_field))
+
+    first = json.loads(base.elements_to_json([parent]))
+    second = json.loads(base.elements_to_json([parent]))
+
+    first_ids = [
+        e.id for e in base.elements_from_base64_gzipped_json(first[0]["metadata"]["orig_elements"])
+    ]
+    second_ids = [
+        e.id for e in base.elements_from_base64_gzipped_json(second[0]["metadata"]["orig_elements"])
+    ]
+    assert first_ids == second_ids == [child.id]
