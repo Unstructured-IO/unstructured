@@ -1,3 +1,9 @@
+## 0.27.19
+
+- **Avoid copying spooled uploads into memory**: `detect_filetype()` and the DOCX, PPTX, and shared partitioning paths now read `SpooledTemporaryFile` inputs in place instead of copying their complete contents into `BytesIO`. Large uploads remain disk-backed, avoiding a document-sized heap allocation without changing the partition API. A spooled file passed to `detect_filetype()` is still returned at read position 0.
+- **Use `metadata_file_path` when a file's name is not a path**: a temporary file, including a rolled-over `SpooledTemporaryFile`, can report an integer file descriptor as its `.name`. File-type detection now ignores non-string names and falls back to `metadata_file_path` for the filename extension instead of raising `TypeError`.
+- **Read any seekable binary stream in `convert_to_bytes()`**: streams such as `tempfile.TemporaryFile()` or file-like wrappers previously raised `ValueError("Invalid file-like object type")` from text-encoding detection and PDF page rendering. Any object with `read()` and `seek()` is now read from the start and rewound, including a `BufferedReader` whose `.name` is not a path (an in-memory buffer or a file descriptor), which previously raised `AttributeError` or closed the caller's descriptor.
+
 ## 0.27.19-dev0
 
 ### Maintenance

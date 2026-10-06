@@ -1,6 +1,9 @@
+import io
 import logging
+import os
 import pathlib
 from multiprocessing import Pool
+from tempfile import SpooledTemporaryFile, TemporaryFile
 
 import numpy as np
 import pytest
@@ -28,6 +31,58 @@ from unstructured.documents.elements import (
     Image as ImageElement,
 )
 from unstructured.partition.common import common
+
+
+def test_rewind_if_spooled_rewinds_without_copying():
+    with SpooledTemporaryFile(max_size=1, mode="w+b") as spooled_file:
+        spooled_file.write(b"sample content")
+
+        result = common.rewind_if_spooled(spooled_file)
+
+        assert result is spooled_file
+        assert result.tell() == 0
+        assert result.read() == b"sample content"
+
+
+@pytest.mark.parametrize("max_size", [0, 1])
+def test_convert_to_bytes_reads_a_SpooledTemporaryFile_and_rewinds_it(max_size: int):
+    with SpooledTemporaryFile(max_size=max_size) as spooled_file:
+        spooled_file.write(b"sample content")
+
+        assert common.convert_to_bytes(spooled_file) == b"sample content"
+        assert spooled_file.tell() == 0
+
+
+def test_convert_to_bytes_reads_any_seekable_binary_stream_and_rewinds_it():
+    with TemporaryFile() as file:
+        file.write(b"sample content")
+
+        assert common.convert_to_bytes(file) == b"sample content"
+        assert file.tell() == 0
+
+
+def test_convert_to_bytes_reads_a_BufferedReader_without_a_path_name():
+    file = io.BufferedReader(io.BytesIO(b"sample content"))
+
+    assert common.convert_to_bytes(file) == b"sample content"
+    assert file.tell() == 0
+
+
+def test_convert_to_bytes_leaves_a_BufferedReader_over_a_file_descriptor_open():
+    with TemporaryFile() as tmp:
+        tmp.write(b"sample content")
+        tmp.flush()
+        file = io.BufferedReader(io.FileIO(tmp.fileno(), "rb", closefd=False))
+
+        assert common.convert_to_bytes(file) == b"sample content"
+        assert file.tell() == 0
+        assert not tmp.closed
+        os.fstat(tmp.fileno())
+
+
+def test_convert_to_bytes_raises_for_an_object_that_is_not_a_seekable_stream():
+    with pytest.raises(ValueError, match="Invalid file-like object type"):
+        common.convert_to_bytes(object())  # pyright: ignore[reportArgumentType]
 
 
 class MockPageLayout(layout.PageLayout):

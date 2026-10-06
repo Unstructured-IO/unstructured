@@ -50,7 +50,7 @@ from unstructured.partition.common.common import (
     get_page_image_metadata,
     normalize_layout_element,
     ocr_data_to_elements,
-    spooled_to_bytes_io_if_needed,
+    rewind_if_spooled,
 )
 from unstructured.partition.common.lang import check_language_args, prepare_languages_for_tesseract
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
@@ -329,7 +329,7 @@ def partition_pdf_or_image(
             else:
                 extracted_elements = extractable_elements(
                     filename=filename,
-                    file=spooled_to_bytes_io_if_needed(file),
+                    file=rewind_if_spooled(file),
                     languages=languages,
                     metadata_last_modified=metadata_last_modified or last_modified,
                     starting_page_number=starting_page_number,
@@ -376,7 +376,7 @@ def partition_pdf_or_image(
             warnings.simplefilter("ignore")
             return _partition_pdf_or_image_local(
                 filename=filename,
-                file=spooled_to_bytes_io_if_needed(file),
+                file=rewind_if_spooled(file),
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
