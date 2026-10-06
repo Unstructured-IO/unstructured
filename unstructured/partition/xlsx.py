@@ -6,7 +6,6 @@ import io
 from functools import cached_property
 from typing import IO, Any, Iterator, Optional
 
-import networkx as nx
 import numpy as np
 import openpyxl
 import pandas as pd
@@ -318,38 +317,47 @@ class _ConnectedComponents:
     @cached_property
     def _connected_components(self) -> list[_ConnectedComponent]:
         """The `_ConnectedComponent` objects comprising this collection."""
-        # -- produce a 2D-graph representing the populated cells of the worksheet (or subsheet).
-        # -- A 2D-graph relates each populated cell to the one above, below, left, and right of it.
-        # -- Only populated cells become nodes; a worksheet is mostly empty when it has a stray
-        # -- far-away cell, and a node per empty cell would cost ~1KB each.
-        populated = self._worksheet_df.notna().to_numpy()
-        graph: nx.Graph = nx.Graph()  # pyright: ignore[reportMissingTypeArgument]
-        graph.add_nodes_from(_cell_coordinates(*np.nonzero(populated)))  # pyright: ignore
-        # -- vertical edges, between each populated cell and a populated cell below it --
-        rows, cols = np.nonzero(populated[:-1, :] & populated[1:, :])
-        graph.add_edges_from(  # pyright: ignore
-            zip(_cell_coordinates(rows, cols), _cell_coordinates(rows + 1, cols))
-        )
-        # -- horizontal edges, between each populated cell and a populated cell right of it --
-        rows, cols = np.nonzero(populated[:, :-1] & populated[:, 1:])
-        graph.add_edges_from(  # pyright: ignore
-            zip(_cell_coordinates(rows, cols), _cell_coordinates(rows, cols + 1))
-        )
-
-        # -- compute sets of nodes representing each connected-component --
-        connected_node_sets: Iterator[set[_CellCoordinate]]
-        connected_node_sets = nx.connected_components(  # pyright: ignore[reportUnknownMemberType]
-            graph
-        )
-
         return list(
             self._merge_overlapping_tables(
                 [
                     _ConnectedComponent(self._worksheet_df, component_node_set)
-                    for component_node_set in connected_node_sets
+                    for component_node_set in self._iter_connected_node_sets()
                 ]
             )
         )
+
+    def _iter_connected_node_sets(self) -> Iterator[set[_CellCoordinate]]:
+        """Sets of 4-neighbor connected populated-cell coordinates in row-major order."""
+        populated_cell_mask = self._worksheet_df.notna().to_numpy()
+        row_indices, col_indices = np.nonzero(populated_cell_mask)
+        row_coordinates, col_coordinates = row_indices.tolist(), col_indices.tolist()
+        unvisited_cells = set(zip(row_coordinates, col_coordinates))
+
+        for cell in zip(row_coordinates, col_coordinates):
+            if cell not in unvisited_cells:
+                continue
+
+            component_node_set: set[_CellCoordinate] = set()
+            cells_to_visit = [cell]
+            unvisited_cells.remove(cell)
+
+            while cells_to_visit:
+                row_idx, col_idx = cells_to_visit.pop()
+                component_node_set.add((row_idx, col_idx))
+
+                for neighbor in (
+                    (row_idx - 1, col_idx),
+                    (row_idx + 1, col_idx),
+                    (row_idx, col_idx - 1),
+                    (row_idx, col_idx + 1),
+                ):
+                    if neighbor not in unvisited_cells:
+                        continue
+
+                    unvisited_cells.remove(neighbor)
+                    cells_to_visit.append(neighbor)
+
+            yield component_node_set
 
     def _merge_overlapping_tables(
         self, connected_components: list[_ConnectedComponent]
