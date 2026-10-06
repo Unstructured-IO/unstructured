@@ -2,6 +2,12 @@
 
 - **Bound chunking memory for empty image streams.** When `include_orig_elements=False`, consolidate empty-image metadata incrementally and release image payloads that are excluded from chunk metadata. Preserve chunk boundaries and consolidation order. Serialize original elements incrementally, spilling compressed data above 1 MiB to temporary disk instead of retaining the complete original-element graph and JSON representation. Original-element identity and transport bytes remain unchanged.
 
+## 0.27.19-dev0
+
+### Maintenance
+
+- **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
+
 ## 0.27.18
 
 ### Fixes
