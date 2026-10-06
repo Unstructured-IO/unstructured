@@ -1070,11 +1070,15 @@ def _partition_pdf_or_image_local(
         # The pages are rendered once and shared by layout inference, OCR and image extraction.
         page_image_paths: Optional[list[str]] = None
         if not is_image:
+            # pdfium can only open streams that implement `readinto`.
+            render_source = file
+            if file is not None and not isinstance(file, bytes) and not hasattr(file, "readinto"):
+                render_source = file.read()
             page_image_paths = cast(
                 list[str],
                 convert_pdf_to_image(
                     filename,
-                    file,
+                    render_source,
                     pdf_image_dpi,
                     output_folder=page_image_dir,
                     path_only=True,
@@ -1093,7 +1097,7 @@ def _partition_pdf_or_image_local(
                     pdf_image_dpi=pdf_image_dpi,
                     password=password,
                     **model_render_kwargs,
-                    **({"image_paths": page_image_paths} if page_image_paths is not None else {}),
+                    image_paths=page_image_paths,
                 )
             except PdfRenderTooLargeError as exc:
                 raise UnprocessableEntityError(str(exc)) from exc

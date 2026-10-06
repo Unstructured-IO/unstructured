@@ -337,6 +337,47 @@ def test_partition_pdf_local_renders_pages_once_and_shares_them(
     assert saved_with == [rendered, rendered]
 
 
+def test_partition_pdf_local_renders_streams_without_readinto(monkeypatch):
+    """pdfium can only open streams that implement `readinto`; other file-likes are rendered
+    from their bytes."""
+
+    class ReadSeekOnly:
+        def __init__(self, data):
+            self._buffer = io.BytesIO(data)
+
+        def read(self, *args):
+            return self._buffer.read(*args)
+
+        def seek(self, *args):
+            return self._buffer.seek(*args)
+
+        def tell(self):
+            return self._buffer.tell()
+
+    rendered_inputs = []
+
+    def _render(filename, file=None, *args, **kwargs):
+        rendered_inputs.append(file)
+        return []
+
+    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", _render)
+    monkeypatch.setattr(layout, "process_data_with_model", lambda *a, **k: MockDocumentLayout())
+    monkeypatch.setattr(pdfminer_processing, "process_data_with_pdfminer", lambda *a, **k: ([], []))
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "merge_inferred_with_extracted_layout",
+        lambda **k: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(ocr, "process_data_with_ocr", lambda *a, **k: MockDocumentLayout())
+    with open(example_doc_path("pdf/layout-parser-paper-fast.pdf"), "rb") as f:
+        stream = ReadSeekOnly(f.read())
+
+    pdf._partition_pdf_or_image_local(filename="", file=stream)
+
+    assert isinstance(rendered_inputs[0], bytes)
+    assert stream.tell() == 0
+
+
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
     ("strategy", "starting_page_number", "expected_page_numbers", "origin"),
