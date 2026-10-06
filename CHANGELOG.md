@@ -4,6 +4,12 @@
 - **Use `metadata_file_path` when a file's name is not a path**: a temporary file, including a rolled-over `SpooledTemporaryFile`, can report an integer file descriptor as its `.name`. File-type detection now ignores non-string names and falls back to `metadata_file_path` for the filename extension instead of raising `TypeError`.
 - **Read any seekable binary stream in `convert_to_bytes()`**: streams such as `tempfile.TemporaryFile()` or file-like wrappers previously raised `ValueError("Invalid file-like object type")` from text-encoding detection and PDF page rendering. Any object with `read()` and `seek()` is now read from the start and rewound, including a `BufferedReader` whose `.name` is not a path (an in-memory buffer or a file descriptor), which previously raised `AttributeError` or closed the caller's descriptor.
 
+## 0.27.19-dev0
+
+### Maintenance
+
+- **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
+
 ## 0.27.18
 
 ### Fixes
