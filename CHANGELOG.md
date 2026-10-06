@@ -1,4 +1,4 @@
-## 0.27.18
+## 0.27.19-dev0
 
 ### Fixes
 
@@ -6,6 +6,16 @@
   replaces element IDs or stored metadata with attributes from the JSON container. Explicit
   `metadata_filename` and `metadata_last_modified` overrides remain supported, including
   timestamps on chunk originals, while arbitrary JSON retains deterministic IDs and source metadata.
+
+### Maintenance
+
+- **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
+
+## 0.27.18
+
+### Fixes
+
+- **Fix `ValueError: Coordinate 'lower' is less than 'upper'` when extracting figure/table images**: `save_elements` assumed `points[0]`/`points[2]` were always the top-left/bottom-right corners in screen orientation. For elements whose coordinates carried (or were converted from) a y-up orientation, that ordering inverted the PIL crop box and raised the error, which was then silently swallowed and the image dropped. The crop box is now derived from the extent (min/max) of all coordinate points, so it is always valid regardless of point ordering.
 
 ## 0.27.17
 
