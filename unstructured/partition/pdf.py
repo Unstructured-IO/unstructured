@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import functools
+import inspect
 import io
 import os
 import re
@@ -976,6 +978,14 @@ def _enable_detect_vertical_if_rotated(
     return pdfminer_config
 
 
+@functools.lru_cache(maxsize=1)
+def _inference_reuses_page_images() -> bool:
+    """Whether the installed unstructured-inference accepts pre-rendered page images."""
+    from unstructured_inference.inference.layout import DocumentLayout
+
+    return "image_paths" in inspect.signature(DocumentLayout.from_file).parameters
+
+
 def _rotation_corrections_from_layout(inferred_document_layout) -> list[int]:
     """Per-page rotations unstructured-inference applied to the page images to make their
     text upright. Mirrored onto the pdfminer coordinates so both layers share one frame."""
@@ -1069,7 +1079,7 @@ def _partition_pdf_or_image_local(
     with tempfile.TemporaryDirectory() as page_image_dir:
         # The pages are rendered once and shared by layout inference, OCR and image extraction.
         page_image_paths: Optional[list[str]] = None
-        if not is_image:
+        if not is_image and _inference_reuses_page_images():
             # pdfium can only open streams that implement `readinto`.
             render_source = file
             if file is not None and not isinstance(file, bytes) and not hasattr(file, "readinto"):
@@ -1097,7 +1107,7 @@ def _partition_pdf_or_image_local(
                     pdf_image_dpi=pdf_image_dpi,
                     password=password,
                     **model_render_kwargs,
-                    image_paths=page_image_paths,
+                    **({"image_paths": page_image_paths} if page_image_paths is not None else {}),
                 )
             except PdfRenderTooLargeError as exc:
                 raise UnprocessableEntityError(str(exc)) from exc

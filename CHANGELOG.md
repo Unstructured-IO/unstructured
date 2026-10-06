@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- **Render the PDF once in `hi_res`.** Layout inference, OCR and image extraction each rendered every page of the PDF again. The pages are now rendered a single time and shared, and `save_elements` keeps one page image open instead of re-decoding the page for every element. Requires `unstructured-inference>=1.6.14`.
+- **Render the PDF once in `hi_res`.** Layout inference, OCR and image extraction each rendered every page of the PDF again. The pages are now rendered a single time and shared, and `save_elements` keeps one page image open instead of re-decoding the page for every element. Takes effect with `unstructured-inference>=1.6.14`; older versions keep rendering per stage.
 
 ### Maintenance
 

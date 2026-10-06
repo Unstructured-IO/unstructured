@@ -295,6 +295,7 @@ def test_partition_pdf_local_renders_pages_once_and_shares_them(
 ):
     """The PDF is rendered a single time and the page images reach layout inference, OCR
     and image extraction instead of each of them rendering the PDF again."""
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: True)
     rendered = ["page-1.png", "page-2.png"]
     render_calls = []
     received = {}
@@ -340,6 +341,7 @@ def test_partition_pdf_local_renders_pages_once_and_shares_them(
 def test_partition_pdf_local_renders_streams_without_readinto(monkeypatch):
     """pdfium can only open streams that implement `readinto`; other file-likes are rendered
     from their bytes."""
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: True)
 
     class ReadSeekOnly:
         def __init__(self, data):
@@ -376,6 +378,41 @@ def test_partition_pdf_local_renders_streams_without_readinto(monkeypatch):
 
     assert isinstance(rendered_inputs[0], bytes)
     assert stream.tell() == 0
+
+
+def test_partition_pdf_local_does_not_prerender_when_inference_cannot_reuse_pages(monkeypatch):
+    """Without inference support the pages would be rendered twice, so the pipeline keeps
+    rendering per stage."""
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: False)
+    monkeypatch.setattr(
+        pdf_image_utils,
+        "convert_pdf_to_image",
+        lambda *a, **k: pytest.fail("pdf must not be pre-rendered"),
+    )
+    received = {}
+
+    def _capture(name):
+        def _inner(*args, **kwargs):
+            received[name] = kwargs
+            return MockDocumentLayout()
+
+        return _inner
+
+    monkeypatch.setattr(layout, "process_file_with_model", _capture("model"))
+    monkeypatch.setattr(pdfminer_processing, "process_file_with_pdfminer", lambda *a, **k: ([], []))
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "merge_inferred_with_extracted_layout",
+        lambda **k: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(ocr, "process_file_with_ocr", _capture("ocr"))
+
+    pdf._partition_pdf_or_image_local(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+    )
+
+    assert received["model"].get("image_paths") is None
+    assert received["ocr"].get("image_paths") is None
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
