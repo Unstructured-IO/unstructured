@@ -1,0 +1,25 @@
+CHANGELOG.md
+  s_fefc7e42dac411::t_6b6951ea4e5f66 1-5
+test_unstructured/partition/test_xlsx.py
+  s_fefc7e42dac411::t_2385619daefb93 584-591
+unstructured/partition/xlsx.py
+  s_fefc7e42dac411::t_2155955f28c00e 325-327
+unstructured/__version__.py
+  s_fefc7e42dac411::t_22dd683251c5d5 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "090b7577bc99856477dd144b861641c78c6cdf59",
+  "prompts": {},
+  "sessions": {
+    "s_fefc7e42dac411": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e9404985-cdc1-4464-8bb1-e00a1b460a66",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "aballman <aballman@unstructured.io>"
+    }
+  }
+}
