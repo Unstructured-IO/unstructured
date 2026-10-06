@@ -249,6 +249,40 @@ def test_save_elements(
                 assert not el.metadata.image_mime_type
 
 
+def test_save_elements_uses_given_image_paths_without_rendering(monkeypatch, tmp_path):
+    def fail_render(*args, **kwargs):
+        raise AssertionError("pdf must not be rendered when image_paths are given")
+
+    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", fail_render)
+    page_paths = []
+    for i in range(2):
+        page_path = tmp_path / f"page-{i}.png"
+        PILImg.new("RGB", (400, 400), "white").save(page_path)
+        page_paths.append(str(page_path))
+    elements = [
+        Image(
+            text=f"Image {page}",
+            coordinates=((10, 10), (10, 100), (100, 100), (100, 10)),
+            coordinate_system=PixelSpace(width=400, height=400),
+            metadata=ElementMetadata(page_number=page),
+        )
+        for page in (1, 1, 2)
+    ]
+
+    pdf_image_utils.save_elements(
+        elements=elements,
+        starting_page_number=1,
+        element_category_to_save=ElementType.IMAGE,
+        pdf_image_dpi=200,
+        filename="unused.pdf",
+        output_dir_path=str(tmp_path),
+        extract_image_block_to_payload=True,
+        image_paths=page_paths,
+    )
+
+    assert all(el.metadata.image_base64 for el in elements)
+
+
 def test_save_elements_with_inverted_point_ordering(monkeypatch):
     """Regression: points whose ordering puts points[0] below points[2] (as happens when
     coordinates come from / were converted from a y-up CARTESIAN system) must not raise

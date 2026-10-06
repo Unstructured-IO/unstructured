@@ -1,5 +1,9 @@
 ## 0.27.19-dev0
 
+### Enhancements
+
+- **Render the PDF once in `hi_res`.** Layout inference, OCR and image extraction each rendered every page of the PDF again. The pages are now rendered a single time and shared, and `save_elements` keeps one page image open instead of re-decoding the page for every element. Requires `unstructured-inference>=1.6.14`.
+
 ### Maintenance
 
 - **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.

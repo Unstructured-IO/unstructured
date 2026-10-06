@@ -5,6 +5,7 @@ import copy
 import io
 import os
 import re
+import tempfile
 import warnings
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Iterator, NoReturn, Optional, Union, cast
@@ -1034,6 +1035,7 @@ def _partition_pdf_or_image_local(
     from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdf_image_utils import (
         check_element_types_to_extract,
+        convert_pdf_to_image,
         save_elements,
     )
     from unstructured.partition.pdf_image.pdfminer_processing import (
@@ -1064,194 +1066,222 @@ def _partition_pdf_or_image_local(
 
     skip_analysis_dump = env_config.ANALYSIS_DUMP_OD_SKIP
 
-    def _run_layout_inference(processor, source):
-        try:
-            return processor(
-                source,
+    with tempfile.TemporaryDirectory() as page_image_dir:
+        # The pages are rendered once and shared by layout inference, OCR and image extraction.
+        page_image_paths: Optional[list[str]] = None
+        if not is_image:
+            page_image_paths = cast(
+                list[str],
+                convert_pdf_to_image(
+                    filename,
+                    file,
+                    pdf_image_dpi,
+                    output_folder=page_image_dir,
+                    path_only=True,
+                    password=password,
+                ),
+            )
+            if hasattr(file, "seek"):
+                file.seek(0)
+
+        def _run_layout_inference(processor, source):
+            try:
+                return processor(
+                    source,
+                    is_image=is_image,
+                    model_name=hi_res_model_name,
+                    pdf_image_dpi=pdf_image_dpi,
+                    password=password,
+                    **model_render_kwargs,
+                    **({"image_paths": page_image_paths} if page_image_paths is not None else {}),
+                )
+            except PdfRenderTooLargeError as exc:
+                raise UnprocessableEntityError(str(exc)) from exc
+
+        if file is None:
+            inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
+            _record_image_layout_document_type(inferred_document_layout, is_image)
+
+            pdfminer_config = _enable_detect_vertical_if_rotated(
+                inferred_document_layout,
+                pdfminer_config,
+            )
+
+            extracted_layout, layouts_links = (
+                process_file_with_pdfminer(
+                    filename=filename,
+                    dpi=pdf_image_dpi,
+                    password=password,
+                    pdfminer_config=pdfminer_config,
+                    rotation_corrections=_rotation_corrections_from_layout(
+                        inferred_document_layout
+                    ),
+                )
+                if pdf_text_extractable
+                else ([], [])
+            )
+
+            if analysis:
+                if not analyzed_image_output_dir_path:
+                    if env_config.GLOBAL_WORKING_DIR_ENABLED:
+                        analyzed_image_output_dir_path = str(
+                            Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "annotated"
+                        )
+                    else:
+                        analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
+                os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
+                if not skip_analysis_dump:
+                    od_model_layout_dumper = ObjectDetectionLayoutDumper(
+                        layout=inferred_document_layout,
+                        model_name=hi_res_model_name,
+                    )
+                    extracted_layout_dumper = ExtractedLayoutDumper(
+                        layout=[layout.as_list() for layout in extracted_layout],
+                    )
+                    ocr_layout_dumper = OCRLayoutDumper()
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = merge_inferred_with_extracted_layout(
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
+                hi_res_model_name=hi_res_model_name,
+            )
+
+            final_document_layout = process_file_with_ocr(
+                filename,
+                merged_document_layout,
+                extracted_layout=extracted_layout,
                 is_image=is_image,
-                model_name=hi_res_model_name,
+                infer_table_structure=infer_table_structure,
+                ocr_agent=ocr_agent,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
+                ocr_layout_dumper=ocr_layout_dumper,
                 password=password,
-                **model_render_kwargs,
+                table_ocr_agent=table_ocr_agent,
+                image_paths=page_image_paths,
             )
-        except PdfRenderTooLargeError as exc:
-            raise UnprocessableEntityError(str(exc)) from exc
+        else:
+            inferred_document_layout = _run_layout_inference(process_data_with_model, file)
+            _record_image_layout_document_type(inferred_document_layout, is_image)
 
-    if file is None:
-        inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
-        _record_image_layout_document_type(inferred_document_layout, is_image)
+            if hasattr(file, "seek"):
+                file.seek(0)
 
-        pdfminer_config = _enable_detect_vertical_if_rotated(
-            inferred_document_layout,
-            pdfminer_config,
+            pdfminer_config = _enable_detect_vertical_if_rotated(
+                inferred_document_layout,
+                pdfminer_config,
+            )
+
+            extracted_layout, layouts_links = (
+                process_data_with_pdfminer(
+                    file=file,
+                    dpi=pdf_image_dpi,
+                    password=password,
+                    pdfminer_config=pdfminer_config,
+                    rotation_corrections=_rotation_corrections_from_layout(
+                        inferred_document_layout
+                    ),
+                )
+                if pdf_text_extractable
+                else ([], [])
+            )
+
+            if analysis:
+                if not analyzed_image_output_dir_path:
+                    if env_config.GLOBAL_WORKING_DIR_ENABLED:
+                        analyzed_image_output_dir_path = str(
+                            Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "annotated"
+                        )
+                    else:
+                        analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
+                if not skip_analysis_dump:
+                    od_model_layout_dumper = ObjectDetectionLayoutDumper(
+                        layout=inferred_document_layout,
+                        model_name=hi_res_model_name,
+                    )
+                    extracted_layout_dumper = ExtractedLayoutDumper(
+                        layout=[layout.as_list() for layout in extracted_layout],
+                    )
+                    ocr_layout_dumper = OCRLayoutDumper()
+
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = merge_inferred_with_extracted_layout(
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
+                hi_res_model_name=hi_res_model_name,
+            )
+
+            if hasattr(file, "seek"):
+                file.seek(0)
+            final_document_layout = process_data_with_ocr(
+                file,
+                merged_document_layout,
+                extracted_layout=extracted_layout,
+                is_image=is_image,
+                infer_table_structure=infer_table_structure,
+                ocr_agent=ocr_agent,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
+                pdf_image_dpi=pdf_image_dpi,
+                ocr_layout_dumper=ocr_layout_dumper,
+                password=password,
+                table_ocr_agent=table_ocr_agent,
+                image_paths=page_image_paths,
+            )
+
+        # vectorization of the data structure ends here
+        final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
+
+        elements = document_to_element_list(
+            final_document_layout,
+            sortable=True,
+            include_page_breaks=include_page_breaks,
+            last_modification_date=metadata_last_modified,
+            # NOTE(crag): do not attempt to derive ListItem's from a layout-recognized "list"
+            # block with NLP rules. Otherwise, the assumptions in
+            # unstructured.partition.common::layout_list_to_list_items often result in weird
+            # chunking.
+            infer_list_items=False,
+            languages=languages,
+            starting_page_number=starting_page_number,
+            layouts_links=layouts_links,
+            **kwargs,
         )
 
-        extracted_layout, layouts_links = (
-            process_file_with_pdfminer(
+        extract_image_block_types = check_element_types_to_extract(extract_image_block_types)
+        #  NOTE(christine): `extract_images_in_pdf` would deprecate
+        #  (but continue to support for a while)
+        if extract_images_in_pdf:
+            save_elements(
+                elements=elements,
+                starting_page_number=starting_page_number,
+                element_category_to_save=ElementType.IMAGE,
                 filename=filename,
-                dpi=pdf_image_dpi,
-                password=password,
-                pdfminer_config=pdfminer_config,
-                rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
-            )
-            if pdf_text_extractable
-            else ([], [])
-        )
-
-        if analysis:
-            if not analyzed_image_output_dir_path:
-                if env_config.GLOBAL_WORKING_DIR_ENABLED:
-                    analyzed_image_output_dir_path = str(
-                        Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "annotated"
-                    )
-                else:
-                    analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
-            os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
-            if not skip_analysis_dump:
-                od_model_layout_dumper = ObjectDetectionLayoutDumper(
-                    layout=inferred_document_layout,
-                    model_name=hi_res_model_name,
-                )
-                extracted_layout_dumper = ExtractedLayoutDumper(
-                    layout=[layout.as_list() for layout in extracted_layout],
-                )
-                ocr_layout_dumper = OCRLayoutDumper()
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = merge_inferred_with_extracted_layout(
-            inferred_document_layout=inferred_document_layout,
-            extracted_layout=extracted_layout,
-            hi_res_model_name=hi_res_model_name,
-        )
-
-        final_document_layout = process_file_with_ocr(
-            filename,
-            merged_document_layout,
-            extracted_layout=extracted_layout,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-            ocr_agent=ocr_agent,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            pdf_image_dpi=pdf_image_dpi,
-            ocr_layout_dumper=ocr_layout_dumper,
-            password=password,
-            table_ocr_agent=table_ocr_agent,
-        )
-    else:
-        inferred_document_layout = _run_layout_inference(process_data_with_model, file)
-        _record_image_layout_document_type(inferred_document_layout, is_image)
-
-        if hasattr(file, "seek"):
-            file.seek(0)
-
-        pdfminer_config = _enable_detect_vertical_if_rotated(
-            inferred_document_layout,
-            pdfminer_config,
-        )
-
-        extracted_layout, layouts_links = (
-            process_data_with_pdfminer(
                 file=file,
-                dpi=pdf_image_dpi,
-                password=password,
-                pdfminer_config=pdfminer_config,
-                rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
+                is_image=is_image,
+                pdf_image_dpi=pdf_image_dpi,
+                extract_image_block_to_payload=extract_image_block_to_payload,
+                output_dir_path=extract_image_block_output_dir,
+                image_paths=page_image_paths,
             )
-            if pdf_text_extractable
-            else ([], [])
-        )
 
-        if analysis:
-            if not analyzed_image_output_dir_path:
-                if env_config.GLOBAL_WORKING_DIR_ENABLED:
-                    analyzed_image_output_dir_path = str(
-                        Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "annotated"
-                    )
-                else:
-                    analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
-            if not skip_analysis_dump:
-                od_model_layout_dumper = ObjectDetectionLayoutDumper(
-                    layout=inferred_document_layout,
-                    model_name=hi_res_model_name,
-                )
-                extracted_layout_dumper = ExtractedLayoutDumper(
-                    layout=[layout.as_list() for layout in extracted_layout],
-                )
-                ocr_layout_dumper = OCRLayoutDumper()
+        for el_type in extract_image_block_types:
+            if extract_images_in_pdf and el_type == ElementType.IMAGE:
+                continue
 
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = merge_inferred_with_extracted_layout(
-            inferred_document_layout=inferred_document_layout,
-            extracted_layout=extracted_layout,
-            hi_res_model_name=hi_res_model_name,
-        )
-
-        if hasattr(file, "seek"):
-            file.seek(0)
-        final_document_layout = process_data_with_ocr(
-            file,
-            merged_document_layout,
-            extracted_layout=extracted_layout,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-            ocr_agent=ocr_agent,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            pdf_image_dpi=pdf_image_dpi,
-            ocr_layout_dumper=ocr_layout_dumper,
-            password=password,
-            table_ocr_agent=table_ocr_agent,
-        )
-
-    # vectorization of the data structure ends here
-    final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
-
-    elements = document_to_element_list(
-        final_document_layout,
-        sortable=True,
-        include_page_breaks=include_page_breaks,
-        last_modification_date=metadata_last_modified,
-        # NOTE(crag): do not attempt to derive ListItem's from a layout-recognized "list"
-        # block with NLP rules. Otherwise, the assumptions in
-        # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
-        infer_list_items=False,
-        languages=languages,
-        starting_page_number=starting_page_number,
-        layouts_links=layouts_links,
-        **kwargs,
-    )
-
-    extract_image_block_types = check_element_types_to_extract(extract_image_block_types)
-    #  NOTE(christine): `extract_images_in_pdf` would deprecate
-    #  (but continue to support for a while)
-    if extract_images_in_pdf:
-        save_elements(
-            elements=elements,
-            starting_page_number=starting_page_number,
-            element_category_to_save=ElementType.IMAGE,
-            filename=filename,
-            file=file,
-            is_image=is_image,
-            pdf_image_dpi=pdf_image_dpi,
-            extract_image_block_to_payload=extract_image_block_to_payload,
-            output_dir_path=extract_image_block_output_dir,
-        )
-
-    for el_type in extract_image_block_types:
-        if extract_images_in_pdf and el_type == ElementType.IMAGE:
-            continue
-
-        save_elements(
-            elements=elements,
-            starting_page_number=starting_page_number,
-            element_category_to_save=el_type,
-            filename=filename,
-            file=file,
-            is_image=is_image,
-            pdf_image_dpi=pdf_image_dpi,
-            extract_image_block_to_payload=extract_image_block_to_payload,
-            output_dir_path=extract_image_block_output_dir,
-        )
+            save_elements(
+                elements=elements,
+                starting_page_number=starting_page_number,
+                element_category_to_save=el_type,
+                filename=filename,
+                file=file,
+                is_image=is_image,
+                pdf_image_dpi=pdf_image_dpi,
+                extract_image_block_to_payload=extract_image_block_to_payload,
+                output_dir_path=extract_image_block_output_dir,
+                image_paths=page_image_paths,
+            )
 
     out_elements = []
     for el in elements:
