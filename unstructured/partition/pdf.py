@@ -1095,6 +1095,7 @@ def _partition_pdf_or_image_local(
                     password=password,
                 ),
             )
+            render_source = None
             if hasattr(file, "seek"):
                 file.seek(0)
 
