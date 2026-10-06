@@ -46,7 +46,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType, create_file_type, register_partitioner
-from unstructured.partition.auto import _PartitionerLoader, partition
+from unstructured.partition.auto import _PartitionerLoader, file_and_type_from_url, partition
 from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.common.metadata import is_attachment_element
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -1133,6 +1133,18 @@ def test_auto_partition_from_url_routes_timeout_to_HTTP_request(request: Fixture
     )
 
 
+@pytest.mark.parametrize("status_code", [400, 401, 403, 404, 429, 500, 503])
+def test_file_and_type_from_url_rejects_an_error_response(request: FixtureRequest, status_code):
+    function_mock(
+        request,
+        "unstructured.partition.auto.safe_get",
+        return_value=MagicMock(ok=False, status_code=status_code),
+    )
+
+    with pytest.raises(ValueError, match=f"URL returned an error: {status_code}"):
+        file_and_type_from_url("https://example.com/missing")
+
+
 # ================================================================================================
 # OTHER ARGS
 # ================================================================================================
@@ -1602,3 +1614,22 @@ def test_auto_partition_works_with_custom_types(
     register_partitioner(file_type)(_test_partition_foo)
     loader = _PartitionerLoader()
     assert loader.get(file_type) is _test_partition_foo
+
+
+@pytest.mark.parametrize("status_code", [200, 206])
+def test_file_and_type_from_url_preserves_successful_response(request, status_code):
+    response = MagicMock(
+        ok=True,
+        status_code=status_code,
+        content=b"sample text",
+        headers={"Content-Type": "text/plain; charset=utf-8"},
+        encoding="utf-8",
+    )
+    function_mock(request, "unstructured.partition.auto.safe_get", return_value=response)
+    detector = function_mock(
+        request, "unstructured.partition.auto.detect_filetype", return_value=FileType.TXT
+    )
+    file, filetype = file_and_type_from_url("https://example.com/document")
+    assert file.getvalue() == b"sample text"
+    assert filetype == FileType.TXT
+    detector.assert_called_once_with(file=file, encoding="utf-8", content_type="text/plain")

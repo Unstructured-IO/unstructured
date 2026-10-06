@@ -1,3 +1,7 @@
+## 0.27.25
+
+- Reject HTTP error responses before URL partitioning so error pages are not ingested as documents.
+
 ## 0.27.19-dev0
 
 ### Maintenance
