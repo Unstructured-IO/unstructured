@@ -2,6 +2,12 @@
 
 - Optimize XLSX subtable detection using sparse populated-cell traversal; preserve table grouping and output without introducing size limits.
 
+## 0.27.19-dev0
+
+### Maintenance
+
+- **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
+
 ## 0.27.18
 
 ### Fixes
