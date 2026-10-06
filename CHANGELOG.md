@@ -4,6 +4,12 @@
 
 - **Release consumed original-element decoding buffers.** Compressed bytes, decoded JSON bytes, and JSON text are released before later reconstruction stages retain another large representation. Restored elements and the existing 200 MiB decompressed-size limit are unchanged.
 
+## 0.27.19-dev0
+
+### Maintenance
+
+- **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
+
 ## 0.27.18
 
 ### Fixes
