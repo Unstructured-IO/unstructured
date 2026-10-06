@@ -31,6 +31,11 @@ install_packages() {
 }
 
 retry_download apt-get "${apt_options[@]}" -o APT::Update::Error-Mode=any update
+if [[ "${1:-}" == "--packages-only" ]]; then
+  shift
+  install_packages "$@"
+  exit 0
+fi
 install_packages libmagic-dev poppler-utils libreoffice
 # Avoid add-apt-repository's implicit, unbounded index download.
 retry_download add-apt-repository --no-update -y ppa:alex-p/tesseract-ocr5
