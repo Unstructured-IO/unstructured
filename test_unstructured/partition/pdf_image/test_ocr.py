@@ -682,13 +682,17 @@ def test_process_file_with_ocr_uses_given_image_paths_without_rendering(mocker, 
         raise AssertionError("pdf must not be rendered when image_paths are given")
 
     mocker.patch.object(ocr, "convert_pdf_to_image", side_effect=fail_render)
-    supplement = mocker.patch.object(
-        ocr, "supplement_page_layout_with_ocr", side_effect=lambda page_layout, **kw: page_layout
-    )
+    seen = []
+
+    def record(page_layout, image, **kwargs):
+        seen.append((page_layout, image.size))
+        return page_layout
+
+    mocker.patch.object(ocr, "supplement_page_layout_with_ocr", side_effect=record)
     page_paths = []
-    for i in range(2):
+    for i, size in enumerate(((50, 50), (60, 70))):
         page_path = tmp_path / f"page-{i}.png"
-        PILImage.new("RGB", (50, 50)).save(page_path)
+        PILImage.new("RGB", size).save(page_path)
         page_paths.append(str(page_path))
     doc = MagicMock(DocumentLayout)
     doc.pages = [MagicMock(), MagicMock()]
@@ -697,5 +701,5 @@ def test_process_file_with_ocr_uses_given_image_paths_without_rendering(mocker, 
         "foo.pdf", doc, [[], []], is_image=False, image_paths=page_paths
     )
 
-    assert supplement.call_count == 2
-    assert len(result.pages) == 2
+    assert seen == [(doc.pages[0], (50, 50)), (doc.pages[1], (60, 70))]
+    assert result.pages == doc.pages

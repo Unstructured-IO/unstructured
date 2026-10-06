@@ -255,9 +255,9 @@ def test_save_elements_uses_given_image_paths_without_rendering(monkeypatch, tmp
 
     monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", fail_render)
     page_paths = []
-    for i in range(2):
+    for i, color in enumerate(("red", "blue")):
         page_path = tmp_path / f"page-{i}.png"
-        PILImg.new("RGB", (400, 400), "white").save(page_path)
+        PILImg.new("RGB", (400, 400), color).save(page_path)
         page_paths.append(str(page_path))
     elements = [
         Image(
@@ -280,7 +280,11 @@ def test_save_elements_uses_given_image_paths_without_rendering(monkeypatch, tmp
         image_paths=page_paths,
     )
 
-    assert all(el.metadata.image_base64 for el in elements)
+    def dominant_channel(el):
+        crop = PILImg.open(io.BytesIO(base64.b64decode(el.metadata.image_base64))).convert("RGB")
+        return max(range(3), key=lambda channel: crop.getpixel((10, 10))[channel])
+
+    assert [dominant_channel(el) for el in elements] == [0, 0, 2]
 
 
 def test_save_elements_with_inverted_point_ordering(monkeypatch):
