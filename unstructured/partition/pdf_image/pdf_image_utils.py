@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import os
 import re
+import shutil
 import tempfile
 import unicodedata
 from copy import deepcopy
@@ -150,15 +151,13 @@ def save_elements(
             if file is None:
                 image_paths = [filename]
             else:
-                if isinstance(file, bytes):
-                    file_data = file
-                else:
-                    file.seek(0)
-                    file_data = file.read()
-
                 tmp_file_path = os.path.join(temp_dir, "tmp_file")
                 with open(tmp_file_path, "wb") as tmp_file:
-                    tmp_file.write(file_data)
+                    if isinstance(file, bytes):
+                        tmp_file.write(file)
+                    else:
+                        file.seek(0)
+                        shutil.copyfileobj(file, tmp_file, length=1024 * 1024)
                 image_paths = [tmp_file_path]
         else:
             _image_paths = convert_pdf_to_image(
@@ -206,30 +205,38 @@ def save_elements(
             figure_number += 1
             try:
                 image_path = image_paths[page_index]
+                # The crop owns its pixels; release the decoded page before encoding it.
+                # Image.close() frees the pixel data, which the context manager does not.
                 image = Image.open(image_path)
-                cropped_image = image.crop(padded_bbox)
+                try:
+                    cropped_image = image.crop(padded_bbox)
+                finally:
+                    image.close()
+                try:
+                    # PNG images with transparency need conversion before JPEG encoding.
+                    if cropped_image.mode == "RGBA":
+                        converted_image = cropped_image.convert("RGB")
+                        cropped_image.close()
+                        cropped_image = converted_image
 
-                # PNG images with transparency need to be converted before saving
-                if cropped_image.mode == "RGBA":
-                    cropped_image = cropped_image.convert("RGB")
-
-                if extract_image_block_to_payload:
-                    buffered = BytesIO()
-                    cropped_image.save(buffered, format="JPEG")
-                    img_base64 = base64.b64encode(buffered.getvalue())
-                    img_base64_str = img_base64.decode()
-                    el.metadata.image_base64 = img_base64_str
-                    el.metadata.image_mime_type = "image/jpeg"
-                else:
-                    basename = "table" if el.category == ElementType.TABLE else "figure"
-                    assert output_dir_path
-                    output_f_path = os.path.join(
-                        output_dir_path,
-                        f"{basename}-{metadata_page_number}-{figure_number}.jpg",
-                    )
-                    write_image(cropped_image, output_f_path)
-                    # add image path to element metadata
-                    el.metadata.image_path = output_f_path
+                    if extract_image_block_to_payload:
+                        with BytesIO() as buffered:
+                            cropped_image.save(buffered, format="JPEG")
+                            el.metadata.image_base64 = base64.b64encode(
+                                buffered.getvalue()
+                            ).decode()
+                        el.metadata.image_mime_type = "image/jpeg"
+                    else:
+                        basename = "table" if el.category == ElementType.TABLE else "figure"
+                        assert output_dir_path
+                        output_f_path = os.path.join(
+                            output_dir_path,
+                            f"{basename}-{metadata_page_number}-{figure_number}.jpg",
+                        )
+                        write_image(cropped_image, output_f_path)
+                        el.metadata.image_path = output_f_path
+                finally:
+                    cropped_image.close()
             except (ValueError, IOError):
                 logger.warning("Image Extraction Error: Skipping the failed image", exc_info=True)
 
