@@ -186,10 +186,14 @@ def elements_from_base64_gzipped_json(b64_encoded_elements: str) -> list[Element
             )
         else:
             raise zlib.error("Incomplete or corrupted compressed data")
+    # -- release compressed input before allocating the decoded JSON string --
+    del decoded_b64_bytes, dobj
     # -- JSON (bytes) to JSON (str) --
     elements_json_str = elements_json_bytes.decode("utf-8")
+    del elements_json_bytes
     # -- JSON (str) -> dicts --
     element_dicts = json.loads(elements_json_str)
+    del elements_json_str
     # -- dicts -> elements --
     return elements_from_dicts(element_dicts)
 

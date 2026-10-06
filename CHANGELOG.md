@@ -1,3 +1,9 @@
+## 0.27.24
+
+### Enhancements
+
+- **Release consumed original-element decoding buffers.** Compressed bytes, decoded JSON bytes, and JSON text are released before later reconstruction stages retain another large representation. Restored elements and the existing 200 MiB decompressed-size limit are unchanged.
+
 ## 0.27.19-dev0
 
 ### Maintenance
