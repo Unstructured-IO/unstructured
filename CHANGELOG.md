@@ -4,6 +4,12 @@
 
 - **Release image extraction buffers after each crop.** Image and PDF figure extraction closes owned decoded pages, crops, and JPEG buffers promptly, and copies image uploads to its existing temporary file in bounded chunks. JPEG payloads, saved files, metadata, and caller-owned streams retain their existing behavior.
 
+## 0.27.19-dev0
+
+### Maintenance
+
+- **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
+
 ## 0.27.18
 
 ### Fixes
