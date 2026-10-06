@@ -2,6 +2,10 @@
 
 - **Start the next development cycle after 0.27.18.** CI maintenance uses development metadata rather than reusing an already released package version. This does not declare a stable package release.
 
+### Maintenance
+
+- **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
+
 ## 0.27.18
 
 ### Fixes
