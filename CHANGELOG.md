@@ -1,8 +1,15 @@
-## 0.27.21
+## 0.27.22
 
 ### Fixes
 
 - **Preserve slide and category-depth metadata on PPTX email addresses.** Emails in title and body shapes now receive the same text metadata as neighboring elements, including custom starting page numbers. Email classification and title-depth progression are unchanged. Element IDs change for these emails and for elements that follow an email on the same slide, because IDs include the page number and the element's position on its page.
+
+
+## 0.27.21
+
+### Fixes
+
+- **Chunk text containing literal tokenizer special-token spellings.** Token-based chunking previously raised `ValueError` for document text such as `<|endoftext|>`. Token counting now treats these spellings as ordinary text, preserving their full token cost and the configured chunk budget.
 
 ## 0.27.20
 

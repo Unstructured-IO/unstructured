@@ -75,7 +75,7 @@ class TokenCounter:
 
     def count(self, text: str) -> int:
         """Return the number of tokens in `text`."""
-        return len(self._encoder.encode(text))
+        return len(self._encoder.encode_ordinary(text))
 
     def validate(self) -> None:
         """Resolve the tokenizer now, raising if it is unknown or tiktoken is not installed.
