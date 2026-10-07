@@ -1,3 +1,9 @@
+## 0.27.20
+
+### Maintenance
+
+- **Add Transform v2 benchmark note to README.**
+
 ## 0.27.19
 
 ### Fixes

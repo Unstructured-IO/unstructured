@@ -39,28 +39,16 @@
 
 The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://docs.unstructured.io/open-source/core-functionality/partitioning). The use cases of `unstructured` revolve around streamlining and optimizing the data processing workflow for LLMs. `unstructured` modular functions and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and efficient in transforming unstructured data into structured outputs.
 
+> [!NOTE]
+> **The open-source library is, and will stay, completely free.** If you need higher-quality output, though, our latest models are available through the [Transform v2 API](https://docs.unstructured.io/transform/first-request). Compared with this library, Transform gets **2x table content accuracy**, **58% less invented content**, and **0.878 text accuracy (vs. 0.715)**:
+>
+> | Model | Table Cell Content | Table Cell Spatial | Adjusted CCT (text accuracy) | Tokens Added (lower is better) |
+> |---|---|---|---|---|
+> | **Transform (Best)** | **0.866** | **0.853** | **0.878** | **0.050** |
+> | Unstructured OSS | 0.426 | 0.498 | 0.715 | 0.119 |
+>
+> <sub>OSS: [unstructured.io/benchmarks](https://unstructured.io/benchmarks) (1,000+ pages). Transform Best: SCOREBench, 224 pages, Sept 2026.</sub>
 
-## Unstructured Transform MCP — Document Processing for your Agents
-
-Unstructured Transform brings production-grade document processing to your agents as an MCP server. It gives them the ability to turn 60+ file types into structured data that's ready for your applications, vector databases, and any downstream processes by parsing, enriching, chunking, and embedding files directly inside their current session.
-
-### Setup Steps for Your Agent
-
-1. **Pick your MCP client.** Transform works with virtually any MCP-compatible host or agent framework — Claude Code, Cursor, Codex CLI and more.
-
-2. **Add the Transform MCP server** to your client's MCP configuration (via the CLI `mcp add` command or the client's MCP settings/config file, depending on the tool).
-
-3. **Authenticate once** when your client prompts you. Sign in, and the Transform tools become available to your agent on its next message.
-
-4. **Point your agent at a file.** Drag and drop or reference a local file or URL. Transform handles 60+ formats (PDFs, emails, images, scanned files, and more).
-
-5. **Describe what you need in plain language.** Tell the agent your intent (e.g. "parse and chunk this contract for a vector store") and Transform partitions, enriches, chunks, and embeds the file, returning structured data ready to use. 
-
-⚡ [Get Started for Free](https://transform.unstructured.io/?entry=cta)
-
-## Unstructured Pipelines
-
-Ready to move your data processing pipeline to production, and take advantage of advanced features? Check out [Unstructured Pipelines](https://unstructured.io/enterprise). In addition to better processing performance, take advantage of chunking, embedding, and image and table enrichment generation, all from a low code UI or an API. [Request a demo](https://unstructured.io/?modal=contact-sales) from our sales team to learn more about how to get started.
 
 ## :eight_pointed_black_star: Quick Start
 
