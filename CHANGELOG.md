@@ -1,3 +1,9 @@
+## 0.27.21
+
+### Fixes
+
+- **Preserve slide and category-depth metadata on PPTX email addresses.** Emails in title and body shapes now receive the same text metadata as neighboring elements, including custom starting page numbers. Email classification and title-depth progression are unchanged.
+
 ## 0.27.20
 
 ### Maintenance
