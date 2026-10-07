@@ -1,8 +1,15 @@
-## 0.27.21
+## 0.27.22
 
 ### Fixes
 
 - **Emit PPTX page breaks only between slides with custom page numbering.** A starting page number above 1 previously added a leading `PageBreak` attributed to the preceding page. First-slide detection now respects the configured starting page while retaining the page numbers of subsequent breaks.
+
+
+## 0.27.21
+
+### Fixes
+
+- **Chunk text containing literal tokenizer special-token spellings.** Token-based chunking previously raised `ValueError` for document text such as `<|endoftext|>`. Token counting now treats these spellings as ordinary text, preserving their full token cost and the configured chunk budget.
 
 ## 0.27.20
 
