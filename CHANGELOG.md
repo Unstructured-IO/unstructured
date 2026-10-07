@@ -1,3 +1,9 @@
+## 0.27.21
+
+### Fixes
+
+- **Chunk text containing literal tokenizer special-token spellings.** Token-based chunking previously raised `ValueError` for document text such as `<|endoftext|>`. Token counting now treats these spellings as ordinary text, preserving their full token cost and the configured chunk budget.
+
 ## 0.27.20
 
 ### Maintenance
