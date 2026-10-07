@@ -797,3 +797,39 @@ class DescribePptxPartitionerOptions:
     @pytest.fixture()
     def metadata_file_path_prop_(self, request: FixtureRequest):
         return property_mock(request, PptxPartitionerOptions, "metadata_file_path")
+
+
+@pytest.mark.parametrize("starting_page_number", [1, 3, 10])
+@pytest.mark.parametrize("slide_count", [0, 1, 2])
+@pytest.mark.parametrize("include_page_breaks", [True, False])
+def test_partition_pptx_emits_breaks_only_between_slides_with_page_offset(
+    starting_page_number: int, slide_count: int, include_page_breaks: bool
+):
+    presentation = pptx.Presentation()
+    for index in range(slide_count):
+        slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+        shape = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(4), Inches(1))
+        shape.text = f"Slide {index + 1}"
+    file = io.BytesIO()
+    presentation.save(file)
+    file.seek(0)
+
+    elements = partition_pptx(
+        file=file,
+        starting_page_number=starting_page_number,
+        include_page_breaks=include_page_breaks,
+        languages=["eng"],
+    )
+
+    breaks = [e for e in elements if isinstance(e, PageBreak)]
+    expected_pages = list(range(starting_page_number, starting_page_number + slide_count - 1))
+    assert [e.metadata.page_number for e in breaks] == (
+        expected_pages if include_page_breaks else []
+    )
+    content = [e for e in elements if not isinstance(e, PageBreak)]
+    assert [e.text for e in content] == [f"Slide {index + 1}" for index in range(slide_count)]
+    assert [e.metadata.page_number for e in content] == list(
+        range(starting_page_number, starting_page_number + slide_count)
+    )
+    if elements:
+        assert not isinstance(elements[0], PageBreak)

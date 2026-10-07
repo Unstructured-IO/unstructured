@@ -359,6 +359,7 @@ class PptxPartitionerOptions:
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
         # -- options object maintains page-number state --
+        self._starting_page_number = starting_page_number
         self._page_counter = starting_page_number - 1
 
     @classmethod
@@ -385,7 +386,7 @@ class PptxPartitionerOptions:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
         self._page_counter += 1
         # -- no page-break before first page --
-        if self._page_counter < 2:
+        if self._page_counter == self._starting_page_number:
             return
         # -- only emit page-breaks when enabled --
         if self._include_page_breaks:
