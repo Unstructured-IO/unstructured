@@ -228,7 +228,7 @@ def blank_line_grouper(
     Vestibulum auctor dapibus neque.\n\nNunc dignissim risus id metus.\n\n
 
     """
-    return group_broken_paragraphs(text)
+    return group_broken_paragraphs(text, paragraph_split=paragraph_split)
 
 
 def auto_paragraph_grouper(
