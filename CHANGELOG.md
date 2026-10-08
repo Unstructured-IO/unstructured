@@ -1,3 +1,9 @@
+## 0.27.23
+
+### Features
+
+- **Partition WEBP images.** `.webp` is now a supported image type, detected from its filename extension, an asserted `image/webp` content type or its content, and partitioned by `partition_image()` like a PNG or JPEG. Its elements carry `image/webp` as their `filetype`, and by default it skips table-structure inference as PNG, JPEG and HEIC do. The `fast` strategy rejects it as it rejects every image, and `IMAGE_MAX_TOTAL_PIXELS` applies to it, so `hi_res` rejects an animated WEBP whose frames together exceed the limit. Runtime telemetry records it as a `webp` image. Previously `partition()` failed on every `.webp` with "Partitioning is not supported for the FileType.UNK file type."
+
 ## 0.27.22
 
 ### Fixes

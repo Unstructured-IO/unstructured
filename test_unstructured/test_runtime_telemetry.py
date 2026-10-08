@@ -463,6 +463,30 @@ def test_inferred_image_type_is_available_to_later_error_event(captured_events):
     assert captured_events[0]["document_type"] == "heic"
 
 
+def test_auto_partition_records_webp_as_an_image_with_its_strategy(
+    monkeypatch, captured_events, tmp_path
+):
+    from PIL import Image
+
+    from unstructured.partition import pdf
+    from unstructured.partition.auto import partition
+
+    # -- detection and strategy selection run for real; layout inference and OCR do not --
+    monkeypatch.setattr(pdf, "_partition_pdf_or_image_local", lambda **kwargs: [])
+    webp_path = str(tmp_path / "image.webp")
+    Image.new("RGB", (64, 64), "white").save(webp_path)
+
+    partition(filename=webp_path, strategy="auto")
+
+    assert len(captured_events) == 1
+    event = captured_events[0]
+    assert event["partitioner"] == "partition"
+    assert event["outcome"] == "success"
+    assert event["document_type"] == "webp"
+    assert event["strategy_requested"] == "auto"
+    assert event["strategy_used"] == "hi_res"
+
+
 def test_structured_remote_or_serialized_table_does_not_claim_local_extraction(captured_events):
     result = [Table("table", metadata=ElementMetadata(text_as_html="<table></table>"))]
     partition_api = _named_partitioner("partition_via_api", lambda: result, None)
