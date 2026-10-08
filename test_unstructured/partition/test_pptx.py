@@ -28,6 +28,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
+    EmailAddress,
     Image,
     ListItem,
     NarrativeText,
@@ -797,3 +798,52 @@ class DescribePptxPartitionerOptions:
     @pytest.fixture()
     def metadata_file_path_prop_(self, request: FixtureRequest):
         return property_mock(request, PptxPartitionerOptions, "metadata_file_path")
+
+
+@pytest.mark.parametrize("input_kind", ["filename", "file"])
+def test_partition_pptx_preserves_email_slide_and_depth_metadata(tmp_path, input_kind):
+    presentation = pptx.Presentation()
+    for slide_number in range(2):
+        slide = presentation.slides.add_slide(presentation.slide_layouts[1])
+        title_frame = slide.shapes.title.text_frame
+        title_frame.text = "First heading"
+        title_frame.add_paragraph().text = f"title{slide_number}@example.com"
+        title_frame.add_paragraph().text = "Next heading"
+        body_frame = slide.placeholders[1].text_frame
+        body_frame.text = f"body{slide_number}@example.com"
+        body_frame.paragraphs[0].level = 2
+
+    filename = tmp_path / "emails.pptx"
+    presentation.save(filename)
+    kwargs = (
+        {"filename": str(filename)}
+        if input_kind == "filename"
+        else {
+            "file": io.BytesIO(filename.read_bytes()),
+            "metadata_filename": filename.name,
+        }
+    )
+    elements = partition_pptx(
+        **kwargs,
+        starting_page_number=10,
+        include_page_breaks=False,
+        metadata_last_modified="2024-04-02T20:32:35",
+        languages=["eng"],
+    )
+
+    emails = [element for element in elements if isinstance(element, EmailAddress)]
+    assert [(e.text, e.metadata.page_number, e.metadata.category_depth) for e in emails] == [
+        ("title0@example.com", 10, 1),
+        ("body0@example.com", 10, 2),
+        ("title1@example.com", 11, 1),
+        ("body1@example.com", 11, 2),
+    ]
+    assert all(e.metadata.filename == filename.name for e in emails)
+    assert all(e.metadata.last_modified == "2024-04-02T20:32:35" for e in emails)
+    titles = [element for element in elements if isinstance(element, Title)]
+    assert [(e.text, e.metadata.category_depth) for e in titles] == [
+        ("First heading", 0),
+        ("Next heading", 1),
+        ("First heading", 0),
+        ("Next heading", 1),
+    ]
