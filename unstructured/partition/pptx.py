@@ -232,7 +232,7 @@ class _PptxPartitioner:
             if self._is_bulleted_paragraph(paragraph):
                 yield ListItem(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             elif is_email_address(text):
-                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
+                yield EmailAddress(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             elif is_possible_narrative_text(text):
                 yield NarrativeText(
                     text=text,
@@ -290,7 +290,11 @@ class _PptxPartitioner:
                     detection_origin=DETECTION_ORIGIN,
                 )
             elif is_email_address(text):
-                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
+                yield EmailAddress(
+                    text=text,
+                    metadata=self._opts.text_metadata(category_depth=depth),
+                    detection_origin=DETECTION_ORIGIN,
+                )
             else:
                 # increment the category depth by the paragraph increment in the shape
                 yield Title(
