@@ -463,15 +463,10 @@ class _DocxPartitioner:
         emitted.
 
         `is_continuation` is True for a fragment of a paragraph split by a page-break, other than
-        the first. Such a fragment is part of a list-item already labeled and gets no label.
+        the first. Such a fragment is part of a numbered paragraph already labeled and gets no
+        label.
         """
-        text = "".join(
-            e.text
-            for e in paragraph._p.xpath(
-                "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
-            )
-        )
-
+        text = _paragraph_text(paragraph)
         label = "" if is_continuation else self._list_labels.label(paragraph)
 
         # -- blank paragraphs are commonly used for spacing between paragraphs and do not
@@ -486,18 +481,14 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
-                if label and metadata.links:
-                    shift = len(label) + 1
-                    metadata.links = [
-                        {**link, "start_index": link["start_index"] + shift}
-                        for link in metadata.links
-                    ]
                 yield ListItem(
-                    text=f"{label} {clean_text}" if label else clean_text,
+                    text=self._prefix_label(label, clean_text, metadata),
                     metadata=metadata,
                     detection_origin=DETECTION_ORIGIN,
                 )
             return
+
+        text = self._prefix_label(label, text, metadata)
 
         # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
@@ -513,6 +504,18 @@ class _DocxPartitioner:
 
         # -- if all that fails we give it the default `Text` element-type --
         yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+
+    @staticmethod
+    def _prefix_label(label: str, text: str, metadata: ElementMetadata) -> str:
+        """`text` with `label` in front, and the link offsets in `metadata` moved to match."""
+        if not label:
+            return text
+        if metadata.links:
+            shift = len(label) + 1
+            metadata.links = [
+                {**link, "start_index": link["start_index"] + shift} for link in metadata.links
+            ]
+        return f"{label} {text}"
 
     def _convert_table_to_html(self, table: DocxTable) -> str | None:
         """HTML string version of `table`, or `None` when its layout-grid is too large.
@@ -707,7 +710,7 @@ class _DocxPartitioner:
             level = element.xpath("./w:pPr/w:outlineLvl/@w:val")
             if level:
                 try:
-                    return int(level[0]) < 9
+                    return 0 <= int(level[0]) <= 8
                 except ValueError:
                     return False
         return False
@@ -1142,6 +1145,16 @@ def _row_grid_width(row: _Row) -> int:
 # ================================================================================================
 
 
+def _paragraph_text(paragraph: Paragraph) -> str:
+    """The text of `paragraph` that becomes element text: its runs, hyperlinks and inline runs."""
+    return "".join(
+        e.text
+        for e in paragraph._p.xpath(
+            "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
+        )
+    )
+
+
 class _ListLabels:
     """Renders the label Word displays for an auto-numbered paragraph, e.g. "1." or "a)".
 
@@ -1188,7 +1201,9 @@ class _ListLabels:
     @staticmethod
     def _is_section_break_mark(paragraph: Paragraph) -> bool:
         """True for an empty paragraph that only holds a section break; Word does not number it."""
-        return bool(paragraph._p.xpath("./w:pPr/w:sectPr")) and not paragraph.text.strip()
+        return (
+            bool(paragraph._p.xpath("./w:pPr/w:sectPr")) and not _paragraph_text(paragraph).strip()
+        )
 
     def _render_label(self, paragraph: Paragraph) -> str:
         num_id, ilvl, style_id = self._resolve_num_pr(paragraph)

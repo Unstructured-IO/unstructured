@@ -373,7 +373,8 @@ def _numbered_docx(
     - style "NumberedStyle" is bound to numId 1 and "ChildStyle" is based on it
     - style "LinkedStyle" is bound to numId 1 at ilvl 0
     - style "OutlinedStyle" is bound to numId 1 and has outline level 0, "OutlinedChildStyle" is
-      based on it, and "BodyOutlineStyle" is bound to numId 1 with outline level 9 (body text)
+      based on it, "OutlinedGrandchildStyle" is based on that, "BodyOverChildStyle" is based on it
+      with outline level 9, and "BodyOutlineStyle" is bound to numId 1 with outline level 9
     """
     numbering_xml = numbering_xml or (
         f"<w:numbering {_W_NS}>"
@@ -420,6 +421,8 @@ def _numbered_docx(
     for style_id, based_on, outline in [
         ("OutlinedStyle", None, 0),
         ("OutlinedChildStyle", "OutlinedStyle", None),
+        ("OutlinedGrandchildStyle", "OutlinedChildStyle", None),
+        ("BodyOverChildStyle", "OutlinedStyle", 9),
         ("BodyOutlineStyle", None, 9),
     ]:
         styles.append(
@@ -728,23 +731,142 @@ def test_partition_docx_uses_the_level_a_style_names_over_the_one_a_definition_l
     assert [e.text for e in elements] == ["1. one", "2. two"]
 
 
-@pytest.mark.parametrize("style", ["OutlinedStyle", "OutlinedChildStyle"])
-def test_partition_docx_does_not_treat_a_numbered_heading_as_a_list_item(tmp_path, style: str):
+def _add_direct_num_pr(paragraph, num_id: int = 1, ilvl: int = 0) -> None:
+    paragraph._p.get_or_add_pPr().append(
+        parse_xml(f'<w:numPr {_W_NS}><w:ilvl w:val="{ilvl}"/><w:numId w:val="{num_id}"/></w:numPr>')
+    )
+
+
+@pytest.mark.parametrize(
+    "style", ["OutlinedStyle", "OutlinedChildStyle", "OutlinedGrandchildStyle"]
+)
+def test_partition_docx_labels_a_numbered_heading_without_making_it_a_list_item(
+    tmp_path, style: str
+):
     path = _numbered_docx(tmp_path, [("a", 1, 0)])
     document = docx.Document(path)
     document.add_paragraph("Heading text", style=style)
-    document.add_paragraph("c")._p.get_or_add_pPr().append(
-        parse_xml(f'<w:numPr {_W_NS}><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>')
-    )
+    _add_direct_num_pr(document.add_paragraph("c"))
     document.save(path)
 
     elements = partition_docx(path)
 
     assert [(isinstance(e, ListItem), e.text) for e in elements] == [
         (True, "1. a"),
-        (False, "Heading text"),
+        (False, "2. Heading text"),
         (True, "3. c"),
     ]
+
+
+def test_partition_docx_labels_a_numbered_heading_that_a_style_name_maps_to_a_title(tmp_path):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    heading_style = document.styles["Heading 1"].element
+    heading_style.get_or_add_pPr().append(
+        parse_xml(f'<w:numPr {_W_NS}><w:numId w:val="1"/></w:numPr>')
+    )
+    document.add_paragraph("Overview", style="Heading 1")
+    document.add_paragraph("Scope", style="Heading 1")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [(Title, "1. Overview"), (Title, "2. Scope")]
+
+
+def test_partition_docx_shifts_link_offsets_past_a_numbered_headings_label(tmp_path):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    heading = document.add_paragraph("", style="OutlinedStyle")
+    url_id = document.part.relate_to(
+        "https://example.com/",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+        is_external=True,
+    )
+    heading._p.append(
+        parse_xml(
+            f'<w:hyperlink {_W_NS} xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/'
+            f'relationships" r:id="{url_id}"><w:r><w:t>example</w:t></w:r></w:hyperlink>'
+        )
+    )
+    document.save(path)
+
+    (element,) = partition_docx(path)
+
+    (link,) = element.metadata.links
+    assert not isinstance(element, ListItem)
+    assert element.text == "1. example"
+    assert element.text[link["start_index"] :][: len(link["text"])] == "example"
+
+
+def test_partition_docx_restarts_a_child_level_after_a_numbered_heading(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("b", 1, 1)])
+    document = docx.Document(path)
+    document.add_paragraph("Heading text", style="OutlinedStyle")
+    _add_direct_num_pr(document.add_paragraph("c"), ilvl=1)
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "a) b", "2. Heading text", "a) c"]
+
+
+def test_partition_docx_keeps_a_directly_numbered_paragraph_in_an_outlined_style_a_list_item(
+    tmp_path,
+):
+    path = _numbered_docx(tmp_path, [("a", 1, 0)])
+    document = docx.Document(path)
+    _add_direct_num_pr(document.add_paragraph("x", style="OutlinedStyle"))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [(ListItem, "1. a"), (ListItem, "2. x")]
+
+
+def test_partition_docx_uses_the_paragraphs_own_outline_level_over_its_styles(tmp_path):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    for text, style, level in [
+        ("heading by paragraph", "NumberedStyle", 1),
+        ("list item by paragraph", "OutlinedStyle", 9),
+    ]:
+        paragraph = document.add_paragraph(text, style=style)
+        paragraph._p.get_or_add_pPr().append(parse_xml(f'<w:outlineLvl {_W_NS} w:val="{level}"/>'))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(isinstance(e, ListItem), e.text) for e in elements] == [
+        (False, "1. heading by paragraph"),
+        (True, "2. list item by paragraph"),
+    ]
+
+
+def test_partition_docx_lets_the_nearest_style_outline_level_decide(tmp_path):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    document.add_paragraph("body text", style="BodyOverChildStyle")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [(ListItem, "1. body text")]
+
+
+@pytest.mark.parametrize("level", ["x", "", "-1", "10"])
+def test_partition_docx_ignores_an_outline_level_outside_zero_to_eight(tmp_path, level: str):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    document.styles["BodyOutlineStyle"].element.xpath("./w:pPr/w:outlineLvl")[0].set(
+        qn("w:val"), level
+    )
+    document.add_paragraph("item", style="BodyOutlineStyle")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [(ListItem, "1. item")]
 
 
 def test_partition_docx_treats_a_numbered_body_text_outline_level_as_a_list_item(tmp_path):
@@ -756,6 +878,19 @@ def test_partition_docx_treats_a_numbered_body_text_outline_level_as_a_list_item
     elements = partition_docx(path)
 
     assert [(type(e), e.text) for e in elements] == [(ListItem, "1. body")]
+
+
+def test_partition_docx_still_numbers_a_section_break_paragraph_that_has_text(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("b", 1, 0), ("c", 1, 0)])
+    document = docx.Document(path)
+    document.paragraphs[1]._p.get_or_add_pPr().append(
+        parse_xml(f'<w:sectPr {_W_NS}><w:pgSz w:w="15840" w:h="12240"/></w:sectPr>')
+    )
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "2. b", "3. c"]
 
 
 def test_partition_docx_counts_an_empty_numbered_paragraph(tmp_path):

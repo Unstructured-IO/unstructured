@@ -2,7 +2,7 @@
 
 ### Fixes
 
-- **Stop numbering section-break paragraphs and stop treating numbered headings as list items.** An empty paragraph that only holds a section break no longer consumes a list number, and a numbered paragraph whose style has a heading outline level is no longer classified as a `ListItem`.
+- **Label numbered headings and keep them out of list items; stop numbering section-break paragraphs.** A numbered paragraph of any element type now carries its label in the text, a numbered heading is no longer classified as a `ListItem`, and an empty paragraph that only holds a section break no longer consumes a list number.
 
 ## 0.27.23
 
