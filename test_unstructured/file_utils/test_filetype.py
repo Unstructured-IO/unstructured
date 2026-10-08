@@ -7,6 +7,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import pathlib
 
 import pytest
 
@@ -159,6 +160,18 @@ def test_it_identifies_NDJSON_for_file_like_object_with_no_name_but_NDJSON_conte
 def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_type():
     file_path = example_doc_path("simple.ndjson")
     assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+
+
+def test_it_detects_WEBP_from_file_no_name_with_asserted_content_type(
+    webp_bytes: bytes, ctx_mime_type_: Mock
+):
+    # -- disable mime-guessing and filename extension mapping, leaving only the content-type --
+    ctx_mime_type_.return_value = None
+
+    file_type = detect_filetype(file=io.BytesIO(webp_bytes), content_type="image/webp")
+
+    ctx_mime_type_.assert_not_called()
+    assert file_type is FileType.WEBP
 
 
 # ================================================================================================
@@ -334,6 +347,15 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
     assert "libmagic is unavailable but assists in filetype detection. Please cons" in caplog.text
 
 
+def test_strategy_mime_guessing_detects_WEBP_when_libmagic_is_unavailable(
+    webp_bytes: bytes, LIBMAGIC_AVAILABLE_False: bool
+):
+    # -- a file-like object with no `.name` leaves no extension to fall back on --
+    assert LIBMAGIC_AVAILABLE_False is False
+
+    assert detect_filetype(file=io.BytesIO(webp_bytes)) is FileType.WEBP
+
+
 # ================================================================================================
 # STRATEGY #4 - MAP FILENAME EXTENSION TO FILETYPE
 # ================================================================================================
@@ -394,6 +416,20 @@ def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
 
     ctx_mime_type_.assert_called_with()
     assert file_type is expected_value
+
+
+def test_it_detects_WEBP_from_its_extension(
+    tmp_path: pathlib.Path, webp_bytes: bytes, ctx_mime_type_: Mock
+):
+    # -- disable mime-guessing so only the ".webp" extension can identify the file --
+    ctx_mime_type_.return_value = None
+    file_path = tmp_path / "image.webp"
+    file_path.write_bytes(webp_bytes)
+
+    file_type = detect_filetype(str(file_path))
+
+    ctx_mime_type_.assert_called_with()
+    assert file_type is FileType.WEBP
 
 
 # ================================================================================================
@@ -877,6 +913,16 @@ def LIBMAGIC_AVAILABLE_False():
 @pytest.fixture()
 def ctx_mime_type_(request: FixtureRequest):
     return property_mock(request, _FileTypeDetectionContext, "mime_type")
+
+
+@pytest.fixture()
+def webp_bytes() -> bytes:
+    """A small WEBP image written by Pillow, so no binary fixture is committed."""
+    from PIL import Image
+
+    buffer = io.BytesIO()
+    Image.new("RGB", (64, 64), "white").save(buffer, format="WEBP")
+    return buffer.getvalue()
 
 
 # ================================================================================================

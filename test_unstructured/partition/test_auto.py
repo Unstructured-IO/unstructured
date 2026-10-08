@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import pathlib
@@ -388,6 +389,24 @@ def test_auto_partition_webp_from_file(
             content_type=content_type,
             strategy=PartitionStrategy.AUTO,
         )
+
+    assert elements
+    assert all(e.metadata.filetype == "image/webp" for e in elements)
+
+
+@pytest.mark.parametrize("content_type", [None, "image/webp"])
+def test_auto_partition_webp_from_a_stream_without_a_name(
+    webp_file_path: str, content_type: str | None, monkeypatch: pytest.MonkeyPatch
+):
+    # -- a stream with no name has no extension to fall back on, so detection must come from
+    # -- the bytes or the asserted content type; layout inference and OCR are stubbed out --
+    monkeypatch.setattr(
+        "unstructured.partition.pdf._partition_pdf_or_image_local", lambda **kwargs: [Title("t")]
+    )
+    with open(webp_file_path, "rb") as f:
+        stream = io.BytesIO(f.read())
+
+    elements = partition(file=stream, content_type=content_type)
 
     assert elements
     assert all(e.metadata.filetype == "image/webp" for e in elements)
