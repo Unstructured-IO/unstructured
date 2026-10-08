@@ -72,7 +72,7 @@ Thank you for using Unstructured Open Source!
 
 Try Unstructured's commercial offering for improved output quality.
 
-                     10,000 free pages to start.                      
+                     10,000 free pages to start.
 
 Learn more: https://example.invalid/unstructured-offer
 Illustration only - placeholder URL; offer pending publication review.
