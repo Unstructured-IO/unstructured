@@ -718,6 +718,20 @@ def test_partition_docx_counts_an_empty_numbered_paragraph(tmp_path):
     assert [e.text for e in elements] == ["1. a", "3. c"]
 
 
+def test_partition_docx_does_not_count_an_empty_paragraph_that_holds_a_section_break(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("", 1, 0), ("c", 1, 0)])
+    document = docx.Document(path)
+    section_break = document.paragraphs[1]._p.get_or_add_pPr()
+    section_break.append(
+        parse_xml(f'<w:sectPr {_W_NS}><w:pgSz w:w="15840" w:h="12240"/></w:sectPr>')
+    )
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "2. c"]
+
+
 def test_partition_docx_keeps_counting_child_levels_when_level_restart_is_zero(tmp_path):
     no_restart = _lvl_xml(1, "decimal", "%2.").replace(
         "<w:numFmt", '<w:lvlRestart w:val="0"/><w:numFmt'

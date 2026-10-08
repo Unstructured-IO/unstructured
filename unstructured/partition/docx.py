@@ -1152,13 +1152,18 @@ class _ListLabels:
 
     def label(self, paragraph: Paragraph) -> str:
         """The label for `paragraph`, advancing the list counters; "" when it has none."""
-        if self._numbering is None:
+        if self._numbering is None or self._is_section_break_mark(paragraph):
             return ""
         try:
             return self._render_label(paragraph)
         except Exception:
             logging.warning("Could not resolve list numbering for a paragraph", exc_info=True)
             return ""
+
+    @staticmethod
+    def _is_section_break_mark(paragraph: Paragraph) -> bool:
+        """True for an empty paragraph that only holds a section break; Word does not number it."""
+        return bool(paragraph._p.xpath("./w:pPr/w:sectPr")) and not paragraph.text.strip()
 
     def _render_label(self, paragraph: Paragraph) -> str:
         num_id, ilvl, style_id = self._resolve_num_pr(paragraph)
