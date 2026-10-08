@@ -56,7 +56,6 @@ EXPECTED_PPTX_OUTPUT = [
 # == document file behaviors ==============================================================
 
 
-
 def test_partition_pptx_from_filename():
     elements = partition_pptx(example_doc_path("fake-power-point.pptx"))
     assert elements == EXPECTED_PPTX_OUTPUT
@@ -125,7 +124,6 @@ def test_it_loads_a_PPTX_with_a_JPEG_misidentified_as_image_jpg(opts_args: dict[
 
 
 # == page-break behaviors =================================================================
-
 
 
 def test_partition_pptx_adds_page_breaks(tmp_path: pathlib.Path):
@@ -199,7 +197,6 @@ def test_partition_pptx_many_pages():
 
 
 # == miscellaneous behaviors ==============================================================
-
 
 
 def test_partition_pptx_orders_elements(tmp_path: pathlib.Path):
@@ -287,7 +284,6 @@ def test_partition_pptx_malformed():
 # == image sub-partitioning behaviors =====================================================
 
 
-
 def test_partition_pptx_generates_no_Image_elements_by_default():
     assert partition_pptx(example_doc_path("picture.pptx")) == []
 
@@ -310,7 +306,6 @@ def test_partition_pptx_uses_registered_picture_partitioner():
 
 
 # == metadata behaviors ===================================================================
-
 
 
 # -- .metadata.last_modified ---------------------------------------------------------------------
@@ -383,7 +378,6 @@ def test_partition_pptx_raises_TypeError_for_invalid_languages():
 
 
 # == downstream behaviors =================================================================
-
 
 
 def test_partition_pptx_with_json():
@@ -539,7 +533,6 @@ def test_partition_pptx_hierarchy_sample_document():
 # =========================================================================================
 
 
-
 @pytest.fixture()
 def opts_args() -> dict[str, Any]:
     """All default arguments for `_XlsxPartitionerOptions`.
@@ -565,7 +558,6 @@ def opts_args() -> dict[str, Any]:
 # These test components used by `partition_pptx()` in isolation such that all edge cases can be
 # exercised.
 # =========================================================================================
-
 
 
 class DescribePptxPartitionerOptions:
