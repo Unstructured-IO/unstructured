@@ -50,9 +50,9 @@ class OCRAgent(ABC):
         except (ImportError, AttributeError) as e:
             logger.error(f"Failed to get OCRAgent instance: {e}")
             raise RuntimeError(
-                "Could not get the OCRAgent instance. Please check the OCR package and the "
-                "OCR_AGENT environment variable."
-            )
+                f"Could not get the OCRAgent instance. Please check the OCR package and the "
+                f"OCR_AGENT environment variable: {e}"
+            ) from e
 
     @abstractmethod
     def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
