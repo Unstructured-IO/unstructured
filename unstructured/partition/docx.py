@@ -685,7 +685,32 @@ class _DocxPartitioner:
             return False
 
         style_type = self._style_based_element_type(paragraph)
-        return style_type is None or style_type is ListItem
+        if style_type is not None and style_type is not ListItem:
+            return False
+        return not self._has_outline_level(paragraph)
+
+    @staticmethod
+    def _has_outline_level(paragraph: Paragraph) -> bool:
+        """True when `paragraph` or its style chain gives it a heading outline level, 0 to 8.
+
+        The nearest `w:outlineLvl` decides; level 9 is body text. Such a paragraph is a heading
+        that happens to be numbered, not a list item.
+        """
+        elements = [paragraph._p]
+        style = paragraph.style
+        seen: set[str] = set()
+        while style is not None and style.style_id not in seen:
+            seen.add(style.style_id)
+            elements.append(style.element)
+            style = style.base_style
+        for element in elements:
+            level = element.xpath("./w:pPr/w:outlineLvl/@w:val")
+            if level:
+                try:
+                    return int(level[0]) < 9
+                except ValueError:
+                    return False
+        return False
 
     @cached_property
     def _list_labels(self) -> _ListLabels:
