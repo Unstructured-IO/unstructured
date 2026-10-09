@@ -1,8 +1,23 @@
-## 0.27.23
+## 0.27.25
 
 ### Enhancements
 
 - **Partition WEBP images.** `partition()` now detects `.webp` files and partitions them with `partition_image()` like PNG and JPEG, with `metadata.filetype` set to `image/webp`. `partition_email()` and `partition_msg()` now partition WEBP attachments instead of skipping them, and a WEBP file saved under another image extension is now detected as `image/webp` from its content.
+
+
+## 0.27.24
+
+### Fixes
+
+- **Reject a negative `overlap`.** `ChunkingOptions` validated `new_after_n_chars` and `new_after_n_tokens` but not `overlap`, so a negative value silently corrupted output: on the character-split path the remainder started past the end of the fragment and dropped that many characters at every split boundary, and with `overlap_all=True` the tail slice ran forward and repeated most of the chunk. It now raises `ValueError`, matching the sibling options.
+
+
+## 0.27.23
+
+### Fixes
+
+- **Emit PPTX page breaks only between slides with custom page numbering.** A starting page number above 1 previously added a leading `PageBreak` attributed to the preceding page. First-slide detection now respects the configured starting page while retaining the page numbers of subsequent breaks.
+
 
 ## 0.27.22
 
