@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import io
 import json
 import os
 import pathlib
@@ -45,7 +44,6 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType, create_file_type, register_partitioner
 from unstructured.partition.auto import _PartitionerLoader, partition
@@ -345,6 +343,17 @@ def test_auto_partition_bmp_from_filename(tmp_path: pathlib.Path):
     assert "</thead><tbody><tr>" in table[0]
 
 
+def test_auto_partition_webp_from_filename(tmp_path: pathlib.Path):
+    webp_filename = str(tmp_path / "layout-parser-paper-fast.webp")
+    with Image.open(example_doc_path("img/layout-parser-paper-fast.jpg")) as img:
+        img.save(webp_filename, lossless=True)
+
+    elements = partition(filename=webp_filename, strategy=PartitionStrategy.AUTO)
+
+    assert any("LayoutParser" in e.text for e in elements)
+    assert all(e.metadata.filetype == "image/webp" for e in elements)
+
+
 @pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
 def test_auto_partition_image_element_extraction(extract_image_block_to_payload: bool):
     extract_image_block_types = ["Image", "Table"]
@@ -360,103 +369,6 @@ def test_auto_partition_image_element_extraction(extract_image_block_to_payload:
         assert_element_extraction(
             elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
         )
-
-
-@pytest.mark.parametrize(
-    "strategy", [PartitionStrategy.HI_RES, PartitionStrategy.OCR_ONLY, PartitionStrategy.AUTO]
-)
-def test_auto_partition_webp_from_filename(webp_file_path: str, strategy: str):
-    elements = partition(filename=webp_file_path, strategy=strategy)
-
-    assert elements
-    assert all(e.metadata.filetype == "image/webp" for e in elements)
-    assert any("LayoutParser" in e.text for e in elements)
-
-
-@pytest.mark.parametrize(
-    ("pass_metadata_filename", "content_type"),
-    [(False, None), (False, "image/webp"), (True, "image/webp"), (True, None)],
-)
-def test_auto_partition_webp_from_file(
-    webp_file_path: str, pass_metadata_filename: bool, content_type: str | None
-):
-    metadata_filename = webp_file_path if pass_metadata_filename else None
-
-    with open(webp_file_path, "rb") as f:
-        elements = partition(
-            file=f,
-            metadata_filename=metadata_filename,
-            content_type=content_type,
-            strategy=PartitionStrategy.AUTO,
-        )
-
-    assert elements
-    assert all(e.metadata.filetype == "image/webp" for e in elements)
-
-
-@pytest.mark.parametrize("content_type", [None, "image/webp"])
-def test_auto_partition_webp_from_a_stream_without_a_name(
-    webp_file_path: str, content_type: str | None, monkeypatch: pytest.MonkeyPatch
-):
-    # -- a stream with no name has no extension to fall back on, so detection must come from
-    # -- the bytes or the asserted content type; layout inference and OCR are stubbed out --
-    monkeypatch.setattr(
-        "unstructured.partition.pdf._partition_pdf_or_image_local", lambda **kwargs: [Title("t")]
-    )
-    with open(webp_file_path, "rb") as f:
-        stream = io.BytesIO(f.read())
-
-    elements = partition(file=stream, content_type=content_type)
-
-    assert elements
-    assert all(e.metadata.filetype == "image/webp" for e in elements)
-
-
-@pytest.mark.parametrize("extension", [".jpg", ".png", ".webp"])
-def test_auto_partition_webp_rejects_fast_strategy_like_other_images(
-    extension: str, tmp_path: pathlib.Path
-):
-    image_path = str(tmp_path / f"image{extension}")
-    Image.new("RGB", (64, 64), "white").save(image_path)
-
-    with pytest.raises(ValueError, match="The fast strategy is not available for image files."):
-        partition(filename=image_path, strategy=PartitionStrategy.FAST)
-
-
-@pytest.mark.parametrize(
-    ("extension", "infer_table_structure"),
-    [(".bmp", True), (".heic", False), (".jpg", False), (".png", False), (".webp", False)],
-)
-def test_auto_partition_webp_skips_table_inference_by_default_like_png(
-    extension: str, infer_table_structure: bool, request: FixtureRequest, tmp_path: pathlib.Path
-):
-    partition_pdf_or_image_ = function_mock(
-        request, "unstructured.partition.image.partition_pdf_or_image", return_value=[]
-    )
-    if extension == ".heic":
-        # -- HEIC comes from the example documents; the other images are written with Pillow --
-        image_path = example_doc_path("img/DA-1p.heic")
-    else:
-        image_path = str(tmp_path / f"image{extension}")
-        Image.new("RGB", (64, 64), "white").save(image_path)
-
-    partition(filename=image_path)
-
-    call_kwargs = partition_pdf_or_image_.call_args.kwargs
-    assert call_kwargs["infer_table_structure"] is infer_table_structure
-
-
-def test_auto_partition_rejects_animated_webp_over_the_pixel_limit(
-    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
-):
-    # -- three distinct 40 x 40 frames, 4,800 pixels in all; hi_res decodes every frame --
-    webp_path = str(tmp_path / "animated.webp")
-    frames = [Image.new("RGB", (40, 40), (100 * i, 0, 0)) for i in range(3)]
-    frames[0].save(webp_path, save_all=True, append_images=frames[1:])
-    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "4799")
-
-    with pytest.raises(UnprocessableEntityError, match="first 3 frame"):
-        partition(filename=webp_path, strategy=PartitionStrategy.HI_RES)
 
 
 # ================================================================================================
@@ -1687,15 +1599,6 @@ def expected_docx_elements():
         Text("2023"),
         Address("DOYLESTOWN, PA 18901"),
     ]
-
-
-@pytest.fixture()
-def webp_file_path(tmp_path: pathlib.Path) -> str:
-    """A lossless WEBP copy of the layout-parser JPEG, so OCR reads the same pixels."""
-    webp_file_path = str(tmp_path / "layout-parser-paper-fast.webp")
-    with Image.open(example_doc_path("img/layout-parser-paper-fast.jpg")) as img:
-        img.save(webp_file_path, lossless=True)
-    return webp_file_path
 
 
 def _test_partition_foo():

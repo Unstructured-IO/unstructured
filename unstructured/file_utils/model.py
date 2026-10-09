@@ -230,7 +230,7 @@ class FileType(enum.Enum):
     def partitioner_shortname(self) -> str | None:
         """Familiar name of partitioner, like "image" for file-types that use `partition_image()`.
 
-        One use is to determine whether a file-type is one of the six image types, all of which
+        One use is to determine whether a file-type is one of the image types, all of which
         are processed by `partition_image()`.
 
         `None` for file-types that are not partitionable, although `.is_partitionable` is the

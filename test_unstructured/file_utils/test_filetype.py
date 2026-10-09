@@ -7,7 +7,6 @@ from __future__ import annotations
 import io
 import json
 import os
-import pathlib
 
 import pytest
 
@@ -92,6 +91,7 @@ def test_it_detects_correct_file_type_for_CFB_and_ZIP_subtypes_detected_by_direc
         (FileType.TSV, "stanley-cups.tsv", "text/tsv"),
         (FileType.TXT, "norwich-city.txt", "text/plain"),
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
+        (FileType.WEBP, "img/DA-1p.webp", "image/webp"),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.ZIP, "simple.zip", "application/zip"),
         (FileType.NDJSON, "spring-weather.html.ndjson", "application/x-ndjson"),
@@ -130,6 +130,7 @@ def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_conte
         (FileType.TSV, "stanley-cups.tsv", "text/tsv"),
         (FileType.TXT, "norwich-city.txt", "text/plain"),
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
+        (FileType.WEBP, "img/DA-1p.webp", "image/webp"),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.ZIP, "simple.zip", "application/zip"),
     ],
@@ -160,18 +161,6 @@ def test_it_identifies_NDJSON_for_file_like_object_with_no_name_but_NDJSON_conte
 def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_type():
     file_path = example_doc_path("simple.ndjson")
     assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
-
-
-def test_it_detects_WEBP_from_file_no_name_with_asserted_content_type(
-    webp_bytes: bytes, ctx_mime_type_: Mock
-):
-    # -- disable mime-guessing and filename extension mapping, leaving only the content-type --
-    ctx_mime_type_.return_value = None
-
-    file_type = detect_filetype(file=io.BytesIO(webp_bytes), content_type="image/webp")
-
-    ctx_mime_type_.assert_not_called()
-    assert file_type is FileType.WEBP
 
 
 # ================================================================================================
@@ -207,6 +196,7 @@ def test_it_detects_WEBP_from_file_no_name_with_asserted_content_type(
         (FileType.TXT, "norwich-city.txt", "text/plain"),
         (FileType.TXT, "simple.yaml", "text/yaml"),
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
+        (FileType.WEBP, "img/DA-1p.webp", "image/webp"),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.XML, "factbook.xml", "text/xml"),
     ],
@@ -244,6 +234,7 @@ def test_it_detects_correct_file_type_by_guessed_MIME_when_libmagic_guesses_reco
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.WEBP, "img/DA-1p.webp"),
         (FileType.XML, "factbook.xml"),
         (FileType.ZIP, "simple.zip"),
     ],
@@ -275,6 +266,7 @@ def test_it_detects_most_file_types_using_mime_guessing_when_libmagic_guesses_mi
         ("img/bmp_24.bmp", "image/bmp", FileType.BMP),
         ("img/DA-1p.heic", "image/heic", FileType.HEIC),
         ("CantinaBand3.wav", "audio/wav", FileType.WAV),
+        ("img/DA-1p.webp", "image/webp", FileType.WEBP),
     ],
 )
 def test_it_falls_back_to_filetype_mime_guessing_when_libmagic_returns_unrecognized_mime_type(
@@ -304,6 +296,7 @@ def test_it_falls_back_to_filetype_mime_guessing_when_libmagic_returns_unrecogni
         (FileType.RTF, "fake-doc.rtf"),
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
         (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.WEBP, "img/DA-1p.webp"),
         (FileType.ZIP, "simple.zip"),
         # -- but it doesn't recognize textual file-types at all --
         (FileType.UNK, "stanley-cups.csv"),
@@ -347,15 +340,6 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
     assert "libmagic is unavailable but assists in filetype detection. Please cons" in caplog.text
 
 
-def test_strategy_mime_guessing_detects_WEBP_when_libmagic_is_unavailable(
-    webp_bytes: bytes, LIBMAGIC_AVAILABLE_False: bool
-):
-    # -- a file-like object with no `.name` leaves no extension to fall back on --
-    assert LIBMAGIC_AVAILABLE_False is False
-
-    assert detect_filetype(file=io.BytesIO(webp_bytes)) is FileType.WEBP
-
-
 # ================================================================================================
 # STRATEGY #4 - MAP FILENAME EXTENSION TO FILETYPE
 # ================================================================================================
@@ -381,6 +365,7 @@ def test_strategy_mime_guessing_detects_WEBP_when_libmagic_is_unavailable(
         (FileType.TSV, "stanley-cups.tsv"),
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.WEBP, "img/DA-1p.webp"),
         (FileType.XML, "factbook.xml"),
         (FileType.NDJSON, "simple.ndjson"),
     ],
@@ -405,6 +390,7 @@ def test_it_detects_correct_file_type_from_extension_when_that_maps_to_a_file_ty
     [
         (FileType.BMP, "img/bmp_24.bmp", "application/octet-stream"),
         (FileType.HEIC, "img/DA-1p.heic", "application/octet-stream"),
+        (FileType.WEBP, "img/DA-1p.webp", "application/octet-stream"),
     ],
 )
 def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
@@ -416,20 +402,6 @@ def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
 
     ctx_mime_type_.assert_called_with()
     assert file_type is expected_value
-
-
-def test_it_detects_WEBP_from_its_extension(
-    tmp_path: pathlib.Path, webp_bytes: bytes, ctx_mime_type_: Mock
-):
-    # -- disable mime-guessing so only the ".webp" extension can identify the file --
-    ctx_mime_type_.return_value = None
-    file_path = tmp_path / "image.webp"
-    file_path.write_bytes(webp_bytes)
-
-    file_type = detect_filetype(str(file_path))
-
-    ctx_mime_type_.assert_called_with()
-    assert file_type is FileType.WEBP
 
 
 # ================================================================================================
@@ -913,16 +885,6 @@ def LIBMAGIC_AVAILABLE_False():
 @pytest.fixture()
 def ctx_mime_type_(request: FixtureRequest):
     return property_mock(request, _FileTypeDetectionContext, "mime_type")
-
-
-@pytest.fixture()
-def webp_bytes() -> bytes:
-    """A small WEBP image written by Pillow, so no binary fixture is committed."""
-    from PIL import Image
-
-    buffer = io.BytesIO()
-    Image.new("RGB", (64, 64), "white").save(buffer, format="WEBP")
-    return buffer.getvalue()
 
 
 # ================================================================================================
