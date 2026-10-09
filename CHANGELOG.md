@@ -1,3 +1,10 @@
+## 0.27.25
+
+### Fixes
+
+- **Extract text from vector-heavy PDFs with the `fast` strategy.** `partition_pdf` skips PDFMiner text extraction when `is_pdf_too_complex` flags a PDF, which leaves `fast` with no text source, so drawing-heavy PDFs (CAD and engineering sheets, or any page whose graphics operators outnumber its text operators 20:1 past 10,000 operators) silently returned zero elements. This affected PDFs of 1 MB or more since 0.21.12 and every PDF since 0.27.0, when the check began inspecting small files. `fast` now extracts these PDFs with PDFMiner, and raises `UnprocessableEntityError` for a PDF whose content streams exceed the decoding limits instead of returning nothing. Other strategies still skip text extraction for both cases. The new `pdf_complexity` reports which reason applies; `is_pdf_too_complex` is unchanged.
+
+
 ## 0.27.24
 
 ### Fixes
