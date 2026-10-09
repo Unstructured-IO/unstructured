@@ -7,6 +7,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import shutil
 
 import pytest
 
@@ -258,6 +259,14 @@ def test_it_detects_most_file_types_using_mime_guessing_when_libmagic_guesses_mi
         file = io.BytesIO(f.read())
 
     assert detect_filetype(file=file) is expected_value
+
+
+def test_it_detects_WEBP_from_its_content_when_its_extension_is_png(tmp_path):
+    # -- the `.png` extension decides only when MIME-type guessing fails --
+    file_path = str(tmp_path / "renamed.png")
+    shutil.copyfile(example_doc_path("img/DA-1p.webp"), file_path)
+
+    assert detect_filetype(file_path=file_path) is FileType.WEBP
 
 
 @pytest.mark.parametrize(
