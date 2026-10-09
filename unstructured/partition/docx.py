@@ -462,16 +462,15 @@ class _DocxPartitioner:
         does not contribute to the document-element stream and will not cause an element to be
         emitted.
 
-        `is_continuation` is True for a fragment of a paragraph split by a page-break, other than
-        the first. Such a fragment is part of a list-item already labeled and gets no label.
-        """
-        text = "".join(
-            e.text
-            for e in paragraph._p.xpath(
-                "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
-            )
-        )
+        Word counts every numbered paragraph, so the list counters advance for a blank one and for
+        one that is not a list-item; a numbered paragraph's label is prefixed to the text of
+        whatever element it becomes.
 
+        `is_continuation` is True for a fragment of a paragraph split by a page-break, other than
+        the first. Such a fragment is part of a numbered paragraph already labeled and gets no
+        label.
+        """
+        text = _paragraph_text(paragraph)
         label = "" if is_continuation else self._list_labels.label(paragraph)
 
         # -- blank paragraphs are commonly used for spacing between paragraphs and do not
@@ -486,18 +485,14 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
-                if label and metadata.links:
-                    shift = len(label) + 1
-                    metadata.links = [
-                        {**link, "start_index": link["start_index"] + shift}
-                        for link in metadata.links
-                    ]
                 yield ListItem(
-                    text=f"{label} {clean_text}" if label else clean_text,
+                    text=self._prefix_label(label, clean_text, metadata),
                     metadata=metadata,
                     detection_origin=DETECTION_ORIGIN,
                 )
             return
+
+        text = self._prefix_label(label, text, metadata)
 
         # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
@@ -513,6 +508,18 @@ class _DocxPartitioner:
 
         # -- if all that fails we give it the default `Text` element-type --
         yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+
+    @staticmethod
+    def _prefix_label(label: str, text: str, metadata: ElementMetadata) -> str:
+        """`text` with `label` in front, and the link offsets in `metadata` moved to match."""
+        if not label:
+            return text
+        if metadata.links:
+            shift = len(label) + 1
+            metadata.links = [
+                {**link, "start_index": link["start_index"] + shift} for link in metadata.links
+            ]
+        return f"{label} {text}"
 
     def _convert_table_to_html(self, table: DocxTable) -> str | None:
         """HTML string version of `table`, or `None` when its layout-grid is too large.
@@ -674,18 +681,75 @@ class _DocxPartitioner:
         return "\n".join(text for text in iter_hdrftr_texts(hdrftr) if text)
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
-        """True when `paragraph` can be identified as a list-item."""
+        """True when `paragraph` can be identified as a list-item.
+
+        A paragraph is a list-item when its text starts with a bullet or it is numbered, directly or
+        by its style. A numbered heading is not one, and neither is a paragraph numbered only by its
+        style when that style maps to another element type.
+        """
         if is_bulleted_text(paragraph.text):
             return True
 
         if "<w:numPr>" in paragraph._p.xml:
-            return True
+            return not self._is_numbered_heading(paragraph)
 
         if not self._list_labels.has_style_numbering(paragraph):
             return False
 
         style_type = self._style_based_element_type(paragraph)
-        return style_type is None or style_type is ListItem
+        if style_type is not None and style_type is not ListItem:
+            return False
+        return not self._has_outline_level(paragraph)
+
+    def _is_numbered_heading(self, paragraph: Paragraph) -> bool:
+        """True when a numbered `paragraph` is a heading, by a title style or an outline level.
+
+        A paragraph with no explicit style is in the default style, which is not a title style.
+        """
+        if not paragraph._p.xpath("./w:pPr/w:pStyle"):
+            return self._has_outline_level(paragraph)
+        return self._style_based_element_type(paragraph) is Title or self._has_outline_level(
+            paragraph
+        )
+
+    def _has_outline_level(self, paragraph: Paragraph) -> bool:
+        """True when `paragraph` or its style chain gives it a heading outline level, 0 to 8.
+
+        The nearest `w:outlineLvl` decides; level 9 is body text.
+        """
+        own = paragraph._p.xpath("./w:pPr/w:outlineLvl/@w:val")
+        if own:
+            return self._is_heading_outline_level(own[0])
+        style = self._list_labels.style_of(paragraph)
+        if style is None:
+            return False
+        if style.style_id not in self._style_outline_levels:
+            self._style_outline_levels[style.style_id] = self._style_has_outline_level(style)
+        return self._style_outline_levels[style.style_id]
+
+    @cached_property
+    def _style_outline_levels(self) -> dict[str, bool]:
+        """Whether each style seen so far gives a heading outline level, by style-id."""
+        return {}
+
+    def _style_has_outline_level(self, style: Any) -> bool:
+        """True when the nearest `w:outlineLvl` in the chain starting at `style` is 0 to 8."""
+        seen: set[str] = set()
+        while style is not None and style.style_id not in seen:
+            seen.add(style.style_id)
+            level = style.element.xpath("./w:pPr/w:outlineLvl/@w:val")
+            if level:
+                return self._is_heading_outline_level(level[0])
+            style = style.base_style
+        return False
+
+    @staticmethod
+    def _is_heading_outline_level(value: str) -> bool:
+        """True when `value` is a `w:outlineLvl` that marks a heading, an integer 0 to 8."""
+        try:
+            return 0 <= int(value) <= 8
+        except ValueError:
+            return False
 
     @cached_property
     def _list_labels(self) -> _ListLabels:
@@ -1117,6 +1181,16 @@ def _row_grid_width(row: _Row) -> int:
 # ================================================================================================
 
 
+def _paragraph_text(paragraph: Paragraph) -> str:
+    """The text of `paragraph` that becomes element text: its runs, hyperlinks and inline runs."""
+    return "".join(
+        e.text
+        for e in paragraph._p.xpath(
+            "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
+        )
+    )
+
+
 class _ListLabels:
     """Renders the label Word displays for an auto-numbered paragraph, e.g. "1." or "a)".
 
@@ -1140,8 +1214,21 @@ class _ListLabels:
             for abstract in self._numbering.findall(qn("w:abstractNum")):
                 self._abstracts.setdefault(abstract.get(qn("w:abstractNumId")), abstract)
         self._levels: dict[tuple[str, int], Any | None] = {}
+        self._styles: dict[str | None, Any] = {}
         self._counters: dict[str, list[int | None]] = {}
         self._restarted: set[tuple[str, int]] = set()
+
+    def style_of(self, paragraph: Paragraph) -> Any:
+        """The style of `paragraph`, looked up once per style-id.
+
+        Finding the default style of a paragraph with no explicit style scans every style in the
+        document, so the result is kept.
+        """
+        style_ids = paragraph._p.xpath("./w:pPr/w:pStyle/@w:val")
+        key = style_ids[0] if style_ids else None
+        if key not in self._styles:
+            self._styles[key] = paragraph.style
+        return self._styles[key]
 
     def has_style_numbering(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` gets its numbering from its style chain rather than directly."""
@@ -1151,14 +1238,25 @@ class _ListLabels:
             return False
 
     def label(self, paragraph: Paragraph) -> str:
-        """The label for `paragraph`, advancing the list counters; "" when it has none."""
-        if self._numbering is None:
+        """The label for `paragraph`, advancing the list counters; "" when it has none.
+
+        An empty paragraph that only holds a section break is not numbered by Word, so it has no
+        label and does not advance the counters.
+        """
+        if self._numbering is None or self._is_section_break_mark(paragraph):
             return ""
         try:
             return self._render_label(paragraph)
         except Exception:
             logging.warning("Could not resolve list numbering for a paragraph", exc_info=True)
             return ""
+
+    @staticmethod
+    def _is_section_break_mark(paragraph: Paragraph) -> bool:
+        """True for an empty paragraph that only holds a section break; Word does not number it."""
+        return (
+            bool(paragraph._p.xpath("./w:pPr/w:sectPr")) and not _paragraph_text(paragraph).strip()
+        )
 
     def _render_label(self, paragraph: Paragraph) -> str:
         num_id, ilvl, style_id = self._resolve_num_pr(paragraph)
@@ -1238,7 +1336,7 @@ class _ListLabels:
         num_id: str | None = None
         ilvl: int | None = None
         style_id: str | None = None
-        style = paragraph.style
+        style = self.style_of(paragraph)
         seen: set[str] = set()
         while style is not None and style.style_id not in seen:
             seen.add(style.style_id)
