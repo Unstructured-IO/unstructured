@@ -1253,6 +1253,30 @@ def test_partition_docx_raises_TypeError_for_invalid_languages():
         partition_docx(filename=filename, languages="eng")
 
 
+def test_partition_docx_classifies_non_english_paragraph_as_narrative_text(tmp_path):
+    """Non-English narrative text is NarrativeText when `languages` is specified."""
+    document = docx.Document()
+    document.add_paragraph("Dette er et eksempel på en kort sætning.")
+    file_path = tmp_path / "danish.docx"
+    document.save(str(file_path))
+
+    elements = partition_docx(filename=str(file_path), languages=["dan"])
+
+    assert isinstance(elements[0], NarrativeText)
+
+
+def test_partition_docx_detects_languages_for_element_classification(tmp_path):
+    """Element classification uses detected document languages when `languages` is omitted."""
+    document = docx.Document()
+    document.add_paragraph("Dette er et eksempel på en kort sætning.")
+    file_path = tmp_path / "danish.docx"
+    document.save(str(file_path))
+
+    elements = partition_docx(filename=str(file_path))
+
+    assert isinstance(elements[0], NarrativeText)
+
+
 # ------------------------------------------------------------------------------------------------
 
 

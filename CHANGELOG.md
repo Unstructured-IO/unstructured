@@ -1,3 +1,10 @@
+## 0.27.24
+
+### Fixes
+
+- **Classify DOCX paragraphs with document languages.** Paragraph text classification previously always applied English heuristics, so non-English narrative text was misclassified. `partition_docx` now uses the caller-specified `languages`, or detects them from the document text when not provided, when checking for narrative text.
+
+
 ## 0.27.23
 
 ### Fixes
