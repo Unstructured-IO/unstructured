@@ -702,7 +702,12 @@ class _DocxPartitioner:
         return not self._has_outline_level(paragraph)
 
     def _is_numbered_heading(self, paragraph: Paragraph) -> bool:
-        """True when a numbered `paragraph` is a heading, by a title style or an outline level."""
+        """True when a numbered `paragraph` is a heading, by a title style or an outline level.
+
+        A paragraph with no explicit style is in the default style, which is not a title style.
+        """
+        if not paragraph._p.xpath("./w:pPr/w:pStyle"):
+            return self._has_outline_level(paragraph)
         return self._style_based_element_type(paragraph) is Title or self._has_outline_level(
             paragraph
         )
@@ -715,7 +720,7 @@ class _DocxPartitioner:
         own = paragraph._p.xpath("./w:pPr/w:outlineLvl/@w:val")
         if own:
             return self._is_heading_outline_level(own[0])
-        style = paragraph.style
+        style = self._list_labels.style_of(paragraph)
         if style is None:
             return False
         if style.style_id not in self._style_outline_levels:
@@ -1209,8 +1214,21 @@ class _ListLabels:
             for abstract in self._numbering.findall(qn("w:abstractNum")):
                 self._abstracts.setdefault(abstract.get(qn("w:abstractNumId")), abstract)
         self._levels: dict[tuple[str, int], Any | None] = {}
+        self._styles: dict[str | None, Any] = {}
         self._counters: dict[str, list[int | None]] = {}
         self._restarted: set[tuple[str, int]] = set()
+
+    def style_of(self, paragraph: Paragraph) -> Any:
+        """The style of `paragraph`, looked up once per style-id.
+
+        Finding the default style of a paragraph with no explicit style scans every style in the
+        document, so the result is kept.
+        """
+        style_ids = paragraph._p.xpath("./w:pPr/w:pStyle/@w:val")
+        key = style_ids[0] if style_ids else None
+        if key not in self._styles:
+            self._styles[key] = paragraph.style
+        return self._styles[key]
 
     def has_style_numbering(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` gets its numbering from its style chain rather than directly."""
@@ -1318,7 +1336,7 @@ class _ListLabels:
         num_id: str | None = None
         ilvl: int | None = None
         style_id: str | None = None
-        style = paragraph.style
+        style = self.style_of(paragraph)
         seen: set[str] = set()
         while style is not None and style.style_id not in seen:
             seen.add(style.style_id)
