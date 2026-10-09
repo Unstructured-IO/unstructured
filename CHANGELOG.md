@@ -1,8 +1,57 @@
-## 0.27.17
+## 0.27.24
 
 ### Fixes
 
 - **Reject a negative `overlap`.** `ChunkingOptions` validated `new_after_n_chars` and `new_after_n_tokens` but not `overlap`, so a negative value silently corrupted output: on the character-split path the remainder started past the end of the fragment and dropped that many characters at every split boundary, and with `overlap_all=True` the tail slice ran forward and repeated most of the chunk. It now raises `ValueError`, matching the sibling options.
+
+
+## 0.27.23
+
+### Fixes
+
+- **Emit PPTX page breaks only between slides with custom page numbering.** A starting page number above 1 previously added a leading `PageBreak` attributed to the preceding page. First-slide detection now respects the configured starting page while retaining the page numbers of subsequent breaks.
+
+
+## 0.27.22
+
+### Fixes
+
+- **Preserve slide and category-depth metadata on PPTX email addresses.** Emails in title and body shapes now receive the same text metadata as neighboring elements, including custom starting page numbers. Email classification and title-depth progression are unchanged. Element IDs change for these emails and for elements that follow an email on the same slide, because IDs include the page number and the element's position on its page.
+
+
+## 0.27.21
+
+### Fixes
+
+- **Chunk text containing literal tokenizer special-token spellings.** Token-based chunking previously raised `ValueError` for document text such as `<|endoftext|>`. Token counting now treats these spellings as ordinary text, preserving their full token cost and the configured chunk budget.
+
+## 0.27.20
+
+### Maintenance
+
+- **Add Transform v2 benchmark note to README.**
+
+## 0.27.19
+
+### Fixes
+
+- **Partition an XLSX with an empty worksheet instead of crashing.** `_ConnectedComponents` built its populated-cell mask with `DataFrame.notna().to_numpy()`, which returns a `float64` array for a completely empty (0x0) worksheet, so the subsequent `populated[:-1, :] & populated[1:, :]` raised `TypeError: ufunc 'bitwise_and' not supported`. A workbook containing any empty sheet (for example a trailing blank `Sheet2`) failed to partition with a 500. The mask is now built with `.to_numpy(dtype=bool)`, so an empty worksheet yields no connected components and partitioning proceeds.
+
+### Maintenance
+
+- **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
+
+## 0.27.18
+
+### Fixes
+
+- **Fix `ValueError: Coordinate 'lower' is less than 'upper'` when extracting figure/table images**: `save_elements` assumed `points[0]`/`points[2]` were always the top-left/bottom-right corners in screen orientation. For elements whose coordinates carried (or were converted from) a y-up orientation, that ordering inverted the PIL crop box and raised the error, which was then silently swallowed and the image dropped. The crop box is now derived from the extent (min/max) of all coordinate points, so it is always valid regardless of point ordering.
+
+## 0.27.17
+
+### Fixes
+
+- **Serializing a chunk copied its `orig_elements` twice and threw both copies away.** `ElementMetadata.to_dict()` deep-copied every metadata field before replacing `coordinates`, `data_source`, `orig_elements` and `key_value_pairs` with their serialized form, and `_fix_metadata_field_precision()` copied each element again to round coordinates and `detection_class_prob` that most elements do not carry. On a chunk, `orig_elements` holds every source element of that chunk, so both copies duplicated the document. Serializing chunks is now roughly 4x to 6x faster through `to_dict()` and 6x to 10x faster through `elements_to_json()`; `elements_to_json()` on elements with no `orig_elements` is about 3x faster. **Behavior change:** `Element.id` mints a uuid on first access and caches it on that element, so the discarded copies used to take the new ids with them and consecutive serializations of one chunk reported different `element_id`s for the same source elements. Ids are now minted on the caller's element and are stable across calls, in `elements_to_json()` and `elements_to_ndjson()` as well as inside `orig_elements`. Elements given an explicit or hash-derived id were never affected.
 
 ## 0.27.16
 
