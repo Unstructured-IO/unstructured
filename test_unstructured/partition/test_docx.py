@@ -373,8 +373,9 @@ def _numbered_docx(
     - style "NumberedStyle" is bound to numId 1 and "ChildStyle" is based on it
     - style "LinkedStyle" is bound to numId 1 at ilvl 0
     - style "OutlinedStyle" is bound to numId 1 and has outline level 0, "OutlinedChildStyle" is
-      based on it, "OutlinedGrandchildStyle" is based on that, "BodyOverChildStyle" is based on it
-      with outline level 9, and "BodyOutlineStyle" is bound to numId 1 with outline level 9
+      based on "OutlinedStyle", "OutlinedGrandchildStyle" is based on "OutlinedChildStyle",
+      "BodyOverChildStyle" is based on "OutlinedStyle" with outline level 9, and
+      "BodyOutlineStyle" is bound to numId 1 with outline level 9
     """
     numbering_xml = numbering_xml or (
         f"<w:numbering {_W_NS}>"

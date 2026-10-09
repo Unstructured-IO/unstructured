@@ -462,6 +462,10 @@ class _DocxPartitioner:
         does not contribute to the document-element stream and will not cause an element to be
         emitted.
 
+        Word counts every numbered paragraph, so the list counters advance for a blank one and for
+        one that is not a list-item; a numbered paragraph's label is prefixed to the text of
+        whatever element it becomes.
+
         `is_continuation` is True for a fragment of a paragraph split by a page-break, other than
         the first. Such a fragment is part of a numbered paragraph already labeled and gets no
         label.
@@ -677,7 +681,12 @@ class _DocxPartitioner:
         return "\n".join(text for text in iter_hdrftr_texts(hdrftr) if text)
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
-        """True when `paragraph` can be identified as a list-item."""
+        """True when `paragraph` can be identified as a list-item.
+
+        A paragraph is a list-item when its text starts with a bullet or it is numbered, directly or
+        by its style. A numbered heading is not one, and neither is a paragraph numbered only by its
+        style when that style maps to another element type.
+        """
         if is_bulleted_text(paragraph.text):
             return True
 
@@ -701,8 +710,7 @@ class _DocxPartitioner:
     def _has_outline_level(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` or its style chain gives it a heading outline level, 0 to 8.
 
-        The nearest `w:outlineLvl` decides; level 9 is body text. Such a paragraph is a heading
-        that happens to be numbered, not a list item.
+        The nearest `w:outlineLvl` decides; level 9 is body text.
         """
         own = paragraph._p.xpath("./w:pPr/w:outlineLvl/@w:val")
         if own:
@@ -1212,7 +1220,11 @@ class _ListLabels:
             return False
 
     def label(self, paragraph: Paragraph) -> str:
-        """The label for `paragraph`, advancing the list counters; "" when it has none."""
+        """The label for `paragraph`, advancing the list counters; "" when it has none.
+
+        An empty paragraph that only holds a section break is not numbered by Word, so it has no
+        label and does not advance the counters.
+        """
         if self._numbering is None or self._is_section_break_mark(paragraph):
             return ""
         try:
