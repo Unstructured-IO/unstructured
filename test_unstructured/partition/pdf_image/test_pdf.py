@@ -20,7 +20,13 @@ from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from pypdf import PdfWriter
 from pypdf.errors import LimitReachedError
-from pypdf.generic import ArrayObject, DecodedStreamObject, NameObject, NullObject
+from pypdf.generic import (
+    ArrayObject,
+    DecodedStreamObject,
+    DictionaryObject,
+    NameObject,
+    NullObject,
+)
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
@@ -2072,6 +2078,88 @@ def test_is_pdf_too_complex_charges_non_stream_entries_to_budget():
 
     # Fails closed on page 1; the pre-fix code charged only streams and returned False.
     assert result is True
+
+
+def _vector_heavy_pdf_with_text(text: str) -> bytes:
+    """One-page PDF with a line of real text over 4,000 line strokes: ~140 KB of decoded
+    content and 12,000 graphics operators, vector-heavy under the default thresholds."""
+    writer = PdfWriter()
+    page = writer.add_blank_page(width=612, height=792)
+    font = DictionaryObject(
+        {
+            NameObject("/Type"): NameObject("/Font"),
+            NameObject("/Subtype"): NameObject("/Type1"),
+            NameObject("/BaseFont"): NameObject("/Helvetica"),
+        }
+    )
+    page[NameObject("/Resources")] = DictionaryObject(
+        {NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})}
+    )
+    strokes = b"".join(
+        b"%.2f 100.00 m %.2f 700.00 l S\n" % (x, x) for x in (72 + (i % 468) for i in range(4_000))
+    )
+    stream = DecodedStreamObject()
+    stream.set_data(b"BT /F1 24 Tf 72 740 Td (" + text.encode() + b") Tj ET\n" + strokes)
+    page[NameObject("/Contents")] = writer._add_object(stream)
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+def test_pdf_complexity_reports_vector_heavy_page():
+    data = _vector_heavy_pdf_with_text("Site plan")
+
+    assert pdf.pdf_complexity(file=data) is pdf.PdfComplexity.VECTOR_HEAVY
+
+
+def test_pdf_complexity_reports_exceeded_limits():
+    data = _vector_heavy_pdf_with_text("Site plan")
+
+    assert pdf.pdf_complexity(file=data, max_raw_stream_bytes=1_000) is (
+        pdf.PdfComplexity.EXCEEDS_LIMITS
+    )
+
+
+def test_partition_pdf_fast_extracts_text_from_vector_heavy_pdf():
+    data = _vector_heavy_pdf_with_text("Site plan")
+
+    elements = pdf.partition_pdf(file=io.BytesIO(data), strategy=PartitionStrategy.FAST)
+
+    assert "Site plan" in [element.text for element in elements]
+
+
+def test_partition_pdf_fast_rejects_pdf_over_decoding_limits(monkeypatch):
+    monkeypatch.setattr(pdf, "pdf_complexity", lambda **kwargs: pdf.PdfComplexity.EXCEEDS_LIMITS)
+
+    with pytest.raises(UnprocessableEntityError, match="decoding limits"):
+        pdf.partition_pdf(
+            filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+            strategy=PartitionStrategy.FAST,
+        )
+
+
+@pytest.mark.parametrize("complexity", list(pdf.PdfComplexity))
+@pytest.mark.parametrize(
+    ("strategy", "partitioner"),
+    [
+        (PartitionStrategy.AUTO, "_partition_pdf_or_image_with_ocr"),
+        (PartitionStrategy.HI_RES, "_partition_pdf_or_image_local"),
+    ],
+)
+def test_partition_pdf_skips_text_extraction_for_complex_pdf(
+    monkeypatch, complexity, strategy, partitioner
+):
+    monkeypatch.setattr(pdf, "pdf_complexity", lambda **kwargs: complexity)
+    extractable_elements = mock.Mock(return_value=[])
+    monkeypatch.setattr(pdf, "extractable_elements", extractable_elements)
+
+    with mock.patch.object(pdf, partitioner, return_value=[Text("Hello there!")]) as mock_partition:
+        pdf.partition_pdf(
+            filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"), strategy=strategy
+        )
+
+    extractable_elements.assert_not_called()
+    mock_partition.assert_called_once()
 
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
