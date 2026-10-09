@@ -811,7 +811,7 @@ def test_partition_docx_restarts_a_child_level_after_a_numbered_heading(tmp_path
     assert [e.text for e in elements] == ["1. a", "a) b", "2. Heading text", "a) c"]
 
 
-def test_partition_docx_keeps_a_directly_numbered_paragraph_in_an_outlined_style_a_list_item(
+def test_partition_docx_treats_a_directly_numbered_paragraph_in_an_outlined_style_as_a_heading(
     tmp_path,
 ):
     path = _numbered_docx(tmp_path, [("a", 1, 0)])
@@ -821,7 +821,56 @@ def test_partition_docx_keeps_a_directly_numbered_paragraph_in_an_outlined_style
 
     elements = partition_docx(path)
 
-    assert [(type(e), e.text) for e in elements] == [(ListItem, "1. a"), (ListItem, "2. x")]
+    assert [(isinstance(e, ListItem), e.text) for e in elements] == [
+        (True, "1. a"),
+        (False, "2. x"),
+    ]
+
+
+def test_partition_docx_treats_a_directly_numbered_heading_style_paragraph_as_a_title(tmp_path):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    _add_direct_num_pr(document.add_paragraph("Overview", style="Heading 1"))
+    _add_direct_num_pr(document.add_paragraph("Scope", style="Heading 1"))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [(Title, "1. Overview"), (Title, "2. Scope")]
+
+
+@pytest.mark.parametrize("style", ["Caption", "Quote", "No Spacing", "List Paragraph"])
+def test_partition_docx_keeps_a_directly_numbered_paragraph_in_a_non_heading_style_a_list_item(
+    tmp_path, style: str
+):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    _add_direct_num_pr(document.add_paragraph("item", style=style))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [(ListItem, "1. item")]
+
+
+def test_partition_docx_uses_the_own_outline_level_of_a_directly_numbered_paragraph(tmp_path):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    for text, style, level in [
+        ("heading by paragraph", "Normal", 1),
+        ("list item by paragraph", "OutlinedStyle", 9),
+    ]:
+        paragraph = document.add_paragraph(text, style=style)
+        _add_direct_num_pr(paragraph)
+        paragraph._p.get_or_add_pPr().append(parse_xml(f'<w:outlineLvl {_W_NS} w:val="{level}"/>'))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(isinstance(e, ListItem), e.text) for e in elements] == [
+        (False, "1. heading by paragraph"),
+        (True, "2. list item by paragraph"),
+    ]
 
 
 def test_partition_docx_uses_the_paragraphs_own_outline_level_over_its_styles(tmp_path):

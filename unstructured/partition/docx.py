@@ -682,7 +682,7 @@ class _DocxPartitioner:
             return True
 
         if "<w:numPr>" in paragraph._p.xml:
-            return True
+            return not self._is_numbered_heading(paragraph)
 
         if not self._list_labels.has_style_numbering(paragraph):
             return False
@@ -691,6 +691,12 @@ class _DocxPartitioner:
         if style_type is not None and style_type is not ListItem:
             return False
         return not self._has_outline_level(paragraph)
+
+    def _is_numbered_heading(self, paragraph: Paragraph) -> bool:
+        """True when a numbered `paragraph` is a heading, by a title style or an outline level."""
+        return self._style_based_element_type(paragraph) is Title or self._has_outline_level(
+            paragraph
+        )
 
     def _has_outline_level(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` or its style chain gives it a heading outline level, 0 to 8.
