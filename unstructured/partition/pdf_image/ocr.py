@@ -46,6 +46,7 @@ def process_data_with_ocr(
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
     password: Optional[str] = None,
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    image_paths: Optional[List[str]] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given data and supplement the output DocumentLayout
@@ -72,6 +73,9 @@ def process_data_with_ocr(
     - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to
       env_config.PDF_RENDER_DPI's value.
 
+    - image_paths (List[str], optional): Page images already rendered from the PDF at
+      `pdf_image_dpi`. When given, the PDF is not rendered again.
+
     - ocr_layout_dumper (OCRLayoutDumper, optional): The OCR layout dumper to save the OCR layout.
 
     Returns:
@@ -97,6 +101,7 @@ def process_data_with_ocr(
             ocr_layout_dumper=ocr_layout_dumper,
             password=password,
             table_ocr_agent=table_ocr_agent,
+            image_paths=image_paths,
         )
 
     return merged_layouts
@@ -116,6 +121,7 @@ def process_file_with_ocr(
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
     password: Optional[str] = None,
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    image_paths: Optional[List[str]] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
@@ -143,6 +149,9 @@ def process_file_with_ocr(
 
     - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to
       env_config.PDF_RENDER_DPI.
+
+    - image_paths (List[str], optional): Page images already rendered from the PDF at
+      `pdf_image_dpi`. When given, the PDF is not rendered again.
 
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
@@ -174,14 +183,15 @@ def process_file_with_ocr(
                 return DocumentLayout.from_pages(merged_page_layouts)
         else:
             with tempfile.TemporaryDirectory() as temp_dir:
-                _image_paths = convert_pdf_to_image(
-                    filename,
-                    dpi=pdf_image_dpi,
-                    output_folder=temp_dir,
-                    path_only=True,
-                    password=password,
-                )
-                image_paths = cast(List[str], _image_paths)
+                if image_paths is None:
+                    _image_paths = convert_pdf_to_image(
+                        filename,
+                        dpi=pdf_image_dpi,
+                        output_folder=temp_dir,
+                        path_only=True,
+                        password=password,
+                    )
+                    image_paths = cast(List[str], _image_paths)
 
                 for i, image_path in enumerate(image_paths):
                     extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None

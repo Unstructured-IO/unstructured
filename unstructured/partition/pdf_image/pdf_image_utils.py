@@ -125,6 +125,7 @@ def save_elements(
     extract_image_block_to_payload: bool = False,
     output_dir_path: str | None = None,
     password: Optional[str] = None,
+    image_paths: Optional[List[str]] = None,
 ):
     """
     Saves specific elements from a PDF as images either to a directory or embeds them in the
@@ -133,6 +134,9 @@ def save_elements(
     This function processes a list of elements partitioned from a PDF file. For each element of
     a specified category, it extracts and saves the image. The images can either be saved to
     a specified directory or embedded into the element's payload as a base64-encoded string.
+
+    `image_paths` are page images already rendered from the PDF at `pdf_image_dpi`. When given,
+    the PDF is not rendered again.
     """
 
     # Determine the output directory path
@@ -146,32 +150,35 @@ def save_elements(
         os.makedirs(output_dir_path, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        if is_image:
-            if file is None:
-                image_paths = [filename]
-            else:
-                if isinstance(file, bytes):
-                    file_data = file
+        if image_paths is None:
+            if is_image:
+                if file is None:
+                    image_paths = [filename]
                 else:
-                    file.seek(0)
-                    file_data = file.read()
+                    if isinstance(file, bytes):
+                        file_data = file
+                    else:
+                        file.seek(0)
+                        file_data = file.read()
 
-                tmp_file_path = os.path.join(temp_dir, "tmp_file")
-                with open(tmp_file_path, "wb") as tmp_file:
-                    tmp_file.write(file_data)
-                image_paths = [tmp_file_path]
-        else:
-            _image_paths = convert_pdf_to_image(
-                filename,
-                file,
-                pdf_image_dpi,
-                output_folder=temp_dir,
-                path_only=True,
-                password=password,
-            )
-            image_paths = cast(List[str], _image_paths)
+                    tmp_file_path = os.path.join(temp_dir, "tmp_file")
+                    with open(tmp_file_path, "wb") as tmp_file:
+                        tmp_file.write(file_data)
+                    image_paths = [tmp_file_path]
+            else:
+                _image_paths = convert_pdf_to_image(
+                    filename,
+                    file,
+                    pdf_image_dpi,
+                    output_folder=temp_dir,
+                    path_only=True,
+                    password=password,
+                )
+                image_paths = cast(List[str], _image_paths)
 
         figure_number = 0
+        page_image: Optional[Image.Image] = None
+        page_image_index: Optional[int] = None
         for el in elements:
             if el.category != element_category_to_save:
                 continue
@@ -205,9 +212,14 @@ def save_elements(
 
             figure_number += 1
             try:
-                image_path = image_paths[page_index]
-                image = Image.open(image_path)
-                cropped_image = image.crop(padded_bbox)
+                if page_image_index != page_index:
+                    if page_image is not None:
+                        page_image.close()
+                        page_image = None
+                    page_image_index = None
+                    page_image = Image.open(image_paths[page_index])
+                    page_image_index = page_index
+                cropped_image = page_image.crop(padded_bbox)
 
                 # PNG images with transparency need to be converted before saving
                 if cropped_image.mode == "RGBA":
@@ -232,6 +244,8 @@ def save_elements(
                     el.metadata.image_path = output_f_path
             except (ValueError, IOError):
                 logger.warning("Image Extraction Error: Skipping the failed image", exc_info=True)
+        if page_image is not None:
+            page_image.close()
 
 
 def check_element_types_to_extract(

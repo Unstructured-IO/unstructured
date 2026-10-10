@@ -44,7 +44,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.partition import pdf, strategies
-from unstructured.partition.pdf_image import ocr, pdfminer_processing
+from unstructured.partition.pdf_image import ocr, pdf_image_utils, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
 from unstructured.partition.utils import config as partition_config
 from unstructured.partition.utils.constants import (
@@ -177,6 +177,7 @@ class MockSinglePageDocumentLayout(layout.DocumentLayout):
     ],
 )
 def test_partition_pdf_local(monkeypatch, filename, file):
+    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", lambda *a, **k: [])
     monkeypatch.setattr(
         layout,
         "process_data_with_model",
@@ -213,7 +214,7 @@ def test_partition_pdf_local(monkeypatch, filename, file):
 
 
 def test_partition_pdf_local_raises_with_no_filename():
-    with pytest.raises((FileNotFoundError, PDFPageCountError, TypeError)):
+    with pytest.raises((FileNotFoundError, PDFPageCountError, TypeError, ValueError)):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 
 
@@ -252,6 +253,7 @@ def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
     rotated_layout = _layout_with_rotation_corrections(
         [{"pdf_rotation_correction": 90}, {"pdf_rotation_correction": 0}]
     )
+    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", lambda *a, **k: [])
     monkeypatch.setattr(layout, model_target, lambda *a, **k: rotated_layout)
 
     captured = {}
@@ -274,6 +276,143 @@ def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
     )
 
     assert captured["rotation_corrections"] == [90, 0]
+
+
+@pytest.mark.parametrize(
+    ("file_arg", "model_target", "pdfminer_target", "ocr_target"),
+    [
+        (None, "process_file_with_model", "process_file_with_pdfminer", "process_file_with_ocr"),
+        (
+            b"0000",
+            "process_data_with_model",
+            "process_data_with_pdfminer",
+            "process_data_with_ocr",
+        ),
+    ],
+)
+def test_partition_pdf_local_renders_pages_once_and_shares_them(
+    monkeypatch, file_arg, model_target, pdfminer_target, ocr_target
+):
+    """The PDF is rendered a single time and the page images reach layout inference, OCR
+    and image extraction instead of each of them rendering the PDF again."""
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: True)
+    rendered = ["page-1.png", "page-2.png"]
+    render_calls = []
+    received = {}
+    saved_with = []
+
+    def _render(*args, **kwargs):
+        render_calls.append(kwargs)
+        return rendered
+
+    def _capture(name):
+        def _inner(*args, **kwargs):
+            received[name] = kwargs.get("image_paths")
+            return MockDocumentLayout()
+
+        return _inner
+
+    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", _render)
+    monkeypatch.setattr(layout, model_target, _capture("model"))
+    monkeypatch.setattr(pdfminer_processing, pdfminer_target, lambda *a, **k: ([], []))
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "merge_inferred_with_extracted_layout",
+        lambda **k: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(ocr, ocr_target, _capture("ocr"))
+    monkeypatch.setattr(
+        pdf_image_utils,
+        "save_elements",
+        lambda **kwargs: saved_with.append(kwargs["image_paths"]),
+    )
+
+    pdf._partition_pdf_or_image_local(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf") if file_arg is None else "",
+        file=file_arg,
+        extract_image_block_types=["Image", "Table"],
+    )
+
+    assert len(render_calls) == 1
+    assert received == {"model": rendered, "ocr": rendered}
+    assert saved_with == [rendered, rendered]
+
+
+def test_partition_pdf_local_renders_streams_without_readinto(monkeypatch):
+    """pdfium can only open streams that implement `readinto`; other file-likes are rendered
+    from their bytes."""
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: True)
+
+    class ReadSeekOnly:
+        def __init__(self, data):
+            self._buffer = io.BytesIO(data)
+
+        def read(self, *args):
+            return self._buffer.read(*args)
+
+        def seek(self, *args):
+            return self._buffer.seek(*args)
+
+        def tell(self):
+            return self._buffer.tell()
+
+    rendered_inputs = []
+
+    def _render(filename, file=None, *args, **kwargs):
+        rendered_inputs.append(file)
+        return []
+
+    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", _render)
+    monkeypatch.setattr(layout, "process_data_with_model", lambda *a, **k: MockDocumentLayout())
+    monkeypatch.setattr(pdfminer_processing, "process_data_with_pdfminer", lambda *a, **k: ([], []))
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "merge_inferred_with_extracted_layout",
+        lambda **k: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(ocr, "process_data_with_ocr", lambda *a, **k: MockDocumentLayout())
+    with open(example_doc_path("pdf/layout-parser-paper-fast.pdf"), "rb") as f:
+        stream = ReadSeekOnly(f.read())
+
+    pdf._partition_pdf_or_image_local(filename="", file=stream)
+
+    assert isinstance(rendered_inputs[0], bytes)
+    assert stream.tell() == 0
+
+
+def test_partition_pdf_local_does_not_prerender_when_inference_cannot_reuse_pages(monkeypatch):
+    """Without inference support the pages would be rendered twice, so the pipeline keeps
+    rendering per stage."""
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: False)
+    monkeypatch.setattr(
+        pdf_image_utils,
+        "convert_pdf_to_image",
+        lambda *a, **k: pytest.fail("pdf must not be pre-rendered"),
+    )
+    received = {}
+
+    def _capture(name):
+        def _inner(*args, **kwargs):
+            received[name] = kwargs
+            return MockDocumentLayout()
+
+        return _inner
+
+    monkeypatch.setattr(layout, "process_file_with_model", _capture("model"))
+    monkeypatch.setattr(pdfminer_processing, "process_file_with_pdfminer", lambda *a, **k: ([], []))
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "merge_inferred_with_extracted_layout",
+        lambda **k: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(ocr, "process_file_with_ocr", _capture("ocr"))
+
+    pdf._partition_pdf_or_image_local(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+    )
+
+    assert received["model"].get("image_paths") is None
+    assert received["ocr"].get("image_paths") is None
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])

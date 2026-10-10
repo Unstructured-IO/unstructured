@@ -50,6 +50,10 @@
 
 - **Partition an XLSX with an empty worksheet instead of crashing.** `_ConnectedComponents` built its populated-cell mask with `DataFrame.notna().to_numpy()`, which returns a `float64` array for a completely empty (0x0) worksheet, so the subsequent `populated[:-1, :] & populated[1:, :]` raised `TypeError: ufunc 'bitwise_and' not supported`. A workbook containing any empty sheet (for example a trailing blank `Sheet2`) failed to partition with a 500. The mask is now built with `.to_numpy(dtype=bool)`, so an empty worksheet yields no connected components and partitioning proceeds.
 
+### Enhancements
+
+- **Render the PDF once in `hi_res`.** Layout inference, OCR and image extraction each rendered every page of the PDF again. The pages are now rendered a single time and shared, and `save_elements` keeps one page image open instead of re-decoding the page for every element. Takes effect with `unstructured-inference>=1.6.14`; older versions keep rendering per stage.
+
 ### Maintenance
 
 - **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
