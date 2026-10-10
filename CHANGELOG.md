@@ -1,3 +1,9 @@
+## 0.27.27
+
+### Fixes
+
+- **Keep overlap category names intact from element 100 on.** `identify_overlapping_or_nesting_case()` split `{ix}. {category}` labels with a 3-character slice, so from index 100 the leftover digits leaked into `overlapping_elements` and `overlapping_case`. It now splits on the first `". "`.
+
 ## 0.27.26
 
 ### Enhancements

@@ -7,7 +7,7 @@ import pytest
 
 from unstructured import utils
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import ElementMetadata, NarrativeText, Title
+from unstructured.documents.elements import ElementMetadata, NarrativeText, Table, Title
 
 
 @pytest.fixture()
@@ -310,6 +310,43 @@ def test_catch_overlapping_and_nested_bboxes_non_overlapping_case():
     )
     assert overlapping_flag is False
     assert overlapping_cases == []
+
+
+@pytest.mark.parametrize("n_filler", [0, 100, 1000])
+def test_catch_overlapping_and_nested_bboxes_keeps_category_past_element_99(n_filler):
+    coordinate_system = PixelSpace(width=1000, height=1000)
+    fillers = [
+        NarrativeText(
+            text=f"filler {i}",
+            coordinates=((0, i), (0, i + 1), (5, i + 1), (5, i)),
+            coordinate_system=coordinate_system,
+            metadata=ElementMetadata(page_number=1),
+        )
+        for i in range(n_filler)
+    ]
+    elements = fillers + [
+        Table(
+            text="cell a cell b",
+            coordinates=((0, 0), (0, 500), (500, 500), (500, 0)),
+            coordinate_system=coordinate_system,
+            metadata=ElementMetadata(page_number=2),
+        ),
+        Title(
+            text="cell a",
+            coordinates=((10, 10), (10, 50), (100, 50), (100, 10)),
+            coordinate_system=coordinate_system,
+            metadata=ElementMetadata(page_number=2),
+        ),
+    ]
+
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(elements)
+
+    assert overlapping_flag is True
+    assert overlapping_cases[0]["overlapping_elements"] == [
+        f"Table(ix={n_filler})",
+        f"Title(ix={n_filler + 1})",
+    ]
+    assert overlapping_cases[0]["overlapping_case"] == "nested Title in Table"
 
 
 def test_only_returns_singleton_iterable():
