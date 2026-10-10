@@ -171,23 +171,28 @@ def test_logger_configuration_is_owned_by_application(monkeypatch):
     stream = io.StringIO()
     handler = logging.StreamHandler(stream)
     logger = notice.logger
+    monkeypatch.setattr(sys, "stdout", io.StringIO())
     monkeypatch.setattr(logger, "handlers", [handler])
     monkeypatch.setattr(logger, "propagate", False)
-    logger.setLevel(logging.WARNING)
-    wrapped()()
-    assert stream.getvalue().count("10,000 free pages to start.") == 1
-    assert logger.handlers == [handler]
-    assert logger.level == logging.WARNING
-    notice._reset_after_fork()
-    monkeypatch.setenv("UNSTRUCTURED_DISABLE_NOTICE", "1")
-    wrapped()()
-    assert stream.getvalue().count("10,000 free pages to start.") == 1
-    monkeypatch.delenv("UNSTRUCTURED_DISABLE_NOTICE")
-    logger.setLevel(logging.ERROR)
-    wrapped()()
-    logger.setLevel(logging.WARNING)
-    wrapped()()
-    assert stream.getvalue().count("10,000 free pages to start.") == 1
+    original_level = logger.level
+    try:
+        logger.setLevel(logging.WARNING)
+        wrapped()()
+        assert stream.getvalue().count("10,000 free pages to start.") == 1
+        assert logger.handlers == [handler]
+        assert logger.level == logging.WARNING
+        notice._reset_after_fork()
+        monkeypatch.setenv("UNSTRUCTURED_DISABLE_NOTICE", "1")
+        wrapped()()
+        assert stream.getvalue().count("10,000 free pages to start.") == 1
+        monkeypatch.delenv("UNSTRUCTURED_DISABLE_NOTICE")
+        logger.setLevel(logging.ERROR)
+        wrapped()()
+        logger.setLevel(logging.WARNING)
+        wrapped()()
+        assert stream.getvalue().count("10,000 free pages to start.") == 1
+    finally:
+        logger.setLevel(original_level)
 
 
 @pytest.mark.parametrize("filter_raises", [False, True])
@@ -195,11 +200,169 @@ def test_logger_filter_failure_or_suppression_consumes_attempt(monkeypatch, filt
     filter_ = Mock()
     filter_.filter.side_effect = RuntimeError("filter") if filter_raises else None
     filter_.filter.return_value = False
+    monkeypatch.setattr(sys, "stdout", io.StringIO())
     monkeypatch.setattr(notice.logger, "filters", [filter_])
-    monkeypatch.setattr(notice.logger, "level", logging.WARNING)
-    wrapped()()
-    wrapped()()
-    assert filter_.filter.call_count == 1
+    original_level = notice.logger.level
+    try:
+        notice.logger.setLevel(logging.WARNING)
+        wrapped()()
+        wrapped()()
+        assert filter_.filter.call_count == 1
+    finally:
+        notice.logger.setLevel(original_level)
+
+
+@pytest.mark.parametrize("entry_level", [logging.NOTSET, logging.INFO, logging.ERROR])
+@pytest.mark.parametrize("case", ["configuration", "filter", "raising_filter"])
+@pytest.mark.parametrize("fail_inside", [False, True])
+@pytest.mark.parametrize("warm_before", [False, True])
+def test_logger_tests_restore_level_and_enablement(entry_level, case, fail_inside, warm_before):
+    logger = notice.logger
+    root = logging.getLogger()
+    child = logging.getLogger("unstructured.notice_test_child")
+    saved_levels = [(item, item.level) for item in (root, logger, child)]
+    try:
+        root.setLevel(logging.INFO)
+        logger.setLevel(entry_level)
+        child.setLevel(logging.NOTSET)
+        expected = entry_level or logging.INFO
+        if warm_before:
+            for item in (logger, child):
+                assert item.isEnabledFor(logging.INFO) == (expected <= logging.INFO)
+                assert item.isEnabledFor(logging.WARNING) == (expected <= logging.WARNING)
+
+        def fail():
+            for item in (logger, child):
+                assert item.isEnabledFor(logging.WARNING)
+            raise AssertionError("injected failure")
+
+        with pytest.MonkeyPatch.context() as patch:
+            patch.delenv("UNSTRUCTURED_DISABLE_NOTICE", raising=False)
+            notice._reset_after_fork()
+            if fail_inside:
+                patch.setattr(sys.modules[__name__], "wrapped", lambda: fail)
+
+            def run_case():
+                if case == "configuration":
+                    test_logger_configuration_is_owned_by_application(patch)
+                else:
+                    test_logger_filter_failure_or_suppression_consumes_attempt(
+                        patch, filter_raises=case == "raising_filter"
+                    )
+
+            if fail_inside:
+                with pytest.raises(AssertionError, match="injected failure"):
+                    run_case()
+            else:
+                run_case()
+
+        assert logger.level == entry_level
+        for item in (logger, child):
+            assert item.isEnabledFor(logging.INFO) == (expected <= logging.INFO)
+            assert item.isEnabledFor(logging.WARNING) == (expected <= logging.WARNING)
+    finally:
+        for item, level in saved_levels:
+            item.setLevel(level)
+
+
+@pytest.mark.parametrize("has_detail", [False, True])
+@pytest.mark.parametrize("notice_disabled", [False, True])
+@pytest.mark.parametrize("suppression", ["none", "level", "disabled"])
+def test_plain_import_preserves_application_logging(has_detail, notice_disabled, suppression):
+    script = """
+import io
+import logging
+import sys
+
+has_detail, notice_disabled, suppression = sys.argv[1:]
+def app_detail(self, message):
+    pass
+if has_detail == "True":
+    logging.Logger.detail = app_detail
+else:
+    assert not hasattr(logging.Logger, "detail")
+logging.addLevelName(15, "APP_DETAIL")
+logger = logging.getLogger("unstructured")
+stream = io.StringIO()
+handler = logging.StreamHandler(stream)
+class AppFilter(logging.Filter):
+    calls = 0
+    def filter(self, record):
+        self.calls += 1
+        return True
+filter_ = AppFilter()
+logger.handlers = [handler]
+logger.filters = [filter_]
+logger.propagate = False
+logger.setLevel(logging.ERROR if suppression == "level" else logging.WARNING)
+logger.disabled = suppression == "disabled"
+configuration = (
+    logger.level, logger.handlers[:], logger.filters[:], logger.propagate, logger.disabled
+)
+
+import unstructured
+from unstructured import _usage_notice as notice
+from unstructured.telemetry import partition_runtime_telemetry
+assert "unstructured.logger" not in sys.modules
+assert hasattr(logging.Logger, "detail") == (has_detail == "True")
+if has_detail == "True":
+    assert logging.Logger.detail is app_detail
+assert logging.getLevelName(15) == "APP_DETAIL"
+assert notice.logger is logger
+assert stream.getvalue() == ""
+call = partition_runtime_telemetry()(lambda: "result")
+assert call() == call() == "result"
+assert configuration == (
+    logger.level, logger.handlers, logger.filters, logger.propagate, logger.disabled
+)
+expected = int(notice_disabled == "False" and suppression == "none")
+assert stream.getvalue().count("10,000 free pages to start.") == expected
+assert filter_.calls == expected
+if notice_disabled == "False":
+    logger.setLevel(logging.WARNING)
+    logger.disabled = False
+    call()
+    assert filter_.calls == expected  # Suppression still consumes the attempt.
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script, str(has_detail), str(notice_disabled), suppression],
+        env={
+            **os.environ,
+            "DO_NOT_TRACK": "1",
+            "UNSTRUCTURED_DISABLE_NOTICE": "1" if notice_disabled else "0",
+        },
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout == result.stderr == ""
+
+
+def test_explicit_legacy_logger_import_keeps_detail_behavior():
+    script = """
+import io
+import logging
+from unstructured import _usage_notice as notice
+from unstructured.logger import DETAIL, logger
+assert logger is notice.logger
+assert logging.getLevelName(DETAIL) == "DETAIL"
+stream = io.StringIO()
+logger.handlers = [logging.StreamHandler(stream)]
+logger.propagate = False
+logger.setLevel(DETAIL)
+logger.detail("application detail")
+assert stream.getvalue() == "application detail\\n"
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        env={**os.environ, "DO_NOT_TRACK": "1"},
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout == result.stderr == ""
 
 
 @pytest.mark.skipif(not hasattr(os, "fork"), reason="requires Python fork")

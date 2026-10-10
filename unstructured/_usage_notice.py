@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import sys
 import threading
 
-from unstructured.logger import logger
+logger = logging.getLogger("unstructured")
 
 _COPY = (
     "Thank you for using Unstructured Open Source!",
