@@ -34,8 +34,9 @@ from unstructured.chunking.base import (
     is_on_next_page,
     is_title,
 )
+from unstructured.chunking.basic import chunk_elements, iter_chunk_elements
 from unstructured.chunking.dispatch import reconstruct_table_from_chunks
-from unstructured.chunking.title import chunk_by_title
+from unstructured.chunking.title import chunk_by_title, iter_chunks_by_title
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CheckBox,
@@ -170,6 +171,22 @@ class DescribeChunkingOptions:
             match=f"'new_after_n_chars' argument must be >= 0, got {n_chars}",
         ):
             ChunkingOptions(new_after_n_chars=n_chars)._validate()
+
+    @pytest.mark.parametrize("overlap", [-1, -5])
+    def it_rejects_overlap_for_n_less_than_zero(self, overlap: int):
+        """A negative `overlap` silently corrupts chunk text, so reject it at validation.
+
+        On the character-split path `_TextSplitter.__call__` computes the remainder as
+        `s[maxlen - overlap:]`, so a negative overlap starts the remainder *after* the end of the
+        fragment and drops that many characters of the document at every split boundary. With
+        `overlap_all=True`, `PreChunk.overlap_tail` computes `self._text[-overlap:]`, which for a
+        negative overlap is a forward slice that repeats nearly the whole chunk in the next one.
+        """
+        with pytest.raises(
+            ValueError,
+            match=f"'overlap' argument must be >= 0, got {overlap}",
+        ):
+            ChunkingOptions(overlap=overlap)._validate()
 
     def it_rejects_overlap_not_less_than_max_characters(self):
         with pytest.raises(
@@ -334,6 +351,40 @@ class DescribeTokenCounter:
         count = counter.count("Hello, World!")
         assert isinstance(count, int)
         assert count > 0
+
+    @pytest.mark.parametrize(
+        ("text", "expected_count"),
+        [
+            ("Hello, World!", 4),
+            ("<|endoftext|>", 7),
+            ("<|endofprompt|>", 7),
+            ("<|fim_prefix|>", 7),
+            ("<|fim_middle|>", 7),
+            ("<|fim_suffix|>", 7),
+        ],
+    )
+    def it_counts_special_token_spellings_as_ordinary_text(
+        self, text: str, expected_count: int, _tiktoken_installed: None
+    ):
+        assert TokenCounter("cl100k_base").count(text) == expected_count
+
+    @pytest.mark.parametrize(
+        "chunker", [chunk_elements, iter_chunk_elements, chunk_by_title, iter_chunks_by_title]
+    )
+    @pytest.mark.parametrize("max_tokens", [4, 100])
+    def it_chunks_literal_special_token_spellings_without_losing_text(
+        self, chunker, max_tokens: int, _tiktoken_installed: None
+    ):
+        import tiktoken
+
+        text = "<|endoftext|><|fim_prefix|>"
+        chunks = list(chunker([Text(text)], max_tokens=max_tokens, tokenizer="cl100k_base"))
+
+        assert "".join(chunk.text for chunk in chunks) == text
+        encoder = tiktoken.get_encoding("cl100k_base")
+        assert all(len(encoder.encode_ordinary(chunk.text)) <= max_tokens for chunk in chunks)
+        if max_tokens == 100:
+            assert [chunk.text for chunk in chunks] == [text]
 
     def it_lazily_imports_tiktoken(self, _tiktoken_installed: None):
         counter = TokenCounter("cl100k_base")

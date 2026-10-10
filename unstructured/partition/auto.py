@@ -37,7 +37,7 @@ def partition(
     ssl_verify: bool = True,
     request_timeout: Optional[int] = None,
     strategy: str = PartitionStrategy.AUTO,
-    skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic"],
+    skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic", "webp"],
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
