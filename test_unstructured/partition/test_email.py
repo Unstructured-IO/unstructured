@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import email.policy
 import io
 import tempfile
 from email.message import EmailMessage
@@ -219,6 +220,40 @@ def test_partition_email_augments_message_body_elements_with_email_metadata():
         e.metadata.sent_to == ["Bob <bob@example.com>", "Sue <sue@example.com>"] for e in elements
     )
     assert all(e.metadata.subject == "Example Plain-Text MIME Message" for e in elements)
+
+
+def test_partition_email_keeps_non_ascii_display_names_readable():
+    # -- mail clients write a non-ASCII display name as an RFC 2047 encoded-word, which
+    # -- `email.utils.formataddr()` would produce again, e.g. "=?utf-8?b?5byg5Lyf?=" for "张伟" --
+    msg = EmailMessage(policy=email.policy.SMTP)
+    msg["From"] = "José García <jose@ejemplo.es>"
+    msg["To"] = "张伟 <zhang@example.cn>, Jürgen Müller <juergen@beispiel.de>"
+    msg["Cc"] = '"Müller, Jürgen" <j.mueller@beispiel.de>'
+    msg["Bcc"] = "Zoë <zoe@example.com>"
+    msg.set_content("Hello")
+
+    element = partition_email(file=io.BytesIO(msg.as_bytes()))[0]
+
+    assert element.metadata.sent_from == ["José García <jose@ejemplo.es>"]
+    assert element.metadata.sent_to == [
+        "张伟 <zhang@example.cn>",
+        "Jürgen Müller <juergen@beispiel.de>",
+    ]
+    assert element.metadata.cc_recipient == ['"Müller, Jürgen" <j.mueller@beispiel.de>']
+    assert element.metadata.bcc_recipient == ["Zoë <zoe@example.com>"]
+
+
+def test_partition_email_accepts_non_ascii_addresses():
+    # -- RFC 6532 allows UTF-8 in addresses; `email.utils.formataddr()` raises on them --
+    msg = EmailMessage(policy=email.policy.SMTPUTF8)
+    msg["From"] = "José <josé@ejemplo.es>"
+    msg["To"] = "Jürgen <jürgen@beispiel.de>, alice@example.com"
+    msg.set_content("Hello")
+
+    element = partition_email(file=io.BytesIO(msg.as_bytes()))[0]
+
+    assert element.metadata.sent_from == ["José <josé@ejemplo.es>"]
+    assert element.metadata.sent_to == ["Jürgen <jürgen@beispiel.de>", "alice@example.com"]
 
 
 # -- .metadata.filename --------------------------------------------------------------------------
