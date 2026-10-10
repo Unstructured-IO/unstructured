@@ -92,12 +92,15 @@ def partition_json(
     metadata_last_modified
         The last modified date for the document.
     """
-    if not (text is not None and not text.strip() and not file and not filename):
+    blank_text = text is not None and not text.strip() and not file and not filename
+    if not blank_text:
         exactly_one(filename=filename, file=file, text=text)
 
     last_modified = get_last_modified_date(filename) if filename else None
     file_text = ""
-    if filename is not None:
+    if blank_text:
+        file_text = text or ""
+    elif filename is not None:
         with open(filename, encoding="utf8") as f:
             file_text = f.read()
 

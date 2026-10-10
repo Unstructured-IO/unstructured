@@ -782,7 +782,9 @@ def test_json_custom_chunker_preserves_attachment_metadata(serialized):
     assert attachment.metadata.text_as_html == "attachment-html"
 
 
-@pytest.mark.parametrize("route", ["empty", "whitespace", "stream", "path", "array"])
+@pytest.mark.parametrize(
+    "route", ["empty", "empty_filename", "whitespace", "stream", "path", "array"]
+)
 @pytest.mark.parametrize("unique", [False, True])
 def test_empty_json_custom_chunker_receives_final_metadata_and_ids(route, unique, tmp_path):
     def placeholder(elements: Iterable[Element], **kwargs) -> list[Element]:
@@ -790,7 +792,9 @@ def test_empty_json_custom_chunker_receives_final_metadata_and_ids(route, unique
         return [CompositeElement("placeholder", element_id="placeholder-id")]
 
     register_chunking_strategy("json-empty-regression", placeholder)
-    if route == "stream":
+    if route == "empty_filename":
+        arguments = {"filename": "", "text": " \n"}
+    elif route == "stream":
         arguments = {"file": io.BytesIO(b" \n")}
     elif route == "path":
         path = tmp_path / "empty.json"
@@ -811,3 +815,8 @@ def test_empty_json_custom_chunker_receives_final_metadata_and_ids(route, unique
     assert result.metadata.url == "source-url"
     assert result.metadata.text_as_html == "source-html"
     assert (result.id == "placeholder-id") is unique
+
+
+@pytest.mark.parametrize("text", ["", " \n"])
+def test_blank_json_text_with_empty_filename_is_empty(text):
+    assert partition_json(filename="", text=text) == []
