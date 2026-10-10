@@ -11,6 +11,7 @@ import email.policy
 import email.utils
 import io
 import os
+import re
 from email.message import EmailMessage, MIMEPart
 from functools import cached_property
 from typing import IO, Any, Final, Iterator, cast
@@ -30,6 +31,25 @@ from unstructured.partition.text import partition_text
 from unstructured.telemetry import partition_runtime_telemetry
 
 VALID_CONTENT_SOURCES: Final[tuple[str, ...]] = ("text/html", "text/plain")
+
+# -- the characters for which `email.utils.formataddr()` quotes a display name, and those it then
+# -- escapes with a backslash --
+_SPECIALS_RE: Final[re.Pattern[str]] = re.compile(r'[][\\()<>@,:;".]')
+_ESCAPES_RE: Final[re.Pattern[str]] = re.compile(r'[\\"]')
+
+
+def _format_address(name: str, address: str) -> str:
+    """Format `name` and `address` like `email.utils.formataddr()`, leaving non-ASCII text as is.
+
+    `formataddr()` writes a non-ASCII display name as an RFC 2047 encoded-word, e.g.
+    "=?utf-8?b?5byg5Lyf?=" for "张伟", and raises `UnicodeEncodeError` on a non-ASCII address,
+    which RFC 6532 allows. ASCII names and addresses get the same result as `formataddr()`.
+    """
+    if not name:
+        return address
+    quotes = '"' if _SPECIALS_RE.search(name) else ""
+    name = _ESCAPES_RE.sub(r"\\\g<0>", name)
+    return f"{quotes}{name}{quotes} <{address}>"
 
 
 @partition_runtime_telemetry("eml")
@@ -131,7 +151,7 @@ class EmailPartitioningContext:
         if not bccs:
             return None
         addrs = email.utils.getaddresses(bccs)
-        return [email.utils.formataddr(addr) for addr in addrs]
+        return [_format_address(*addr) for addr in addrs]
 
     @cached_property
     def body_part(self) -> MIMEPart | None:
@@ -149,7 +169,7 @@ class EmailPartitioningContext:
         if not ccs:
             return None
         addrs = email.utils.getaddresses(ccs)
-        return [email.utils.formataddr(addr) for addr in addrs]
+        return [_format_address(*addr) for addr in addrs]
 
     @cached_property
     def content_type_preference(self) -> tuple[str, ...]:
@@ -184,7 +204,7 @@ class EmailPartitioningContext:
             # -- this should never occur because the From: header is mandatory per RFC 5322 --
             return None
         addrs = email.utils.getaddresses(froms)
-        formatted_addrs = [email.utils.formataddr(addr) for addr in addrs]
+        formatted_addrs = [_format_address(*addr) for addr in addrs]
         return formatted_addrs[0]
 
     @cached_property
@@ -274,7 +294,7 @@ class EmailPartitioningContext:
         if not tos:
             return None
         addrs = email.utils.getaddresses(tos)
-        return [email.utils.formataddr(addr) for addr in addrs]
+        return [_format_address(*addr) for addr in addrs]
 
     @cached_property
     def _filesystem_last_modified(self) -> str | None:
