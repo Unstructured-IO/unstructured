@@ -265,7 +265,10 @@ def partition(
     # -- parameters that apply to other file types.
     if file_type in (FileType.JSON, FileType.NDJSON):
         partitioner = partitioner_loader.get(file_type)
-        elements = partitioner(filename=filename, file=file, **kwargs)
+        # -- `encoding` is bound as a named parameter of `partition()`, so it is not in `kwargs`
+        # -- and has to be forwarded explicitly; otherwise the caller's codec is dropped here and
+        # -- this path behaves differently from calling the partitioner directly.
+        elements = partitioner(filename=filename, file=file, encoding=encoding, **kwargs)
         return augment_metadata(elements)
 
     # -- EMPTY is also a special case because while we can't determine the file type, we can be

@@ -22,6 +22,7 @@ from unstructured.partition.common.json_partitioning import (
     elements_from_arbitrary_value,
     is_element_shaped_dict,
     loads_strict_json,
+    read_json_text,
     rehydrate_elements,
 )
 from unstructured.partition.common.metadata import get_last_modified_date
@@ -37,6 +38,7 @@ def partition_json(
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    encoding: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a JSON document into its constituent elements.
@@ -68,6 +70,9 @@ def partition_json(
         A file-like object as bytes --> open(filename, "rb").
     text
         The string representation of the .json document.
+    encoding
+        The encoding method used to decode the input bytes when drawn from `filename` or `file`.
+        Defaults to detecting the encoding when not specified.
     metadata_last_modified
         The last modified date for the document.
     """
@@ -79,12 +84,10 @@ def partition_json(
     last_modified = get_last_modified_date(filename) if filename else None
     file_text = ""
     if filename is not None:
-        with open(filename, encoding="utf8") as f:
-            file_text = f.read()
+        file_text = read_json_text(filename=filename, encoding=encoding)
 
     elif file is not None:
-        file_content = file.read()
-        file_text = file_content if isinstance(file_content, str) else file_content.decode()
+        file_text = read_json_text(file=file, encoding=encoding)
         file.seek(0)
 
     elif text is not None:
