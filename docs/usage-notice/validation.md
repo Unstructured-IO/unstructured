@@ -49,3 +49,10 @@ byte. Only one notice appeared across nested automatic dispatch and direct use.
 A real terminal capture remains outstanding because this worker denies PTY allocation.
 The terminal route was verified with fake streams in tests. This limitation is a deviation
 from the requested demonstration, not a claim of completed terminal evidence.
+
+### October 9 URL update
+
+The targeted usage-notice suite passed: `28 passed in 4.15s`.
+Real terminal and redirected server demonstrations passed with the supplied Transform
+URL. The parent chat had also completed the October 8 terminal capture; the earlier
+worker PTY limitation is resolved. See demonstrations.md.

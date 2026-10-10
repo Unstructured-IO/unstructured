@@ -16,7 +16,7 @@ are outside the lifecycle guarantee.
 The prepared commit history contains recent fixes, including pptx and chunking.
 The README says the open source library will stay free and describes higher quality
 commercial output. No evidence establishes a maintenance-mode start date or duration.
-Maintenance duration, offer eligibility, final wording, and the placeholder URL need
+Maintenance duration, offer eligibility, and final wording need
 owner review before publication. This branch is an illustration.
 
 ## Oracle evidence and recovery
@@ -61,3 +61,8 @@ new hooks. A registry entry alone was not used as coverage evidence.
 - `unstructured/partition/tsv.py`: `partition_tsv()`
 - `unstructured/partition/xlsx.py`: `partition_xlsx()`
 - `unstructured/partition/xml.py`: `partition_xml()`
+
+On October 9, 2026, Crag supplied the offering URL:
+https://transform.unstructured.io/?utm_source=unstructured_oss.
+The notice now uses this URL and no longer calls it a placeholder. The original
+Oracle proposal is retained as historical design evidence.

@@ -15,7 +15,7 @@ Observed stdout:
 
 Observed stderr:
 ```text
-Thank you for using Unstructured Open Source! Try Unstructured's commercial offering for improved output quality. 10,000 free pages to start. Learn more: https://example.invalid/unstructured-offer Illustration only - placeholder URL; offer pending publication review. Hide this notice: UNSTRUCTURED_DISABLE_NOTICE=1
+Thank you for using Unstructured Open Source! Try Unstructured's commercial offering for improved output quality. 10,000 free pages to start. Learn more: https://transform.unstructured.io/?utm_source=unstructured_oss Illustration only - offer pending publication review. Hide this notice: UNSTRUCTURED_DISABLE_NOTICE=1
 ```
 
 ### Server / redirected stdout; notice disabled
@@ -74,8 +74,8 @@ Try Unstructured's commercial offering for improved output quality.
 
                      10,000 free pages to start.
 
-Learn more: https://example.invalid/unstructured-offer
-Illustration only - placeholder URL; offer pending publication review.
+Learn more: https://transform.unstructured.io/?utm_source=unstructured_oss
+Illustration only - offer pending publication review.
 Hide this notice: UNSTRUCTURED_DISABLE_NOTICE=1
 ----------------------------------------------------------------------
 [{"type": "NarrativeText", "text": "This is a local usage notice demonstration sentence."}]
@@ -94,3 +94,9 @@ Observed terminal output:
 ```text
 [{"type": "NarrativeText", "text": "This is a local usage notice demonstration sentence."}]
 ```
+
+### October 9 URL update
+
+The enabled terminal and redirected server demonstrations were rerun after replacing
+the placeholder with Crag's supplied Transform URL. Both exited 0 and produced the
+updated output shown above. The disabled and import captures are unchanged from October 8.

@@ -12,8 +12,8 @@ _COPY = (
     "Thank you for using Unstructured Open Source!",
     "Try Unstructured's commercial offering for improved output quality.",
     "10,000 free pages to start.",
-    "Learn more: https://example.invalid/unstructured-offer",
-    "Illustration only - placeholder URL; offer pending publication review.",
+    "Learn more: https://transform.unstructured.io/?utm_source=unstructured_oss",
+    "Illustration only - offer pending publication review.",
     "Hide this notice: UNSTRUCTURED_DISABLE_NOTICE=1",
 )
 _WARNING = " ".join(_COPY)
