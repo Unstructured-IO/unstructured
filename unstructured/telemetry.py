@@ -16,6 +16,7 @@ import requests
 from requests.adapters import HTTPAdapter
 
 from unstructured.__version__ import __version__
+from unstructured._usage_notice import maybe_emit_usage_notice
 from unstructured.utils import _telemetry_opt_out, scarf_analytics
 
 _P = ParamSpec("_P")
@@ -156,7 +157,11 @@ def partition_runtime_telemetry(
 
         @functools.wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
-            # Opt-out is checked before argument inspection, context creation, or delivery work.
+            # The usage notice has its own opt-out, independent of telemetry.
+            with suppress(Exception):
+                maybe_emit_usage_notice()
+
+            # Opt-out precedes telemetry argument inspection, context creation, and delivery.
             try:
                 opted_out = _telemetry_opt_out()
             except Exception:
