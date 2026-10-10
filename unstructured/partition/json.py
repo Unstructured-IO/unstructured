@@ -92,17 +92,8 @@ def partition_json(
     metadata_last_modified
         The last modified date for the document.
     """
-    if text is not None and text.strip() == "" and not file and not filename:
-        return _apply_chunking(
-            [],
-            filename=filename,
-            file=file,
-            text=text,
-            metadata_last_modified=metadata_last_modified,
-            kwargs=kwargs,
-        )
-
-    exactly_one(filename=filename, file=file, text=text)
+    if not (text is not None and not text.strip() and not file and not filename):
+        exactly_one(filename=filename, file=file, text=text)
 
     last_modified = get_last_modified_date(filename) if filename else None
     file_text = ""
@@ -118,18 +109,8 @@ def partition_json(
     elif text is not None:
         file_text = str(text)
 
-    if not file_text.strip():
-        return _apply_chunking(
-            [],
-            filename=filename,
-            file=file,
-            text=text,
-            metadata_last_modified=metadata_last_modified,
-            kwargs=kwargs,
-        )
-
     try:
-        value = loads_strict_json(file_text)
+        value = loads_strict_json(file_text) if file_text.strip() else []
     except (json.JSONDecodeError, RecursionError):
         raise ValueError("Not a valid json")
 
@@ -152,8 +133,13 @@ def partition_json(
         )
         metadata_filename = kwargs.get("metadata_filename")
         for element in elements:
-            if metadata_filename and element.metadata.attached_to_filename is None:
-                add_element_metadata(element, filename=metadata_filename)
+            if element.metadata.attached_to_filename is None:
+                add_element_metadata(
+                    element,
+                    filename=metadata_filename,
+                    url=kwargs.get("url"),
+                    text_as_html=kwargs.get("text_as_html"),
+                )
             if metadata_last_modified:
                 element.metadata.last_modified = metadata_last_modified
 
@@ -177,13 +163,14 @@ def partition_json(
         elements = set_element_hierarchy(elements)
         metadata_filename = kwargs.get("metadata_filename") or filename
         for element in elements:
-            add_element_metadata(
-                element,
-                filename=metadata_filename,
-                filetype=FileType.JSON.mime_type,
-                url=kwargs.get("url"),
-                text_as_html=kwargs.get("text_as_html"),
-            )
+            if element.metadata.attached_to_filename is None:
+                add_element_metadata(
+                    element,
+                    filename=metadata_filename,
+                    filetype=FileType.JSON.mime_type,
+                    url=kwargs.get("url"),
+                    text_as_html=kwargs.get("text_as_html"),
+                )
 
         if kwargs.get("unique_element_ids", False) is False:
             elements = assign_and_map_hash_ids(elements)

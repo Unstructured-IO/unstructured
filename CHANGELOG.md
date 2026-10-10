@@ -4,8 +4,9 @@
 
 - **Preserve serialized element identity when rehydrating JSON.** `partition_json()` no longer
   replaces element IDs or stored metadata with attributes from the JSON container. Explicit
-  `metadata_filename` and `metadata_last_modified` overrides remain supported, including
-  timestamps on chunk originals, while arbitrary JSON retains deterministic IDs and source metadata.
+  `metadata_filename`, `metadata_last_modified`, `url`, and `text_as_html` overrides remain supported,
+  including timestamps on chunk originals. Attachments keep their source metadata, and custom
+  chunker output receives consistent metadata and IDs even for empty JSON inputs.
 
 ### Maintenance
 

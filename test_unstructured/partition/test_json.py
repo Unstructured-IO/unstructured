@@ -718,3 +718,96 @@ def it_rehydrates_on_a_detect_then_partition_sequence_over_the_same_file_handle(
     elements = partition_json(file=file)
 
     assert elements[0] == Title(text="These are a few of my favorite things:")
+
+
+@pytest.mark.parametrize("strategy", [None, "basic", "by_title"])
+@pytest.mark.parametrize("stored", [True, False])
+@pytest.mark.parametrize("override", [None, "", "new"])
+def test_rehydration_applies_explicit_url_and_html_overrides(strategy, stored, override):
+    metadata = ElementMetadata(
+        url="old" if stored else None,
+        text_as_html="old" if stored else None,
+        filename="original.txt",
+        filetype="text/plain",
+    )
+    original = Text("content", element_id="stored-id", metadata=metadata)
+    result = partition_json(
+        text=json.dumps(elements_to_dicts([original])),
+        chunking_strategy=strategy,
+        url=override,
+        text_as_html=override,
+    )[0]
+    expected = override if override is not None else ("old" if stored else None)
+    assert result.metadata.url == expected
+    assert result.metadata.text_as_html == expected
+    assert result.metadata.filename == "original.txt"
+    assert result.metadata.filetype == "text/plain"
+    if strategy is None:
+        assert result.id == "stored-id"
+
+
+@pytest.mark.parametrize("serialized", [False, True])
+def test_json_custom_chunker_preserves_attachment_metadata(serialized):
+    def emit_attachment(elements: Iterable[Element], **kwargs) -> list[Element]:
+        return [
+            Text("ordinary"),
+            Text(
+                "attachment",
+                metadata=ElementMetadata(
+                    filename="invoice.pdf",
+                    filetype="application/pdf",
+                    attached_to_filename="message.eml",
+                    url="attachment-url",
+                    text_as_html="attachment-html",
+                ),
+            ),
+        ]
+
+    register_chunking_strategy("json-attachment-regression", emit_attachment)
+    text = json.dumps(elements_to_dicts([Text("original")])) if serialized else "{}"
+    ordinary, attachment = partition_json(
+        text=text,
+        chunking_strategy="json-attachment-regression",
+        metadata_filename="container.json",
+        url="container-url",
+        text_as_html="container-html",
+    )
+    assert ordinary.metadata.filename == "container.json"
+    assert ordinary.metadata.url == "container-url"
+    assert ordinary.metadata.text_as_html == "container-html"
+    assert attachment.metadata.filename == "invoice.pdf"
+    assert attachment.metadata.filetype == "application/pdf"
+    assert attachment.metadata.attached_to_filename == "message.eml"
+    assert attachment.metadata.url == "attachment-url"
+    assert attachment.metadata.text_as_html == "attachment-html"
+
+
+@pytest.mark.parametrize("route", ["empty", "whitespace", "stream", "path", "array"])
+@pytest.mark.parametrize("unique", [False, True])
+def test_empty_json_custom_chunker_receives_final_metadata_and_ids(route, unique, tmp_path):
+    def placeholder(elements: Iterable[Element], **kwargs) -> list[Element]:
+        assert list(elements) == []
+        return [CompositeElement("placeholder", element_id="placeholder-id")]
+
+    register_chunking_strategy("json-empty-regression", placeholder)
+    if route == "stream":
+        arguments = {"file": io.BytesIO(b" \n")}
+    elif route == "path":
+        path = tmp_path / "empty.json"
+        path.write_text(" \n")
+        arguments = {"filename": str(path)}
+    else:
+        arguments = {"text": {"empty": "", "whitespace": " \n", "array": "[]"}[route]}
+    result = partition_json(
+        **arguments,
+        chunking_strategy="json-empty-regression",
+        unique_element_ids=unique,
+        metadata_filename="container.json",
+        url="source-url",
+        text_as_html="source-html",
+    )[0]
+    assert result.metadata.filename == "container.json"
+    assert result.metadata.filetype == FileType.JSON.mime_type
+    assert result.metadata.url == "source-url"
+    assert result.metadata.text_as_html == "source-html"
+    assert (result.id == "placeholder-id") is unique
