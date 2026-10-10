@@ -500,7 +500,7 @@ def identify_overlapping_or_nesting_case(
     type1, type2 = label_pair
     ix_element1 = "".join([ch for ch in type1 if ch.isnumeric()])
     ix_element2 = "".join([ch for ch in type2 if ch.isnumeric()])
-    # Labels are "{ix}. {category}". type1[3:] only strips a one-digit index.
+    # Labels are "{ix}. {category}", and ix can have any number of digits.
     type1 = type1.split(". ", 1)[-1]
     type2 = type2.split(". ", 1)[-1]
     box1_corners = _convert_coordinates_to_box(box1)
