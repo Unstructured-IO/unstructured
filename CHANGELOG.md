@@ -1,3 +1,17 @@
+## 0.27.25
+
+### Enhancements
+
+- **Partition WEBP images.** `partition()` now detects `.webp` files and partitions them with `partition_image()` like PNG and JPEG, with `metadata.filetype` set to `image/webp`. A WEBP file saved under another image extension is now detected as `image/webp` from its content. With the `image` extra installed, `partition_email()` and `partition_msg()` now partition WEBP attachments; without it they still skip them with a warning. As with PNG and JPEG attachments, a WEBP attachment that fails image processing now raises instead of being skipped.
+
+
+## 0.27.24
+
+### Fixes
+
+- **Reject a negative `overlap`.** `ChunkingOptions` validated `new_after_n_chars` and `new_after_n_tokens` but not `overlap`, so a negative value silently corrupted output: on the character-split path the remainder started past the end of the fragment and dropped that many characters at every split boundary, and with `overlap_all=True` the tail slice ran forward and repeated most of the chunk. It now raises `ValueError`, matching the sibling options.
+
+
 ## 0.27.23
 
 ### Fixes

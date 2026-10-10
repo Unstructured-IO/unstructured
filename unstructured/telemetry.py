@@ -87,6 +87,7 @@ _DOCUMENT_TYPES = {
     "txt",
     "wav",
     "webm",
+    "webp",
     "xls",
     "xlsx",
     "xml",
@@ -95,7 +96,7 @@ _DOCUMENT_TYPES = {
     "unknown",
     "other",
 }
-_IMAGE_TYPES = {"bmp", "heic", "jpg", "png", "tiff"}
+_IMAGE_TYPES = {"bmp", "heic", "jpg", "png", "tiff", "webp"}
 _LOCAL_TABLE_STRUCTURE_PARTITIONERS = {
     "partition_csv",
     "partition_docx",
