@@ -55,6 +55,7 @@ def partition_md(
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
     languages: Optional[list[str]] = None,
+    encoding: str | None = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a markdown file into its constituent elements
@@ -74,6 +75,9 @@ def partition_md(
     languages
         The languages present in the document. Use ``["auto"]`` to detect (default when None).
         Use ``[""]`` to disable language detection.
+    encoding
+        The encoding method used to decode the input bytes when drawn from `filename` or `file`.
+        Defaults to detecting the encoding when not specified.
 
     Other keyword arguments are forwarded to ``partition_html``. In addition, ``extensions`` may be
     passed to ``markdown.markdown()`` as a list of registered extension names (``str``) and/or
@@ -90,10 +94,10 @@ def partition_md(
     last_modified = get_last_modified_date(filename) if filename else None
 
     if filename is not None:
-        _, text = read_txt_file(filename=filename)
+        _, text = read_txt_file(filename=filename, encoding=encoding)
 
     elif file is not None:
-        _, text = read_txt_file(file=file)
+        _, text = read_txt_file(file=file, encoding=encoding)
 
     elif url is not None:
         response = safe_get(url)
