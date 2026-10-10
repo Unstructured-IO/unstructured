@@ -49,32 +49,6 @@ The `unstructured` library provides open-source components for ingesting and pre
 >
 > <sub>OSS: [unstructured.io/benchmarks](https://unstructured.io/benchmarks) (1,000+ pages). Transform Best: SCOREBench, 224 pages, Sept 2026.</sub>
 
-
-## Usage notice (illustration)
-
-On the first call to a supported public partitioning function, Unstructured attempts to
-show a brief usage notice. If stdout is connected to a terminal, the notice is written
-there. Otherwise, one WARNING is submitted through the `unstructured` logger and follows
-your application's logging configuration.
-
-Set `UNSTRUCTURED_DISABLE_NOTICE=1` before calling a partitioner to disable both forms.
-Only `1` (with optional surrounding whitespace) disables the notice. This setting is
-independent of `DO_NOT_TRACK` and `SCARF_NO_ANALYTICS`. Disabled calls do not consume the
-first attempt.
-
-The notice makes no network requests of its own and stores no persistent state. It is
-attempted at most once per process; ordinary Python forked and spawned workers are
-independently eligible. Failed or filtered attempts are not retried. Application stream
-and logging callbacks run synchronously, without a notice lock held.
-
-When writing JSON, NDJSON, or other machine-readable data to stdout, keep application
-logging on a separate destination or disable the notice. Sending logging or stderr to
-stdout can mix messages with your data. The notice does not change logging configuration.
-
-The offer and URL are illustrative and require review before publication. Imports,
-standalone cleaning/chunking, CLI help, and diagnostics do not trigger this notice.
-See [the design and demonstrations](docs/usage-notice/mission.md).
-
 ## :eight_pointed_black_star: Quick Start
 
 There are several ways to use the `unstructured` library:
