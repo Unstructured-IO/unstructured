@@ -98,11 +98,16 @@ def partition_via_api(
     base_url = api_url[:-19] if "/general/v0/general" in api_url else api_url
     sdk = UnstructuredClient(api_key_auth=api_key, server_url=base_url)
 
+    # -- `shared.Files` carries a `content_type` field; leave it unset when the caller did not
+    # -- specify one so the SDK keeps inferring the MIME type from the file name as before.
+    content_type_kwargs = {"content_type": content_type} if content_type is not None else {}
+
     if filename is not None:
         with open(filename, "rb") as f:
             files = shared.Files(
                 content=f.read(),
                 file_name=filename,
+                **content_type_kwargs,
             )
 
     elif file is not None:
@@ -111,7 +116,7 @@ def partition_via_api(
                 "If file is specified in partition_via_api, "
                 "metadata_filename must be specified as well.",
             )
-        files = shared.Files(content=file, file_name=metadata_filename)
+        files = shared.Files(content=file, file_name=metadata_filename, **content_type_kwargs)
 
     req = operations.PartitionRequest(
         partition_parameters=shared.PartitionParameters(files=files, **request_kwargs)
