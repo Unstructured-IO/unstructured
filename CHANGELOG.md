@@ -1,3 +1,9 @@
+## 0.27.26
+
+### Enhancements
+
+- **Add a usage notice.** Display a notice once per process when a public partitioner is used. Terminal sessions receive a banner; other sessions use the package logger. Set `UNSTRUCTURED_DISABLE_NOTICE=1` to disable the notice.
+
 ## 0.27.25
 
 ### Enhancements
