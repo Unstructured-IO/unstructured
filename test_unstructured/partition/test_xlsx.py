@@ -180,6 +180,17 @@ def test_partition_xlsx_password_protected_raises_exception():
         partition_xlsx(filename="example-docs/password_protected.xlsx")
 
 
+def test_partition_xlsx_reads_xls_whose_workbook_stream_ends_in_padding():
+    # -- written by `xlwt`; msoffcrypto's encryption check raises `struct.error` on the few bytes
+    # -- of padding at the end of its Workbook stream (nolze/msoffcrypto-tool#83) --
+    elements = partition_xlsx(example_doc_path("xlwt-padded-workbook.xls"))
+
+    assert [(type(e).__name__, e.text) for e in elements] == [
+        ("Table", "Fruit Count Apple 3 Pear 7")
+    ]
+    assert elements[0].metadata.page_name == "Fruit"
+
+
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
