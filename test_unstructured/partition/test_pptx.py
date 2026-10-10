@@ -28,6 +28,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
+    EmailAddress,
     Image,
     ListItem,
     NarrativeText,
@@ -52,7 +53,7 @@ EXPECTED_PPTX_OUTPUT = [
 ]
 
 
-# == document file behaviors =====================================================================
+# == document file behaviors ==============================================================
 
 
 def test_partition_pptx_from_filename():
@@ -122,7 +123,7 @@ def test_it_loads_a_PPTX_with_a_JPEG_misidentified_as_image_jpg(opts_args: dict[
         raise AssertionError("JPEG image not recognized, needs `python-pptx>=1.0.1`")
 
 
-# == page-break behaviors ========================================================================
+# == page-break behaviors =================================================================
 
 
 def test_partition_pptx_adds_page_breaks(tmp_path: pathlib.Path):
@@ -195,7 +196,7 @@ def test_partition_pptx_many_pages():
         assert element.metadata.filename == "fake-power-point-many-pages.pptx"
 
 
-# == miscellaneous behaviors =====================================================================
+# == miscellaneous behaviors ==============================================================
 
 
 def test_partition_pptx_orders_elements(tmp_path: pathlib.Path):
@@ -280,7 +281,7 @@ def test_partition_pptx_malformed():
         assert element.metadata.filename == "fake-power-point-malformed.pptx"
 
 
-# == image sub-partitioning behaviors ============================================================
+# == image sub-partitioning behaviors =====================================================
 
 
 def test_partition_pptx_generates_no_Image_elements_by_default():
@@ -304,7 +305,7 @@ def test_partition_pptx_uses_registered_picture_partitioner():
     assert image.text == "Image with hash b0a1e6cf904691e6fa42bd9e72acc2b05280dc86, strategy: fast"
 
 
-# == metadata behaviors ==========================================================================
+# == metadata behaviors ===================================================================
 
 
 # -- .metadata.last_modified ---------------------------------------------------------------------
@@ -376,7 +377,7 @@ def test_partition_pptx_raises_TypeError_for_invalid_languages():
         partition_pptx(example_doc_path("fake-power-point.pptx"), languages="eng")
 
 
-# == downstream behaviors ========================================================================
+# == downstream behaviors =================================================================
 
 
 def test_partition_pptx_with_json():
@@ -526,9 +527,10 @@ def test_partition_pptx_hierarchy_sample_document():
         assert element.id == expected_id
 
 
-# ================================================================================================
+# =========================================================================================
+
 # MODULE-LEVEL FIXTURES
-# ================================================================================================
+# =========================================================================================
 
 
 @pytest.fixture()
@@ -548,12 +550,14 @@ def opts_args() -> dict[str, Any]:
     }
 
 
-# ================================================================================================
+# =========================================================================================
+
 # ISOLATED UNIT TESTS
-# ================================================================================================
+# =========================================================================================
+
 # These test components used by `partition_pptx()` in isolation such that all edge cases can be
 # exercised.
-# ================================================================================================
+# =========================================================================================
 
 
 class DescribePptxPartitionerOptions:
@@ -797,3 +801,88 @@ class DescribePptxPartitionerOptions:
     @pytest.fixture()
     def metadata_file_path_prop_(self, request: FixtureRequest):
         return property_mock(request, PptxPartitionerOptions, "metadata_file_path")
+
+
+@pytest.mark.parametrize("starting_page_number", [1, 3, 10])
+@pytest.mark.parametrize("slide_count", [0, 1, 2])
+@pytest.mark.parametrize("include_page_breaks", [True, False])
+def test_partition_pptx_emits_breaks_only_between_slides_with_page_offset(
+    starting_page_number: int, slide_count: int, include_page_breaks: bool
+):
+    presentation = pptx.Presentation()
+    for index in range(slide_count):
+        slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+        shape = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(4), Inches(1))
+        shape.text = f"Slide {index + 1}"
+    file = io.BytesIO()
+    presentation.save(file)
+    file.seek(0)
+
+    elements = partition_pptx(
+        file=file,
+        starting_page_number=starting_page_number,
+        include_page_breaks=include_page_breaks,
+        languages=["eng"],
+    )
+
+    breaks = [e for e in elements if isinstance(e, PageBreak)]
+    expected_pages = list(range(starting_page_number, starting_page_number + slide_count - 1))
+    assert [e.metadata.page_number for e in breaks] == (
+        expected_pages if include_page_breaks else []
+    )
+    content = [e for e in elements if not isinstance(e, PageBreak)]
+    assert [e.text for e in content] == [f"Slide {index + 1}" for index in range(slide_count)]
+    assert [e.metadata.page_number for e in content] == list(
+        range(starting_page_number, starting_page_number + slide_count)
+    )
+    if elements:
+        assert not isinstance(elements[0], PageBreak)
+
+
+@pytest.mark.parametrize("input_kind", ["filename", "file"])
+def test_partition_pptx_preserves_email_slide_and_depth_metadata(tmp_path, input_kind):
+    presentation = pptx.Presentation()
+    for slide_number in range(2):
+        slide = presentation.slides.add_slide(presentation.slide_layouts[1])
+        title_frame = slide.shapes.title.text_frame
+        title_frame.text = "First heading"
+        title_frame.add_paragraph().text = f"title{slide_number}@example.com"
+        title_frame.add_paragraph().text = "Next heading"
+        body_frame = slide.placeholders[1].text_frame
+        body_frame.text = f"body{slide_number}@example.com"
+        body_frame.paragraphs[0].level = 2
+
+    filename = tmp_path / "emails.pptx"
+    presentation.save(filename)
+    kwargs = (
+        {"filename": str(filename)}
+        if input_kind == "filename"
+        else {
+            "file": io.BytesIO(filename.read_bytes()),
+            "metadata_filename": filename.name,
+        }
+    )
+    elements = partition_pptx(
+        **kwargs,
+        starting_page_number=10,
+        include_page_breaks=False,
+        metadata_last_modified="2024-04-02T20:32:35",
+        languages=["eng"],
+    )
+
+    emails = [element for element in elements if isinstance(element, EmailAddress)]
+    assert [(e.text, e.metadata.page_number, e.metadata.category_depth) for e in emails] == [
+        ("title0@example.com", 10, 1),
+        ("body0@example.com", 10, 2),
+        ("title1@example.com", 11, 1),
+        ("body1@example.com", 11, 2),
+    ]
+    assert all(e.metadata.filename == filename.name for e in emails)
+    assert all(e.metadata.last_modified == "2024-04-02T20:32:35" for e in emails)
+    titles = [element for element in elements if isinstance(element, Title)]
+    assert [(e.text, e.metadata.category_depth) for e in titles] == [
+        ("First heading", 0),
+        ("Next heading", 1),
+        ("First heading", 0),
+        ("Next heading", 1),
+    ]

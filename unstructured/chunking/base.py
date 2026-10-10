@@ -75,7 +75,7 @@ class TokenCounter:
 
     def count(self, text: str) -> int:
         """Return the number of tokens in `text`."""
-        return len(self._encoder.encode(text))
+        return len(self._encoder.encode_ordinary(text))
 
     def validate(self) -> None:
         """Resolve the tokenizer now, raising if it is unknown or tiktoken is not installed.
@@ -390,6 +390,15 @@ class ChunkingOptions:
                 " tables cannot be passed through unchanged while also sharing a pre-chunk with"
                 " adjacent elements"
             )
+
+        # -- a negative `overlap` is a caller mistake, not a smaller overlap: on the
+        # -- character-split path it moves the remainder's start past the end of the fragment and
+        # -- silently deletes that many characters from the document, and with `overlap_all=True`
+        # -- `_text[-overlap:]` becomes a forward slice that repeats most of the chunk instead of
+        # -- its tail. Reject it here, as `new_after_n_chars` already is.
+        overlap_arg = self._kwargs.get("overlap")
+        if overlap_arg is not None and overlap_arg < 0:
+            raise ValueError(f"'overlap' argument must be >= 0, got {overlap_arg}")
 
         # -- overlap must be less than max-chars or the chunk text will never be consumed --
         if self.overlap >= hard_max:
