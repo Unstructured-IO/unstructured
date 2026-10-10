@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import struct
 from functools import cached_property
 from typing import IO, Any, Iterator, Optional
 
@@ -202,7 +203,16 @@ class _XlsxPartitionerOptions:
         except FileFormatError as e:
             raise UnprocessableEntityError("Not a valid XLSX file.") from e
 
-        if office_file.is_encrypted():
+        try:
+            is_encrypted = office_file.is_encrypted()
+        except struct.error:
+            # -- msoffcrypto reads an XLS "Workbook" stream as 4-byte record headers and raises when
+            # -- the stream ends in fewer than 4 bytes of padding, as in many files written by
+            # -- `xlwt` (nolze/msoffcrypto-tool#83). The FilePass record of an encrypted XLS
+            # -- directly follows its BOF record, so the check finds it before any padding.
+            is_encrypted = False
+
+        if is_encrypted:
             raise UnprocessableEntityError("XLSX file is password protected.")
 
         # -- Pandas allocates a dense data-frame spanning every worksheet out to its farthest
