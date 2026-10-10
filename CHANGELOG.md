@@ -50,6 +50,14 @@
 
 - **Partition an XLSX with an empty worksheet instead of crashing.** `_ConnectedComponents` built its populated-cell mask with `DataFrame.notna().to_numpy()`, which returns a `float64` array for a completely empty (0x0) worksheet, so the subsequent `populated[:-1, :] & populated[1:, :]` raised `TypeError: ufunc 'bitwise_and' not supported`. A workbook containing any empty sheet (for example a trailing blank `Sheet2`) failed to partition with a 500. The mask is now built with `.to_numpy(dtype=bool)`, so an empty worksheet yields no connected components and partitioning proceeds.
 
+### Fixes
+
+- **Preserve serialized element identity when rehydrating JSON.** `partition_json()` no longer
+  replaces element IDs or stored metadata with attributes from the JSON container. Explicit
+  `metadata_filename`, `metadata_last_modified`, `url`, and `text_as_html` overrides remain supported,
+  including timestamps on chunk originals. Attachments keep their source metadata, and custom
+  chunker output receives consistent metadata and IDs even for empty JSON inputs.
+
 ### Maintenance
 
 - **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
