@@ -13,7 +13,6 @@ _COPY = (
     "Try Unstructured's commercial offering for improved output quality.",
     "10,000 free pages to start.",
     "Learn more: https://transform.unstructured.io/?utm_source=unstructured_oss",
-    "Illustration only - offer pending publication review.",
     "Hide this notice: UNSTRUCTURED_DISABLE_NOTICE=1",
 )
 _WARNING = " ".join(_COPY)
