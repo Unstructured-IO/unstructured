@@ -1,3 +1,9 @@
+## 0.27.27
+
+### Fixes
+
+- **Anchor every alternative in `clean_prefix` and `clean_postfix`.** The pattern was spliced in as `^{pattern}` and `{pattern}$`, so in an unwrapped alternation such as `"SUMMARY:|DESC:"` only one branch was anchored and the others were removed wherever they occurred in the text. The pattern is now wrapped in a non-capturing group, so the whole pattern is anchored.
+
 ## 0.27.26
 
 ### Enhancements
