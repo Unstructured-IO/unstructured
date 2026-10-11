@@ -1,7 +1,10 @@
 import warnings
 from typing import List, Optional
 
-import langdetect
+try:
+    import langdetect_rs as langdetect  # NOTE(kholdrex): same API and results, faster
+except ImportError:
+    import langdetect
 from transformers import MarianMTModel, MarianTokenizer
 
 from unstructured.nlp.tokenize import sent_tokenize

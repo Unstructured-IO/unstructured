@@ -9,7 +9,7 @@ import pathlib
 
 import pytest
 
-from test_unstructured.unit_utils import LogCaptureFixture
+from test_unstructured.unit_utils import LogCaptureFixture, example_doc_path
 from unstructured.documents.elements import (
     NarrativeText,
     PageBreak,
@@ -319,3 +319,30 @@ def test_check_language_args_raises_error_when_ocr_languages_contains_auto(
             languages=languages,
             ocr_languages=ocr_languages,
         )
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "language-docs/UDHR_first_article_all.txt",
+        "language-docs/eng_spa_mult.txt",
+        "book-war-and-peace-1p.txt",
+    ],
+)
+def test_detect_languages_same_with_langdetect_and_langdetect_rs(filename: str):
+    langdetect = pytest.importorskip("langdetect")
+    langdetect_rs = pytest.importorskip("langdetect_rs")
+    with open(example_doc_path(filename), encoding="utf-8") as f:
+        paragraphs = [p for p in f.read().split("\n\n") if p.strip()]
+
+    def detect_all(module) -> list[list[tuple[str, float]]]:
+        module.DetectorFactory.seed = 0
+        results = []
+        for paragraph in paragraphs:
+            try:
+                results.append([(x.lang, x.prob) for x in module.detect_langs(paragraph)])
+            except module.LangDetectException:
+                results.append([])
+        return results
+
+    assert detect_all(langdetect_rs) == detect_all(langdetect)

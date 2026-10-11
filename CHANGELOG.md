@@ -1,3 +1,9 @@
+## 0.27.27
+
+### Enhancements
+
+- **Use `langdetect-rs` for language detection when it is installed.** `langdetect-rs` is a Rust port of `langdetect` with the same API that returns bit-identical results, including the seeded detection used for `metadata.languages`. Installing it (`pip install langdetect-rs`) makes language detection several times faster, with no change in output. Without it, `langdetect` is used as before.
+
 ## 0.27.26
 
 ### Enhancements

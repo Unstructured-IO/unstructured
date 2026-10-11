@@ -5,11 +5,21 @@ from functools import lru_cache
 from typing import Callable, Iterable, Iterator, Optional
 
 import iso639  # pyright: ignore[reportMissingTypeStubs]
-from langdetect import (  # pyright: ignore[reportMissingTypeStubs]
-    DetectorFactory,
-    detect_langs,  # pyright: ignore[reportUnknownVariableType]
-    lang_detect_exception,
-)
+
+# NOTE(kholdrex): langdetect-rs, when installed, is a Rust port of langdetect with the same API
+# and bit-identical results (including with DetectorFactory.seed set below), several times faster.
+try:
+    from langdetect_rs import (  # pyright: ignore[reportMissingTypeStubs]
+        DetectorFactory,
+        detect_langs,  # pyright: ignore[reportUnknownVariableType]
+        lang_detect_exception,
+    )
+except ImportError:
+    from langdetect import (  # pyright: ignore[reportMissingTypeStubs]
+        DetectorFactory,
+        detect_langs,  # pyright: ignore[reportUnknownVariableType]
+        lang_detect_exception,
+    )
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
