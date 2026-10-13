@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- **Use `langdetect-rs` for language detection when it is installed.** `langdetect-rs` is a Rust port of `langdetect` with the same API that returns bit-identical results, including the seeded detection used for `metadata.languages`. Installing it (`pip install langdetect-rs`) makes language detection several times faster, with no change in output. Without it, `langdetect` is used as before.
+- **Optionally use `langdetect-rs` for partition language detection.** Set `UNSTRUCTURED_USE_LANGDETECT_RS=true` before importing `unstructured` and install `langdetect-rs==0.1.0` to detect `metadata.languages` with this faster Rust port of `langdetect`, which matched its seeded results on the tested inputs. If the package is missing, a warning is logged and `langdetect` is used. Without the variable, nothing changes.
 
 ## 0.27.26
 

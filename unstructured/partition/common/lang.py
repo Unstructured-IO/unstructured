@@ -5,28 +5,35 @@ from functools import lru_cache
 from typing import Callable, Iterable, Iterator, Optional
 
 import iso639  # pyright: ignore[reportMissingTypeStubs]
-
-# NOTE(kholdrex): langdetect-rs, when installed, is a Rust port of langdetect with the same API
-# and bit-identical results (including with DetectorFactory.seed set below), several times faster.
-try:
-    from langdetect_rs import (  # pyright: ignore[reportMissingTypeStubs]
-        DetectorFactory,
-        detect_langs,  # pyright: ignore[reportUnknownVariableType]
-        lang_detect_exception,
-    )
-except ImportError:
-    from langdetect import (  # pyright: ignore[reportMissingTypeStubs]
-        DetectorFactory,
-        detect_langs,  # pyright: ignore[reportUnknownVariableType]
-        lang_detect_exception,
-    )
+from langdetect import (  # pyright: ignore[reportMissingTypeStubs]
+    DetectorFactory,
+    detect_langs,  # pyright: ignore[reportUnknownVariableType]
+    lang_detect_exception,
+)
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     TESSERACT_LANGUAGES_AND_CODES,
     TESSERACT_LANGUAGES_SPLITTER,
 )
+
+if env_config.UNSTRUCTURED_USE_LANGDETECT_RS:
+    try:
+        from langdetect_rs import (  # pyright: ignore[reportMissingTypeStubs]
+            DetectorFactory,
+            detect_langs,  # pyright: ignore[reportUnknownVariableType]
+            lang_detect_exception,
+        )
+    except ModuleNotFoundError as e:
+        if e.name != "langdetect_rs":
+            raise
+        logger.warning(
+            "UNSTRUCTURED_USE_LANGDETECT_RS is set but langdetect-rs is not installed, "
+            "falling back to langdetect"
+        )
+logger.debug(f"language detection backend: {detect_langs.__module__}")
 
 _ASCII_RE = re.compile(r"^[\x00-\x7F]+$")
 

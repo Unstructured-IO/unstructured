@@ -7542,7 +7542,7 @@ test = [
     { name = "coverage", specifier = ">=7.13.3,<8.0.0" },
     { name = "freezegun", specifier = ">=1.5.5,<2.0.0" },
     { name = "grpcio", specifier = ">=1.78.0,<2.0.0" },
-    { name = "langdetect-rs", specifier = ">=0.1.0,<1.0.0" },
+    { name = "langdetect-rs", specifier = "==0.1.0" },
     { name = "mypy", specifier = ">=1.19.1,<2.0.0" },
     { name = "pip-licenses", specifier = ">=5.0.0,<6.0.0" },
     { name = "pydantic", specifier = ">=2.12.5,<3.0.0" },
