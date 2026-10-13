@@ -1,3 +1,9 @@
+## 0.27.27
+
+### Fixes
+
+- **Make uncertain text decoding observable (#4466).** Automatic legacy and BOM-less UTF-16/32 detection now emits `EncodingDetectionWarning`, which callers can promote to an exception with Python warning filters. Unicode BOMs, then strict UTF-8 validity, are honored before statistical detection, so valid UTF-8 whose only non-ASCII content is an invisible character such as U+200B is no longer decoded as `mac_iceland` or `cp850`; UTF-8/ASCII remains the default convention. Inconclusive detection ranks unrestricted candidates instead of accepting the first decodable codec (usually Latin-1), and raises when no text candidate survives. Correctly detected codecs outside `COMMON_ENCODINGS` remain supported. `partition_md(encoding=...)` now strictly decodes local and URL bytes using the supplied encoding. Automatic detection remains heuristic; this change does not guarantee recovery of the original text without a known encoding.
+
 ## 0.27.26
 
 ### Enhancements
