@@ -1,6 +1,8 @@
-## 0.27.27-dev1
+## 0.27.27-dev2
 
 ### Fixes
+
+- **Normalize missing text in text elements.** `Text` and its subclasses, including `Image`, now store `text=None` as an empty string. This prevents string conversion from failing for images with missing detected text. String conversion also returns an empty string if text is later set to `None`. Newly constructed elements serialize this text as `""` instead of `null`; recalculated content hashes change for formerly null text. Supplied IDs and ordinary string text are unchanged.
 
 - **Keep overlap category names intact from element 100 on.** `identify_overlapping_or_nesting_case()` split `{ix}. {category}` labels with a 3-character slice, so from index 100 the leftover digits leaked into `overlapping_elements` and `overlapping_case`. It now splits on the first `". "`.
 
