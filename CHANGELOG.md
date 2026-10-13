@@ -1,3 +1,9 @@
+## 0.27.27
+
+### Fixes
+
+- **Normalize missing text in text elements.** `Text` and its subclasses, including `Image`, now store `text=None` as an empty string. This prevents string conversion from failing for images with missing detected text. String conversion also returns an empty string if text is later set to `None`. Newly constructed elements serialize this text as `""` instead of `null`; recalculated content hashes change for formerly null text. Supplied IDs and ordinary string text are unchanged.
+
 ## 0.27.26
 
 ### Enhancements

@@ -70,6 +70,23 @@ def test_Image_text_none_str_returns_empty_string():
     assert str(image) == ""
 
 
+@pytest.mark.parametrize("element_cls", [Text, Image])
+@pytest.mark.parametrize("text", [None, "", "hello", " \u2603 ", "None"])
+def test_Text_normalizes_only_none(element_cls, text):
+    element = element_cls(text=text)
+    expected = "" if text is None else text
+    assert element.text == expected
+    assert str(element) == expected
+    assert element.to_dict()["text"] == expected
+
+
+def test_Image_str_handles_later_none_assignment_without_mutation():
+    image = Image(text="hello")
+    image.text = None
+    assert str(image) == ""
+    assert image.text is None
+
+
 @pytest.mark.parametrize(
     "element",
     [
