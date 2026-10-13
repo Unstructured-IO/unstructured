@@ -1,4 +1,5 @@
 import csv
+import io
 import json
 import os
 import pathlib
@@ -138,6 +139,33 @@ def test_convert_to_csv(tmp_path: str):
     with open(output_csv_path) as csv_file:
         csv_rows = csv.DictReader(csv_file)
         assert all(set(row.keys()) == set(base.TABLE_FIELDNAMES) for row in csv_rows)
+
+
+def test_convert_to_csv_includes_flattened_nested_metadata():
+    # Regression for #4548: nested metadata (data_source, enrichment_origins) is
+    # flattened into sub-keys, but the CSV whitelist used to only contain the raw
+    # dict keys, so those sub-keys were dropped and the columns stayed empty.
+    elements = [
+        NarrativeText(
+            text="Hello",
+            metadata=ElementMetadata(
+                data_source=DataSourceMetadata(url="s3://bucket/report.pdf", version="v3"),
+                enrichment_origins={"ner": [{"mode": "Auto"}]},
+            ),
+        ),
+    ]
+    csv_file = io.StringIO(base.convert_to_csv(elements))
+    reader = csv.DictReader(csv_file)
+    row = next(reader)
+
+    # Flattened sub-keys must be present as columns and carry the values.
+    assert row["data_source_url"] == "s3://bucket/report.pdf"
+    assert row["data_source_version"] == "v3"
+    assert row["enrichment_origins_ner"] == str([{"mode": "Auto"}])
+
+    # Backward compatibility: the fixed column set must still be present.
+    for column in base.TABLE_FIELDNAMES:
+        assert column in row
 
 
 def test_convert_to_dataframe():

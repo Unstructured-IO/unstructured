@@ -632,18 +632,24 @@ def convert_to_csv(elements: Iterable[Element]) -> str:
     """Convert `elements` to CSV format."""
     rows: list[dict[str, Any]] = elements_to_dicts(elements)
     table_fieldnames = _get_table_fieldnames(rows)
-    # NOTE(robinson) - flatten metadata and add it to the table
+    # NOTE(robinson) - flatten metadata and add it to the table. Nested metadata
+    # (e.g. data_source, enrichment_origins) flattens into sub-keys that are not part
+    # of the fixed table_fieldnames, so we collect them across rows and append them in
+    # order; otherwise the sub-keys were dropped and those columns stayed empty (#4548).
+    extra_fieldnames: list[str] = []
     for row in rows:
         metadata = row.pop("metadata")
         for key, value in flatten_dict(metadata).items():
-            if key in table_fieldnames:
-                row[key] = value
+            row[key] = value
+            if key not in table_fieldnames and key not in extra_fieldnames:
+                extra_fieldnames.append(key)
 
         if row.get("sent_from"):
             row["sender"] = row.get("sent_from")
             if isinstance(row["sender"], list):
                 row["sender"] = row["sender"][0]
 
+    table_fieldnames = table_fieldnames + extra_fieldnames
     with io.StringIO() as buffer:
         csv_writer = csv.DictWriter(buffer, fieldnames=table_fieldnames)
         csv_writer.writeheader()
