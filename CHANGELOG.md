@@ -1,8 +1,14 @@
-## 0.27.27
+## 0.27.27-dev1
 
 ### Fixes
 
 - **Keep overlap category names intact from element 100 on.** `identify_overlapping_or_nesting_case()` split `{ix}. {category}` labels with a 3-character slice, so from index 100 the leftover digits leaked into `overlapping_elements` and `overlapping_case`. It now splits on the first `". "`.
+
+- **Preserve serialized element identity when rehydrating JSON.** `partition_json()` no longer
+  replaces element IDs or stored metadata with attributes from the JSON container. Explicit
+  `metadata_filename`, `metadata_last_modified`, `url`, and `text_as_html` overrides remain supported,
+  including timestamps on chunk originals. Attachments keep their source metadata, and custom
+  chunker output receives consistent metadata and IDs even for empty JSON inputs.
 
 ## 0.27.26
 
