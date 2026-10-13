@@ -14,6 +14,8 @@
 
 - **Keep HTML table captions (#4552).** `partition_html()` dropped the `<caption>` of a `<table>`, so the table's title was missing from the `Table` element. The caption text now starts the element's `text` and appears as a `<caption>` in `metadata.text_as_html`, sanitized like table cells, and `elements_to_html()` keeps it inside the exported `<table>`. A table with a caption but no cell text still produces no element.
 
+- **Stop dropping nested metadata values in `convert_to_csv()`.** Nested metadata such as `data_source` and `enrichment_origins` is flattened into sub-keys (`data_source_url`, `enrichment_origins_ner`, …), but the CSV column whitelist only contained the raw dict keys, so those sub-keys were filtered out and the corresponding columns stayed empty. The flattened sub-keys are now collected across rows and appended as columns, so the values are exported. Backward compatible: the fixed `TABLE_FIELDNAMES` columns are unchanged.
+
 ## 0.27.27
 
 ### Fixes
@@ -40,10 +42,6 @@
 ### Enhancements
 
 - **Add a usage notice.** Display a notice once per process when a public partitioner is used. Terminal sessions receive a banner; other sessions use the package logger. Set `UNSTRUCTURED_DISABLE_NOTICE=1` to disable the notice.
-
-### Fixes
-
-- **Stop dropping nested metadata values in `convert_to_csv()`.** Nested metadata such as `data_source` and `enrichment_origins` is flattened into sub-keys (`data_source_url`, `enrichment_origins_ner`, …), but the CSV column whitelist only contained the raw dict keys, so those sub-keys were filtered out and the corresponding columns stayed empty. The flattened sub-keys are now collected across rows and appended as columns, so the values are exported. Backward compatible: the fixed `TABLE_FIELDNAMES` columns are unchanged.
 
 ## 0.27.25
 
