@@ -738,8 +738,8 @@
 - Updated the Dockerfile to build from the chainguard base. Implemented updating and added base-packages that was done in the base-images repo to instead all be done here.
 - `is_text_embedded` now considers rotated text as low fidelity and and elements with no trivial amount of it are considered not embedded
 - Replace `pdf2image` with PyPDFium2 for PDF rendering
-- Optimize `_get_optimal_value_for_bbox`
-- Optimize `_DocxPartitioner._style_based_element_type`
+- Optimize `_get_optimal_value_for_bbox` (codeflash)
+- Optimize `_DocxPartitioner._style_based_element_type` (codeflash)
 
 ### Fixes
 
@@ -752,27 +752,27 @@
 
 ### Enhancement
 
-- Optimize `clean_extra_whitespace_with_index_run`
-- Optimize `recursive_xy_cut_swapped`
-- Optimize `_DocxPartitioner._parse_category_depth_by_style_name`
-- Optimize `VertexAIEmbeddingEncoder._add_embeddings_to_elements`
-- Optimize `ngrams`
-- Optimize `stage_for_datasaur`
+- Optimize `clean_extra_whitespace_with_index_run` (codeflash)
+- Optimize `recursive_xy_cut_swapped` (codeflash)
+- Optimize `_DocxPartitioner._parse_category_depth_by_style_name` (codeflash)
+- Optimize `VertexAIEmbeddingEncoder._add_embeddings_to_elements` (codeflash)
+- Optimize `ngrams` (codeflash)
+- Optimize `stage_for_datasaur` (codeflash)
 
 ## 0.18.27
 
 ### Fixes
 
-- Comment no-ops in `zoom_image`
+- Comment no-ops in `zoom_image` (codeflash)
 - Fix an issue where elements with partially filled extracted text are marked as extracted
 
 ### Enhancement
 
-- Optimize `sentence_count`
-- Optimize `_PartitionerLoader._load_partitioner`
-- Optimize `detect_languages`
-- Optimize `contains_verb`
-- Optimize `get_bbox_thickness`
+- Optimize `sentence_count` (codeflash)
+- Optimize `_PartitionerLoader._load_partitioner` (codeflash)
+- Optimize `detect_languages` (codeflash)
+- Optimize `contains_verb` (codeflash)
+- Optimize `get_bbox_thickness` (codeflash)
 - Upgrade pdfminer-six to 20260107 to fix ~15-18% performance regression from eager f-string evaluation
 
 ## 0.18.26
@@ -791,7 +791,7 @@
 
 ### Enhancement
 
-- Optimize `OCRAgentTesseract.extract_word_from_hocr`
+- Optimize `OCRAgentTesseract.extract_word_from_hocr` (codeflash)
 
 ### Fixes
 
@@ -866,7 +866,7 @@
 
 ### Enhancement
 
-- Speed up function \_assign_hash_ids by 34%
+- Speed up function \_assign_hash_ids by 34% (codeflash)
 
 ### Features
 
@@ -881,8 +881,8 @@
 
 ### Enhancements
 
-- Speed up function ElementHtml.\_get_children_html by 234%
-- Speed up function group_broken_paragraphs by 30%
+- Speed up function ElementHtml.\_get_children_html by 234% (codeflash)
+- Speed up function group_broken_paragraphs by 30% (codeflash)
 
 ### Features
 
@@ -895,9 +895,9 @@
 
 ### Enhancements
 
-- Speed up function sentence_count by 59%
-- Speed up function `check_for_nltk_package` by 111%
-- Speed up function `under_non_alpha_ratio` by 76%
+- Speed up function sentence_count by 59% (codeflash)
+- Speed up function `check_for_nltk_package` by 111% (codeflash)
+- Speed up function `under_non_alpha_ratio` by 76% (codeflash)
 
 ### Features
 
