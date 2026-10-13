@@ -1017,8 +1017,11 @@ element_class_lookup.get_namespace(None).update(
         "p": BlockItem,
         "pre": Pre,
         # -- list blocks --
+        "dl": ListBlock,
         "ol": ListBlock,
         "ul": ListBlock,
+        "dd": ListItemBlock,
+        "dt": BlockItem,
         "li": ListItemBlock,
         # -- image --
         "img": ImageBlock,
@@ -1082,9 +1085,6 @@ element_class_lookup.get_namespace(None).update(
         "xml": RemovedPhrasing,  # -- legacy "data island", like Office document-properties --
         # -- removed block --
         "details": RemovedBlock,  # -- likely boilerplate --
-        "dl": RemovedBlock,
-        "dd": RemovedBlock,
-        "dt": RemovedBlock,
         "figure": RemovedBlock,
         "hr": RemovedBlock,
         "nav": RemovedBlock,

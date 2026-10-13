@@ -159,6 +159,8 @@ class ElementMetadata:
     #   to consolidate this new metadata field from each pre-chunk element during chunking.
     # - Add field-name to DEBUG_FIELD_NAMES if it shouldn't appear in dict/JSON or participate in
     #   equality comparison.
+    # - Add field-name to SEPARATELY_SERIALIZED_FIELD_NAMES if `.to_dict()` replaces its value
+    #   with a serialized form, so it is not deep-copied first.
 
     attached_to_filename: Optional[str]
     category_depth: Optional[int]
@@ -234,6 +236,13 @@ class ElementMetadata:
     # -- to dict/JSON, do not participate in equality comparison, and are not included in the
     # -- `.fields` dict used by other parts of the library like chunking and weaviate.
     DEBUG_FIELD_NAMES = frozenset(["detection_origin"])
+
+    #: Fields that `.to_dict()` replaces with their serialized form. Deep-copying them there
+    #: would only build a copy that is thrown away on the next few lines, and `orig_elements` on
+    #: a chunk holds every source element of that chunk.
+    SEPARATELY_SERIALIZED_FIELD_NAMES = frozenset(
+        ["coordinates", "data_source", "orig_elements", "key_value_pairs"]
+    )
 
     def __init__(
         self,
@@ -429,7 +438,14 @@ class ElementMetadata:
         """
         from unstructured.staging.base import elements_to_base64_gzipped_json
 
-        meta_dict = copy.deepcopy(dict(self.fields))
+        # -- copy the fields a caller could mutate to reach back into this metadata, but not the
+        # -- ones replaced by their serialized form below. Those stay in place as placeholders so
+        # -- the reassignments keep their original key position --
+        fields = self.fields
+        copied = copy.deepcopy(
+            {k: v for k, v in fields.items() if k not in self.SEPARATELY_SERIALIZED_FIELD_NAMES}
+        )
+        meta_dict = {k: copied.get(k, v) for k, v in fields.items()}
 
         # -- remove fields that should not be serialized --
         for field_name in self.DEBUG_FIELD_NAMES:

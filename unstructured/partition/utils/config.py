@@ -328,5 +328,25 @@ class ENVConfig:
         """Maximum rendered pixels allowed for a single PDF page"""
         return self._get_int("PDF_RENDER_MAX_PIXELS_PER_PAGE", 1_000_000_000)
 
+    @property
+    def XLSX_MAX_CELLS(self) -> int:
+        """Maximum worksheet cells, summed across all worksheets, a spreadsheet may span"""
+        return self._get_int("XLSX_MAX_CELLS", 5_000_000)
+
+    @property
+    def DOCX_TABLE_MAX_CELLS(self) -> int:
+        """Maximum layout-grid cells, summed across a DOCX document's tables, rendered as HTML"""
+        return self._get_int("DOCX_TABLE_MAX_CELLS", 5_000_000)
+
+    @property
+    def CSV_MAX_CELLS(self) -> int:
+        """Maximum `rows x columns` cells a CSV or TSV file may span"""
+        return self._get_int("CSV_MAX_CELLS", 5_000_000)
+
+    @property
+    def IMAGE_MAX_TOTAL_PIXELS(self) -> int:
+        """Maximum pixels, summed across all frames, an image file may decode to"""
+        return self._get_int("IMAGE_MAX_TOTAL_PIXELS", 500_000_000)
+
 
 env_config = ENVConfig()
