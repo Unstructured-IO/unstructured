@@ -1,3 +1,9 @@
+## 0.27.28
+
+### Fixes
+
+- **Preserve caller metadata in Prodigy exports.** `stage_for_prodigy()` copies each metadata dictionary before adding the element ID, so repeated JSON or CSV exports work and shared dictionaries keep each element's ID.
+
 ## 0.27.27-dev3
 
 ### Fixes
