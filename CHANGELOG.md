@@ -1,8 +1,18 @@
-## 0.27.27
+## 0.27.27-dev3
 
 ### Fixes
 
 - **Keep the text inside HTML elements the parser does not recognize.** Since 0.15.0, `partition_html()` (and the `.md`, `.eml`, `.msg`, `.epub`, `.rst` and `.org` partitioners that route through it) kept only the text *after* an element with no registered element class and dropped its content: `<font>` text in email bodies, custom elements, and the Inline XBRL facts and notes of SEC filings (`example-10k.html` lost about a third of its text, including Notes 1-14). An unrecognized element is now transparent, like a `<span>`: its text joins the surrounding paragraph and any block items it contains become their own elements. Elements whose content is not rendered as text (`<head>`, `<title>`, `<svg>`, `<math>`, `<iframe>`, `<object>`, `<audio>`, `<video>`, `<canvas>`, `<noembed>`, `<noframes>`, `<select>`, `<datalist>`, `<textarea>`, `<dialog>`, and legacy `<xml>` data islands) and the hidden Inline XBRL `<ix:header>` are still skipped. Resolves #4496 and #3842.
+
+- **Normalize missing text in text elements.** `Text` and its subclasses, including `Image`, now store `text=None` as an empty string. This prevents string conversion from failing for images with missing detected text. String conversion also returns an empty string if text is later set to `None`. Newly constructed elements serialize this text as `""` instead of `null`; recalculated content hashes change for formerly null text. Supplied IDs and ordinary string text are unchanged.
+
+- **Keep overlap category names intact from element 100 on.** `identify_overlapping_or_nesting_case()` split `{ix}. {category}` labels with a 3-character slice, so from index 100 the leftover digits leaked into `overlapping_elements` and `overlapping_case`. It now splits on the first `". "`.
+
+- **Preserve serialized element identity when rehydrating JSON.** `partition_json()` no longer
+  replaces element IDs or stored metadata with attributes from the JSON container. Explicit
+  `metadata_filename`, `metadata_last_modified`, `url`, and `text_as_html` overrides remain supported,
+  including timestamps on chunk originals. Attachments keep their source metadata, and custom
+  chunker output receives consistent metadata and IDs even for empty JSON inputs.
 
 ## 0.27.26
 
