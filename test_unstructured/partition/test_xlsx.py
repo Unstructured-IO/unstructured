@@ -581,6 +581,14 @@ class Describe_ConnectedComponents:
             sorted(c._cell_coordinate_set) for c in expected
         )
 
+    def it_treats_a_completely_empty_worksheet_as_having_no_components(self):
+        # -- regression: `.notna().to_numpy()` on a 0x0 frame is float64, so the `&` in
+        # -- `_connected_components` raised `TypeError: ufunc 'bitwise_and' not supported`; a
+        # -- workbook with any empty sheet (e.g. a trailing blank `Sheet2`) failed to partition --
+        components = _ConnectedComponents.from_worksheet_df(pd.DataFrame())
+
+        assert list(components) == []
+
 
 class Describe_iter_worksheet_shapes:
     """Unit-test suite for `unstructured.partition.xlsx._iter_worksheet_shapes()`."""

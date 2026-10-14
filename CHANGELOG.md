@@ -1,3 +1,81 @@
+## 0.27.27-dev3
+
+### Fixes
+
+- **Make uncertain text decoding observable (#4466).** Automatic legacy and BOM-less UTF-16/32 detection now emits `EncodingDetectionWarning`, which callers can promote to an exception with Python warning filters. Unicode BOMs, then strict UTF-8 validity, are honored before statistical detection, so valid UTF-8 whose only non-ASCII content is an invisible character such as U+200B is no longer decoded as `mac_iceland` or `cp850`. Input containing NUL bytes skips the UTF-8 check, because BOM-less UTF-16/32 is often also valid UTF-8. File-type detection's 4,096-byte stream prefix tolerates a multi-byte sequence split at its end, including a UTF-16 surrogate pair after a BOM; UTF-8/ASCII remains the default convention. Inconclusive detection ranks unrestricted candidates instead of accepting the first decodable codec (usually Latin-1), and raises when no text candidate survives. Correctly detected codecs outside `COMMON_ENCODINGS` remain supported. `partition_md(encoding=...)` now strictly decodes local and URL bytes using the supplied encoding. Automatic detection remains heuristic; this change does not guarantee recovery of the original text without a known encoding.
+
+- **Normalize missing text in text elements.** `Text` and its subclasses, including `Image`, now store `text=None` as an empty string. This prevents string conversion from failing for images with missing detected text. String conversion also returns an empty string if text is later set to `None`. Newly constructed elements serialize this text as `""` instead of `null`; recalculated content hashes change for formerly null text. Supplied IDs and ordinary string text are unchanged.
+
+- **Keep overlap category names intact from element 100 on.** `identify_overlapping_or_nesting_case()` split `{ix}. {category}` labels with a 3-character slice, so from index 100 the leftover digits leaked into `overlapping_elements` and `overlapping_case`. It now splits on the first `". "`.
+
+- **Preserve serialized element identity when rehydrating JSON.** `partition_json()` no longer
+  replaces element IDs or stored metadata with attributes from the JSON container. Explicit
+  `metadata_filename`, `metadata_last_modified`, `url`, and `text_as_html` overrides remain supported,
+  including timestamps on chunk originals. Attachments keep their source metadata, and custom
+  chunker output receives consistent metadata and IDs even for empty JSON inputs.
+
+## 0.27.26
+
+### Enhancements
+
+- **Add a usage notice.** Display a notice once per process when a public partitioner is used. Terminal sessions receive a banner; other sessions use the package logger. Set `UNSTRUCTURED_DISABLE_NOTICE=1` to disable the notice.
+
+## 0.27.25
+
+### Enhancements
+
+- **Partition WEBP images.** `partition()` now detects `.webp` files and partitions them with `partition_image()` like PNG and JPEG, with `metadata.filetype` set to `image/webp`. A WEBP file saved under another image extension is now detected as `image/webp` from its content. With the `image` extra installed, `partition_email()` and `partition_msg()` now partition WEBP attachments; without it they still skip them with a warning. As with PNG and JPEG attachments, a WEBP attachment that fails image processing now raises instead of being skipped.
+
+
+## 0.27.24
+
+### Fixes
+
+- **Reject a negative `overlap`.** `ChunkingOptions` validated `new_after_n_chars` and `new_after_n_tokens` but not `overlap`, so a negative value silently corrupted output: on the character-split path the remainder started past the end of the fragment and dropped that many characters at every split boundary, and with `overlap_all=True` the tail slice ran forward and repeated most of the chunk. It now raises `ValueError`, matching the sibling options.
+
+
+## 0.27.23
+
+### Fixes
+
+- **Emit PPTX page breaks only between slides with custom page numbering.** A starting page number above 1 previously added a leading `PageBreak` attributed to the preceding page. First-slide detection now respects the configured starting page while retaining the page numbers of subsequent breaks.
+
+
+## 0.27.22
+
+### Fixes
+
+- **Preserve slide and category-depth metadata on PPTX email addresses.** Emails in title and body shapes now receive the same text metadata as neighboring elements, including custom starting page numbers. Email classification and title-depth progression are unchanged. Element IDs change for these emails and for elements that follow an email on the same slide, because IDs include the page number and the element's position on its page.
+
+
+## 0.27.21
+
+### Fixes
+
+- **Chunk text containing literal tokenizer special-token spellings.** Token-based chunking previously raised `ValueError` for document text such as `<|endoftext|>`. Token counting now treats these spellings as ordinary text, preserving their full token cost and the configured chunk budget.
+
+## 0.27.20
+
+### Maintenance
+
+- **Add Transform v2 benchmark note to README.**
+
+## 0.27.19
+
+### Fixes
+
+- **Partition an XLSX with an empty worksheet instead of crashing.** `_ConnectedComponents` built its populated-cell mask with `DataFrame.notna().to_numpy()`, which returns a `float64` array for a completely empty (0x0) worksheet, so the subsequent `populated[:-1, :] & populated[1:, :]` raised `TypeError: ufunc 'bitwise_and' not supported`. A workbook containing any empty sheet (for example a trailing blank `Sheet2`) failed to partition with a 500. The mask is now built with `.to_numpy(dtype=bool)`, so an empty worksheet yields no connected components and partitioning proceeds.
+
+### Maintenance
+
+- **Start CI tests without waiting for setup and lint.** Lint installs only its own dependency group, extras jobs install only the system packages their tests use, and a new push cancels the pull request's previous CI run.
+
+## 0.27.18
+
+### Fixes
+
+- **Fix `ValueError: Coordinate 'lower' is less than 'upper'` when extracting figure/table images**: `save_elements` assumed `points[0]`/`points[2]` were always the top-left/bottom-right corners in screen orientation. For elements whose coordinates carried (or were converted from) a y-up orientation, that ordering inverted the PIL crop box and raised the error, which was then silently swallowed and the image dropped. The crop box is now derived from the extent (min/max) of all coordinate points, so it is always valid regardless of point ordering.
+
 ## 0.27.17
 
 ### Fixes

@@ -181,8 +181,15 @@ def save_elements(
                 continue
 
             points = coordinates.points
-            x1, y1 = points[0]
-            x2, y2 = points[2]
+            # Don't assume a fixed corner ordering: depending on the element's
+            # coordinate-system orientation, points[0]/points[2] are not reliably the
+            # top-left/bottom-right in the page image's screen space. Trusting them can
+            # yield an inverted PIL crop box and raise "Coordinate 'lower' is less than
+            # 'upper'". Take the extent of all points instead.
+            xs = [p[0] for p in points]
+            ys = [p[1] for p in points]
+            x1, y1 = min(xs), min(ys)
+            x2, y2 = max(xs), max(ys)
             h_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD
             v_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD
             padded_bbox = cast(

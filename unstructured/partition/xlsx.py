@@ -322,7 +322,9 @@ class _ConnectedComponents:
         # -- A 2D-graph relates each populated cell to the one above, below, left, and right of it.
         # -- Only populated cells become nodes; a worksheet is mostly empty when it has a stray
         # -- far-away cell, and a node per empty cell would cost ~1KB each.
-        populated = self._worksheet_df.notna().to_numpy()
+        # -- `dtype=bool` is required: `.notna()` on an empty (0x0) worksheet produces a float64
+        # -- array, and `&` on floats raises `TypeError: ufunc 'bitwise_and' not supported` below --
+        populated = self._worksheet_df.notna().to_numpy(dtype=bool)
         graph: nx.Graph = nx.Graph()  # pyright: ignore[reportMissingTypeArgument]
         graph.add_nodes_from(_cell_coordinates(*np.nonzero(populated)))  # pyright: ignore
         # -- vertical edges, between each populated cell and a populated cell below it --
