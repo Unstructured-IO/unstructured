@@ -7,8 +7,12 @@ from __future__ import annotations
 import io
 import sys
 import tempfile
+from pathlib import Path
 from typing import Any
 
+import networkx as nx
+import numpy as np
+import openpyxl
 import pandas as pd
 import pandas.testing as pdt
 import pytest
@@ -31,6 +35,8 @@ from unstructured.documents.elements import ListItem, Table, Text, Title
 from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.xlsx import (
     _ConnectedComponent,
+    _ConnectedComponents,
+    _iter_worksheet_shapes,
     _SubtableParser,
     _XlsxPartitionerOptions,
     partition_xlsx,
@@ -297,6 +303,66 @@ def test_partition_xlsx_with_more_than_1k_cells():
         sys.setrecursionlimit(old_recursion_limit)
 
 
+# -- worksheet cell-count limit ------------------------------------------------------------------
+
+
+def test_partition_xlsx_rejects_a_stray_far_cell_before_pandas_reads_it(
+    tmp_path: Path, mocker: MockerFixture, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("XLSX_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
+    # -- one cell at row 1M makes Pandas allocate 1M x 5 cells from a few-KB file --
+    file_path = _write_xlsx(tmp_path, {"Sheet": {(1, 1): "a", (2, 3): "b", (1_048_576, 5): "c"}})
+    read_excel_ = mocker.patch.object(pd, "read_excel")
+
+    with pytest.raises(UnprocessableEntityError, match="1,048,576 rows x 5 columns"):
+        partition_xlsx(file_path)
+
+    read_excel_.assert_not_called()
+
+
+def test_partition_xlsx_partitions_a_stray_far_cell_within_the_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("XLSX_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
+    file_path = _write_xlsx(tmp_path, {"Sheet": {(1, 1): "a", (1, 2): "b", (200_000, 3): "c"}})
+
+    elements = partition_xlsx(file_path)
+
+    assert [e.text for e in elements] == ["a b", "c"]
+
+
+def test_partition_xlsx_limits_cells_summed_across_worksheets(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    # -- each worksheet spans 10 x 10 = 100 cells --
+    file_path = _write_xlsx(
+        tmp_path, {"One": {(1, 1): "a", (10, 10): "b"}, "Two": {(1, 1): "c", (10, 10): "d"}}
+    )
+
+    monkeypatch.setenv("XLSX_MAX_CELLS", "200")
+    assert len(partition_xlsx(file_path)) == 4
+
+    monkeypatch.setenv("XLSX_MAX_CELLS", "199")
+    with pytest.raises(UnprocessableEntityError, match="worksheet 'Two'"):
+        partition_xlsx(file_path)
+
+
+@pytest.mark.parametrize(("max_cells", "raises"), [("1", True), (None, False)])
+def test_partition_xlsx_applies_the_cell_limit_to_xls_files(
+    max_cells: str | None, raises: bool, monkeypatch: pytest.MonkeyPatch
+):
+    if max_cells is None:
+        monkeypatch.delenv("XLSX_MAX_CELLS", raising=False)
+    else:
+        monkeypatch.setenv("XLSX_MAX_CELLS", max_cells)
+
+    if raises:
+        with pytest.raises(UnprocessableEntityError, match="XLSX_MAX_CELLS"):
+            partition_xlsx(example_doc_path("tests-example.xls"))
+    else:
+        assert partition_xlsx(example_doc_path("tests-example.xls"))
+
+
 # ================================================================================================
 # OTHER ARGS
 # ================================================================================================
@@ -415,6 +481,27 @@ class Describe_XlsxPartitionerOptions:
 
         assert opts.metadata_file_path == "x/y/z.xlsx"
 
+    # -- ._excel_engine ---------------------------------------------------------------------------
+
+    @pytest.mark.parametrize(
+        ("file_name", "expected_value"),
+        [("stanley-cups.xlsx", "openpyxl"), ("tests-example.xls", "xlrd")],
+    )
+    def it_picks_the_Pandas_engine_from_the_file_signature(
+        self, file_name: str, expected_value: str, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = example_doc_path(file_name)
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts._excel_engine == expected_value
+
+    def but_it_rejects_a_file_that_is_neither_XLSX_nor_XLS(self, opts_args: dict[str, Any]):
+        opts_args["file"] = io.BytesIO(b"not a spreadsheet")
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        with pytest.raises(UnprocessableEntityError, match="Not a valid XLSX or XLS file"):
+            opts._excel_engine
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
@@ -470,6 +557,81 @@ class Describe_ConnectedComponent:
         pdt.assert_frame_equal(
             subtable, pd.DataFrame([["d", "e"], ["f", "g"], [None, "h"]], index=[2, 3, 4])
         )
+
+
+class Describe_ConnectedComponents:
+    """Unit-test suite for `unstructured.partition.xlsx._ConnectedComponents` objects."""
+
+    @pytest.mark.parametrize("seed", range(20))
+    def it_finds_the_same_components_as_a_full_grid_graph(self, seed: int):
+        rng = np.random.default_rng(seed)
+        n_rows, n_cols = rng.integers(1, 15, size=2)
+        cells = np.where(rng.random((n_rows, n_cols)) < 0.4, "x", None)
+        worksheet_df = pd.DataFrame(cells)
+
+        components = _ConnectedComponents.from_worksheet_df(worksheet_df)
+
+        # -- reference: every cell is a grid node, then the empty ones are removed --
+        graph = nx.grid_2d_graph(n_rows, n_cols)
+        graph.remove_nodes_from(tuple(rc) for rc in np.argwhere(worksheet_df.isna().to_numpy()))
+        expected = _ConnectedComponents(worksheet_df)._merge_overlapping_tables(
+            [_ConnectedComponent(worksheet_df, s) for s in nx.connected_components(graph)]
+        )
+        assert sorted(sorted(c._cell_coordinate_set) for c in components) == sorted(
+            sorted(c._cell_coordinate_set) for c in expected
+        )
+
+    def it_treats_a_completely_empty_worksheet_as_having_no_components(self):
+        # -- regression: `.notna().to_numpy()` on a 0x0 frame is float64, so the `&` in
+        # -- `_connected_components` raised `TypeError: ufunc 'bitwise_and' not supported`; a
+        # -- workbook with any empty sheet (e.g. a trailing blank `Sheet2`) failed to partition --
+        components = _ConnectedComponents.from_worksheet_df(pd.DataFrame())
+
+        assert list(components) == []
+
+
+class Describe_iter_worksheet_shapes:
+    """Unit-test suite for `unstructured.partition.xlsx._iter_worksheet_shapes()`."""
+
+    @pytest.mark.parametrize(
+        "file_name", ["stanley-cups.xlsx", "more-than-1k-cells.xlsx", "tests-example.xls"]
+    )
+    def it_measures_the_shape_Pandas_reads_for_each_worksheet(self, file_name: str):
+        file_path = example_doc_path(file_name)
+        self._assert_shapes_match_pandas(file_path)
+
+    def and_it_measures_sparse_worksheets_with_trailing_empty_cells(self, tmp_path: Path):
+        file_path = _write_xlsx(
+            tmp_path,
+            {
+                "Sparse": {(3, 2): "a", (7, 5): 0, (12, 1): "b", (13, 9): ""},
+                "Empty": {},
+                "Blank": {(4, 4): ""},
+            },
+        )
+        self._assert_shapes_match_pandas(file_path)
+
+    def _assert_shapes_match_pandas(self, file_path: str):
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
+        opts = _XlsxPartitionerOptions(
+            file_path=file_path,
+            file=None,
+            find_subtable=True,
+            include_header=False,
+            infer_table_structure=True,
+        )
+        # -- the last shape generated for each worksheet is its full shape --
+        shapes = {
+            name: (n_rows, n_cols)
+            for _, name, n_rows, n_cols in _iter_worksheet_shapes(file_bytes, opts._excel_engine)
+        }
+
+        expected = {
+            name: df.shape
+            for name, df in pd.read_excel(file_path, sheet_name=None, header=None).items()
+        }
+        assert shapes == expected
 
 
 class Describe_SubtableParser:
@@ -612,3 +774,21 @@ class Describe_SubtableParser:
         )
 
         assert trailing_single_cell_row_texts == expected_value
+
+
+# ------------------------------------------------------------------------------------------------
+# MODULE-LEVEL FIXTURES
+# ------------------------------------------------------------------------------------------------
+
+
+def _write_xlsx(tmp_path: Path, sheets: dict[str, dict[tuple[int, int], Any]]) -> str:
+    """Write an XLSX file with the `{(row, col): value}` cells (1-based) of each named worksheet."""
+    workbook = openpyxl.Workbook()
+    workbook.remove(workbook.active)  # pyright: ignore[reportArgumentType]
+    for sheet_name, cells in sheets.items():
+        worksheet = workbook.create_sheet(sheet_name)
+        for (row, col), value in cells.items():
+            worksheet.cell(row, col, value)
+    file_path = str(tmp_path / "workbook.xlsx")
+    workbook.save(file_path)
+    return file_path

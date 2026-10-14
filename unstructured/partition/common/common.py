@@ -253,6 +253,24 @@ def _is_soffice_running():
     return False
 
 
+def _decode_soffice_output(raw: bytes) -> str:
+    """Decode and strip `soffice` output, tolerating a non-UTF-8 console encoding.
+
+    LibreOffice echoes the input path using the console encoding, which on Windows is the locale
+    codepage rather than UTF-8. A name or path containing multi-byte characters therefore makes
+    a strict decode raise `UnicodeDecodeError`, and `partition_doc()` / `partition_ppt()` fail
+    on a file they could otherwise have converted. This output is only used for logging and
+    for an is-it-empty check, so an approximate rendering is preferable to an exception.
+
+    `backslashreplace` (rather than `replace`) keeps the result pure ASCII, so the line still
+    reaches a handler whose stream uses the locale encoding -- a `logging.FileHandler` on the
+    same Windows box cannot encode U+FFFD and would drop the whole record. The escaped bytes
+    are also more diagnostic than `?`. `b""` still decodes to `""`, so the empty-stdout check
+    in `convert_office_doc()` is unaffected.
+    """
+    return raw.decode("utf-8", errors="backslashreplace").strip()
+
+
 def convert_office_doc(
     input_filename: str,
     output_directory: str,
@@ -302,7 +320,7 @@ def convert_office_doc(
         wait_time = 0
         sleep_time = 0.1
         output = subprocess.run(command, capture_output=True)
-        message = output.stdout.decode().strip()
+        message = _decode_soffice_output(output.stdout)
         # we can't rely on returncode unfortunately because on macOS it would return 0 even when the
         # command failed to run; instead we have to rely on the stdout being empty as a sign of the
         # process failed
@@ -312,7 +330,7 @@ def convert_office_doc(
                 sleep(sleep_time)
             else:
                 output = subprocess.run(command, capture_output=True)
-                message = output.stdout.decode().strip()
+                message = _decode_soffice_output(output.stdout)
     except FileNotFoundError:
         raise FileNotFoundError(
             """soffice command was not found. Please install libreoffice
@@ -328,7 +346,7 @@ on your system and try again.
         logger.error(
             "soffice failed to convert to format %s with code %i", target_format, output.returncode
         )
-        logger.error(output.stderr.decode().strip())
+        logger.error(_decode_soffice_output(output.stderr))
 
 
 def exactly_one(**kwargs: Any) -> None:

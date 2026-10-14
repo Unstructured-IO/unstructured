@@ -1,0 +1,18 @@
+MIME-Version: 1.0
+Date: Wed, 19 Aug 2026 09:15:00 -0400
+Message-ID: <hyphenated-values@example.com>
+Subject: Account details
+From: sender@example.com
+To: recipient@example.com
+Content-Type: text/plain; charset="UTF-8"
+
+Customer: Acme Corp
+
+Phone: 555-123-4567
+SSN: 456-78-9012
+Effective: 2026-08-19
+Card: 4111-1111-1111-1111
+Contact: Jean-Luc Picard
+Service: my-service-prod
+
+Thanks

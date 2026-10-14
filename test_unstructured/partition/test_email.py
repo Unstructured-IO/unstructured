@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 """Test suite for `unstructured.partition.email` module."""
 
 from __future__ import annotations
@@ -11,6 +13,7 @@ import pytest
 
 from test_unstructured.unit_utils import (
     FixtureRequest,
+    LogCaptureFixture,
     Mock,
     assert_round_trips_through_JSON,
     example_doc_path,
@@ -26,6 +29,8 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.file_utils.model import FileType
+from unstructured.partition.auto import _PartitionerLoader
 from unstructured.partition.email import EmailPartitioningContext, partition_email
 
 EXPECTED_OUTPUT = [
@@ -128,6 +133,24 @@ def test_partition_email_partitions_an_html_part_with_quoted_printable_encoded_I
 
 
 # -- edge-cases ----------------------------------------------------------------------------------
+
+
+def test_partition_email_does_not_split_hyphenated_values_in_the_body():
+    """`.eml` bodies are dense with short `Field: value` lines, the worst case for the bug.
+
+    Each of these lines used to become one element per hyphen-delimited fragment, so a regex
+    or PII pass downstream could never match the value.
+    """
+    assert [e.text for e in partition_email(example_doc_path("eml/hyphenated-values.eml"))] == [
+        "Customer: Acme Corp",
+        "Phone: 555-123-4567",
+        "SSN: 456-78-9012",
+        "Effective: 2026-08-19",
+        "Card: 4111-1111-1111-1111",
+        "Contact: Jean-Luc Picard",
+        "Service: my-service-prod",
+        "Thanks",
+    ]
 
 
 def test_partition_email_accepts_a_whitespace_only_file():
@@ -415,6 +438,51 @@ def test_partition_email_does_not_raise_on_multipart_attachment():
     assert elements[1].metadata.attached_to_filename == "mime-attach-multipart-signed.eml"
 
 
+def test_partition_email_skips_a_WEBP_attachment_when_image_dependencies_are_not_installed(
+    request: FixtureRequest, caplog: LogCaptureFixture, webp_attachment_email: io.BytesIO
+):
+    # -- a WEBP partitioner cached by an earlier test would bypass the dependency check --
+    _PartitionerLoader._partitioners.pop(FileType.WEBP, None)
+    function_mock(
+        request,
+        "unstructured.partition.auto.dependency_exists",
+        side_effect=lambda pkg_name: pkg_name != "unstructured_inference",
+    )
+
+    elements = partition_email(file=webp_attachment_email, process_attachments=True)
+
+    assert elements == [NarrativeText("This is an email with a WEBP attachment.")]
+    # -- the image partitioner's dependency check skipped it, so it was detected as an image --
+    assert "Skipping attachment DA-1p.webp: ImportError: partition_image()" in caplog.text
+
+
+def test_partition_email_partitions_a_WEBP_attachment_with_partition_image(
+    request: FixtureRequest, webp_attachment_email: io.BytesIO
+):
+    pytest.importorskip("unstructured_inference")
+    # -- stub out layout inference and OCR; this test covers routing and metadata --
+    function_mock(
+        request,
+        "unstructured.partition.image.partition_pdf_or_image",
+        return_value=[Title("Scanned page")],
+    )
+
+    elements = partition_email(
+        file=webp_attachment_email,
+        metadata_filename="webp-attachment.eml",
+        process_attachments=True,
+    )
+
+    assert elements == [
+        NarrativeText("This is an email with a WEBP attachment."),
+        Title("Scanned page"),
+    ]
+    attachment_element = elements[-1]
+    assert attachment_element.metadata.filetype == "image/webp"
+    assert attachment_element.metadata.filename == "DA-1p.webp"
+    assert attachment_element.metadata.attached_to_filename == "webp-attachment.eml"
+
+
 # ================================================================================================
 # ISOLATED UNIT TESTS
 # ================================================================================================
@@ -660,3 +728,18 @@ class DescribeEmailPartitionerOptions:
     @pytest.fixture()
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
         return function_mock(request, "unstructured.partition.email.get_last_modified_date")
+
+
+# ================================================================================================
+# MODULE-LEVEL FIXTURES
+# ================================================================================================
+
+
+@pytest.fixture()
+def webp_attachment_email() -> io.BytesIO:
+    """An email with a plain-text body and the example WEBP image attached."""
+    msg = EmailMessage()
+    msg.set_content("This is an email with a WEBP attachment.")
+    with open(example_doc_path("img/DA-1p.webp"), "rb") as f:
+        msg.add_attachment(f.read(), maintype="image", subtype="webp", filename="DA-1p.webp")
+    return io.BytesIO(msg.as_bytes())

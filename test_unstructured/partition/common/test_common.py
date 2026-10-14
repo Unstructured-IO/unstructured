@@ -1,3 +1,4 @@
+import logging
 import pathlib
 from multiprocessing import Pool
 
@@ -347,6 +348,40 @@ def test_convert_office_doc_captures_errors(monkeypatch, caplog):
     monkeypatch.setattr(subprocess, "run", mock_run)
     common.convert_office_doc("no-real.docx", "fake-directory", target_format="docx")
     assert "soffice failed to convert to format docx with code 1" in caplog.text
+
+
+@pytest.mark.parametrize("stream", ["stdout", "stderr"])
+def test_convert_office_doc_survives_non_utf8_soffice_output(stream, monkeypatch, caplog):
+    """A non-UTF-8 console must not abort the call, on either captured stream.
+
+    LibreOffice echoes the input path using the console encoding, which on Windows is the
+    locale codepage rather than UTF-8. A document with a multi-byte name -- `文章.doc` here,
+    echoed as CP932 -- made the strict decode raise, failing a conversion `soffice` had already
+    done. `stderr` goes through the same decode on the failure branch.
+    """
+    from unstructured.partition.common.common import subprocess
+
+    caplog.set_level(logging.INFO, logger="unstructured")
+    # -- "convert 文章.doc -> 文章.docx" as a Japanese console would emit it --
+    non_utf8 = "convert 文章.doc -> 文章.docx".encode("cp932")
+    # -- stdout must stay non-empty in the stderr case or the retry loop spins instead --
+    returncode, stdout, stderr = (
+        (0, non_utf8, b"") if stream == "stdout" else (1, b"soffice ran", non_utf8)
+    )
+
+    def mock_run(*args, **kwargs):
+        return MockRunOutput(returncode, stdout, stderr)
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
+
+    common.convert_office_doc("文章.doc", "fake-directory", target_format="docx")
+
+    # -- the ASCII part survives, the undecodable bytes are shown, and the whole record is
+    # -- still encodable by a handler using the locale codepage --
+    assert "convert" in caplog.text
+    assert ".docx" in caplog.text
+    assert r"\x95\xb6" in caplog.text
+    caplog.text.encode("ascii")
 
 
 def test_convert_office_docs_avoids_concurrent_call_to_soffice():

@@ -170,6 +170,12 @@ def test_contains_us_phone_number(text, expected):
         ("  This is a fine point!", True),
         ("* This is a fine point!", True),
         ("- This is a fine point!", True),
+        ("– This is a fine point!", True),  # EN DASH followed by a space
+        ("-", True),  # a lone dash is an empty bullet
+        ("-123.45", False),  # a minus sign, not a bullet
+        ("–10 °C", False),  # ditto, EN DASH
+        ("-item", False),  # a bullet is separated from the item it introduces
+        ("•item", True),  # unambiguous glyphs need no separator
         ("This is NOT a fine point!", False),  # No bullet point
         ("I love morse code! ● ● ● --- ● ● ●", False),  # Not at the beginning
         ("----------------------------", False),  # Too long

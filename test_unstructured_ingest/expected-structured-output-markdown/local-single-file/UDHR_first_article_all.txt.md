@@ -36,8 +36,7 @@ Asháninka Aquempetavacaajeita maaroni atiri. Timatsi aquenqueshirejeitantari ma
 Ashéninka, Pichis Maaroni atziripayeeni, ovaquera intzimapaaque, eero ocantzi iñaashitacaavaitaityaari iromperanataityaari. Eejatzi oquemitari iroñaaca te apantyaaro amanitashireteri atziri ancanteri: "Te pirjiperote eeroca, iriima irinta iriitaque ñaaperori". Eejatzi oquemitari te oncameethate intzime aparoni atziri antayetashityaarone caari ishinetaacairi pashine irantero. Tema maaroni ayotziro ampampithashirvaayeta, ayotziro tsicarica otzimayetzi cameethatatsiri anteri o tsicarica otzimi caariperotatsiri, irootaque ocovaperotantari iroñaaca entacotavacaayetya anquemitacaantanaquero arentzitavacaatyeeyaami ocaaquiini.
 Assyrian Neo-Aramaic ܟܠ ܒܪܢܫܐ ܒܪܝܠܗ ܚܐܪܐ ܘܒܪܒܪ ܓܘ ܐܝܩܪܐ ܘܙܕܩܐ. ܘܦܝܫܝܠܗ ܝܗܒܐ ܗܘܢܐ ܘܐܢܝܬ. ܒܘܕ ܕܐܗܐ ܓܫܩܬܝ ܥܠ ܐܚܪܢܐ ܓܪܓ ܗܘܝܐ ܒܚܕ ܪܘܚܐ ܕܐܚܢܘܬܐ.
 Asturian Tolos seres humanos nacen llibres y iguales en dignidá y drechos y, pola mor de la razón y la conciencia de so, han comportase hermaniblemente los unos colos otros.
-# Awa
-# Cuaiquer
+# Awa-Cuaiquer
 Aymara, Central Taqpach jaqejh khuskat uñjatatäpjhewa munañapansa, lurañapansa, amuyasiñapansa, ukatwa jilani sullkanípjhaspas ukham uñjasipjhañapawa.
 Azerbaijani, North (Cyrillic) Бүтүн инсанлар  ләјагәт вә һүгугларына ҝөрә азад вә бәрабәр доғулурлар. Онларын шүурлары вә виҹданлары вар вә бир-бирләринә мүнасибәтдә гардашлыг руһунда давранмалыдырлар.
 Azerbaijani, North (Latin) Bütün insanlar ləyaqət və hüquqlarına görə azad və bərabər doğulurlar. Onların şüurları və vicdanları var və bir-birlərinə münasibətdə qardaşlıq ruhunda davranmalıdırlar.
