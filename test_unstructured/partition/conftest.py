@@ -12,8 +12,9 @@ def isolated_global_working_dir(monkeypatch: pytest.MonkeyPatch, tmp_path: Path)
     """Point `GLOBAL_WORKING_DIR` at a directory private to the requesting test.
 
     Any test that exercises `GLOBAL_WORKING_DIR_ENABLED` needs this. The default working dir is
-    keyed on `os.getpgid(0)` (see `get_tempdir()`), a process *group*, so every pytest-xdist worker
-    resolves the same path; and enabling the feature assigns the process-global `tempfile.tempdir`
+    keyed on `os.getpgid(0)` on POSIX (see `get_tempdir()`), a process *group*, so every
+    pytest-xdist worker resolves the same path (Windows falls back to `os.getpid()`); and enabling
+    the feature assigns the process-global `tempfile.tempdir`
     as a side effect of reading `GLOBAL_WORKING_PROCESS_DIR`. Exercising the feature against the
     default therefore writes into a directory the whole run shares, and leaves this worker putting
     every later temp file there. Redirecting the working dir keeps that shared path untouched, and

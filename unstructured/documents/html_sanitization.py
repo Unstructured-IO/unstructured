@@ -82,6 +82,7 @@ ALLOWED_TAGS: frozenset[str] = frozenset(
         "table",
         "thead",
         "tbody",
+        "tfoot",
         "tr",
         "td",
         "th",
