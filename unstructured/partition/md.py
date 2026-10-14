@@ -41,7 +41,7 @@ def _validate_markdown_extensions(extensions: Any) -> list[Any]:
         if not isinstance(item, (str, Extension)):
             raise ValueError(
                 "Each entry in 'extensions' must be a str or markdown.extensions.Extension "
-                f"instance, got {type(item).__name__}: {item!r}"
+                f"instance, got {type(extensions).__name__!r}"
             )
     return extensions
 
@@ -55,6 +55,7 @@ def partition_md(
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
     languages: Optional[list[str]] = None,
+    *,
     encoding: str | None = None,
     **kwargs: Any,
 ) -> list[Element]:
@@ -69,15 +70,16 @@ def partition_md(
     text
         The string representation of the markdown document.
     url
-        The URL of a webpage to parse. Only for URLs that return a markdown document.
+        A URL of a webpage to parse. Only for URLs that return a markdown document.
     metadata_last_modified
         The last modified date for the document.
     languages
         The languages present in the document. Use ``["auto"]`` to detect (default when None).
         Use ``[""]`` to disable language detection.
     encoding
-        The encoding method used to decode the input bytes when drawn from `filename` or `file`.
-        Defaults to detecting the encoding when not specified.
+        The source encoding for filename, file, or URL bytes. When None, local files use
+        best-effort detection and URLs use the HTTP response's encoding. An explicit
+        encoding is decoded strictly and is never replaced by an automatic guess.
 
     Other keyword arguments are forwarded to ``partition_html``. In addition, ``extensions`` may be
     passed to ``markdown.markdown()`` as a list of registered extension names (``str``) and/or
@@ -110,7 +112,7 @@ def partition_md(
                 f"Expected content type text/markdown. Got {content_type}.",
             )
 
-        text = response.text
+        text = response.content.decode(encoding) if encoding else response.text
 
     # -- optional markdown extensions; default matches historical partition_md behavior --
     extensions = _validate_markdown_extensions(
