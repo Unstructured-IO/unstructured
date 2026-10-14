@@ -275,11 +275,3 @@ omit = [
 
 [tool.coverage.report]
 fail_under = 90
-
-[tool.codeflash]
-module-root = "unstructured"
-tests-root = "test_unstructured"
-test-framework = "pytest"
-ignore-paths = []
-formatter-cmds = ["ruff check --exit-zero --fix-only $file", "ruff format $file"]
-benchmarks-root = "test_unstructured/benchmarks"
