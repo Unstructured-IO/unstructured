@@ -73,9 +73,18 @@ def validate_encoding(encoding: str) -> bool:
     return False
 
 
+def _decode(byte_data: bytes, encoding: str, final: bool) -> str:
+    """Decode strictly. With `final=False`, an incomplete trailing sequence is not an error."""
+    if final:
+        return byte_data.decode(encoding)
+    return codecs.getincrementaldecoder(encoding)().decode(byte_data, final=False)
+
+
 def detect_file_encoding(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
+    *,
+    final: bool = True,
 ) -> Tuple[str, str]:
     """Decode bytes using a Unicode BOM, strict UTF-8, or best-effort character-set detection.
 
@@ -83,6 +92,10 @@ def detect_file_encoding(
     Emit EncodingDetectionWarning for statistical legacy/BOM-less UTF-16/32
     detection, so applications can either retain best-effort behavior or reject it.
     UTF-8/ASCII is the default text convention, not a proof of the source encoding.
+
+    Pass `final=False` when the bytes are only a prefix of a longer document. A multi-byte
+    sequence cut off at the end of the prefix is then left out instead of failing the decode.
+    Every other undecodable byte still fails.
     """
     if filename:
         with open(filename, "rb") as f:
@@ -108,12 +121,14 @@ def detect_file_encoding(
         None,
     )
     encoding = bom_encoding
-    if encoding is None and not byte_data.isascii():
+    # -- Pure ASCII keeps its detected `ascii` label. NUL is excluded because BOM-less UTF-16/32
+    # -- pads ASCII characters with NUL bytes, which UTF-8 also accepts.
+    if encoding is None and not byte_data.isascii() and b"\x00" not in byte_data:
         # Valid UTF-8 is structurally unlikely by accident, while permissive single-byte
         # codecs accept anything. Detectors can still prefer one at full confidence when
         # the only non-ASCII bytes are a single character such as U+200B or U+00AD.
         try:
-            byte_data.decode("utf-8")
+            _decode(byte_data, "utf-8", final)
             encoding = "utf-8"
         except UnicodeDecodeError:
             pass
@@ -137,7 +152,7 @@ def detect_file_encoding(
 
     # Do not expose a UnicodeError's input payload in the public exception.
     try:
-        file_text = byte_data.decode(encoding)
+        file_text = _decode(byte_data, encoding, final)
         canonical_encoding = codecs.lookup(encoding).name
     except (UnicodeError, LookupError):
         raise UnprocessableEntityError(

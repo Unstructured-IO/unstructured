@@ -150,6 +150,55 @@ def test_valid_utf8_is_not_overridden_by_a_confident_detector(char, via, tmp_pat
     assert (encoding, actual) == ("utf-8", text)
 
 
+BOM_LESS_UTF16_32 = ["utf-16-le", "utf-16-be", "utf-32-le", "utf-32-be"]
+# -- NUL-padded ASCII is valid UTF-8; U+8ACB in UTF-16LE is `CB 8A`, valid UTF-8 for U+02CA --
+NUL_PADDED_TEXTS = ["Meeting notes: 請\n", "hello world"]
+
+
+@pytest.mark.parametrize("text", NUL_PADDED_TEXTS)
+@pytest.mark.parametrize("encoding", BOM_LESS_UTF16_32)
+@pytest.mark.parametrize("via", ["filename", "bytes", "stream"])
+def test_bom_less_utf16_and_utf32_are_not_claimed_by_the_utf8_check(text, encoding, via, tmp_path):
+    with (
+        patch.object(subject, "detect", return_value={"encoding": encoding, "confidence": 1.0}),
+        pytest.warns(UserWarning, match="encoding was inferred"),
+    ):
+        _, actual = subject.detect_file_encoding(
+            **source_kwargs(text.encode(encoding), via, tmp_path)
+        )
+    assert actual == text
+
+
+@pytest.mark.parametrize("text", NUL_PADDED_TEXTS)
+@pytest.mark.parametrize("encoding", BOM_LESS_UTF16_32)
+def test_callers_can_reject_bom_less_utf16_and_utf32(text, encoding):
+    with (
+        patch.object(subject, "detect", return_value={"encoding": encoding, "confidence": 1.0}),
+        warnings.catch_warnings(),
+    ):
+        warnings.simplefilter("error", subject.EncodingDetectionWarning)
+        with pytest.raises(subject.EncodingDetectionWarning):
+            subject.detect_file_encoding(file=text.encode(encoding))
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        codecs.BOM_UTF16_LE + "aaa\U0001f600".encode("utf-16-le"),
+        codecs.BOM_UTF16_BE + "aaa\U0001f600".encode("utf-16-be"),
+        codecs.BOM_UTF8 + "aaa\U0001f600".encode("utf-8"),
+        "aaa\U0001f600".encode("utf-8"),
+    ],
+)
+def test_a_prefix_may_end_inside_a_multibyte_sequence(payload):
+    assert subject.detect_file_encoding(file=payload[:-1], final=False)[1] == "aaa"
+
+
+def test_a_prefix_still_rejects_an_invalid_byte_before_its_end():
+    with pytest.raises(UnprocessableEntityError, match="decode failed"):
+        subject.detect_file_encoding(file=codecs.BOM_UTF8 + b"a\xffa", final=False)
+
+
 def test_invalid_detected_codec_has_a_lightweight_error():
     with patch.object(
         subject, "detect", return_value={"encoding": "not-a-codec", "confidence": 1.0}
