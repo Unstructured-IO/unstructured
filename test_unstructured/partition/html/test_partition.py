@@ -453,6 +453,34 @@ def test_it_does_not_emit_a_Table_element_for_a_table_with_no_text():
     assert partition_html(text=html_text) == []
 
 
+def test_it_keeps_the_table_caption_in_the_text_and_html():
+    html_text = (
+        "<table>\n"
+        '  <caption class="title">Quarterly <b>revenue</b> &amp; growth</caption>\n'
+        "  <tr><th>Region</th><th>Q1</th></tr>\n"
+        "  <tr><td>EMEA</td><td>4.2</td></tr>\n"
+        "</table>"
+    )
+
+    (element,) = partition_html(text=html_text)
+
+    assert isinstance(element, Table)
+    assert element.text == "Quarterly revenue & growth Region Q1 EMEA 4.2"
+    assert element.metadata.text_as_html == (
+        "<table>"
+        "<caption>Quarterly revenue &amp; growth</caption>"
+        "<tr><th>Region</th><th>Q1</th></tr>"
+        "<tr><td>EMEA</td><td>4.2</td></tr>"
+        "</table>"
+    )
+
+
+def test_it_does_not_emit_a_Table_element_for_a_table_with_only_a_caption():
+    html_text = "<table><caption>Empty results</caption><tr><td> </td></tr></table>"
+
+    assert partition_html(text=html_text) == []
+
+
 def test_it_provides_parseable_HTML_in_text_as_html():
     html_text = (
         "<html>\n"

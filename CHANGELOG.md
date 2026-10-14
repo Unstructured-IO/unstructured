@@ -1,4 +1,4 @@
-## 0.27.28-dev1
+## 0.27.28-dev2
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Fixes
 
 - **Keep the text inside HTML elements the parser does not recognize.** Since 0.15.0, `partition_html()` (and the `.md`, `.eml`, `.msg`, `.epub`, `.rst` and `.org` partitioners that route through it) kept only the text *after* an element with no registered element class and dropped its content: `<font>` text in email bodies, custom elements, and the Inline XBRL facts and notes of SEC filings (`example-10k.html` lost about a third of its text, including Notes 1-14). An unrecognized element is now transparent, like a `<span>`: its text joins the surrounding paragraph and any block items it contains become their own elements. Elements whose content is not rendered as text (`<head>`, `<title>`, `<svg>`, `<iframe>`, `<object>`, `<audio>`, `<video>`, `<canvas>`, `<noembed>`, `<noframes>`, `<select>`, `<datalist>`, `<textarea>`, `<dialog>`, and legacy `<xml>` data islands) and the hidden Inline XBRL `<ix:header>` are still skipped. Resolves #4496 and #3842.
+
+- **Keep HTML table captions (#4552).** `partition_html()` dropped the `<caption>` of a `<table>`, so the table's title was missing from the `Table` element. The caption text now starts the element's `text` and appears as a `<caption>` in `metadata.text_as_html`, sanitized like table cells. A table with a caption but no cell text still produces no element.
 
 ## 0.27.27
 

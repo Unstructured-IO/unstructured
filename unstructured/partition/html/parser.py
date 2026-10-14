@@ -573,7 +573,22 @@ class TableBlock(Flow):
         # -- a cell within a table within a cell too.)
 
         html_parts = ["<table>"]
+        caption_texts: list[str] = []
         row_texts: list[str] = []
+
+        def sanitized_text_and_html(node: etree._Element) -> tuple[str, str]:
+            """Text of a cell or caption, and the bare tag wrapping that escaped text."""
+            # -- a cell can contain other elements like spans etc. so we can't count on the
+            # -- text being directly below the cell. `.itertext()` gets all of it recursively.
+            # -- Filter out whitespace text nodes resulting from HTML formatting.
+            stripped_text_nodes = (t.strip() for t in node.itertext())
+            text = " ".join(t for t in stripped_text_nodes if t)
+
+            # -- Reconstruct only the recognized tag and escaped text. Source attributes and
+            # -- nested markup are intentionally excluded from this sanitized representation.
+            escaped_text = html.escape(text)
+            body = " ".join("<br/>".join(escaped_text.split("\n")).split())
+            return text, f"<{node.tag}>{body}</{node.tag}>" if body else f"<{node.tag}/>"
 
         def append_row(tr: etree._Element) -> None:
             """Append the text and sanitized HTML for one recognized table row."""
@@ -584,21 +599,9 @@ class TableBlock(Flow):
                 if cell.tag not in ("th", "td"):
                     continue
 
-                # -- a cell can contain other elements like spans etc. so we can't count on the
-                # -- text being directly below the cell. `.itertext()` gets all of it recursively.
-                # -- Filter out whitespace text nodes resulting from HTML formatting.
-                stripped_text_nodes = (t.strip() for t in cell.itertext())
-                cell_text = " ".join(t for t in stripped_text_nodes if t)
+                cell_text, cell_html = sanitized_text_and_html(cell)
                 cell_texts.append(cell_text)
-
-                # -- Reconstruct only the recognized cell tag and escaped text. Source attributes
-                # -- and nested markup are intentionally excluded from this sanitized
-                # -- representation.
-                escaped_text = html.escape(cell_text)
-                cell_body = " ".join("<br/>".join(escaped_text.split("\n")).split())
-                cell_htmls.append(
-                    f"<{cell.tag}>{cell_body}</{cell.tag}>" if cell_body else f"<{cell.tag}/>"
-                )
+                cell_htmls.append(cell_html)
 
             # -- Retain an entry for empty rows to preserve the existing plain-text join behavior.
             row_texts.append(" ".join(t for t in cell_texts if t))
@@ -606,7 +609,12 @@ class TableBlock(Flow):
                 html_parts.extend(("<tr>", "".join(cell_htmls), "</tr>"))
 
         for child in self:
-            if child.tag == "tr":
+            if child.tag == "caption":
+                caption_text, caption_html = sanitized_text_and_html(child)
+                if caption_text:
+                    caption_texts.append(caption_text)
+                    html_parts.append(caption_html)
+            elif child.tag == "tr":
                 append_row(child)
             elif child.tag in ("thead", "tbody", "tfoot"):
                 html_parts.append(f"<{child.tag}>")
@@ -615,10 +623,11 @@ class TableBlock(Flow):
                         append_row(tr)
                 html_parts.append(f"</{child.tag}>")
 
-        table_text = " ".join(row_texts).strip()
-
-        if table_text == "":
+        # -- a caption alone does not make a table worth emitting --
+        if " ".join(row_texts).strip() == "":
             return
+
+        table_text = " ".join(caption_texts + row_texts).strip()
 
         html_parts.append("</table>")
         yield Table(
