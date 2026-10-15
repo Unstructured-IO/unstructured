@@ -21,6 +21,22 @@ if TYPE_CHECKING:
 SpannedCell: TypeAlias = "tuple[str, int, int]"
 
 
+def normalize_html_cell_text(cell: HtmlElement) -> str:
+    """Return normalized cell text, treating a ``<br>`` as a word boundary.
+
+    ``lxml.text_content()`` does not consistently insert whitespace for a line break; whether a
+    space survives can depend on incidental source whitespace around the tag. Normalize that
+    semantic boundary explicitly so compactified and source-preserving table HTML agree.
+    """
+    if next(cell.iterdescendants("br"), None) is None:
+        return " ".join(cell.text_content().split())
+
+    normalized_cell = copy.deepcopy(cell)
+    for br in normalized_cell.xpath(".//br"):
+        br.tail = f" {br.tail or ''}"
+    return " ".join(normalized_cell.text_content().split())
+
+
 def _format_td(cell_text: str, colspan: int = 1, rowspan: int = 1) -> str:
     """Format a single `<td>` element, escaping and normalizing `cell_text`.
 
@@ -166,11 +182,20 @@ class HtmlTable:
         # -- compactification strips those details --
         rows = cast("list[HtmlElement]", table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
         source_row_htmls = tuple(etree.tostring(tr, encoding=str) for tr in rows)
-        header_row_idxs = {
-            idx
-            for idx, tr in enumerate(rows)
-            if tr.getparent().tag == "thead" or bool(tr.xpath("./th"))
-        }
+        header_row_idxs = set()
+        for idx, tr in enumerate(rows):
+            cells = cast("list[HtmlElement]", tr.xpath("./th | ./td"))
+            first_th_idx = next((i for i, cell in enumerate(cells) if cell.tag == "th"), None)
+            has_blank_corner = first_th_idx is not None and all(
+                cell.tag == "td" and not cell.text_content().strip()
+                for cell in cells[:first_th_idx]
+            )
+            has_only_th_after_corner = first_th_idx is not None and all(
+                cell.tag == "th" or (cell.tag == "td" and not cell.text_content().strip())
+                for cell in cells[first_th_idx:]
+            )
+            if tr.getparent().tag == "thead" or (has_blank_corner and has_only_th_after_corner):
+                header_row_idxs.add(idx)
         # -- row-group identity is each row's parent element (a `<thead>`/`<tbody>`/`<tfoot>`, or
         # -- the `<table>` itself); captured now since it survives `.drop_tag()` below --
         row_group_keys = tuple(tr.getparent() for tr in rows)
@@ -279,7 +304,7 @@ class HtmlRow:
 
     @property
     def is_header(self) -> bool:
-        """True when this row originated from `<thead>` or contains `<th>` cells."""
+        """True for a `<thead>` row or an all-`<th>` row after optional blank corner cells."""
         return self._is_header
 
     @property
@@ -302,7 +327,7 @@ class HtmlRow:
         A cell that is empty or contains only whitespace does not generate a string.
         """
         for td in self._tr:
-            text = " ".join(td.text_content().split())
+            text = normalize_html_cell_text(td)
             if not text:
                 continue
             yield text
@@ -377,15 +402,14 @@ class HtmlCell:
     @cached_property
     def text(self) -> str:
         """Text inside `<td>` element, empty string when no text."""
-        return " ".join(self._td.text_content().split())
+        return normalize_html_cell_text(self._td)
 
     @cached_property
     def rowspan(self) -> int | None:
         """Declared `rowspan` for this cell, `1` when absent or unparseable.
 
         `None` for `rowspan="0"`, HTML's spelling for "spans every remaining row in the
-        containing row group." This model doesn't track `<thead>`/`<tbody>`/`<tfoot>`
-        boundaries (see `HtmlTable`), so that resolves to the end of the table.
+        containing row group." Callers use `HtmlRow.row_group_key` to resolve that boundary.
         """
         try:
             value = int(self._td.attrib.get("rowspan", 1))

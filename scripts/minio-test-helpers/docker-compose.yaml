@@ -1,13 +1,10 @@
 services:
   minio:
-    image: quay.io/minio/minio
+    # The former Quay image no longer permits anonymous CI pulls. Pin the
+    # source-built replacement so test runs cannot pick up a moving image.
+    image: ghcr.io/coollabsio/minio@sha256:69b55a1c1c5dc285ce04db96689f5b2102317fc77a50680a1874ca6efd1c87f9
     container_name: minio-test
     ports:
       - 9000:9000
       - 9001:9001
     command: server --console-address ":9001" /data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 5s
-      timeout: 20s
-      retries: 3

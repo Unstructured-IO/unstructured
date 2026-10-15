@@ -705,8 +705,9 @@ class _FileTypeDetectionContext:
                     # file-path branch. Decoding with errors="ignore" silently
                     # stripped undecodable characters and corrupted the text
                     # head for non-UTF-8 streams (S3/GCS objects, API uploads)
-                    # — issue #4434.
-                    _, file_text = detect_file_encoding(file=content)
+                    # — issue #4434. `final=eof_reached` for the same reason as above,
+                    # e.g. a UTF-16 surrogate pair split at the boundary.
+                    _, file_text = detect_file_encoding(file=content, final=eof_reached)
                     return file_text[:4096]
 
         file_path = self.file_path
