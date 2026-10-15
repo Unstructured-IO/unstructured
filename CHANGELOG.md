@@ -1,6 +1,8 @@
-## 0.27.27-dev4
+## 0.27.27
 
 ### Fixes
+
+- **Add basic MathML support.** `<math>` elements now extract a textual representation from alttext or supported TeX/LaTeX `<annotation>` values, including case-insensitive annotation encodings. Inline math remains part of surrounding text, while display="block" math is emitted as a separate element boundary. KaTeX's paired MathML/HTML output is also handled without duplicating the same expression.
 
 - **`partition_email()` no longer crashes on a `multipart/*` attachment**: a multipart sub-part surfaced as an "attachment" (e.g. a PGP/MIME-signed forwarded message) previously raised an uncaught `KeyError` from `email.contentmanager`, which has no `get_content()` handler for any `multipart/*` content-type. `_AttachmentPartitioner._file_bytes` now falls back to the part's raw serialized bytes for this case instead.
 - **`partition_email()` no longer drops a `multipart/*` attachment's own body**: serializing such an attachment verbatim left its own `Content-Disposition: attachment` header intact, so re-parsing it as the root of a new message made `EmailMessage.get_body()` skip it entirely instead of finding its body part. The attachment's raw bytes are now serialized from a copy with that header stripped.
