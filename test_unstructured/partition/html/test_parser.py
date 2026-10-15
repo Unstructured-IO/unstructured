@@ -23,6 +23,7 @@ from unstructured.partition.html.parser import (
     Annotation,
     DefaultElement,
     Flow,
+    Math,
     Phrasing,
     RemovedPhrasing,
     TextSegment,
@@ -1525,6 +1526,24 @@ class DescribeLineBreak:
         assert _normalize_text("".join(texts)) == "spaceships of the Vogon Constructor Fleet"
 
 
+class DescribeMath:
+    """Isolated unit-test suite for `unstructured.partition.html.parser.Math`.
+
+    Used for `<math>` elements. Its text extraction is covered by the MathML tests in
+    `test_partition.py`.
+    """
+
+    @pytest.mark.parametrize("wrapper", ["{}", "<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+    def it_skips_mathml_that_has_no_text_representation_but_not_its_tail(self, wrapper: str):
+        html = "<div>Before {} after.</div>".format(
+            wrapper.format("<math><mi>x</mi><mo>=</mo><mn>2</mn></math>")
+        )
+        div = etree.fromstring(html, html_parser).xpath(".//div")[0]
+
+        assert isinstance(div.xpath(".//math")[0], Math)
+        assert [e.text for e in div.iter_elements()] == ["Before after."]
+
+
 class DescribeRemovedPhrasing:
     """Isolated unit-test suite for `unstructured.partition.html.parser.RemovedPhrasing`.
 
@@ -1558,7 +1577,6 @@ class DescribeRemovedPhrasing:
             "<iframe src='a.html'>Your browser does not support iframes.</iframe>",
             "<ix:header><ix:hidden><ix:nonNumeric name='dei:AmendmentFlag'>false</ix:nonNumeric>"
             "</ix:hidden></ix:header>",
-            "<math><mi>x</mi><mo>=</mo><mn>2</mn></math>",
             "<noembed>Your browser does not support plugins.</noembed>",
             "<noframes>Your browser does not support frames.</noframes>",
             "<object data='a.pdf'><p>Download the PDF instead.</p></object>",

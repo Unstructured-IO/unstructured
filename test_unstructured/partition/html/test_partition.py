@@ -831,6 +831,68 @@ def test_partition_html_keeps_inline_xbrl_facts_but_not_the_hidden_xbrl_header()
     assert isinstance(elements[3], Table)
 
 
+@pytest.mark.parametrize("wrapper", ["<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+def test_partition_html_keeps_each_formula_once_inside_an_unrecognized_element(wrapper: str):
+    html = "<div>{}</div>".format(
+        wrapper.format(
+            "The error rate is"
+            " <math><semantics><mrow><mn>10</mn></mrow>"
+            '<annotation encoding="application/x-tex">10^{-4}</annotation></semantics></math>'
+            " and the loss is"
+            ' <span class="katex">'
+            '<span class="katex-mathml"><math alttext="x^2"><semantics>'
+            "<msup><mi>x</mi><mn>2</mn></msup>"
+            '<annotation encoding="application/x-tex">x^2</annotation>'
+            "</semantics></math></span>"
+            '<span class="katex-html" aria-hidden="true">'
+            '<span class="base"><span>x</span><span>2</span></span>'
+            "</span></span>"
+            " per token."
+        )
+    )
+
+    elements = partition_html(text=html)
+
+    assert [e.text for e in elements] == [
+        "The error rate is 10^{-4} and the loss is x^2 per token."
+    ]
+
+
+@pytest.mark.parametrize("wrapper", ["<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+def test_partition_html_keeps_katex_html_of_unusable_mathml_inside_an_unrecognized_element(
+    wrapper: str,
+):
+    html = "<div>{}</div>".format(
+        wrapper.format(
+            "Before"
+            ' <span class="katex">'
+            '<span class="katex-mathml"><math><semantics><mi>x</mi></semantics></math></span>'
+            '<span class="katex-html" aria-hidden="true">'
+            '<span class="base"><span>x</span><span>2</span></span>'
+            "</span></span>"
+            " After"
+        )
+    )
+
+    elements = partition_html(text=html)
+
+    assert [e.text for e in elements] == ["Before x2 After"]
+
+
+@pytest.mark.parametrize("wrapper", ["<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+def test_partition_html_keeps_display_math_boundaries_inside_an_unrecognized_element(
+    wrapper: str,
+):
+    html = '<div data-page-number="7">{}</div>'.format(
+        wrapper.format('Before<math display="block" alttext="x=1"></math>After')
+    )
+
+    elements = partition_html(text=html)
+
+    assert [e.text for e in elements] == ["Before", "x=1", "After"]
+    assert [e.metadata.page_number for e in elements] == [7, 7, 7]
+
+
 # -- parsing edge cases --------------------------------------------------------------------------
 
 

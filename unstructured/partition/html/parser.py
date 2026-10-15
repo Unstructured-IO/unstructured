@@ -1206,7 +1206,6 @@ element_class_lookup.get_namespace(None).update(
         # -- this matches the conventional `ix` prefix only, not another prefix bound to the same
         # -- Inline XBRL namespace.
         "ix:header": RemovedPhrasing,
-        "math": RemovedPhrasing,  # -- MathML; no plain-text representation yet --
         "noembed": RemovedPhrasing,  # -- obsolete; fallback content for `<embed>` --
         "noframes": RemovedPhrasing,  # -- obsolete; fallback content for frames --
         "object": RemovedPhrasing,  # -- content is fallback for when the object can't be shown --
