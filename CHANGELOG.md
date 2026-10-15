@@ -1,6 +1,9 @@
-## 0.27.27-dev3
+## 0.27.27-dev4
 
 ### Fixes
+
+- **`partition_email()` no longer crashes on a `multipart/*` attachment**: a multipart sub-part surfaced as an "attachment" (e.g. a PGP/MIME-signed forwarded message) previously raised an uncaught `KeyError` from `email.contentmanager`, which has no `get_content()` handler for any `multipart/*` content-type. `_AttachmentPartitioner._file_bytes` now falls back to the part's raw serialized bytes for this case instead.
+- **`partition_email()` no longer drops a `multipart/*` attachment's own body**: serializing such an attachment verbatim left its own `Content-Disposition: attachment` header intact, so re-parsing it as the root of a new message made `EmailMessage.get_body()` skip it entirely instead of finding its body part. The attachment's raw bytes are now serialized from a copy with that header stripped.
 
 - **Make uncertain text decoding observable (#4466).** Automatic legacy and BOM-less UTF-16/32 detection now emits `EncodingDetectionWarning`, which callers can promote to an exception with Python warning filters. Unicode BOMs, then strict UTF-8 validity, are honored before statistical detection, so valid UTF-8 whose only non-ASCII content is an invisible character such as U+200B is no longer decoded as `mac_iceland` or `cp850`. Input containing NUL bytes skips the UTF-8 check, because BOM-less UTF-16/32 is often also valid UTF-8. File-type detection's 4,096-byte stream prefix tolerates a multi-byte sequence split at its end, including a UTF-16 surrogate pair after a BOM; UTF-8/ASCII remains the default convention. Inconclusive detection ranks unrestricted candidates instead of accepting the first decodable codec (usually Latin-1), and raises when no text candidate survives. Correctly detected codecs outside `COMMON_ENCODINGS` remain supported. `partition_md(encoding=...)` now strictly decodes local and URL bytes using the supplied encoding. Automatic detection remains heuristic; this change does not guarantee recovery of the original text without a known encoding.
 
