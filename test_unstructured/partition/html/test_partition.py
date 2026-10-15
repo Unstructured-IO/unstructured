@@ -773,6 +773,126 @@ def test_partition_html_tag_tail_parsing():
     assert elements == [Text("Head"), Text("Nested"), Text("Tail")]
 
 
+def test_partition_html_keeps_the_text_of_font_elements():
+    """`<font>` is not a registered element but is still common, in email bodies especially."""
+    html_text = (
+        "<div>\n"
+        '  <p><font face="Arial"><b>From:</b> Maria Lopez</font> (Procurement)</p>\n'
+        '  <font size="2">\n'
+        "    <p>The vendor confirmed the delivery date.</p>\n"
+        "    <p>Please sign the revised purchase order by Friday.</p>\n"
+        "  </font>\n"
+        "</div>\n"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [e.text for e in elements] == [
+        "From: Maria Lopez (Procurement)",
+        "The vendor confirmed the delivery date.",
+        "Please sign the revised purchase order by Friday.",
+    ]
+    assert elements[0].metadata.emphasized_text_contents == ["From:"]
+
+
+def test_partition_html_keeps_inline_xbrl_facts_but_not_the_hidden_xbrl_header():
+    """SEC filings are Inline XBRL; a fact can wrap a number or a whole note, tables included."""
+    html_text = (
+        "<body>\n"
+        '<div style="display:none">\n'
+        "  <ix:header>\n"
+        "    <ix:hidden>\n"
+        '      <ix:nonNumeric name="dei:AmendmentFlag" contextRef="c-1">false</ix:nonNumeric>\n'
+        "    </ix:hidden>\n"
+        "    <ix:resources>\n"
+        '      <xbrli:context id="c-1"><xbrli:entity><xbrli:identifier scheme="http://www.sec.gov/'
+        'CIK">0000013156</xbrli:identifier></xbrli:entity></xbrli:context>\n'
+        "    </ix:resources>\n"
+        "  </ix:header>\n"
+        "</div>\n"
+        '<p>Revenue was $<ix:nonFraction name="us-gaap:Revenues" contextRef="c-1" unitRef="usd"'
+        ' decimals="0">19,984,378</ix:nonFraction> for the year.</p>\n'
+        '<ix:nonNumeric name="us-gaap:InventoryDisclosureTextBlock" contextRef="c-1">\n'
+        "  <p>NOTE 4. INVENTORY</p>\n"
+        "  <p>Inventory consisted of the following as of December 31, 2021:</p>\n"
+        "  <table><tr><td>Finished goods</td><td>$ 356,928</td></tr></table>\n"
+        "</ix:nonNumeric>\n"
+        "</body>\n"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [e.text for e in elements] == [
+        "Revenue was $19,984,378 for the year.",
+        "NOTE 4. INVENTORY",
+        "Inventory consisted of the following as of December 31, 2021:",
+        "Finished goods $ 356,928",
+    ]
+    assert isinstance(elements[3], Table)
+
+
+@pytest.mark.parametrize("wrapper", ["<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+def test_partition_html_keeps_each_formula_once_inside_an_unrecognized_element(wrapper: str):
+    html = "<div>{}</div>".format(
+        wrapper.format(
+            "The error rate is"
+            " <math><semantics><mrow><mn>10</mn></mrow>"
+            '<annotation encoding="application/x-tex">10^{-4}</annotation></semantics></math>'
+            " and the loss is"
+            ' <span class="katex">'
+            '<span class="katex-mathml"><math alttext="x^2"><semantics>'
+            "<msup><mi>x</mi><mn>2</mn></msup>"
+            '<annotation encoding="application/x-tex">x^2</annotation>'
+            "</semantics></math></span>"
+            '<span class="katex-html" aria-hidden="true">'
+            '<span class="base"><span>x</span><span>2</span></span>'
+            "</span></span>"
+            " per token."
+        )
+    )
+
+    elements = partition_html(text=html)
+
+    assert [e.text for e in elements] == [
+        "The error rate is 10^{-4} and the loss is x^2 per token."
+    ]
+
+
+@pytest.mark.parametrize("wrapper", ["<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+def test_partition_html_keeps_katex_html_of_unusable_mathml_inside_an_unrecognized_element(
+    wrapper: str,
+):
+    html = "<div>{}</div>".format(
+        wrapper.format(
+            "Before"
+            ' <span class="katex">'
+            '<span class="katex-mathml"><math><semantics><mi>x</mi></semantics></math></span>'
+            '<span class="katex-html" aria-hidden="true">'
+            '<span class="base"><span>x</span><span>2</span></span>'
+            "</span></span>"
+            " After"
+        )
+    )
+
+    elements = partition_html(text=html)
+
+    assert [e.text for e in elements] == ["Before x2 After"]
+
+
+@pytest.mark.parametrize("wrapper", ["<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+def test_partition_html_keeps_display_math_boundaries_inside_an_unrecognized_element(
+    wrapper: str,
+):
+    html = '<div data-page-number="7">{}</div>'.format(
+        wrapper.format('Before<math display="block" alttext="x=1"></math>After')
+    )
+
+    elements = partition_html(text=html)
+
+    assert [e.text for e in elements] == ["Before", "x=1", "After"]
+    assert [e.metadata.page_number for e in elements] == [7, 7, 7]
+
+
 # -- parsing edge cases --------------------------------------------------------------------------
 
 
