@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import codecs
 import io
 import json
 import os
@@ -20,6 +21,7 @@ from test_unstructured.unit_utils import (
     patch,
     property_mock,
 )
+from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.filetype import (
     _FileTypeDetectionContext,
     _OleFileDetector,
@@ -1176,6 +1178,36 @@ class Describe_FileTypeDetectionContext:
         text_head = ctx.text_head
 
         assert text_head == "a" * 4095
+
+    @pytest.mark.parametrize(
+        ("bom", "encoding"),
+        [(codecs.BOM_UTF16_LE, "utf-16-le"), (codecs.BOM_UTF16_BE, "utf-16-be")],
+    )
+    def and_it_does_not_mistake_a_boundary_split_surrogate_pair_for_a_decode_error(
+        self, bom: bytes, encoding: str
+    ):
+        """After a UTF-16 BOM, a surrogate pair split by the 4096-byte read is not an error."""
+        # -- BOM + 2046 two-byte chars leaves the emoji's high surrogate as the last 2 bytes --
+        file = io.BytesIO(bom + ("a" * 2046 + "\U0001f600\n").encode(encoding))
+        ctx = _FileTypeDetectionContext(file=file)
+
+        text_head = ctx.text_head
+
+        assert text_head == "a" * 2046
+        assert file.tell() == 0
+
+    @pytest.mark.parametrize(
+        ("bom", "encoding"),
+        [(codecs.BOM_UTF16_LE, "utf-16-le"), (codecs.BOM_UTF16_BE, "utf-16-be")],
+    )
+    def but_it_rejects_a_utf16_stream_that_ends_inside_a_surrogate_pair(
+        self, bom: bytes, encoding: str
+    ):
+        file = io.BytesIO(bom + ("a" * 10 + "\U0001f600").encode(encoding)[:-2])
+        ctx = _FileTypeDetectionContext(file=file)
+
+        with pytest.raises(UnprocessableEntityError, match="decode failed"):
+            ctx.text_head
 
     def and_it_grabs_the_first_4k_chars_from_text_file_for_textual_type_differentiation(self):
         """Not a documented behavior to accept IO[str], but support is implemented."""

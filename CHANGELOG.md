@@ -1,8 +1,19 @@
-## 0.27.27-dev3
+## 0.27.28-dev0
 
 ### Fixes
 
 - **Keep the text inside HTML elements the parser does not recognize.** Since 0.15.0, `partition_html()` (and the `.md`, `.eml`, `.msg`, `.epub`, `.rst` and `.org` partitioners that route through it) kept only the text *after* an element with no registered element class and dropped its content: `<font>` text in email bodies, custom elements, and the Inline XBRL facts and notes of SEC filings (`example-10k.html` lost about a third of its text, including Notes 1-14). An unrecognized element is now transparent, like a `<span>`: its text joins the surrounding paragraph and any block items it contains become their own elements. Elements whose content is not rendered as text (`<head>`, `<title>`, `<svg>`, `<math>`, `<iframe>`, `<object>`, `<audio>`, `<video>`, `<canvas>`, `<noembed>`, `<noframes>`, `<select>`, `<datalist>`, `<textarea>`, `<dialog>`, and legacy `<xml>` data islands) and the hidden Inline XBRL `<ix:header>` are still skipped. Resolves #4496 and #3842.
+
+## 0.27.27
+
+### Fixes
+
+- **Add basic MathML support.** `<math>` elements now extract a textual representation from alttext or supported TeX/LaTeX `<annotation>` values, including case-insensitive annotation encodings. Inline math remains part of surrounding text, while display="block" math is emitted as a separate element boundary. KaTeX's paired MathML/HTML output is also handled without duplicating the same expression.
+
+- **`partition_email()` no longer crashes on a `multipart/*` attachment**: a multipart sub-part surfaced as an "attachment" (e.g. a PGP/MIME-signed forwarded message) previously raised an uncaught `KeyError` from `email.contentmanager`, which has no `get_content()` handler for any `multipart/*` content-type. `_AttachmentPartitioner._file_bytes` now falls back to the part's raw serialized bytes for this case instead.
+- **`partition_email()` no longer drops a `multipart/*` attachment's own body**: serializing such an attachment verbatim left its own `Content-Disposition: attachment` header intact, so re-parsing it as the root of a new message made `EmailMessage.get_body()` skip it entirely instead of finding its body part. The attachment's raw bytes are now serialized from a copy with that header stripped.
+
+- **Make uncertain text decoding observable (#4466).** Automatic legacy and BOM-less UTF-16/32 detection now emits `EncodingDetectionWarning`, which callers can promote to an exception with Python warning filters. Unicode BOMs, then strict UTF-8 validity, are honored before statistical detection, so valid UTF-8 whose only non-ASCII content is an invisible character such as U+200B is no longer decoded as `mac_iceland` or `cp850`. Input containing NUL bytes skips the UTF-8 check, because BOM-less UTF-16/32 is often also valid UTF-8. File-type detection's 4,096-byte stream prefix tolerates a multi-byte sequence split at its end, including a UTF-16 surrogate pair after a BOM; UTF-8/ASCII remains the default convention. Inconclusive detection ranks unrestricted candidates instead of accepting the first decodable codec (usually Latin-1), and raises when no text candidate survives. Correctly detected codecs outside `COMMON_ENCODINGS` remain supported. `partition_md(encoding=...)` now strictly decodes local and URL bytes using the supplied encoding. Automatic detection remains heuristic; this change does not guarantee recovery of the original text without a known encoding.
 
 - **Normalize missing text in text elements.** `Text` and its subclasses, including `Image`, now store `text=None` as an empty string. This prevents string conversion from failing for images with missing detected text. String conversion also returns an empty string if text is later set to `None`. Newly constructed elements serialize this text as `""` instead of `null`; recalculated content hashes change for formerly null text. Supplied IDs and ordinary string text are unchanged.
 
