@@ -27,6 +27,7 @@ from unstructured.documents.elements import (
     DataSourceMetadata,
     Element,
     ElementMetadata,
+    Image,
     Points,
     Text,
     Title,
@@ -58,6 +59,32 @@ def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic
 def test_Text_is_JSON_serializable():
     # -- This shold run without an error --
     json.dumps(Text(text="hello there!", element_id=None).to_dict())
+
+
+def test_Image_text_none_str_returns_empty_string():
+    # https://github.com/Unstructured-IO/unstructured/issues/4084
+    # -- `Image` elements whose `text` was normalized to `None` should still
+    # -- render as a string when `__str__` is called.
+    image = Image(text=None)
+    assert image.text == ""
+    assert str(image) == ""
+
+
+@pytest.mark.parametrize("element_cls", [Text, Image])
+@pytest.mark.parametrize("text", [None, "", "hello", " \u2603 ", "None"])
+def test_Text_normalizes_only_none(element_cls, text):
+    element = element_cls(text=text)
+    expected = "" if text is None else text
+    assert element.text == expected
+    assert str(element) == expected
+    assert element.to_dict()["text"] == expected
+
+
+def test_Image_str_handles_later_none_assignment_without_mutation():
+    image = Image(text="hello")
+    image.text = None
+    assert str(image) == ""
+    assert image.text is None
 
 
 @pytest.mark.parametrize(

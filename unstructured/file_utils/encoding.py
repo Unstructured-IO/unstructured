@@ -1,13 +1,27 @@
+import codecs
+import warnings
 from typing import IO, Optional, Tuple, Union
 
-from charset_normalizer import detect
+from charset_normalizer import detect, from_bytes
 
 from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.common.common import convert_to_bytes
 
 ENCODE_REC_THRESHOLD = 0.8
 
+
+class EncodingDetectionWarning(UserWarning):
+    """A legacy or BOM-less UTF-16/32 encoding was inferred rather than specified.
+
+    Automatic detection is heuristic, even at high confidence. Callers that prefer
+    an exception to potentially incorrect text can promote this warning to an error
+    using Python's warnings filters. Pass the source encoding explicitly to avoid
+    statistical detection. UTF-8/ASCII and Unicode BOMs do not produce this warning.
+    """
+
+
 # popular encodings from https://en.wikipedia.org/wiki/Popularity_of_text_encodings
+# This list is not an exhaustive list of valid encodings or a detection allowlist.
 COMMON_ENCODINGS = [
     "utf_8",
     "iso_8859_1",
@@ -59,56 +73,101 @@ def validate_encoding(encoding: str) -> bool:
     return False
 
 
+def _decode(byte_data: bytes, encoding: str, final: bool) -> str:
+    """Decode strictly. With `final=False`, an incomplete trailing sequence is not an error."""
+    if final:
+        return byte_data.decode(encoding)
+    return codecs.getincrementaldecoder(encoding)().decode(byte_data, final=False)
+
+
 def detect_file_encoding(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
+    *,
+    final: bool = True,
 ) -> Tuple[str, str]:
+    """Decode bytes using a Unicode BOM, strict UTF-8, or best-effort character-set detection.
+
+    A successful decode is not evidence that a guessed encoding is correct.
+    Emit EncodingDetectionWarning for statistical legacy/BOM-less UTF-16/32
+    detection, so applications can either retain best-effort behavior or reject it.
+    UTF-8/ASCII is the default text convention, not a proof of the source encoding.
+
+    Pass `final=False` when the bytes are only a prefix of a longer document. A multi-byte
+    sequence cut off at the end of the prefix is then left out instead of failing the decode.
+    Every other undecodable byte still fails.
+    """
     if filename:
         with open(filename, "rb") as f:
             byte_data = f.read()
-    elif file:
+    elif file is not None:
         byte_data = convert_to_bytes(file)
     else:
         raise FileNotFoundError("No filename nor file were specified")
 
-    result = detect(byte_data)
-    encoding = result["encoding"]
-    confidence = result["confidence"]
-
-    if encoding is None or confidence is None or confidence < ENCODE_REC_THRESHOLD:
-        # Encoding detection failed, fallback to predefined encodings
-        for enc in COMMON_ENCODINGS:
-            try:
-                if filename:
-                    with open(filename, encoding=enc) as f:
-                        file_text = f.read()
-                else:
-                    file_text = byte_data.decode(enc)
-                encoding = enc
-                break
-            except (UnicodeDecodeError, UnicodeError):
-                continue
-        else:
-            # NOTE: Use UnprocessableEntityError instead of UnicodeDecodeError to avoid
-            # logging the entire file content. UnicodeDecodeError automatically stores
-            # the complete input data, which can be problematic for large files.
-            raise UnprocessableEntityError(
-                "Unable to determine file encoding after trying all common encodings. "
-                "File may be corrupted or in an unsupported format."
-            ) from None
-
-    else:
-        # NOTE: Catch UnicodeDecodeError to avoid logging the entire file content.
-        # UnicodeDecodeError automatically stores the complete input data in its
-        # 'object' attribute, which can cause issues with large files in logging
-        # and error reporting systems.
+    # UTF-32 must precede UTF-16: their little-endian BOMs share a prefix.
+    bom_encoding = next(
+        (
+            encoding
+            for bom, encoding in (
+                (codecs.BOM_UTF32_LE, "utf-32"),
+                (codecs.BOM_UTF32_BE, "utf-32"),
+                (codecs.BOM_UTF8, "utf-8-sig"),
+                (codecs.BOM_UTF16_LE, "utf-16"),
+                (codecs.BOM_UTF16_BE, "utf-16"),
+            )
+            if byte_data.startswith(bom)
+        ),
+        None,
+    )
+    encoding = bom_encoding
+    # -- Pure ASCII keeps its detected `ascii` label. NUL is excluded because BOM-less UTF-16/32
+    # -- pads ASCII characters with NUL bytes, which UTF-8 also accepts.
+    if encoding is None and not byte_data.isascii() and b"\x00" not in byte_data:
+        # Valid UTF-8 is structurally unlikely by accident, while permissive single-byte
+        # codecs accept anything. Detectors can still prefer one at full confidence when
+        # the only non-ASCII bytes are a single character such as U+200B or U+00AD.
         try:
-            file_text = byte_data.decode(encoding)
-        except (UnicodeDecodeError, UnicodeError):
-            raise UnprocessableEntityError(
-                f"File encoding detection failed: detected '{encoding}' but decode failed. "
-                f"File may be corrupted or in an unsupported format."
-            ) from None
+            _decode(byte_data, "utf-8", final)
+            encoding = "utf-8"
+        except UnicodeDecodeError:
+            pass
+    if encoding is None:
+        result = detect(byte_data)
+        encoding = result["encoding"]
+        confidence = result["confidence"]
+
+        if encoding is None or confidence is None or confidence < ENCODE_REC_THRESHOLD:
+            # Latin-1 decodes every byte, so first-success decoding masks errors and
+            # makes later codecs unreachable. Rank real candidates without excluding
+            # valid encodings such as cp932/cp1254 just because they are uncommon.
+            # Disable unconditional fallback matches for likely binary/non-text input.
+            best = from_bytes(byte_data, enable_fallback=False).best()
+            if best is None:
+                raise UnprocessableEntityError(
+                    "Unable to determine file encoding. Specify the source encoding with "
+                    "encoding=, or check whether the file is a supported text document."
+                ) from None
+            encoding = best.encoding
+
+    # Do not expose a UnicodeError's input payload in the public exception.
+    try:
+        file_text = _decode(byte_data, encoding, final)
+        canonical_encoding = codecs.lookup(encoding).name
+    except (UnicodeError, LookupError):
+        raise UnprocessableEntityError(
+            f"File encoding detection failed: detected '{encoding}' but decode failed. "
+            "Specify the source encoding with encoding=, or check the file contents."
+        ) from None
+
+    if bom_encoding is None and canonical_encoding not in {"ascii", "utf-8", "utf-8-sig"}:
+        warnings.warn(
+            f"The file encoding was inferred as '{encoding}'. Automatic detection may be "
+            "ambiguous and can produce incorrect text. Pass encoding= to specify the "
+            "source encoding.",
+            EncodingDetectionWarning,
+            stacklevel=2,
+        )
 
     formatted_encoding = format_encoding_str(encoding)
 
@@ -131,7 +190,7 @@ def read_txt_file(
                     raise error
         else:
             formatted_encoding, file_text = detect_file_encoding(filename)
-    elif file:
+    elif file is not None:
         if encoding:
             formatted_encoding = format_encoding_str(encoding)
             try:
