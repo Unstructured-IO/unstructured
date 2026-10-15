@@ -6,10 +6,12 @@ from __future__ import annotations
 
 import os
 import pathlib
+import subprocess
+import sys
 
 import pytest
 
-from test_unstructured.unit_utils import LogCaptureFixture
+from test_unstructured.unit_utils import LogCaptureFixture, example_doc_path
 from unstructured.documents.elements import (
     NarrativeText,
     PageBreak,
@@ -319,3 +321,84 @@ def test_check_language_args_raises_error_when_ocr_languages_contains_auto(
             languages=languages,
             ocr_languages=ocr_languages,
         )
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "language-docs/UDHR_first_article_all.txt",
+        "language-docs/eng_spa_mult.txt",
+        "book-war-and-peace-1p.txt",
+    ],
+)
+def test_detect_languages_same_with_langdetect_and_langdetect_rs(
+    filename: str, monkeypatch: pytest.MonkeyPatch
+):
+    langdetect = pytest.importorskip("langdetect")
+    langdetect_rs = pytest.importorskip("langdetect_rs")
+    with open(example_doc_path(filename), encoding="utf-8") as f:
+        paragraphs = [p for p in f.read().split("\n\n") if p.strip()]
+
+    def detect_all(module) -> list[list[tuple[str, float]]]:
+        monkeypatch.setattr(module.DetectorFactory, "seed", 0)
+        results = []
+        for paragraph in paragraphs:
+            try:
+                results.append([(x.lang, x.prob) for x in module.detect_langs(paragraph)])
+            except module.LangDetectException:
+                results.append([])
+        return results
+
+    assert detect_all(langdetect_rs) == detect_all(langdetect)
+
+
+def _run_lang_import(
+    script: str, use_langdetect_rs: str | None
+) -> subprocess.CompletedProcess[str]:
+    env = {**os.environ, "DO_NOT_TRACK": "1"}
+    env.pop("UNSTRUCTURED_USE_LANGDETECT_RS", None)
+    if use_langdetect_rs is not None:
+        env["UNSTRUCTURED_USE_LANGDETECT_RS"] = use_langdetect_rs
+    result = subprocess.run(
+        [sys.executable, "-c", script], env=env, capture_output=True, text=True, timeout=60
+    )
+    assert result.returncode == 0, result.stderr
+    return result
+
+
+def test_lang_uses_langdetect_by_default():
+    _run_lang_import(
+        """
+import langdetect
+from unstructured.partition.common import lang
+assert lang.detect_langs is langdetect.detect_langs
+""",
+        use_langdetect_rs=None,
+    )
+
+
+def test_lang_uses_langdetect_rs_when_enabled():
+    pytest.importorskip("langdetect_rs")
+    _run_lang_import(
+        """
+import langdetect_rs
+from unstructured.partition.common import lang
+assert lang.detect_langs is langdetect_rs.detect_langs
+assert lang.detect_languages("This is an English sentence about a cat.") == ["eng"]
+""",
+        use_langdetect_rs="1",
+    )
+
+
+def test_lang_falls_back_to_langdetect_when_langdetect_rs_is_missing():
+    result = _run_lang_import(
+        """
+import sys
+sys.modules["langdetect_rs"] = None
+import langdetect
+from unstructured.partition.common import lang
+assert lang.detect_langs is langdetect.detect_langs
+""",
+        use_langdetect_rs="1",
+    )
+    assert "langdetect-rs is not installed" in result.stderr
