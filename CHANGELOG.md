@@ -1,4 +1,8 @@
-## 0.27.28-dev0
+## 0.27.28-dev1
+
+### Enhancements
+
+- **Optionally use `langdetect-rs` for partition language detection.** Set `UNSTRUCTURED_USE_LANGDETECT_RS=true` before importing `unstructured` and install `langdetect-rs==0.1.0` to detect `metadata.languages` with this faster Rust port of `langdetect`, which matched its seeded results on the tested inputs. If the package is missing, a warning is logged and `langdetect` is used. Without the variable, nothing changes.
 
 ### Fixes
 
