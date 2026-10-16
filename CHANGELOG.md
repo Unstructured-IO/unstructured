@@ -1,8 +1,10 @@
-## 0.27.28-dev2
+## 0.27.28-dev3
 
 ### Enhancements
 
 - **Optionally use `langdetect-rs` for partition language detection.** Set `UNSTRUCTURED_USE_LANGDETECT_RS=true` before importing `unstructured` and install `langdetect-rs==0.1.0` to detect `metadata.languages` with this faster Rust port of `langdetect`, which matched its seeded results on the tested inputs. If the package is missing, a warning is logged and `langdetect` is used. Without the variable, nothing changes.
+
+- **Speed up `partition_docx()` on long documents.** python-docx resolves a paragraph's style by searching the document's style definitions, scanning all of them for the many paragraphs that use the default style, and `partition_docx()` did this up to six times per paragraph. Each style is now resolved once per document. On a 3,000-paragraph document built on python-docx's default template (164 styles), partitioning time outside spaCy drops from 5.3 s to 1.0 s and total time from 12.5 s to 8.5 s. Output is unchanged.
 
 ### Fixes
 
