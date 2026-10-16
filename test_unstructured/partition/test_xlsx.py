@@ -337,6 +337,17 @@ def test_partition_xlsx_partitions_a_stray_cell_in_the_last_row(
     assert [e.text for e in elements] == ["a", "b", "c"]
 
 
+def test_partition_xlsx_rejects_a_stray_cell_in_the_last_row_of_a_whole_worksheet(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("XLSX_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
+    # -- a whole worksheet is rendered with all its empty rows, so this spans 1M x 5 cells --
+    file_path = _write_xlsx(tmp_path, {"Sheet": {(1, 1): "a", (2, 3): "b", (1_048_576, 5): "c"}})
+
+    with pytest.raises(UnprocessableEntityError, match="1,048,576 rows x 5 columns"):
+        partition_xlsx(file_path, find_subtable=False)
+
+
 def test_partition_xlsx_partitions_a_stray_far_cell_within_the_limit(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
@@ -624,6 +635,7 @@ class Describe_iter_worksheet_shapes:
             {
                 "Sparse": {(3, 2): "a", (7, 5): 0, (12, 1): "b", (13, 9): ""},
                 "Adjacent": {(1, 1): "a", (2, 1): "b", (4, 2): "c", (100_000, 3): "d"},
+                "Leading": {(5, 1): 1, (6, 1): 2, (9, 2): 3},
                 "Empty": {},
                 "Blank": {(4, 4): ""},
             },
@@ -633,20 +645,24 @@ class Describe_iter_worksheet_shapes:
     def _assert_shapes_match_what_is_read(self, file_path: str):
         with open(file_path, "rb") as f:
             file_bytes = f.read()
-        opts = _XlsxPartitionerOptions(
-            file_path=file_path,
-            file=None,
-            find_subtable=True,
-            include_header=False,
-            infer_table_structure=True,
-        )
-        # -- the last shape generated for each worksheet is its full shape --
-        shapes = {
-            name: (n_rows, n_cols)
-            for _, name, n_rows, n_cols in _iter_worksheet_shapes(file_bytes, opts._excel_engine)
-        }
+        for find_subtable in (True, False):
+            opts = _XlsxPartitionerOptions(
+                file_path=file_path,
+                file=None,
+                find_subtable=find_subtable,
+                include_header=False,
+                infer_table_structure=True,
+            )
+            engine = opts._excel_engine
+            # -- the last shape generated for each worksheet is its full shape --
+            shapes = {
+                name: (n_rows, n_cols)
+                for _, name, n_rows, n_cols in _iter_worksheet_shapes(
+                    file_bytes, engine, engine == "openpyxl" and find_subtable
+                )
+            }
 
-        assert shapes == {name: df.shape for name, df in opts.sheets.items()}
+            assert shapes == {name: df.shape for name, df in opts.sheets.items()}
 
 
 class Describe_RowCompactingOpenpyxlReader:
@@ -655,13 +671,15 @@ class Describe_RowCompactingOpenpyxlReader:
     def it_reads_each_run_of_empty_rows_as_one_empty_row(self, tmp_path: Path):
         file_path = _write_xlsx(
             tmp_path,
-            {"Sheet": {(3, 1): "a", (4, 2): 1, (40, 1): "b", (41, 1): "c", (1_048_576, 3): "d"}},
+            {"Sheet": {(4, 1): "a", (5, 2): 1, (40, 1): "b", (41, 1): "c", (1_048_576, 3): "d"}},
         )
 
         df = _RowCompactingOpenpyxlReader(file_path).parse(sheet_name=None, header=None)["Sheet"]
 
+        # -- except the leading run, which keeps two: one for a header row, one for the data --
         expected = pd.DataFrame(
             [
+                [None, None, None],
                 [None, None, None],
                 ["a", None, None],
                 [None, 1, None],
@@ -673,7 +691,7 @@ class Describe_RowCompactingOpenpyxlReader:
             ]
         )
         pdt.assert_frame_equal(df, expected, check_dtype=False)
-        assert df.iloc[2, 1] == 1  # -- cell values are converted exactly as Pandas does --
+        assert df.iloc[3, 1] == 1  # -- cell values are converted exactly as Pandas does --
 
     @pytest.mark.parametrize(
         "file_name",
@@ -685,13 +703,25 @@ class Describe_RowCompactingOpenpyxlReader:
             "vodafone.xlsx",
             "xlsx-subtable-cases.xlsx",
             None,
+            "leading-empty-rows",
         ],
     )
     @pytest.mark.parametrize("include_header", [False, True])
+    @pytest.mark.parametrize("find_subtable", [True, False])
     def it_partitions_exactly_as_the_stock_reader_does(
-        self, file_name: str | None, include_header: bool, tmp_path: Path, mocker: MockerFixture
+        self,
+        file_name: str | None,
+        include_header: bool,
+        find_subtable: bool,
+        tmp_path: Path,
+        mocker: MockerFixture,
     ):
-        if file_name is None:
+        if file_name == "leading-empty-rows":
+            # -- with a header, the stock reader infers this complete integer column as float --
+            cells = {(row, 1): row for row in range(4, 8)}
+            cells.update({(row, 2): f"v{row}" for row in range(4, 8)})
+            file_path = _write_xlsx(tmp_path, {"Sheet": cells, "Gap": {(1, 1): "a", (5, 1): "b"}})
+        elif file_name is None:
             # -- tables separated by long runs of empty rows, and leading empty rows --
             cells: dict[tuple[int, int], Any] = {
                 (row + 2, col): f"t{row}-{col}" for row in range(4) for col in range(1, 4)
@@ -706,7 +736,9 @@ class Describe_RowCompactingOpenpyxlReader:
         def partition() -> list[tuple[Any, ...]]:
             return [
                 (e.category, e.text, e.metadata.text_as_html, e.metadata.page_name)
-                for e in partition_xlsx(file_path, include_header=include_header)
+                for e in partition_xlsx(
+                    file_path, find_subtable=find_subtable, include_header=include_header
+                )
             ]
 
         actual = partition()
