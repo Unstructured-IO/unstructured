@@ -168,6 +168,50 @@ def test_convert_to_csv_includes_flattened_nested_metadata():
         assert column in row
 
 
+def test_convert_to_csv_disambiguates_metadata_key_colliding_with_top_level_attribute():
+    # Regression for #4549 (same-row): an ad-hoc metadata key that shares a name with a real
+    # top-level Element attribute (here `embeddings`, carried by Text) must not overwrite that
+    # column. The real value stays in `embeddings`; the metadata value is renamed aside.
+    elements = [
+        Text(
+            text="Hello",
+            embeddings=[0.1, 0.2],
+            metadata=ElementMetadata.from_dict({"embeddings": [9.0, 9.0]}),
+        ),
+    ]
+    reader = csv.DictReader(io.StringIO(base.convert_to_csv(elements)))
+    row = next(reader)
+
+    # The real top-level embeddings wins the `embeddings` column.
+    assert row["embeddings"] == str([0.1, 0.2])
+    # The colliding metadata value is preserved under a disambiguated column, not dropped.
+    assert row["metadata_embeddings"] == str([9.0, 9.0])
+
+
+def test_convert_to_csv_disambiguates_colliding_metadata_key_across_rows():
+    # Regression for #4549 (cross-row): one row's real top-level `embeddings` and another row's
+    # ad-hoc `metadata.embeddings` must not register under the same batch-wide header.
+    elements = [
+        NarrativeText(text="row-a", embeddings=[0.1, 0.2]),
+        NarrativeText(
+            text="row-b",
+            metadata=ElementMetadata.from_dict({"embeddings": [9.0, 9.0]}),
+        ),
+    ]
+    reader = csv.DictReader(io.StringIO(base.convert_to_csv(elements)))
+    rows = list(reader)
+
+    assert "embeddings" in reader.fieldnames
+    assert "metadata_embeddings" in reader.fieldnames
+
+    # Row A contributes its real embeddings to the real column and nothing to the renamed one.
+    assert rows[0]["embeddings"] == str([0.1, 0.2])
+    assert rows[0]["metadata_embeddings"] in (None, "")
+    # Row B contributes only to the renamed column and leaves the real column empty.
+    assert rows[1]["embeddings"] in (None, "")
+    assert rows[1]["metadata_embeddings"] == str([9.0, 9.0])
+
+
 def test_convert_to_dataframe():
     elements = [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
     df = base.convert_to_dataframe(elements)

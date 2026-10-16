@@ -632,6 +632,25 @@ def convert_to_csv(elements: Iterable[Element]) -> str:
     """Convert `elements` to CSV format."""
     rows: list[dict[str, Any]] = elements_to_dicts(elements)
     table_fieldnames = _get_table_fieldnames(rows)
+
+    # Snapshot the real top-level keys carried by each Element (e.g. `type`, `text`,
+    # `element_id`, plus `embeddings` on Text and `checked` on CheckBox) *before* metadata
+    # flattening. These are genuine element columns. An ad-hoc metadata key that shares a name
+    # with one of them (e.g. `ElementMetadata.from_dict({"embeddings": [...]})`) must not be
+    # allowed to overwrite the real value, and must not register under that name as a batch-wide
+    # header. We collect the set across all rows first so the disambiguation is stable
+    # same-row *and* cross-row (#4549).
+    reserved_top_level: set[str] = set()
+    for row in rows:
+        reserved_top_level.update(key for key in row if key != "metadata")
+
+    # Promote any real top-level key that is not already part of the fixed table_fieldnames so
+    # its value actually lands in the CSV; DictWriter would otherwise raise on an unexpected row
+    # key (e.g. a Text element carrying `embeddings`).
+    for key in reserved_top_level:
+        if key not in table_fieldnames:
+            table_fieldnames.append(key)
+
     # NOTE(robinson) - flatten metadata and add it to the table. Nested metadata
     # (e.g. data_source, enrichment_origins) flattens into sub-keys that are not part
     # of the fixed table_fieldnames, so we collect them across rows and append them in
@@ -640,9 +659,14 @@ def convert_to_csv(elements: Iterable[Element]) -> str:
     for row in rows:
         metadata = row.pop("metadata")
         for key, value in flatten_dict(metadata).items():
-            row[key] = value
-            if key not in table_fieldnames and key not in extra_fieldnames:
-                extra_fieldnames.append(key)
+            # A metadata key that collides with a real top-level Element attribute (e.g.
+            # `embeddings`) must not overwrite that column; rename it so both survive.
+            out_key = key
+            while out_key in reserved_top_level:
+                out_key = f"metadata_{out_key}"
+            row[out_key] = value
+            if out_key not in table_fieldnames and out_key not in extra_fieldnames:
+                extra_fieldnames.append(out_key)
 
         if row.get("sent_from"):
             row["sender"] = row.get("sent_from")
