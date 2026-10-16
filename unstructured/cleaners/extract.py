@@ -18,12 +18,16 @@ def _get_indexed_match(text: str, pattern: str, index: int = 0) -> re.Match:
         raise ValueError(f"The index is {index}. Index must be a non-negative integer.")
 
     regex_match = None
+    largest_index = -1
     for i, result in enumerate(re.finditer(pattern, text)):
+        largest_index = i
         if i == index:
             regex_match = result
 
     if regex_match is None:
-        raise ValueError(f"Result with index {index} was not found. The largest index was {i}.")
+        raise ValueError(
+            f"Result with index {index} was not found. The largest index was {largest_index}."
+        )
 
     return regex_match
 
