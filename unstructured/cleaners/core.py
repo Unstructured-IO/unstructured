@@ -89,7 +89,7 @@ def clean_ligatures(text) -> str:
         "ﬂ": "fl",
         "ﬃ": "ffi",
         "ﬄ": "ffl",
-        "ﬅ": "ft",
+        "ﬅ": "st",  # U+FB05 LATIN SMALL LIGATURE LONG S T -> "st" (per Unicode NFKC)
         "ʪ": "ls",
         "œ": "oe",
         "Œ": "OE",
