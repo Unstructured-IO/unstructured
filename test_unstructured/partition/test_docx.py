@@ -17,6 +17,7 @@ from docx.document import Document
 from docx.enum.section import WD_SECTION
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
+from docx.parts.document import DocumentPart
 from docx.section import Section
 from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
@@ -505,6 +506,24 @@ def test_partition_docx_labels_list_items_that_inherit_numbering_from_their_styl
         (ListItem, "1. styled"),
         (ListItem, "2. inherited"),
     ]
+
+
+def test_partition_docx_looks_up_each_paragraph_style_once(tmp_path, mocker: MockFixture):
+    document = docx.Document()
+    for i in range(20):
+        document.add_paragraph(f"Paragraph {i} uses the default style.")
+        document.add_paragraph(f"Heading {i}", style="Heading 1")
+        document.add_paragraph(f"Item {i}", style="List Bullet")
+    path = str(tmp_path / "styles.docx")
+    document.save(path)
+    get_style = mocker.spy(DocumentPart, "get_style")
+
+    elements = partition_docx(path)
+
+    assert len(elements) == 60
+    # -- three style-ids, each looked up by the partitioner and by the list-label renderer,
+    # -- however many paragraphs use them --
+    assert get_style.call_count == 6
 
 
 def test_partition_docx_does_not_prefix_bulleted_list_items(tmp_path):
