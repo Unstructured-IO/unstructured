@@ -14,7 +14,7 @@ from unstructured.file_utils.encoding import detect_file_encoding
 
 def test_charset_detection_failure():
     """Test encoding detection failure with memory safety checks."""
-    large_data = b"\x80\x81\x82\x83" * 250_000  # 1MB of invalid UTF-8
+    large_data = bytes(range(256)) * 4096  # 1MiB of deterministic binary data
 
     with tempfile.NamedTemporaryFile(mode="wb", delete=False) as f:
         f.write(large_data)
@@ -23,24 +23,23 @@ def test_charset_detection_failure():
     try:
         detect_result = {"encoding": None, "confidence": None}
         with patch("unstructured.file_utils.encoding.detect", return_value=detect_result):
-            with patch("unstructured.file_utils.encoding.COMMON_ENCODINGS", ["utf_8"]):  # Will fail
-                with pytest.raises(UnprocessableEntityError) as exc_info:
-                    detect_file_encoding(filename=temp_file_path)
+            with pytest.raises(UnprocessableEntityError) as exc_info:
+                detect_file_encoding(filename=temp_file_path)
 
-                exception = exc_info.value
+            exception = exc_info.value
 
-                assert "Unable to determine file encoding" in str(exception)
+            assert "Unable to determine file encoding" in str(exception)
 
-                # Ensure no .object attribute that would store file content (prevents memory bloat)
-                # See: https://docs.python.org/3/library/exceptions.html#UnicodeError.object
-                assert not hasattr(exception, "object")
+            # Ensure no .object attribute that would store file content (prevents memory bloat)
+            # See: https://docs.python.org/3/library/exceptions.html#UnicodeError.object
+            assert not hasattr(exception, "object")
 
-                # Exception should be lightweight regardless of file size
-                exception_memory = sys.getsizeof(exception)
-                serialized_size = len(pickle.dumps(exception))
+            # Exception should be lightweight regardless of file size
+            exception_memory = sys.getsizeof(exception)
+            serialized_size = len(pickle.dumps(exception))
 
-                assert exception_memory < 10_000  # Small in-memory footprint
-                assert serialized_size < 10_000  # Small serialization footprint
+            assert exception_memory < 10_000  # Small in-memory footprint
+            assert serialized_size < 10_000  # Small serialization footprint
     finally:
         os.unlink(temp_file_path)
 

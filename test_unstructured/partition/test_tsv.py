@@ -2,6 +2,12 @@
 
 from __future__ import annotations
 
+import gzip
+import io
+from pathlib import Path
+from typing import Any
+
+import pandas as pd
 import pytest
 from pytest_mock import MockFixture
 
@@ -14,7 +20,9 @@ from test_unstructured.partition.test_constants import (
 )
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
+from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Table
+from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.tsv import partition_tsv
 
 EXPECTED_FILETYPE = "text/tsv"
@@ -159,3 +167,122 @@ def test_partition_tsv_supports_chunking_strategy_while_partitioning():
 
     # The same chunks are returned if chunking elements or chunking during partitioning.
     assert chunk_elements == chunks
+
+
+# -- cell-count limit ----------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("from_file", [False, True])
+def test_partition_tsv_rejects_a_wide_first_line_before_pandas_reads_it(
+    from_file: bool, tmp_path: Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("CSV_MAX_CELLS", raising=False)  # -- default limit of 5M cells --
+    # -- Pandas pads every row out to the first line's 5,000 fields: 25M cells from 15KB --
+    file_path = tmp_path / "ragged.tsv"
+    file_path.write_text("h" + "\t" * 4999 + "\n" + "a\n" * 5000)
+    read_csv_ = mocker.patch.object(pd, "read_csv")
+
+    with pytest.raises(UnprocessableEntityError, match="rows x 5,000 columns"):
+        if from_file:
+            with open(file_path, "rb") as f:
+                partition_tsv(file=f)
+        else:
+            partition_tsv(str(file_path))
+
+    read_csv_.assert_not_called()
+
+
+@pytest.mark.parametrize("from_file", [False, True])
+def test_partition_tsv_partitions_a_file_at_the_cell_limit(
+    from_file: bool, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.setenv("CSV_MAX_CELLS", "6")
+    file_path = tmp_path / "table.tsv"
+    file_path.write_text("a\tb\tc\n1\t2\n")
+
+    if from_file:
+        with open(file_path, "rb") as f:
+            elements = partition_tsv(file=f)
+    else:
+        elements = partition_tsv(str(file_path))
+
+    assert [e.text for e in elements] == ["a b c 1 2"]
+
+
+def test_partition_tsv_reads_a_field_larger_than_the_csv_module_field_limit(tmp_path: Path):
+    # -- the `csv` module's default field limit is 128 KiB; Pandas has none --
+    file_path = tmp_path / "big-field.tsv"
+    file_path.write_text("a\t" + "x" * 200_000 + "\n")
+
+    (table,) = partition_tsv(str(file_path))
+
+    assert table.text == "a " + "x" * 200_000
+
+
+def test_partition_tsv_decompresses_a_compressed_filename(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = tmp_path / "table.tsv.gz"
+    with gzip.open(file_path, "wb") as f:
+        f.write(b"a\tb\n1\t2\n")
+
+    (table,) = partition_tsv(str(file_path))
+
+    assert table.text == "a b 1 2"
+
+    # -- the size check measures the decompressed content --
+    monkeypatch.setenv("CSV_MAX_CELLS", "3")
+    with pytest.raises(UnprocessableEntityError, match="CSV_MAX_CELLS"):
+        partition_tsv(str(file_path))
+
+
+def test_partition_tsv_reads_a_stream_that_cannot_seek():
+    class Pipe(io.RawIOBase):
+        def __init__(self, data: bytes):
+            self._data = io.BytesIO(data)
+
+        def readable(self) -> bool:
+            return True
+
+        def seekable(self) -> bool:
+            return False
+
+        def readinto(self, buffer: Any) -> int:
+            chunk = self._data.read(len(buffer))
+            buffer[: len(chunk)] = chunk
+            return len(chunk)
+
+    (table,) = partition_tsv(file=io.BufferedReader(Pipe(b"a\tb\n1\t2\n")))
+
+    assert table.text == "a b 1 2"
+
+
+def test_partition_tsv_counts_every_implicit_index_column_before_pandas_reads(
+    tmp_path: Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    # -- a 1-field header, a 100-field first data row (99 implicit-index columns) and a ragged
+    # -- tail: Pandas builds 1,002 rows x 100 columns --
+    file_path = tmp_path / "index.tsv"
+    file_path.write_text("h\n" + "\t".join(f"v{i}" for i in range(100)) + "\n" + "a\n" * 1000)
+    monkeypatch.setenv("CSV_MAX_CELLS", str(1002 * 100 - 1))
+    read_csv_ = mocker.patch.object(pd, "read_csv")
+
+    with pytest.raises(UnprocessableEntityError, match="100 columns"):
+        partition_tsv(str(file_path), include_header=True)
+
+    read_csv_.assert_not_called()
+
+
+def test_partition_tsv_with_implicit_index_columns_matches_pandas_within_the_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("CSV_MAX_CELLS", raising=False)
+    file_path = tmp_path / "index.tsv"
+    file_path.write_text("h\n" + "x\ty\tz\n" + "a\n" * 3)
+
+    (table,) = partition_tsv(str(file_path), include_header=True)
+
+    expected = pd.read_csv(file_path, sep="\t", header=0).to_html(
+        index=False, header=True, na_rep=""
+    )
+    assert table.text == HtmlTable.from_html_text(expected).text
