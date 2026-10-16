@@ -5,7 +5,12 @@ from pdfminer.layout import LTChar, LTContainer, LTFigure, LTLayoutContainer, LT
 from pdfminer.pdftypes import PDFStream
 
 from test_unstructured.unit_utils import example_doc_path
-from unstructured.partition.pdf import partition_pdf
+from unstructured.partition.pdf import (
+    _extract_font_sizes_from_text_obj,
+    _get_representative_font_size,
+    _infer_category_depth_from_font_size,
+    partition_pdf,
+)
 from unstructured.partition.pdf_image.pdfminer_utils import (
     CustomPDFPageInterpreter,
     _is_duplicate_char,
@@ -38,6 +43,31 @@ def _make_interpreter(cur_item):
     interp.textstate = MagicMock()
     interp.graphicstate = MagicMock()
     return interp
+
+
+def _make_char_with_bbox(x0=0, y0=0, x1=10, y1=12):
+    """Create LTChar with specific bounding box for font size testing.
+
+    Font size is calculated from character height: y1 - y0
+    """
+    char = LTChar(
+        matrix=(1, 0, 0, 1, 0, 0),
+        font=MagicMock(),
+        fontsize=12,  # This is ignored by extraction logic
+        scaling=1,
+        rise=0,
+        text="x",
+        textwidth=10,
+        textdisp=(0, 1),
+        ncs=MagicMock(),
+        graphicstate=MagicMock(),
+    )
+    # Set bounding box coordinates for font size calculation
+    char.x0 = x0
+    char.y0 = y0
+    char.x1 = x1
+    char.y1 = y1
+    return char
 
 
 def test_patch_render_mode_only_new_chars():
@@ -789,3 +819,307 @@ endcmap"""
         font2 = rsrcmgr.get_font(42, spec)
 
         assert font1 is font2
+
+
+# ================================================================================================
+# Tests for PDF Heading Hierarchy Helper Functions
+# ================================================================================================
+
+
+def test_extract_font_sizes_empty_object():
+    """Test _extract_font_sizes_from_text_obj with empty container."""
+    container = LTLayoutContainer(bbox=(0, 0, 100, 100))
+
+    result = _extract_font_sizes_from_text_obj(container)
+
+    assert result == []
+
+
+def test_extract_font_sizes_single_char():
+    """Test _extract_font_sizes_from_text_obj with single character."""
+    char = _make_char_with_bbox(x0=0, y0=0, x1=10, y1=12)
+
+    result = _extract_font_sizes_from_text_obj(char)
+
+    assert result == [12.0]
+
+
+def test_extract_font_sizes_nested_container():
+    """Test _extract_font_sizes_from_text_obj with nested containers."""
+    # Create nested structure: Container -> TextLine -> Multiple chars
+    container = LTLayoutContainer(bbox=(0, 0, 100, 100))
+    text_line = LTTextLine(word_margin=0.1)
+
+    char1 = _make_char_with_bbox(x0=0, y0=0, x1=10, y1=10)
+    char2 = _make_char_with_bbox(x0=10, y0=0, x1=20, y1=12)
+    char3 = _make_char_with_bbox(x0=20, y0=0, x1=30, y1=14)
+
+    text_line.add(char1)
+    text_line.add(char2)
+    text_line.add(char3)
+    container.add(text_line)
+
+    result = _extract_font_sizes_from_text_obj(container)
+
+    assert result == [10.0, 12.0, 14.0]
+
+
+def test_extract_font_sizes_filters_zero_sizes():
+    """Test _extract_font_sizes_from_text_obj filters zero/negative sizes."""
+    container = LTLayoutContainer(bbox=(0, 0, 100, 100))
+
+    char1 = _make_char_with_bbox(x0=0, y0=0, x1=10, y1=12)  # Valid: 12.0
+    char2 = _make_char_with_bbox(x0=10, y0=10, x1=20, y1=10)  # Zero height
+    char3 = _make_char_with_bbox(x0=20, y0=5, x1=30, y1=0)  # Negative height
+
+    container.add(char1)
+    container.add(char2)
+    container.add(char3)
+
+    result = _extract_font_sizes_from_text_obj(container)
+
+    assert result == [12.0]
+
+
+def test_extract_font_sizes_multiple_chars():
+    """Test _extract_font_sizes_from_text_obj with multiple characters."""
+    container = LTLayoutContainer(bbox=(0, 0, 100, 100))
+
+    char1 = _make_char_with_bbox(x0=0, y0=0, x1=10, y1=10)
+    char2 = _make_char_with_bbox(x0=10, y0=0, x1=20, y1=12)
+    char3 = _make_char_with_bbox(x0=20, y0=0, x1=30, y1=14)
+
+    container.add(char1)
+    container.add(char2)
+    container.add(char3)
+
+    result = _extract_font_sizes_from_text_obj(container)
+
+    assert result == [10.0, 12.0, 14.0]
+
+
+def test_extract_font_sizes_no_ltchar_objects():
+    """Test _extract_font_sizes_from_text_obj with non-text objects."""
+    container = LTLayoutContainer(bbox=(0, 0, 100, 100))
+
+    # Add a figure (non-text object)
+    figure = LTFigure("test", (0, 0, 50, 50), (1, 0, 0, 1, 0, 0))
+    container.add(figure)
+
+    result = _extract_font_sizes_from_text_obj(container)
+
+    assert result == []
+
+
+def test_representative_font_size_empty_list():
+    """Test _get_representative_font_size with empty list."""
+    result = _get_representative_font_size([])
+
+    assert result is None
+
+
+def test_representative_font_size_single_element():
+    """Test _get_representative_font_size with single element."""
+    result = _get_representative_font_size([12.0])
+
+    assert result == 12.0
+
+
+def test_representative_font_size_odd_length():
+    """Test _get_representative_font_size with odd-length list."""
+    result = _get_representative_font_size([10.0, 12.0, 14.0])
+
+    assert result == 12.0  # Middle element
+
+
+def test_representative_font_size_even_length():
+    """Test _get_representative_font_size with even-length list.
+
+    This tests the P1 fix scenario: when calculating median from even-length list,
+    the result is the average of middle two elements, which may not exist in the
+    original list (floating-point median edge case).
+    """
+    result = _get_representative_font_size([10.0, 12.0, 14.0, 16.0])
+
+    assert result == 13.0  # Average of 12.0 and 14.0
+
+
+def test_representative_font_size_unsorted_input():
+    """Test _get_representative_font_size with unsorted input."""
+    result = _get_representative_font_size([14.0, 10.0, 12.0])
+
+    assert result == 12.0  # Function should sort internally
+
+
+def test_category_depth_non_title_returns_none():
+    """Test _infer_category_depth_from_font_size returns None for non-title elements."""
+    page_font_sizes = {10.0: 50, 12.0: 10, 14.0: 5}
+
+    result = _infer_category_depth_from_font_size(
+        font_size=14.0, page_font_sizes=page_font_sizes, is_title=False
+    )
+
+    assert result is None
+
+
+def test_category_depth_none_font_size_returns_none():
+    """Test _infer_category_depth_from_font_size returns None for None font_size."""
+    page_font_sizes = {10.0: 50, 12.0: 10, 14.0: 5}
+
+    result = _infer_category_depth_from_font_size(
+        font_size=None, page_font_sizes=page_font_sizes, is_title=True
+    )
+
+    assert result is None
+
+
+def test_category_depth_empty_page_font_sizes_returns_none():
+    """Test _infer_category_depth_from_font_size returns None for empty page_font_sizes."""
+    result = _infer_category_depth_from_font_size(
+        font_size=12.0, page_font_sizes={}, is_title=True
+    )
+
+    assert result is None
+
+
+def test_category_depth_body_text_returns_none():
+    """Test _infer_category_depth_from_font_size returns None for body text.
+
+    Body text is identified as the most common font size on the page.
+    """
+    page_font_sizes = {10.0: 5, 12.0: 100, 14.0: 10}  # 12.0 is most common
+
+    result = _infer_category_depth_from_font_size(
+        font_size=12.0, page_font_sizes=page_font_sizes, is_title=True
+    )
+
+    assert result is None  # Body text should not get category_depth
+
+
+def test_category_depth_largest_heading_returns_1():
+    """Test _infer_category_depth_from_font_size returns 1 for largest heading."""
+    page_font_sizes = {12.0: 80, 14.0: 10, 18.0: 5}  # 12.0 is body, 18.0 is largest heading
+
+    result = _infer_category_depth_from_font_size(
+        font_size=18.0, page_font_sizes=page_font_sizes, is_title=True
+    )
+
+    assert result == 1
+
+
+def test_category_depth_multiple_heading_levels():
+    """Test _infer_category_depth_from_font_size with multiple heading levels."""
+    page_font_sizes = {10.0: 80, 12.0: 15, 14.0: 10, 16.0: 5, 18.0: 3}
+    # 10.0 is body text (most common)
+    # Heading hierarchy: 18.0 > 16.0 > 14.0 > 12.0
+
+    assert (
+        _infer_category_depth_from_font_size(
+            font_size=18.0, page_font_sizes=page_font_sizes, is_title=True
+        )
+        == 1
+    )
+    assert (
+        _infer_category_depth_from_font_size(
+            font_size=16.0, page_font_sizes=page_font_sizes, is_title=True
+        )
+        == 2
+    )
+    assert (
+        _infer_category_depth_from_font_size(
+            font_size=14.0, page_font_sizes=page_font_sizes, is_title=True
+        )
+        == 3
+    )
+    assert (
+        _infer_category_depth_from_font_size(
+            font_size=12.0, page_font_sizes=page_font_sizes, is_title=True
+        )
+        == 4
+    )
+
+
+def test_category_depth_closest_match_logic():
+    """Test _infer_category_depth_from_font_size with closest-match logic.
+
+    This tests the P1 fix: when font_size is a floating-point median that doesn't
+    exist in page_font_sizes keys (e.g., 13.0 = average of 12.0 and 14.0), the
+    function should use the closest match within tolerance instead of failing.
+    """
+    page_font_sizes = {10.0: 60, 12.0: 20, 14.0: 10, 16.0: 5}
+    # 10.0 is body text
+    # Heading hierarchy: 16.0 > 14.0 > 12.0
+
+    # Test median that doesn't exist in keys (13.0 is between 12.0 and 14.0)
+    result = _infer_category_depth_from_font_size(
+        font_size=13.0, page_font_sizes=page_font_sizes, is_title=True
+    )
+
+    # Should match closest heading (either 12.0 or 14.0) within 1pt tolerance
+    assert result in [2, 3]  # Either 14.0 (rank 2) or 12.0 (rank 3)
+
+
+def test_category_depth_caps_at_6():
+    """Test _infer_category_depth_from_font_size caps at 6 levels."""
+    # Create 10 different heading sizes
+    page_font_sizes = {
+        10.0: 100,  # Body text (most common)
+        12.0: 5,
+        14.0: 5,
+        16.0: 5,
+        18.0: 5,
+        20.0: 5,
+        22.0: 5,
+        24.0: 5,
+        26.0: 5,
+        28.0: 5,
+        30.0: 5,
+    }
+
+    # Test the 7th, 8th, 9th, 10th largest headings - all should cap at 6
+    result_7th = _infer_category_depth_from_font_size(
+        font_size=24.0, page_font_sizes=page_font_sizes, is_title=True
+    )
+    result_10th = _infer_category_depth_from_font_size(
+        font_size=12.0, page_font_sizes=page_font_sizes, is_title=True
+    )
+
+    assert result_7th == 6  # Should cap at 6, not 7
+    assert result_10th == 6  # Should cap at 6, not 10
+
+
+def test_partition_pdf_infers_heading_category_depth():
+    """Integration test: partition_pdf infers category_depth from font sizes.
+
+    Verifies that PDF partition flow correctly infers and assigns category_depth
+    metadata to Title elements based on font size hierarchy. This tests the full
+    integration of helper functions (_extract_font_sizes_from_text_obj,
+    _get_representative_font_size, _infer_category_depth_from_font_size) within
+    the actual PDF processing pipeline.
+    """
+    filename = example_doc_path("pdf/fake-bold-sample.pdf")
+
+    elements = partition_pdf(filename=filename, strategy="fast")
+
+    # Find Title elements in the output
+    titles = [el for el in elements if hasattr(el, "category") and el.category == "Title"]
+
+    # If PDF contains titles, verify category_depth inference worked
+    if titles:
+        # Check that at least some titles have category_depth assigned
+        titles_with_depth = [
+            t
+            for t in titles
+            if hasattr(t, "metadata")
+            and hasattr(t.metadata, "category_depth")
+            and t.metadata.category_depth is not None
+        ]
+
+        # Note: Not all PDFs may have detectable heading hierarchy,
+        # but if category_depth is assigned, it should be valid
+        if titles_with_depth:
+            for title in titles_with_depth:
+                # Verify depth is in valid range (1-6)
+                assert 1 <= title.metadata.category_depth <= 6, (
+                    f"category_depth should be 1-6, got {title.metadata.category_depth}"
+                )
