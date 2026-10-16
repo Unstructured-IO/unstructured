@@ -517,7 +517,7 @@ def get_mean_grouping(
 ) -> None:
     """Aggregates accuracy and missing metrics by column name 'doctype' or 'connector',
     or 'all' for all rows. Export to TSV.
-    If `all`, passing export_name is recommended.
+    If `all`, passing export_filename is recommended.
 
     Args:
         group_by (str): Grouping category ('doctype' or 'connector' or 'all').
@@ -526,7 +526,7 @@ def get_mean_grouping(
         eval_name (str): Evaluated metric ('text_extraction' or 'element_type').
         agg_name (str, optional): String to use with export filename. Default is `cct` for
             group_by `text_extraction` and `element-type` for `element_type`
-        export_name (str, optional): Export filename.
+        export_filename (str, optional): Export filename.
     """
     if group_by not in ("doctype", "connector") and group_by != "all":
         raise ValueError("Invalid grouping category. Returning a non-group evaluation.")
