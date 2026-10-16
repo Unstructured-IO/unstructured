@@ -52,6 +52,50 @@ def test_partition_via_api_with_filename_correctly_calls_sdk(
     assert elements[0].metadata.filetype == "message/rfc822"
 
 
+def test_partition_via_api_sends_an_explicit_content_type_for_a_filename(
+    request: FixtureRequest,
+):
+    """`content_type` is a documented parameter and `shared.Files` has the field for it."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    partition_via_api(
+        filename=example_doc_path("eml/fake-email.eml"), content_type="message/rfc822"
+    )
+
+    sent = partition_mock_.call_args_list[0].kwargs["request"]
+    assert sent.partition_parameters.files.content_type == "message/rfc822"
+
+
+def test_partition_via_api_sends_an_explicit_content_type_for_a_file(request: FixtureRequest):
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        partition_via_api(
+            file=f.read(),
+            metadata_filename=example_doc_path("eml/fake-email.eml"),
+            content_type="message/rfc822",
+        )
+
+    sent = partition_mock_.call_args_list[0].kwargs["request"]
+    assert sent.partition_parameters.files.content_type == "message/rfc822"
+
+
+def test_partition_via_api_leaves_content_type_unset_when_not_given(request: FixtureRequest):
+    """Omitting it must keep the SDK inferring the type from the file name, as before."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    partition_via_api(filename=example_doc_path("eml/fake-email.eml"))
+
+    sent = partition_mock_.call_args_list[0].kwargs["request"]
+    assert sent.partition_parameters.files.content_type is None
+
+
 def test_partition_via_api_with_file_correctly_calls_sdk(
     request: FixtureRequest, expected_call_: list[Any]
 ):
