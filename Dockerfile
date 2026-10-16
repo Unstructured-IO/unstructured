@@ -75,7 +75,8 @@ ENV UV_PYTHON_DOWNLOADS=never
 RUN uv sync --locked --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
     uv run --no-sync $PYTHON -c "from unstructured.nlp.tokenize import _get_nlp; print('spaCy model loaded:', _get_nlp().meta['name'])" && \
     uv run --no-sync $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
-    uv run --no-sync $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
+    uv run --no-sync $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')" && \
+    uv run --no-sync $PYTHON -c "from unstructured_inference.models.base import get_model; get_model('yolox')"
 
 # Replace PyPI opencv wheels (which bundle vulnerable ffmpeg 5.1.x with 14 CVEs)
 # with a source-built opencv-contrib-python-headless wheel compiled with
