@@ -450,14 +450,19 @@ def test_auto_partition_json_from_file_preserves_original_elements():
 def test_auto_partition_forwards_encoding_to_the_json_partitioner(tmp_path: pathlib.Path):
     # -- `encoding` is a named parameter of `partition()`, so it is absent from `**kwargs`; the
     # -- JSON/NDJSON special case has to forward it explicitly or the caller's codec is dropped.
-    # -- UTF-16-LE without a BOM is chosen deliberately: autodetection cannot recover it, so the
-    # -- test fails if the argument is not passed through, rather than passing by luck. --
+    # -- Detection is patched to fail: the shared detector can recognize BOM-less UTF-16, so
+    # -- only a forwarded explicit codec proves the argument reaches the partitioner; a dropped
+    # -- argument would fall back to detection and raise here. --
     text = "R\u200bAG \u4e2d\u6587"
     payload = json.dumps([{"type": "NarrativeText", "element_id": "x", "text": text}])
     path = tmp_path / "utf16le.json"
     path.write_bytes(payload.encode("utf-16-le"))
 
-    elements = partition(filename=str(path), encoding="utf-16-le")
+    with patch(
+        "unstructured.partition.common.json_partitioning.detect_file_encoding",
+        side_effect=AssertionError("explicit encoding must bypass detection"),
+    ):
+        elements = partition(filename=str(path), encoding="utf-16-le")
 
     assert elements[0].text == text
 
@@ -468,7 +473,11 @@ def test_auto_partition_forwards_encoding_to_the_ndjson_partitioner(tmp_path: pa
     path = tmp_path / "utf16le.ndjson"
     path.write_bytes(payload.encode("utf-16-le"))
 
-    elements = partition(filename=str(path), encoding="utf-16-le")
+    with patch(
+        "unstructured.partition.common.json_partitioning.detect_file_encoding",
+        side_effect=AssertionError("explicit encoding must bypass detection"),
+    ):
+        elements = partition(filename=str(path), encoding="utf-16-le")
 
     assert elements[0].text == text
 

@@ -100,6 +100,7 @@ def test_partition_json_passes_complete_call_arguments_to_custom_chunker():
         text: str | None = None,
         metadata_last_modified: str | None = None,
         metadata_filename: str | None = None,
+        encoding: str | None = None,
     ) -> list[Element]:
         call_args.update(
             filename=filename,
@@ -107,12 +108,14 @@ def test_partition_json_passes_complete_call_arguments_to_custom_chunker():
             text=text,
             metadata_last_modified=metadata_last_modified,
             metadata_filename=metadata_filename,
+            encoding=encoding,
         )
         return list(elements)
 
     register_chunking_strategy("capture-json-call-args", capture_call_args)
-    stream = io.BytesIO(b"  \n")
 
+    # -- empty input: no encoding is supplied, so the chunker receives None --
+    stream = io.BytesIO(b"  \n")
     assert (
         partition_json(
             file=stream,
@@ -128,7 +131,34 @@ def test_partition_json_passes_complete_call_arguments_to_custom_chunker():
         "text": None,
         "metadata_last_modified": "2020-07-05T09:24:28",
         "metadata_filename": "cars.json",
+        "encoding": None,
     }
+
+    # -- rehydration: the explicit encoding reaches the registered chunker --
+    call_args.clear()
+    rehydrated = json.dumps(
+        [{"type": "Title", "element_id": "t1", "text": "hello", "metadata": {}}]
+    )
+    assert partition_json(
+        text=rehydrated,
+        encoding="utf-16",
+        chunking_strategy="capture-json-call-args",
+    )
+    assert call_args["encoding"] == "utf-16"
+    assert call_args["text"] == rehydrated
+    assert call_args["file"] is None
+    assert call_args["filename"] is None
+
+    # -- arbitrary JSON: the explicit encoding reaches the registered chunker too --
+    call_args.clear()
+    arbitrary = '{"hi": "there"}'
+    assert partition_json(
+        text=arbitrary,
+        encoding="utf-8",
+        chunking_strategy="capture-json-call-args",
+    )
+    assert call_args["encoding"] == "utf-8"
+    assert call_args["text"] == arbitrary
 
 
 @pytest.mark.parametrize("filename", test_files)

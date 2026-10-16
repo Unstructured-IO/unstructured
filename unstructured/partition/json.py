@@ -36,6 +36,7 @@ def _apply_chunking(
     file: Optional[IO[bytes]],
     text: Optional[str],
     metadata_last_modified: Optional[str],
+    encoding: Optional[str],
     kwargs: dict[str, Any],
 ) -> list[Element]:
     """Apply the requested chunking strategy before final metadata processing."""
@@ -44,6 +45,7 @@ def _apply_chunking(
         "file": file,
         "text": text,
         "metadata_last_modified": metadata_last_modified,
+        "encoding": encoding,
         **kwargs,
     }
     chunking_strategy = call_args.pop("chunking_strategy", None)
@@ -135,6 +137,7 @@ def partition_json(
             file=file,
             text=text,
             metadata_last_modified=metadata_last_modified,
+            encoding=encoding,
             kwargs=kwargs,
         )
         metadata_filename = kwargs.get("metadata_filename")
@@ -164,6 +167,7 @@ def partition_json(
             file=file,
             text=text,
             metadata_last_modified=metadata_last_modified,
+            encoding=encoding,
             kwargs=kwargs,
         )
         elements = set_element_hierarchy(elements)

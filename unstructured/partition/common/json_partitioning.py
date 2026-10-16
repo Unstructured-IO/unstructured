@@ -41,12 +41,12 @@ from unstructured.utils import loads_strict_json as loads_strict_json
 def _decode_bytes(data: bytes, encoding: Optional[str]) -> str:
     """Decode `data`, honoring an explicit `encoding` and delegating detection otherwise.
 
-    An explicit `encoding` is authoritative: it is used as-is so a caller who knows the codec
-always gets it, and a genuine mismatch surfaces as an error rather than mojibake.
+        An explicit `encoding` is authoritative: it is used as-is so a caller who knows the codec
+    always gets it, and a genuine mismatch surfaces as an error rather than mojibake.
 
-    With no `encoding`, the BOM/NUL-aware shared `detect_file_encoding()` policy is used on the
-buffered bytes (never on the live caller stream), which already prefers strict UTF-8 before
-    falling back to statistical detection.
+        With no `encoding`, the BOM/NUL-aware shared `detect_file_encoding()` policy is used on the
+    buffered bytes (never on the live caller stream), which already prefers strict UTF-8 before
+        falling back to statistical detection.
     """
     if encoding is not None:
         return data.decode(format_encoding_str(encoding))
