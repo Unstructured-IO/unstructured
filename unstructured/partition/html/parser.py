@@ -76,6 +76,7 @@ Other background
 from __future__ import annotations
 
 import html
+import itertools
 import re
 from collections import defaultdict, deque
 from functools import cached_property
@@ -92,6 +93,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     EmailAddress,
+    FigureCaption,
     Image,
     ListItem,
     NarrativeText,
@@ -363,18 +365,18 @@ class Flow(etree.ElementBase):
 
     @cached_property
     def _page_number(self) -> int | None:
-        """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute."""
-        # -- iterative, not recursive, because this can be called from deep inside nested
-        # -- unrecognized elements (which are Flow) where the call stack is already deep --
-        element: etree._Element | None = self
-        while isinstance(element, Flow):
+        """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute.
+
+        Phrasing ancestors are included, so an image inside an `<a>` gets its container's page.
+        """
+        for element in itertools.chain((self,), self.iterancestors()):
             page_attr = element.get("data-page-number")
-            if page_attr is not None:
-                try:
-                    return int(page_attr)
-                except (ValueError, TypeError):
-                    pass
-            element = element.getparent()
+            if page_attr is None:
+                continue
+            try:
+                return int(page_attr)
+            except (ValueError, TypeError):
+                continue
         return None
 
     def iter_elements(self) -> Iterator[Element]:
@@ -471,6 +473,38 @@ class Heading(Flow):
     """
 
     _ElementCls = Title
+
+
+class Figure(Flow):
+    """A `<figure>` element, such as an image, code listing or table with its `<figcaption>`.
+
+    It is traversed like a `<div>`. The distinct class keeps a list item from adopting a figure as
+    though it were a plain paragraph.
+    """
+
+
+class FigureCaptionBlock(Flow):
+    """A `<figcaption>` element, which generates a `FigureCaption` element."""
+
+    _ElementCls = FigureCaption
+
+    def iter_elements(self) -> Iterator[Element]:
+        """Adopt a sole text block, such as a caption wrapped in a `<p>`."""
+        if len(self) == 1 and not (self.text or "").strip():
+            child = self[0]
+            if (
+                type(child) in (Flow, BlockItem)
+                and not (child.tail or "").strip()
+                and all(node.is_phrasing for node in child.iterdescendants())
+            ):
+                for element in self._element_from_text_or_tail(
+                    child.text or "", deque(child), FigureCaption
+                ):
+                    element.metadata.page_number = child._page_number
+                    yield element
+                return
+
+        yield from super().iter_elements()
 
 
 class ListBlock(Flow):
@@ -1164,6 +1198,8 @@ element_class_lookup.get_namespace(None).update(
         "dt": BlockItem,
         "li": ListItemBlock,
         # -- image --
+        "figure": Figure,
+        "figcaption": FigureCaptionBlock,
         "img": ImageBlock,
         # -- table --
         "table": TableBlock,
@@ -1226,7 +1262,6 @@ element_class_lookup.get_namespace(None).update(
         "xml": RemovedPhrasing,  # -- legacy "data island", like Office document-properties --
         # -- removed block --
         "details": RemovedBlock,  # -- likely boilerplate --
-        "figure": RemovedBlock,
         "hr": RemovedBlock,
         "nav": RemovedBlock,
         "template": RemovedBlock,

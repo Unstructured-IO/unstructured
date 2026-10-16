@@ -1,3 +1,9 @@
+## 0.27.29
+
+### Fixes
+
+- **Extract HTML figures and preserve their heading hierarchy.** `partition_html()` now keeps images, code listings, tables, and captions inside `<figure>` instead of dropping them. Images and code snippets remain children of the preceding title or header, and page numbers survive inline wrappers. Page-grouped HTML export treats children of a heading on another page as roots within their own page, preserving their content and source metadata. Resolves #3606.
+
 ## 0.27.28-dev3
 
 ### Enhancements

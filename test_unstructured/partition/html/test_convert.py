@@ -1,13 +1,23 @@
 # pyright: reportPrivateUsage=false, reportUnknownMemberType=false, reportOptionalMemberAccess=false
 # pyright: reportAttributeAccessIssue=false, reportUnknownLambdaType=false
 from collections import defaultdict
+from copy import deepcopy
 from typing import Any, Optional
 
 import pytest
 from bs4 import BeautifulSoup, Tag
 from pytest_mock import MockerFixture
 
-from unstructured.documents.elements import Element, ElementMetadata, ElementType
+from unstructured.documents.elements import (
+    CodeSnippet,
+    Element,
+    ElementMetadata,
+    ElementType,
+    Header,
+    Image,
+    NarrativeText,
+)
+from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.partition.html.convert import (
     HTML_PARSER,
     ElementHtml,
@@ -536,3 +546,84 @@ def test_elements_to_html_invalid_html_template(
 
     with pytest.raises(ValueError, match="Body tag not found in the HTML template"):
         elements_to_html(elements)
+
+
+@pytest.mark.parametrize("figure", [False, True])
+@pytest.mark.parametrize("content_type", ["code", "image"])
+def test_elements_to_html_keeps_partitioned_children_of_a_heading_on_another_page(
+    figure: bool, content_type: str
+) -> None:
+    image_base64 = (
+        "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
+        "w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+    )
+    content = (
+        "<pre>x = 1</pre>"
+        if content_type == "code"
+        else f'<img src="data:image/png;base64,{image_base64}" alt="Pipeline diagram">'
+    )
+    if figure:
+        content = f"<figure>{content}<figcaption>Figure 1. The pipeline.</figcaption></figure>"
+    elements = partition_html(
+        text=(
+            '<div data-page-number="1"><h1>Section</h1></div>'
+            f'<div data-page-number="2">{content}'
+            "<p>The pipeline has three stages.</p>"
+            "<h2>Subsection</h2><p>Each stage is described below.</p></div>"
+        ),
+        extract_image_block_to_payload=True,
+        extract_image_block_types=["Image"],
+    )
+    heading, *page_two = elements
+    subsection, subsection_text = page_two[-2:]
+    assert [element.category for element in elements] == (
+        ["Title", "CodeSnippet" if content_type == "code" else "Image"]
+        + (["FigureCaption"] if figure else [])
+        + ["NarrativeText", "Title", "NarrativeText"]
+    )
+    assert heading.metadata.page_number == 1
+    assert all(element.metadata.page_number == 2 for element in page_two)
+    assert all(element.metadata.parent_id == heading.id for element in page_two[:-1])
+    assert subsection_text.metadata.parent_id == subsection.id
+    if content_type == "image":
+        assert page_two[0].metadata.image_base64 == image_base64
+    before_export = deepcopy([element.to_dict() for element in elements])
+
+    html = elements_to_html(elements)
+
+    soup = BeautifulSoup(html, HTML_PARSER)
+    for page_number, page_elements in ((1, [heading]), (2, page_two)):
+        page = soup.find("div", {"data-page_number": str(page_number)})
+        assert page is not None
+        for element in page_elements:
+            (tag,) = soup.find_all(id=element.id)
+            assert tag.find_parent("div", {"data-page_number": str(page_number)}) is page
+            if element.category == "Image":
+                assert tag["src"] == f"data:image/png;base64,{image_base64}"
+                assert tag["alt"] == element.text
+            else:
+                assert tag.get_text(strip=True) == element.text
+    local_heading = soup.find(id=subsection.id)
+    assert soup.find(id=subsection_text.id).parent is local_heading.parent
+    assert [element.to_dict() for element in elements] == before_export
+
+
+@pytest.mark.parametrize("content_class", [CodeSnippet, Image])
+def test_elements_to_html_keeps_children_of_a_header_on_another_page(content_class) -> None:
+    header = Header("Section", metadata=ElementMetadata(page_number=1))
+    content = content_class("Pipeline", metadata=ElementMetadata(page_number=2))
+    following = NarrativeText(
+        "The pipeline has three stages.", metadata=ElementMetadata(page_number=2)
+    )
+    elements = set_element_hierarchy([header, content, following])
+    assert content.metadata.parent_id == header.id
+    assert following.metadata.parent_id == header.id
+    before_export = deepcopy([element.to_dict() for element in elements])
+
+    soup = BeautifulSoup(elements_to_html(elements), HTML_PARSER)
+
+    page_two = soup.find("div", {"data-page_number": "2"})
+    for element in (content, following):
+        (tag,) = soup.find_all(id=element.id)
+        assert tag.find_parent("div", {"data-page_number": "2"}) is page_two
+    assert [element.to_dict() for element in elements] == before_export
