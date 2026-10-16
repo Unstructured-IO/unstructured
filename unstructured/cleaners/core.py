@@ -488,3 +488,14 @@ def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
 
 def index_adjustment_after_clean_extra_whitespace(index, moved_indices) -> int:
     return int(index - moved_indices[index])
+
+
+def clean_newline(text: str) -> str:
+    """Cleans hyphenated words that are split across a line break by rejoining them.
+
+    Example
+    -------
+    "The extracted text is a re-\nsearch project" -> "The extracted text is a research project"
+    """
+    pattern = r"(\w+)-\s+(\w+)"
+    return re.sub(pattern, r"\1\2", text)
