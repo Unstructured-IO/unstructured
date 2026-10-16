@@ -101,6 +101,7 @@ def sort_page_elements(
     sort_mode: str = SORT_MODE_XY_CUT,
     shrink_factor: float = 0.9,
     xy_cut_primary_direction: str = "x",
+    rtl: bool = False,
 ) -> list[Element]:
     """
     Sorts a list of page elements based on the specified sorting mode.
@@ -116,6 +117,9 @@ def sort_page_elements(
         - SORT_MODE_BASIC: Sorts elements based on their coordinates. Elements without coordinates
          will be pushed to the end.
         - If an unrecognized sort_mode is provided, the function returns the elements as-is.
+    - rtl (bool, optional): Only applies to SORT_MODE_XY_CUT. When True, column/block order
+     within a row is right-to-left instead of left-to-right, matching the reading order of
+     right-to-left scripts (e.g. Arabic, Hebrew). Default is False.
 
     Returns:
     - list[Element]: A list of sorted page elements.
@@ -129,6 +133,8 @@ def sort_page_elements(
         "UNSTRUCTURED_XY_CUT_PRIMARY_DIRECTION",
         xy_cut_primary_direction,
     )
+
+    rtl = os.environ.get("UNSTRUCTURED_XY_CUT_RTL", str(rtl)).lower() == "true"
 
     if not page_elements:
         return []
@@ -169,6 +175,7 @@ def sort_page_elements(
             np.asarray(shrunken_bboxes).astype(int),
             np.arange(len(shrunken_bboxes)),
             res,
+            rtl=rtl,
         )
         sorted_page_elements = [page_elements[i] for i in res]
     elif sort_mode == SORT_MODE_BASIC:
@@ -191,6 +198,7 @@ def sort_bboxes_by_xy_cut(
     bboxes,
     shrink_factor: float = 0.9,
     xy_cut_primary_direction: str = "x",
+    rtl: bool = False,
 ):
     """Sort bounding boxes using XY-cut algorithm."""
 
@@ -207,6 +215,7 @@ def sort_bboxes_by_xy_cut(
         np.asarray(shrunken_bboxes).astype(int),
         np.arange(len(shrunken_bboxes)),
         res,
+        rtl=rtl,
     )
     return res
 
@@ -216,6 +225,7 @@ def sort_text_regions(
     sort_mode: str = SORT_MODE_XY_CUT,
     shrink_factor: float = 0.9,
     xy_cut_primary_direction: str = "x",
+    rtl: bool = False,
 ) -> TextRegions:
     """Sort a list of TextRegion elements based on the specified sorting mode."""
 
@@ -250,10 +260,13 @@ def sort_text_regions(
             xy_cut_primary_direction,
         )
 
+        rtl = os.environ.get("UNSTRUCTURED_XY_CUT_RTL", str(rtl)).lower() == "true"
+
         res = sort_bboxes_by_xy_cut(
             bboxes=bboxes,
             shrink_factor=shrink_factor,
             xy_cut_primary_direction=xy_cut_primary_direction,
+            rtl=rtl,
         )
         sorted_elements = elements.slice(res)
     elif sort_mode == SORT_MODE_BASIC:
