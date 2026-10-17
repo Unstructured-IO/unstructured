@@ -2713,7 +2713,7 @@ class _TextSplitter:
 
         # -- for token counting, use the measurement abstraction for size check --
         if self._opts.use_token_counting:
-            if self._opts.measure(s) <= maxlen:
+            if self._fits_token_budget(s):
                 return s, ""
             return self._split_by_tokens(s)
 
@@ -2739,6 +2739,27 @@ class _TextSplitter:
         # -- tail and remainder on arb-char split.
         return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
 
+    def _fits_token_budget(self, s: str) -> bool:
+        """True when `s` fits within the configured token budget.
+
+        Doubling prefixes of `s` are measured before the whole string: once a prefix overflows
+        the budget `s` cannot fit either, so the cost of deciding stays bounded by that prefix
+        rather than by a whole text that may not fit. A text-only table routes its complete
+        flattened text through here, which made this check quadratic when done on the whole
+        remainder for every chunk. The whole `s` is measured only when every probe fits.
+        """
+        maxlen = self._opts.hard_max
+        measure = self._opts.measure
+        n = len(s)
+        end = min(n, 256)
+
+        while True:
+            if measure(s[:end]) > maxlen:
+                return False
+            if end == n:
+                return True
+            end = min(n, 2 * end)
+
     def _split_by_tokens(self, s: str) -> tuple[str, str]:
         """Split text `s` on a separator boundary while respecting token limits.
 
@@ -2750,66 +2771,125 @@ class _TextSplitter:
         overlap = self._opts.overlap
         measure = self._opts.measure
 
+        # -- bound the prospective chunk window: the last prefix position probed as fitting,
+        # -- padded by a short margin so partial-token effects cannot hide a fitting candidate
+        # -- just beyond it. The separator search is restricted to this window; without it a
+        # -- separator-dense string makes the search quadratic in its length (a text-only table
+        # -- routes its whole flattened text through here when HTML is disabled).
+        window_end = self._token_window_end(s, maxlen)
+        search_end = min(len(s), window_end + 16)
+
         # -- try each separator in order of preference --
-        for pattern, _ in self._patterns:
-            # -- find all matches of this separator in the string --
-            # -- note: (?r) flag makes finditer return matches right-to-left --
-            matches = list(pattern.finditer(s))
-            # -- iterate through matches (already right-to-left due to (?r) flag) --
-            for match in matches:
+        for pattern, sep_len in self._patterns:
+            # -- note: the (?r) flag makes finditer return matches right-to-left; the endpos
+            # -- restriction means only candidates inside the token window are visited --
+            for match in pattern.finditer(s, 0, min(len(s), search_end + sep_len)):
                 match_start, match_end = match.span()
                 fragment = s[:match_start].rstrip()
                 # -- check if fragment fits within token limit --
                 if measure(fragment) <= maxlen:
                     # -- skip if fragment is too short (needs at least some content) --
-                    if measure(fragment) == 0:
+                    if not fragment or measure(fragment) == 0:
+                        continue
+                    # -- skip if prefix is wholly covered by overlap (cannot make progress) --
+                    if overlap > 0 and measure(fragment) <= overlap:
                         continue
                     raw_remainder = s[match_end:].lstrip()
                     # -- add overlap if configured --
                     if overlap > 0:
                         # -- token-based overlap: find tail with ~overlap tokens --
                         tail = self._get_token_overlap_tail(fragment, overlap)
-                        overlapped_remainder = tail + " " + raw_remainder
+                        overlapped_remainder = (
+                            (tail + " " + raw_remainder) if tail else raw_remainder
+                        )
+                        if len(overlapped_remainder) >= len(s):
+                            continue
                         return fragment, overlapped_remainder
+                    if len(raw_remainder) >= len(s):
+                        continue
                     return fragment, raw_remainder
 
-        # -- fallback: split on whitespace boundary using binary search to find token limit --
-        # -- find the approximate character position that corresponds to maxlen tokens --
+        # -- fallback: split on a whitespace boundary near the end of the token window --
         # -- Position zero cannot make progress. If even the first code point exceeds the token
-        # -- budget, retain `best_pos == 1` and tolerate that indivisible overflow.
-        low, high = 1, len(s)
-        best_pos = max(overlap + 1, 1)  # -- minimum viable position --
-
-        while low <= high:
-            mid = (low + high) // 2
-            if measure(s[:mid]) <= maxlen:
-                best_pos = mid
-                low = mid + 1
-            else:
-                high = mid - 1
+        # -- budget, `_token_window_end()` retains `1` and tolerates that indivisible overflow.
+        best_pos = window_end
 
         # -- try to find a whitespace boundary near best_pos, searching backwards --
         split_pos = best_pos
-        for i in range(best_pos, max(overlap, 0), -1):
+        for i in range(best_pos, 0, -1):
             if i < len(s) and s[i].isspace():
+                cand_fragment = s[:i].rstrip()
+                if not cand_fragment or measure(cand_fragment) == 0:
+                    continue
+                if overlap > 0 and measure(cand_fragment) <= overlap:
+                    continue
                 split_pos = i
                 break
 
         # -- ensure the fragment still fits after whitespace adjustment --
         fragment = s[:split_pos].rstrip()
-        if measure(fragment) > maxlen and split_pos > overlap + 1:
-            # -- whitespace boundary pushed us over; use the binary search result directly --
+        if not fragment or measure(fragment) > maxlen:
             fragment = s[:best_pos].rstrip()
             split_pos = best_pos
 
-        raw_remainder = s[split_pos:].lstrip()
+        if not fragment:
+            fragment = s[: max(1, best_pos)]
+            split_pos = len(fragment)
+
+        is_whitespace_split = split_pos < len(s) and s[split_pos].isspace()
+        raw_remainder = s[split_pos:].lstrip() if is_whitespace_split else s[split_pos:]
 
         if overlap > 0 and fragment:
             tail = self._get_token_overlap_tail(fragment, overlap)
-            overlapped_remainder = tail + " " + raw_remainder
-            return fragment, overlapped_remainder
+            sep = " " if is_whitespace_split else ""
+            overlapped_remainder = (tail + sep + raw_remainder) if tail else raw_remainder
+            if len(overlapped_remainder) < len(s):
+                return fragment, overlapped_remainder
 
-        return fragment, raw_remainder
+        # -- progress guarantee: remainder must strictly consume content from s --
+        remainder = raw_remainder
+        if len(remainder) >= len(s):
+            # -- fallback to hard back-stop: consume at least one character --
+            remainder = s[max(1, split_pos) :]
+
+        return fragment, remainder
+
+    def _token_window_end(self, s: str, maxlen: int) -> int:
+        """Last prefix length probed as fitting within `maxlen` tokens, at least 1.
+
+        1 is the minimum so position zero cannot cause a non-progressing split; when even
+        `s[:1]` exceeds the budget, `1` is returned and that indivisible overflow is tolerated,
+        matching the fallback in `_split_by_tokens()`.
+
+        Probes by doubling, then binary search, so the number of tokenizer calls is logarithmic
+        in `len(s)`. Prefix token counts are not strictly monotone in prefix length (a trailing
+        partial word can tokenize into more tokens than the completed word), so this is a
+        consistent approximation like the fallback's; callers pad it by a short margin before
+        bounding a search so a fitting candidate just beyond the probe cannot be lost.
+        """
+        measure = self._opts.measure
+        n = len(s)
+        low, high = 1, 1
+
+        # -- exponential probe: find a prefix length whose stripped text overflows the budget --
+        while high < n:
+            high = min(n, max(2 * high, 256))
+            if measure(s[:high].rstrip()) > maxlen:
+                break
+            low = high
+
+        if low == n:
+            return n
+
+        # -- refine between the last fitting length and the first overflowing one --
+        while high - low > 1:
+            mid = (low + high) // 2
+            if measure(s[:mid].rstrip()) <= maxlen:
+                low = mid
+            else:
+                high = mid
+
+        return low
 
     def _get_token_overlap_tail(self, text: str, target_tokens: int) -> str:
         """Extract tail of text containing approximately `target_tokens` tokens.

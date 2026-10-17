@@ -19,10 +19,12 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT_XLSX,
 )
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from unstructured.chunking.base import TokenCounter
 from unstructured.chunking.title import chunk_by_title
 from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Table
 from unstructured.errors import UnprocessableEntityError
+from unstructured.partition.auto import partition
 from unstructured.partition.tsv import partition_tsv
 
 EXPECTED_FILETYPE = "text/tsv"
@@ -286,3 +288,139 @@ def test_partition_tsv_with_implicit_index_columns_matches_pandas_within_the_lim
         index=False, header=True, na_rep=""
     )
     assert table.text == HtmlTable.from_html_text(expected).text
+
+
+# -- `infer_table_structure` ---------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+def test_partition_tsv_from_filename_infer_table_structure(infer_table_structure: bool):
+    elements = partition_tsv(
+        example_doc_path("stanley-cups.tsv"), infer_table_structure=infer_table_structure
+    )
+
+    has_text_as_html = elements[0].metadata.text_as_html is not None
+    assert has_text_as_html == infer_table_structure
+
+
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+def test_partition_tsv_via_partition_respects_infer_table_structure(infer_table_structure: bool):
+    elements = partition(
+        example_doc_path("stanley-cups.tsv"), infer_table_structure=infer_table_structure
+    )
+
+    has_text_as_html = elements[0].metadata.text_as_html is not None
+    assert has_text_as_html == infer_table_structure
+
+
+def test_partition_tsv_with_html_disabled_and_token_overlap():
+    pytest.importorskip("tiktoken")
+    raw = b"a\t" + b"x" * 10_000 + b"\n"
+    chunks = partition_tsv(
+        file=io.BytesIO(raw),
+        infer_table_structure=False,
+        chunking_strategy="basic",
+        max_tokens=100,
+        tokenizer="cl100k_base",
+        overlap=20,
+    )
+
+    assert len(chunks) > 1
+    assert all(c.metadata.text_as_html is None for c in chunks)
+    assert chunks[0].text.startswith("a x")
+    assert all(set(c.text).issubset({"a", " ", "x"}) for c in chunks)
+    assert "a" in chunks[0].text
+    assert sum(c.text.count("x") for c in chunks) >= 10_000
+
+
+def test_partition_auto_tsv_with_html_disabled_and_token_overlap():
+    pytest.importorskip("tiktoken")
+    raw = b"a\t" + b"x" * 10_000 + b"\n"
+    chunks = partition(
+        file=io.BytesIO(raw),
+        metadata_filename="table.tsv",
+        infer_table_structure=False,
+        chunking_strategy="basic",
+        max_tokens=100,
+        tokenizer="cl100k_base",
+        overlap=20,
+    )
+
+    assert len(chunks) > 1
+    assert all(c.metadata.text_as_html is None for c in chunks)
+    assert chunks[0].text.startswith("a x")
+    assert all(set(c.text).issubset({"a", " ", "x"}) for c in chunks)
+    assert "a" in chunks[0].text
+    assert sum(c.text.count("x") for c in chunks) >= 10_000
+
+
+# -- bounded token-chunking work for text-only tables --------------------------------------------
+
+
+def _instrument_tokenizer_work(monkeypatch: pytest.MonkeyPatch) -> list[int]:
+    """Record [call-count, measured-characters] of the tokenizer used while chunking."""
+    original_count = TokenCounter.count
+    work = [0, 0]
+
+    def counting_count(self: TokenCounter, text: str) -> int:
+        work[0] += 1
+        work[1] += len(text)
+        return original_count(self, text)
+
+    monkeypatch.setattr(TokenCounter, "count", counting_count)
+    return work
+
+
+def test_partition_tsv_html_disabled_bounds_token_measurement_work(monkeypatch: pytest.MonkeyPatch):
+    """Chunking a separator-dense text-only table performs bounded tokenizer work per chunk."""
+    tiktoken = pytest.importorskip("tiktoken")
+    row_count = 20_000
+    raw = b"a\tb\n" * row_count
+    work = _instrument_tokenizer_work(monkeypatch)
+
+    chunks = partition_tsv(
+        file=io.BytesIO(raw),
+        infer_table_structure=False,
+        chunking_strategy="basic",
+        max_tokens=100,
+        tokenizer="cl100k_base",
+        overlap=0,
+    )
+
+    # -- the ordered payload survives and every chunk stays within the token budget --
+    assert len(chunks) > 1
+    assert " ".join(chunk.text for chunk in chunks).split() == ["a", "b"] * row_count
+    encode = tiktoken.get_encoding("cl100k_base").encode
+    assert all(len(encode(chunk.text)) <= 100 for chunk in chunks)
+    # -- tokenizer work stays bounded per chunk instead of growing with the table length --
+    assert work[0] <= 30 * len(chunks)
+    assert work[1] <= 40 * len(raw)
+
+
+@pytest.mark.parametrize("chunking_strategy", ["basic", "by_title"])
+@pytest.mark.parametrize("via_partition", [False, True])
+def test_partition_tsv_html_disabled_many_short_rows_keeps_ordered_payload(
+    chunking_strategy: str, via_partition: bool
+):
+    """Both entry points and both chunking strategies preserve the payload of a dense table."""
+    tiktoken = pytest.importorskip("tiktoken")
+    row_count = 2_000
+    raw = b"a\tb\n" * row_count
+    chunking_kwargs: dict[str, Any] = {
+        "infer_table_structure": False,
+        "chunking_strategy": chunking_strategy,
+        "max_tokens": 100,
+        "tokenizer": "cl100k_base",
+        "overlap": 0,
+    }
+
+    if via_partition:
+        chunks = partition(file=io.BytesIO(raw), metadata_filename="table.tsv", **chunking_kwargs)
+    else:
+        chunks = partition_tsv(file=io.BytesIO(raw), **chunking_kwargs)
+
+    assert len(chunks) > 1
+    assert all(chunk.metadata.text_as_html is None for chunk in chunks)
+    assert " ".join(chunk.text for chunk in chunks).split() == ["a", "b"] * row_count
+    encode = tiktoken.get_encoding("cl100k_base").encode
+    assert all(len(encode(chunk.text)) <= 100 for chunk in chunks)
