@@ -166,6 +166,7 @@ test = [
     "coverage>=7.13.3, <8.0.0",
     "freezegun>=1.5.5, <2.0.0",
     "grpcio>=1.78.0, <2.0.0",
+    "langdetect-rs==0.1.0",
     "pip-licenses>=5.0.0, <6.0.0",
     "mypy>=1.19.1, <2.0.0",
     "pydantic>=2.12.5, <3.0.0",
@@ -255,6 +256,10 @@ select = [
 [tool.pytest.ini_options]
 filterwarnings = [
     "ignore::DeprecationWarning",
+    # -- EncodingDetectionWarning, matched by message on its builtin base class. The xdist
+    # -- controller in `make docker-test` cannot import `unstructured`, so it cannot unserialize a
+    # -- warning of that class reported by a worker. Tests that check it use `pytest.warns()`. --
+    "ignore:The file encoding was inferred:UserWarning",
 ]
 python_classes = ["Test", "Describe"]
 python_functions = ["test_", "it_", "they_", "but_", "and_"]
@@ -271,11 +276,3 @@ omit = [
 
 [tool.coverage.report]
 fail_under = 90
-
-[tool.codeflash]
-module-root = "unstructured"
-tests-root = "test_unstructured"
-test-framework = "pytest"
-ignore-paths = []
-formatter-cmds = ["ruff check --exit-zero --fix-only $file", "ruff format $file"]
-benchmarks-root = "test_unstructured/benchmarks"
