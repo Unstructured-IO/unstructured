@@ -348,14 +348,23 @@ def _normalize_line_endings(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
+# -- the separators a ".csv" file is written with: those the context sniffs the file for, and a
+# -- tab, since a tab-separated export is often saved as ".csv" --
+_SNIFFED_DELIMITERS = ",;|\t"
+
+
 def _sniff_delimiter(first_line: str) -> str:
-    """The delimiter `csv.Sniffer` finds in `first_line`, or `_ONE_COLUMN_DELIMITER`."""
+    """The delimiter `csv.Sniffer` finds in `first_line`, or `_ONE_COLUMN_DELIMITER`.
+
+    The sniffer only considers `_SNIFFED_DELIMITERS`. Unrestricted, it takes any character the
+    line repeats, so the first line of a single-column file named a letter or a space as the
+    delimiter: "Note" was split on its "t", and the next line holding more of them was a Pandas
+    `ParserError`.
+    """
     try:
-        delimiter = csv.Sniffer().sniff(first_line).delimiter
+        return csv.Sniffer().sniff(first_line, delimiters=_SNIFFED_DELIMITERS).delimiter
     except csv.Error:
         return _ONE_COLUMN_DELIMITER
-    # -- a quote or line ending cannot delimit fields --
-    return _ONE_COLUMN_DELIMITER if delimiter in ('"', "\n", "\r") else delimiter
 
 
 def _iter_decoded_chunks(file: IO[bytes], encoding: str | None) -> Iterator[str]:
