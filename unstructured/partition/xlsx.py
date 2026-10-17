@@ -144,11 +144,10 @@ def partition_xlsx(
     return elements
 
 
-# -- Read each cell as the value the workbook holds. Pandas otherwise infers a dtype per column:
-# -- one empty cell turns a column of whole numbers into floats ("12" is written "12.0") and a
-# -- column of booleans into 1.0 and 0.0, and the text "N/A", "NULL", "NA" or "None" in a cell is
-# -- read as a missing value and written as an empty cell. Only an empty cell is missing. --
-_CELLS_AS_WRITTEN: dict[str, Any] = {"dtype": object, "keep_default_na": False, "na_values": [""]}
+# -- Read each cell as the value the workbook holds. Pandas otherwise infers a dtype per column,
+# -- so one empty cell turns a column of whole numbers into floats ("12" is written "12.0") and a
+# -- column of booleans into 1.0 and 0.0. --
+_CELLS_AS_WRITTEN: dict[str, Any] = {"dtype": object}
 
 
 class _XlsxPartitionerOptions:

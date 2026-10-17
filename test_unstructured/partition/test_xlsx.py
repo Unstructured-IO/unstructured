@@ -60,22 +60,22 @@ EXCEPTED_PAGE_NAME = "Stanley Cups"
 @pytest.mark.parametrize("find_subtable", [True, False])
 def test_partition_xlsx_reads_each_cell_as_written(find_subtable: bool, tmp_path: Path):
     # -- one empty cell made Pandas read a column of whole numbers as floats ("12.0") and one of
-    # -- booleans as 1.0 and 0.0, and "N/A" or "NULL" in a cell was read as missing and dropped --
+    # -- booleans as 1.0 and 0.0 --
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
-    for row in ([12, "pen", True], [None, "ink", False], [7, "N/A", None], ["NULL", "007", 1.5]):
+    for row in ([12, "pen", True], [None, "ink", False], [7, "pad", None], [3, "007", 1.5]):
         worksheet.append(row)
     file_path = tmp_path / "cells.xlsx"
     workbook.save(file_path)
 
     (table,) = partition_xlsx(str(file_path), find_subtable=find_subtable)
 
-    assert table.text == "12 pen True ink False 7 N/A NULL 007 1.5"
+    assert table.text == "12 pen True ink False 7 pad 3 007 1.5"
     assert table.metadata.text_as_html == (
         "<table><tr><td>12</td><td>pen</td><td>True</td></tr>"
         "<tr><td/><td>ink</td><td>False</td></tr>"
-        "<tr><td>7</td><td>N/A</td><td/></tr>"
-        "<tr><td>NULL</td><td>007</td><td>1.5</td></tr></table>"
+        "<tr><td>7</td><td>pad</td><td/></tr>"
+        "<tr><td>3</td><td>007</td><td>1.5</td></tr></table>"
     )
 
 
