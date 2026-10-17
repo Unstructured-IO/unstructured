@@ -542,6 +542,29 @@ class DescribeTextSplitterTokenMode:
         assert fragment2 == "seven eight nine ten eleven twelve"
         assert remainder2 == ""
 
+    def it_makes_progress_when_prefix_is_wholly_covered_by_overlap(self, _tiktoken_installed: None):
+        """A split prefix wholly covered by overlap must advance instead of looping."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base", overlap=20)
+        split = _TextSplitter(opts)
+
+        # Prefix before space is "a" (1 token), which is <= overlap (20 tokens)
+        text = "a " + "x" * 10_000
+        fragment, remainder = split(text)
+
+        assert fragment
+        assert opts.measure(fragment) <= 100
+        assert len(remainder) < len(text)
+        assert remainder != text
+
+        chunks: list[str] = [fragment]
+        while remainder:
+            fragment, remainder = split(remainder)
+            chunks.append(fragment)
+
+        assert len(chunks) == 16
+        assert chunks[0].startswith("a x")
+        assert all(set(c).issubset({"a", " ", "x"}) for c in chunks)
+
 
 # ================================================================================================
 # PRE-CHUNKER
