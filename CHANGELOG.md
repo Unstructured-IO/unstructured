@@ -1,3 +1,9 @@
+## 0.27.29
+
+### Fixes
+
+- **Read XLS files whose Workbook stream ends in padding.** `partition_xlsx()` raised `struct.error` for many `.xls` files written by `xlwt`: the msoffcrypto encryption check reads the Workbook stream as 4-byte record headers and fails on the few bytes of padding at its end (nolze/msoffcrypto-tool#83). Such a file is now read as not encrypted; password-protected `.xls` files are still rejected.
+
 ## 0.27.28
 
 ### Enhancements
