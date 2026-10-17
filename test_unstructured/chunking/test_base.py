@@ -565,6 +565,30 @@ class DescribeTextSplitterTokenMode:
         assert chunks[0].startswith("a x")
         assert all(set(c).issubset({"a", " ", "x"}) for c in chunks)
 
+    def it_bounds_tokenizer_work_on_a_separator_dense_oversized_text(
+        self, _tiktoken_installed: None, monkeypatch: pytest.MonkeyPatch
+    ):
+        """Splitting separator-dense text does bounded tokenizer work instead of scanning it."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base", overlap=0)
+        split = _TextSplitter(opts)
+        original_count = chunking_base.TokenCounter.count
+        work = [0, 0]
+
+        def counting_count(self: chunking_base.TokenCounter, text: str) -> int:
+            work[0] += 1
+            work[1] += len(text)
+            return original_count(self, text)
+
+        monkeypatch.setattr(chunking_base.TokenCounter, "count", counting_count)
+
+        text = "a " * 5_000
+        fragment, remainder = split(text)
+
+        assert fragment
+        assert len(remainder) < len(text)
+        assert work[0] <= 64
+        assert work[1] <= 2 * len(text)
+
 
 # ================================================================================================
 # PRE-CHUNKER
