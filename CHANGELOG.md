@@ -1,4 +1,4 @@
-## 0.27.28-dev3
+## 0.27.28
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 - **Speed up `partition_docx()` on long documents.** python-docx resolves a paragraph's style by searching the document's style definitions, scanning all of them for the many paragraphs that use the default style, and `partition_docx()` did this up to six times per paragraph. Each style is now resolved once per document. On a 3,000-paragraph document built on python-docx's default template (164 styles), partitioning time outside spaCy drops from 5.3 s to 1.0 s and total time from 12.5 s to 8.5 s. Output is unchanged.
 
 ### Fixes
+
+- **Include the underlying error when an OCR agent fails to load.** The `RuntimeError` now includes the original error message and chains the original exception to help diagnose import and loading failures. Resolves #3276.
 
 - **Partition spreadsheets whose only far-away cells are below the data instead of rejecting them.** A worksheet with a small table and one value near row 1,048,576 spans over a million rows, so it was rejected by `XLSX_MAX_CELLS` (or, without the limit, read as a dense data-frame of empty rows). For subtable detection (the default), XLSX worksheets are now read with each run of empty rows collapsed to a single empty row (two before the first value, so a header row still leaves an empty data row), and the cell limit measures that compacted span. Partitioner output is unchanged: one empty row still separates the same tables, and subtables never contain an all-empty row. With `find_subtable=False` the whole worksheet is rendered with all its empty rows, so it is read and limited as before. A 2 MB customer workbook with 61 values and one at row 1,048,552 now partitions in under a second using ~100 MB.
 
@@ -172,6 +174,7 @@
 - **Recognize HTML and Markdown loose-list items.** A list item containing a single ordinary text block (such as `<li><p>text</p></li>`) now produces a `ListItem`, preserving inline annotations and list depth. Multi-paragraph items and specialized blocks retain their existing behavior. Resolves #3499.
 
 - **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
+
 
 - **A stray processing instruction no longer crashes HTML partitioning.** `partition_html` (and formats that route through it, such as `.md`) raised `AttributeError: 'lxml.etree._ProcessingInstruction' object has no attribute 'is_phrasing'` when the HTML contained a processing-instruction node like a `<?xml ...?>` declaration. The parser now drops processing instructions at parse time, the same way it already drops comments.
 
