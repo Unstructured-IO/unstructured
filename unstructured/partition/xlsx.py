@@ -144,6 +144,13 @@ def partition_xlsx(
     return elements
 
 
+# -- Read each cell as the value the workbook holds. Pandas otherwise infers a dtype per column:
+# -- one empty cell turns a column of whole numbers into floats ("12" is written "12.0") and a
+# -- column of booleans into 1.0 and 0.0, and the text "N/A", "NULL", "NA" or "None" in a cell is
+# -- read as a missing value and written as an empty cell. Only an empty cell is missing. --
+_CELLS_AS_WRITTEN: dict[str, Any] = {"dtype": object, "keep_default_na": False, "na_values": [""]}
+
+
 class _XlsxPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
@@ -220,7 +227,9 @@ class _XlsxPartitionerOptions:
         if compact_empty_rows:
             reader = _RowCompactingOpenpyxlReader(io.BytesIO(self._file_bytes))
             try:
-                return reader.parse(sheet_name=None, header=self.header_row_idx)
+                return reader.parse(
+                    sheet_name=None, header=self.header_row_idx, **_CELLS_AS_WRITTEN
+                )
             finally:
                 reader.close()
 
@@ -229,6 +238,7 @@ class _XlsxPartitionerOptions:
             sheet_name=None,
             header=self.header_row_idx,
             engine=engine,
+            **_CELLS_AS_WRITTEN,
         )
 
     @cached_property
