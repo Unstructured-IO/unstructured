@@ -310,3 +310,44 @@ def test_partition_tsv_via_partition_respects_infer_table_structure(infer_table_
 
     has_text_as_html = elements[0].metadata.text_as_html is not None
     assert has_text_as_html == infer_table_structure
+
+
+def test_partition_tsv_with_html_disabled_and_token_overlap():
+    pytest.importorskip("tiktoken")
+    raw = b"a\t" + b"x" * 10_000 + b"\n"
+    chunks = partition_tsv(
+        file=io.BytesIO(raw),
+        infer_table_structure=False,
+        chunking_strategy="basic",
+        max_tokens=100,
+        tokenizer="cl100k_base",
+        overlap=20,
+    )
+
+    assert len(chunks) > 1
+    assert all(c.metadata.text_as_html is None for c in chunks)
+    assert chunks[0].text.startswith("a x")
+    assert all(set(c.text).issubset({"a", " ", "x"}) for c in chunks)
+    assert "a" in chunks[0].text
+    assert sum(c.text.count("x") for c in chunks) >= 10_000
+
+
+def test_partition_auto_tsv_with_html_disabled_and_token_overlap():
+    pytest.importorskip("tiktoken")
+    raw = b"a\t" + b"x" * 10_000 + b"\n"
+    chunks = partition(
+        file=io.BytesIO(raw),
+        metadata_filename="table.tsv",
+        infer_table_structure=False,
+        chunking_strategy="basic",
+        max_tokens=100,
+        tokenizer="cl100k_base",
+        overlap=20,
+    )
+
+    assert len(chunks) > 1
+    assert all(c.metadata.text_as_html is None for c in chunks)
+    assert chunks[0].text.startswith("a x")
+    assert all(set(c.text).issubset({"a", " ", "x"}) for c in chunks)
+    assert "a" in chunks[0].text
+    assert sum(c.text.count("x") for c in chunks) >= 10_000

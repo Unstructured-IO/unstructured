@@ -2762,15 +2762,24 @@ class _TextSplitter:
                 # -- check if fragment fits within token limit --
                 if measure(fragment) <= maxlen:
                     # -- skip if fragment is too short (needs at least some content) --
-                    if measure(fragment) == 0:
+                    if not fragment or measure(fragment) == 0:
+                        continue
+                    # -- skip if prefix is wholly covered by overlap (cannot make progress) --
+                    if overlap > 0 and measure(fragment) <= overlap:
                         continue
                     raw_remainder = s[match_end:].lstrip()
                     # -- add overlap if configured --
                     if overlap > 0:
                         # -- token-based overlap: find tail with ~overlap tokens --
                         tail = self._get_token_overlap_tail(fragment, overlap)
-                        overlapped_remainder = tail + " " + raw_remainder
+                        overlapped_remainder = (
+                            (tail + " " + raw_remainder) if tail else raw_remainder
+                        )
+                        if len(overlapped_remainder) >= len(s):
+                            continue
                         return fragment, overlapped_remainder
+                    if len(raw_remainder) >= len(s):
+                        continue
                     return fragment, raw_remainder
 
         # -- fallback: split on whitespace boundary using binary search to find token limit --
@@ -2778,7 +2787,7 @@ class _TextSplitter:
         # -- Position zero cannot make progress. If even the first code point exceeds the token
         # -- budget, retain `best_pos == 1` and tolerate that indivisible overflow.
         low, high = 1, len(s)
-        best_pos = max(overlap + 1, 1)  # -- minimum viable position --
+        best_pos = 1
 
         while low <= high:
             mid = (low + high) // 2
@@ -2790,26 +2799,43 @@ class _TextSplitter:
 
         # -- try to find a whitespace boundary near best_pos, searching backwards --
         split_pos = best_pos
-        for i in range(best_pos, max(overlap, 0), -1):
+        for i in range(best_pos, 0, -1):
             if i < len(s) and s[i].isspace():
+                cand_fragment = s[:i].rstrip()
+                if not cand_fragment or measure(cand_fragment) == 0:
+                    continue
+                if overlap > 0 and measure(cand_fragment) <= overlap:
+                    continue
                 split_pos = i
                 break
 
         # -- ensure the fragment still fits after whitespace adjustment --
         fragment = s[:split_pos].rstrip()
-        if measure(fragment) > maxlen and split_pos > overlap + 1:
-            # -- whitespace boundary pushed us over; use the binary search result directly --
+        if not fragment or measure(fragment) > maxlen:
             fragment = s[:best_pos].rstrip()
             split_pos = best_pos
 
-        raw_remainder = s[split_pos:].lstrip()
+        if not fragment:
+            fragment = s[: max(1, best_pos)]
+            split_pos = len(fragment)
+
+        is_whitespace_split = split_pos < len(s) and s[split_pos].isspace()
+        raw_remainder = s[split_pos:].lstrip() if is_whitespace_split else s[split_pos:]
 
         if overlap > 0 and fragment:
             tail = self._get_token_overlap_tail(fragment, overlap)
-            overlapped_remainder = tail + " " + raw_remainder
-            return fragment, overlapped_remainder
+            sep = " " if is_whitespace_split else ""
+            overlapped_remainder = (tail + sep + raw_remainder) if tail else raw_remainder
+            if len(overlapped_remainder) < len(s):
+                return fragment, overlapped_remainder
 
-        return fragment, raw_remainder
+        # -- progress guarantee: remainder must strictly consume content from s --
+        remainder = raw_remainder
+        if len(remainder) >= len(s):
+            # -- fallback to hard back-stop: consume at least one character --
+            remainder = s[max(1, split_pos) :]
+
+        return fragment, remainder
 
     def _get_token_overlap_tail(self, text: str, target_tokens: int) -> str:
         """Extract tail of text containing approximately `target_tokens` tokens.
