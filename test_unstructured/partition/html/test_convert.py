@@ -25,6 +25,7 @@ from unstructured.partition.html.convert import (
     elements_to_html,
     group_elements_by_page,
 )
+from unstructured.partition.html.partition import partition_html
 
 
 class MockElement(Element):
@@ -309,6 +310,32 @@ def test_table_element_html_leaves_empty_table_without_a_cell(
     table_element_html.element.text = ""
     tag = table_element_html.get_html_element()
     assert tag.find("td") is None
+
+
+def test_elements_to_html_keeps_a_partitioned_table_caption_inside_the_table() -> None:
+    elements = partition_html(
+        text=(
+            "<table>"
+            '<caption class="t" onclick="alert(1)">'
+            "Quarterly <b>revenue</b><img src=x onerror=alert(2)>"
+            "</caption>"
+            "<tr><td>EMEA</td></tr>"
+            "</table>"
+        )
+    )
+
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    table = BeautifulSoup(html, HTML_PARSER).find("table")
+    assert isinstance(table, Tag)
+    caption = table.find("caption", recursive=False)
+    assert isinstance(caption, Tag)
+    assert caption.get_text(strip=True) == "Quarterly revenue"
+    assert caption.attrs == {}
+    assert caption.find(True) is None
+    assert html.count("Quarterly revenue") == 1
+    assert "onerror" not in html
+    assert "onclick" not in html
 
 
 def test_link_element_html_attrs(link_element_html: LinkElementHtml) -> None:

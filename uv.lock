@@ -2901,6 +2901,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/0e/72/a3add0e4eec4eb9e2569554f7c70f4a3c27712f40e3284d483e88094cc0e/langdetect-1.0.9.tar.gz", hash = "sha256:cbc1fef89f8d062739774bd51eda3da3274006b3661d199c2655f6b3f6d605a0", size = 981474, upload-time = "2021-05-07T07:54:13.562Z" }
 
 [[package]]
+name = "langdetect-rs"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/25/11/4291720d53c301379dcc4d8befc85bde3c7fa5a3e3400d1b837b1de3ac80/langdetect_rs-0.1.0.tar.gz", hash = "sha256:965c9a18c58868f7947e1a670753f8fcd7f78f665c7d01f15f607b98fbb7d208", size = 1094983, upload-time = "2026-10-11T17:51:07.437Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f7/41/5351883ff1055ec8bd89214684dca36799e304d74acc0a7059344fe9ece8/langdetect_rs-0.1.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:9c4ccdac6d4fe65f0a2aff7c361d7c8687ac3019719a4949b1329d00dbdb8ae2", size = 1693719, upload-time = "2026-10-11T17:50:57.021Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/82/b333976c1e42861e38c0fdc1b8f042c931a25ebf061bda327d2c82ff0c4a/langdetect_rs-0.1.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:500d73771e3e5c16d80953940f3fed4ec79a81bc958440a33f7f03e83f50511b", size = 1658358, upload-time = "2026-10-11T17:50:58.527Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/0c/077e9237c746284eeaeff43e29efa6a8320158da730b4bad0c4b248c1137/langdetect_rs-0.1.0-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ffcd5443886e925537fee48518807a2f95b361ad3423995e309f381c423903ee", size = 1720738, upload-time = "2026-10-11T17:50:59.917Z" },
+    { url = "https://files.pythonhosted.org/packages/d0/75/bced3d52dca8e8e57f5f2605095ce97683837bb8773d863bf4f4f7c9eaf7/langdetect_rs-0.1.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4b76f6b176ef5e6b8d2fd8a82d2b420c619ee76121200ce52a6edf2485cedfc8", size = 1757807, upload-time = "2026-10-11T17:51:01.604Z" },
+    { url = "https://files.pythonhosted.org/packages/68/59/3ab707864fbe081c373b236e272ecd580a169104bbca9d076207a4df6a11/langdetect_rs-0.1.0-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:c7ceaa90f0c6b195b7344cbc1e56d9f08c39f2c5aa96eccab88a7b81fa11fa0c", size = 1898261, upload-time = "2026-10-11T17:51:03.111Z" },
+    { url = "https://files.pythonhosted.org/packages/fb/7d/ace5fc32c8815db090dc1a6441bb5002e1f3724f2900b74ae3e5dc6d775f/langdetect_rs-0.1.0-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:25f9a29a49b4411b5325df22b3774063d7aa9ee16ea80ace68184f01d997585a", size = 1974701, upload-time = "2026-10-11T17:51:04.494Z" },
+    { url = "https://files.pythonhosted.org/packages/48/94/fc91c8b9dad525132510394b9e945f641c499e7f26533f696dd1ba5e6bb0/langdetect_rs-0.1.0-cp39-abi3-win_amd64.whl", hash = "sha256:aaec3223ae1aadd498eb1cad988f86916928b6b3b13740a0e843e3c8216f091f", size = 1605044, upload-time = "2026-10-11T17:51:06.001Z" },
+]
+
+[[package]]
 name = "langsmith"
 version = "0.7.29"
 source = { registry = "https://pypi.org/simple" }
@@ -7381,6 +7396,7 @@ test = [
     { name = "coverage" },
     { name = "freezegun" },
     { name = "grpcio" },
+    { name = "langdetect-rs" },
     { name = "mypy" },
     { name = "pip-licenses" },
     { name = "pydantic" },
@@ -7526,6 +7542,7 @@ test = [
     { name = "coverage", specifier = ">=7.13.3,<8.0.0" },
     { name = "freezegun", specifier = ">=1.5.5,<2.0.0" },
     { name = "grpcio", specifier = ">=1.78.0,<2.0.0" },
+    { name = "langdetect-rs", specifier = "==0.1.0" },
     { name = "mypy", specifier = ">=1.19.1,<2.0.0" },
     { name = "pip-licenses", specifier = ">=5.0.0,<6.0.0" },
     { name = "pydantic", specifier = ">=2.12.5,<3.0.0" },
