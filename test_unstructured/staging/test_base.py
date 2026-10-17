@@ -212,6 +212,101 @@ def test_convert_to_csv_disambiguates_colliding_metadata_key_across_rows():
     assert rows[1]["metadata_embeddings"] == str([9.0, 9.0])
 
 
+@pytest.mark.parametrize(
+    "metadata",
+    [
+        {"embeddings": [9.0, 9.0], "metadata_embeddings": [8.0, 8.0]},
+        {"metadata_embeddings": [8.0, 8.0], "embeddings": [9.0, 9.0]},
+    ],
+)
+def test_convert_to_csv_metadata_replacement_names_do_not_collide_same_row(metadata):
+    # Regression for #4549 (P2, same-row, both insertion orders): a colliding metadata key is
+    # renamed aside, but the replacement name must not collide with a pre-existing metadata field
+    # (here `metadata_embeddings`); each distinct field keeps its own value and column, and the
+    # outcome must not depend on metadata insertion order.
+    elements = [
+        Text(
+            text="Hello",
+            embeddings=[0.1, 0.2],
+            metadata=ElementMetadata.from_dict(metadata),
+        )
+    ]
+    row = next(csv.DictReader(io.StringIO(base.convert_to_csv(elements))))
+
+    assert row["embeddings"] == str([0.1, 0.2])
+    assert row["metadata_embeddings"] == str([9.0, 9.0])
+    assert row["metadata_metadata_embeddings"] == str([8.0, 8.0])
+
+
+def test_convert_to_csv_checked_metadata_names_do_not_collide_across_rows():
+    # Regression for #4549 (P2, cross-row): a real CheckBox `checked` and ad-hoc metadata
+    # `checked` / pre-existing `metadata_checked` must each keep a distinct column instead of
+    # collapsing onto one name and silently dropping a value.
+    elements = [
+        CheckBox(checked=False, metadata=ElementMetadata.from_dict({"checked": "yes"})),
+        Text(text="b", metadata=ElementMetadata.from_dict({"metadata_checked": "no"})),
+    ]
+    rows = list(csv.DictReader(io.StringIO(base.convert_to_csv(elements))))
+    row1, row2 = rows
+
+    assert row1["checked"] == "False"
+    assert row1["metadata_checked"] == "yes"
+    assert row1["metadata_metadata_checked"] in (None, "")
+    assert row2["metadata_checked"] in (None, "")
+    assert row2["metadata_metadata_checked"] == "no"
+
+
+@pytest.mark.parametrize(
+    "elements",
+    [
+        [
+            NarrativeText(text="a", embeddings=[0.1, 0.2]),
+            NarrativeText(text="b", metadata=ElementMetadata.from_dict({"embeddings": [9.0, 9.0]})),
+        ],
+        [
+            NarrativeText(text="b", metadata=ElementMetadata.from_dict({"embeddings": [9.0, 9.0]})),
+            NarrativeText(text="a", embeddings=[0.1, 0.2]),
+        ],
+    ],
+)
+def test_convert_to_csv_embeddings_collision_stable_across_row_orders(elements):
+    # Regression for #4549 (P2, cross-row, both row orders): the real vector and the ad-hoc
+    # metadata embeddings stay in separate columns regardless of which row comes first.
+    rows = list(csv.DictReader(io.StringIO(base.convert_to_csv(elements))))
+    fieldnames = list(rows[0].keys())
+    assert "embeddings" in fieldnames
+    assert "metadata_embeddings" in fieldnames
+
+    real = [r for r in rows if r["embeddings"] not in (None, "")]
+    meta = [r for r in rows if r["metadata_embeddings"] not in (None, "")]
+    assert len(real) == 1
+    assert real[0]["embeddings"] == str([0.1, 0.2])
+    assert len(meta) == 1
+    assert meta[0]["metadata_embeddings"] == str([9.0, 9.0])
+
+
+def test_convert_to_csv_promoted_top_level_columns_are_ordered_deterministically():
+    # Regression for #4549 (P2): promoted real top-level columns (`embeddings`, `checked`)
+    # append in first-seen order rather than set iteration, so the header is reproducible;
+    # `False` and blank cells are preserved and later-row custom metadata still lands after.
+    elements = [
+        Text(text="a", embeddings=[0.1, 0.2]),
+        CheckBox(checked=False),
+        NarrativeText(text="c", metadata=ElementMetadata.from_dict({"custom_tag": "v"})),
+    ]
+    reader = csv.DictReader(io.StringIO(base.convert_to_csv(elements)))
+    headers = reader.fieldnames
+    rows = list(reader)
+
+    assert headers[:3] == ["type", "text", "element_id"]
+    assert headers.index("embeddings") < headers.index("checked")
+    assert "custom_tag" in headers
+
+    assert rows[0]["checked"] in (None, "")
+    assert rows[1]["checked"] == "False"
+    assert rows[2]["custom_tag"] == "v"
+
+
 def test_convert_to_dataframe():
     elements = [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
     df = base.convert_to_dataframe(elements)
