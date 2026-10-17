@@ -1,3 +1,9 @@
+## 0.27.29-dev0
+
+### Fixes
+
+- **Read spreadsheet cells as the workbook holds them.** `partition_xlsx()` let Pandas infer a dtype per column, so one empty cell turned a column of whole numbers into floats (`12` came out as `12.0`) and a column of booleans into `1.0` and `0.0`. Cells are now read as the values they hold. This applies to `.xlsx` and `.xls`, with and without `find_subtable`.
+
 ## 0.27.28
 
 ### Enhancements
