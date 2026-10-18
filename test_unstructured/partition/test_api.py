@@ -55,7 +55,7 @@ def test_partition_via_api_with_filename_correctly_calls_sdk(
 def test_partition_via_api_sends_an_explicit_content_type_for_a_filename(
     request: FixtureRequest,
 ):
-    """`content_type` is a documented parameter and `shared.Files` has the field for it."""
+    """`content_type` rides on `PartitionParameters` (multipart form field) across the SDK range."""
     partition_mock_ = method_mock(
         request, General, "partition", return_value=FakeResponse(status_code=200)
     )
@@ -65,7 +65,9 @@ def test_partition_via_api_sends_an_explicit_content_type_for_a_filename(
     )
 
     sent = partition_mock_.call_args_list[0].kwargs["request"]
-    assert sent.partition_parameters.files.content_type == "message/rfc822"
+    assert sent.partition_parameters.content_type == "message/rfc822"
+    # Not forwarded to `shared.Files`, whose `content_type` kwarg only exists from SDK 0.26.0.
+    assert getattr(sent.partition_parameters.files, "content_type", None) is None
 
 
 def test_partition_via_api_sends_an_explicit_content_type_for_a_file(request: FixtureRequest):
@@ -81,7 +83,8 @@ def test_partition_via_api_sends_an_explicit_content_type_for_a_file(request: Fi
         )
 
     sent = partition_mock_.call_args_list[0].kwargs["request"]
-    assert sent.partition_parameters.files.content_type == "message/rfc822"
+    assert sent.partition_parameters.content_type == "message/rfc822"
+    assert getattr(sent.partition_parameters.files, "content_type", None) is None
 
 
 def test_partition_via_api_leaves_content_type_unset_when_not_given(request: FixtureRequest):
@@ -93,7 +96,8 @@ def test_partition_via_api_leaves_content_type_unset_when_not_given(request: Fix
     partition_via_api(filename=example_doc_path("eml/fake-email.eml"))
 
     sent = partition_mock_.call_args_list[0].kwargs["request"]
-    assert sent.partition_parameters.files.content_type is None
+    assert sent.partition_parameters.content_type is None
+    assert getattr(sent.partition_parameters.files, "content_type", None) is None
 
 
 def test_partition_via_api_with_file_correctly_calls_sdk(
