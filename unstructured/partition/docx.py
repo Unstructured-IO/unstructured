@@ -386,6 +386,8 @@ class _DocxPartitioner:
         self._opts = opts
         # -- layout-grid cells left for `text_as_html` across all tables of this document --
         self._table_grid_cells_remaining = env_config.DOCX_TABLE_MAX_CELLS
+        # -- paragraph-style name by style-id, see `._style_name()` --
+        self._style_names: dict[str | None, str] = {}
 
     @classmethod
     def iter_document_elements(cls, opts: DocxPartitionerOptions) -> Iterator[Element]:
@@ -1024,7 +1026,7 @@ class _DocxPartitioner:
             return round(float(xpath[0]))
 
         # Determine category depth from style name
-        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+        style_name = self._style_name(paragraph)
         depth = self._parse_category_depth_by_style_name(style_name)
 
         if depth > 0:
@@ -1032,6 +1034,21 @@ class _DocxPartitioner:
         else:
             # Check if category depth can be determined from style ilvl
             return self._parse_category_depth_by_style_ilvl()
+
+    def _style_name(self, paragraph: Paragraph) -> str:
+        """Name of the paragraph-style applied to `paragraph`, "Normal" when it has none.
+
+        `Paragraph.style` searches the document's style definitions on every access, and a paragraph
+        with no explicit style (most of them) scans all of them for the default. The name depends
+        only on the paragraph's style-id, so it is looked up once per style-id.
+        """
+        style_id = paragraph._p.style
+        if style_id not in self._style_names:
+            # -- paragraph.style can be None in rare cases, so can style.name. That's going
+            # -- to mean default style which is equivalent to "Normal" for our purposes.
+            style = paragraph.style
+            self._style_names[style_id] = (style and style.name) or "Normal"
+        return self._style_names[style_id]
 
     def _parse_category_depth_by_style_ilvl(self) -> int:
         # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
@@ -1087,9 +1104,7 @@ class _DocxPartitioner:
         # https://python-docx.readthedocs.io/en/latest/user/styles-understanding.html \
         # #paragraph-styles-in-default-template
 
-        # -- paragraph.style can be None in rare cases, so can style.name. That's going
-        # -- to mean default style which is equivalent to "Normal" for our purposes.
-        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+        style_name = self._style_name(paragraph)
 
         # NOTE(robinson) - The "Normal" style name will return None since it's not
         # in the mapping. Unknown style names will also return None.
@@ -1142,6 +1157,7 @@ class _ListLabels:
         self._levels: dict[tuple[str, int], Any | None] = {}
         self._counters: dict[str, list[int | None]] = {}
         self._restarted: set[tuple[str, int]] = set()
+        self._style_num_prs: dict[str | None, tuple[str | None, int | None, str | None]] = {}
 
     def has_style_numbering(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` gets its numbering from its style chain rather than directly."""
@@ -1234,7 +1250,19 @@ class _ListLabels:
         return num_id, ilvl, style_id if own_num_id is None else None
 
     def _style_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
-        """The `(numId, ilvl, style_id)` the paragraph's style chain (`basedOn`) provides."""
+        """The `(numId, ilvl, style_id)` the paragraph's style chain (`basedOn`) provides.
+
+        This depends only on the paragraph's style-id, so it is resolved once per style-id. See
+        `_DocxPartitioner._style_name()` for why `Paragraph.style` is worth avoiding.
+        """
+        paragraph_style_id = paragraph._p.style
+        if paragraph_style_id not in self._style_num_prs:
+            self._style_num_prs[paragraph_style_id] = self._resolve_style_num_pr(paragraph)
+        return self._style_num_prs[paragraph_style_id]
+
+    def _resolve_style_num_pr(
+        self, paragraph: Paragraph
+    ) -> tuple[str | None, int | None, str | None]:
         num_id: str | None = None
         ilvl: int | None = None
         style_id: str | None = None

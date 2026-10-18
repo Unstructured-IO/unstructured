@@ -13,6 +13,7 @@ import pandas as pd
 import xlrd
 from msoffcrypto import OfficeFile
 from msoffcrypto.exceptions import FileFormatError
+from pandas.io.excel._openpyxl import OpenpyxlReader
 from typing_extensions import Self, TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
@@ -208,8 +209,20 @@ class _XlsxPartitionerOptions:
         # -- Pandas allocates a dense data-frame spanning every worksheet out to its farthest
         # -- populated cell, so a tiny file with one far-away cell can exhaust memory. Measure
         # -- that span cheaply before reading, and pin the engine to the one that was measured.
+        # -- A whole worksheet is rendered as-is, empty rows and all, so only subtable detection
+        # -- reads it with runs of empty rows compacted.
         engine = self._excel_engine
-        _check_worksheet_cell_count(self._file_bytes, engine, env_config.XLSX_MAX_CELLS)
+        compact_empty_rows = engine == "openpyxl" and self.find_subtable
+        _check_worksheet_cell_count(
+            self._file_bytes, engine, env_config.XLSX_MAX_CELLS, compact_empty_rows
+        )
+
+        if compact_empty_rows:
+            reader = _RowCompactingOpenpyxlReader(io.BytesIO(self._file_bytes))
+            try:
+                return reader.parse(sheet_name=None, header=self.header_row_idx)
+            finally:
+                reader.close()
 
         return pd.read_excel(
             io.BytesIO(self._file_bytes),
@@ -480,7 +493,58 @@ def _cell_coordinates(rows: np.ndarray, cols: np.ndarray) -> Iterator[_CellCoord
     return zip(rows.tolist(), cols.tolist())
 
 
-def _check_worksheet_cell_count(file_bytes: bytes, engine: str, max_cells: int) -> None:
+# -- the most empty rows `_RowCompactingOpenpyxlReader` keeps before a worksheet's first value --
+_LEADING_EMPTY_ROWS_KEPT = 2
+
+
+class _RowCompactingOpenpyxlReader(OpenpyxlReader):
+    """Pandas' openpyxl reader, but each run of empty rows is read as a single empty row.
+
+    A worksheet whose used-range is stretched by a far-away cell, such as one value at row 1M below
+    a small table, otherwise becomes a data-frame of mostly empty rows. Keeping one empty row per
+    run preserves everything subtable detection depends on: which cells are adjacent (the connected
+    components and the subtables cut from them), row-wise overlap between components, column dtype
+    inference (a column that had an empty cell still has one) and the header row. A leading run
+    keeps up to two empty rows, because the header row can consume the first and the column dtypes
+    still need the empty data row after it. A subtable never contains an all-empty row, so its
+    output is unchanged. A whole worksheet does render its empty rows, so it is not read this way.
+    """
+
+    def get_sheet_data(self, sheet: Any, file_rows_needed: int | None = None) -> list[list[Any]]:
+        if file_rows_needed is not None:
+            return super().get_sheet_data(sheet, file_rows_needed)
+
+        if self.book.read_only:
+            sheet.reset_dimensions()
+
+        data: list[list[Any]] = []
+        last_row_with_data = -1
+        empty_rows_in_run, empty_rows_to_keep = 0, _LEADING_EMPTY_ROWS_KEPT
+        for row in sheet.rows:
+            converted_row = [self._convert_cell(cell) for cell in row]
+            # -- trim trailing empty cells, as Pandas does --
+            while converted_row and converted_row[-1] == "":
+                converted_row.pop()
+            if converted_row:
+                last_row_with_data = len(data)
+                empty_rows_in_run, empty_rows_to_keep = 0, 1
+            elif empty_rows_in_run >= empty_rows_to_keep:
+                continue
+            else:
+                empty_rows_in_run += 1
+            data.append(converted_row)
+
+        # -- trim trailing empty rows and pad the rest to the widest row, as Pandas does --
+        data = data[: last_row_with_data + 1]
+        if not data:
+            return data
+        max_width = max(len(row) for row in data)
+        return [row + [""] * (max_width - len(row)) for row in data]
+
+
+def _check_worksheet_cell_count(
+    file_bytes: bytes, engine: str, max_cells: int, compact_empty_rows: bool
+) -> None:
     """Raise `UnprocessableEntityError` when the worksheets' data-frames would exceed `max_cells`.
 
     The count is the sum across worksheets of the `rows x columns` shape Pandas would allocate,
@@ -489,7 +553,9 @@ def _check_worksheet_cell_count(file_bytes: bytes, engine: str, max_cells: int) 
     """
     total_cells = 0
     cells_by_sheet: dict[int, int] = {}
-    for sheet_idx, sheet_name, n_rows, n_cols in _iter_worksheet_shapes(file_bytes, engine):
+    for sheet_idx, sheet_name, n_rows, n_cols in _iter_worksheet_shapes(
+        file_bytes, engine, compact_empty_rows
+    ):
         # -- a later shape for the same worksheet supersedes the earlier, partial one --
         total_cells += n_rows * n_cols - cells_by_sheet.get(sheet_idx, 0)
         cells_by_sheet[sheet_idx] = n_rows * n_cols
@@ -501,8 +567,13 @@ def _check_worksheet_cell_count(file_bytes: bytes, engine: str, max_cells: int) 
             )
 
 
-def _iter_worksheet_shapes(file_bytes: bytes, engine: str) -> Iterator[tuple[int, str, int, int]]:
-    """Generate `(sheet_idx, sheet_name, n_rows, n_cols)` per worksheet, as Pandas would shape it.
+def _iter_worksheet_shapes(
+    file_bytes: bytes, engine: str, compact_empty_rows: bool
+) -> Iterator[tuple[int, str, int, int]]:
+    """Generate `(sheet_idx, sheet_name, n_rows, n_cols)` per worksheet, as it would be read.
+
+    With `compact_empty_rows` the shape is the one `_RowCompactingOpenpyxlReader` reads, otherwise
+    the one Pandas' own reader does.
 
     For XLSX the shape grows while the worksheet is streamed, so a partial shape is generated each
     time it grows and the caller can stop early. The last shape generated for each worksheet is its
@@ -521,23 +592,28 @@ def _iter_worksheet_shapes(file_bytes: bytes, engine: str) -> Iterator[tuple[int
             book.release_resources()
         return
 
-    # -- Load exactly as Pandas does. Its openpyxl reader ignores the stored `<dimension>` and trims
-    # -- trailing empty rows and cells, so the shape spans the last row and column with a value.
-    # -- Read-only mode streams the XML and generates rows missing from it as empty tuples, so
-    # -- the gap before a far-away cell costs next to nothing.
+    # -- Load exactly as the openpyxl readers do. They ignore the stored `<dimension>` and trim
+    # -- trailing empty rows and cells, so the shape spans the last row and column with a value,
+    # -- or compacts each run of empty rows as `_RowCompactingOpenpyxlReader` does. Read-only
+    # -- mode streams the XML and generates rows missing from it as empty tuples, so the gap
+    # -- before a far-away cell costs next to nothing.
     workbook = openpyxl.load_workbook(
         io.BytesIO(file_bytes), read_only=True, data_only=True, keep_links=False
     )
     try:
         for sheet_idx, worksheet in enumerate(workbook.worksheets):
             worksheet.reset_dimensions()  # pyright: ignore[reportAttributeAccessIssue]
-            n_rows, n_cols = 0, 0
+            n_rows, n_cols, last_row_with_data = 0, 0, 0
             for row in worksheet.iter_rows():
                 # -- the last cell in this row holding a value, if any --
                 last_cell = next((c for c in reversed(row) if c.value not in (None, "")), None)
                 if last_cell is None:
                     continue
-                n_rows = last_cell.row
+                empty_rows = last_cell.row - last_row_with_data - 1
+                if compact_empty_rows:
+                    empty_rows = min(empty_rows, 1 if n_rows else _LEADING_EMPTY_ROWS_KEPT)
+                n_rows += empty_rows + 1
+                last_row_with_data = last_cell.row
                 n_cols = max(n_cols, last_cell.column)
                 yield sheet_idx, worksheet.title, n_rows, n_cols
             yield sheet_idx, worksheet.title, n_rows, n_cols

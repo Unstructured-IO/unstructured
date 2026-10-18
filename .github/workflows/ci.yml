@@ -108,6 +108,9 @@ jobs:
         fi
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
+    - name: Test language detection with langdetect-rs
+      if: matrix.python-version == '3.12'
+      run: make test-langdetect-rs CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
 
   test_unit_no_extras:
     strategy:
