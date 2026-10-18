@@ -2,6 +2,8 @@
 
 ### Fixes
 
+- **`partition_via_api()` now forwards the accepted `content_type` to the API.** The parameter has been part of the signature and documented as "a string defining the file content in MIME type", but it was never read: the SDK request was built from `content` and `file_name` only, so the caller's MIME type never reached the server, which fell back to sniffing the file name. The value is now sent as the `content_type` multipart form field on `PartitionParameters`, which exists on the declared minimum SDK 0.25.9; omitting it leaves the SDK's existing file-name inference unchanged.
+
 - **Make uncertain text decoding observable (#4466).** Automatic legacy and BOM-less UTF-16/32 detection now emits `EncodingDetectionWarning`, which callers can promote to an exception with Python warning filters. Unicode BOMs, then strict UTF-8 validity, are honored before statistical detection, so valid UTF-8 whose only non-ASCII content is an invisible character such as U+200B is no longer decoded as `mac_iceland` or `cp850`. Input containing NUL bytes skips the UTF-8 check, because BOM-less UTF-16/32 is often also valid UTF-8. File-type detection's 4,096-byte stream prefix tolerates a multi-byte sequence split at its end, including a UTF-16 surrogate pair after a BOM; UTF-8/ASCII remains the default convention. Inconclusive detection ranks unrestricted candidates instead of accepting the first decodable codec (usually Latin-1), and raises when no text candidate survives. Correctly detected codecs outside `COMMON_ENCODINGS` remain supported. `partition_md(encoding=...)` now strictly decodes local and URL bytes using the supplied encoding. Automatic detection remains heuristic; this change does not guarantee recovery of the original text without a known encoding.
 
 - **Normalize missing text in text elements.** `Text` and its subclasses, including `Image`, now store `text=None` as an empty string. This prevents string conversion from failing for images with missing detected text. String conversion also returns an empty string if text is later set to `None`. Newly constructed elements serialize this text as `""` instead of `null`; recalculated content hashes change for formerly null text. Supplied IDs and ordinary string text are unchanged.
@@ -138,7 +140,6 @@
 
 ### Fixes
 
-- **`partition_via_api()` now sends the `content_type` it accepts.** The parameter has been part of the signature since the helper was introduced and is documented as "a string defining the file content in MIME type", but it was never read: the `shared.Files` object was built from `content` and `file_name` only, so the caller's MIME type never reached the API and the server fell back to sniffing the file name. `shared.Files` has a `content_type` field, which is now populated when the caller supplies one; omitting it leaves the field unset so the existing inference is unchanged.
 - **`GLOBAL_WORKING_PROCESS_DIR` no longer crashes on Windows.** Use `os.getpid()` when the POSIX-only `os.getpgid()` is unavailable.
 
 - **Preserve HTML table header semantics.** The v1 HTML parser now retains `<thead>`, `<tbody>`,

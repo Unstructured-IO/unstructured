@@ -131,6 +131,33 @@ jobs:
         uv sync --locked --group test
         make test-no-extras CI=true
 
+  test_unit_sdk_floor:
+    # Verify the advertised minimum SDK (unstructured-client==0.25.9) on the partition API wire
+    # path without downgrading the locked ordinary suite: sync the locked test environment, pin
+    # the floor SDK, and run only the focused multipart wire tests.
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Sync locked test dependencies, then pin the minimum SDK
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+      run: |
+        uv sync --locked --group test
+        uv pip install unstructured-client==0.25.9
+    - name: Run focused partition API wire tests on the minimum SDK
+      env:
+        CI: "true"
+      run: |
+        uv run --no-sync pytest test_unstructured/partition/test_api.py -k content_type -q
+
   test_unit_dependency_extras:
     strategy:
       matrix:
