@@ -875,6 +875,22 @@ def test_partition_docx_treats_outline_levels_zero_to_eight_as_headings(
     assert (isinstance(element, ListItem), element.text) == (not is_heading, "1. text")
 
 
+@pytest.mark.parametrize("style", ["List Paragraph", "List Number", "List Bullet"])
+def test_partition_docx_does_not_let_a_list_style_turn_a_numbered_heading_back_into_a_list_item(
+    tmp_path, style: str
+):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    paragraph = document.add_paragraph("Overview", style=style)
+    _add_direct_num_pr(paragraph)
+    paragraph._p.get_or_add_pPr().append(parse_xml(f'<w:outlineLvl {_W_NS} w:val="0"/>'))
+    document.save(path)
+
+    (element,) = partition_docx(path)
+
+    assert (isinstance(element, ListItem), element.text) == (False, "1. Overview")
+
+
 def test_partition_docx_labels_a_numbered_paragraph_that_is_classified_by_its_text(tmp_path):
     path = _numbered_docx(tmp_path, [])
     document = docx.Document(path)

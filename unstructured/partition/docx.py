@@ -498,6 +498,8 @@ class _DocxPartitioner:
 
         # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
+        if TextSubCls is ListItem and self._is_numbered_heading_in_list_style(paragraph):
+            TextSubCls = None
         if TextSubCls:
             yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
@@ -702,6 +704,16 @@ class _DocxPartitioner:
         if style_type is not None and style_type is not ListItem:
             return False
         return not self._has_outline_level(paragraph)
+
+    def _is_numbered_heading_in_list_style(self, paragraph: Paragraph) -> bool:
+        """True when a numbered heading has a list-mapped style, which must not make it a list-item.
+
+        Its type is then left to the text heuristics, like any other numbered heading.
+        """
+        is_numbered = "<w:numPr>" in paragraph._p.xml or self._list_labels.has_style_numbering(
+            paragraph
+        )
+        return is_numbered and self._is_numbered_heading(paragraph)
 
     def _is_numbered_heading(self, paragraph: Paragraph) -> bool:
         """True when a numbered `paragraph` is a heading, by a title style or an outline level.
