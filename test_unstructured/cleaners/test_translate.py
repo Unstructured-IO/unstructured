@@ -48,7 +48,7 @@ def test_translate_raises_with_bad_language():
 
 
 @pytest.mark.skipif(IS_CI, reason="Skipping this test in CI pipeline")
-def test_tranlate_works_with_russian():
+def test_translate_works_with_russian():
     text = "Я тоже можно переводать русский язык!"
     assert translate.translate_text(text) == "I can also translate Russian!"
 
@@ -56,9 +56,10 @@ def test_tranlate_works_with_russian():
 @pytest.mark.skipif(IS_CI, reason="Skipping this test in CI pipeline")
 def test_translate_works_with_chinese():
     text = "網站有中、英文版本"
-    translate.translate_text(text) == "Website available in Chinese and English"
+    assert translate.translate_text(text) == "Website available in Chinese and English"
 
 
-def translate_works_with_arabic():
+@pytest.mark.skipif(IS_CI, reason="Skipping this test in CI pipeline")
+def test_translate_works_with_arabic():
     text = "مرحباً بكم في متجرنا"
-    translate.translate_text(text) == "Welcome to our store."
+    assert translate.translate_text(text) == "Welcome to our store."
