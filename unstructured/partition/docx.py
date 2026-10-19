@@ -750,13 +750,13 @@ class _DocxPartitioner:
         The answer is recorded for every style on the way to it, so a chain is walked only once.
         """
         levels = self._style_outline_levels
-        walked: list[str] = []
+        walked: dict[str, None] = {}
         result = False
         while style is not None and style.style_id not in walked:
             if style.style_id in levels:
                 result = levels[style.style_id]
                 break
-            walked.append(style.style_id)
+            walked[style.style_id] = None
             level = style.element.xpath("./w:pPr/w:outlineLvl/@w:val")
             if level:
                 result = self._is_heading_outline_level(level[0])
