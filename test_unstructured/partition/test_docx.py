@@ -1159,6 +1159,22 @@ def test_partition_docx_counts_a_section_break_paragraph_that_holds_non_text_con
     assert [e.text for e in elements] == ["1. a", "3. c"]
 
 
+@pytest.mark.parametrize("whitespace", [" ", "\u00a0", "\u2003"])
+def test_partition_docx_counts_a_section_break_paragraph_that_holds_whitespace(
+    tmp_path, whitespace: str
+):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), (whitespace, 1, 0), ("c", 1, 0)])
+    document = docx.Document(path)
+    document.paragraphs[1]._p.get_or_add_pPr().append(
+        parse_xml(f'<w:sectPr {_W_NS}><w:pgSz w:w="15840" w:h="12240"/></w:sectPr>')
+    )
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "3. c"]
+
+
 def test_partition_docx_keeps_counting_child_levels_when_level_restart_is_zero(tmp_path):
     no_restart = _lvl_xml(1, "decimal", "%2.").replace(
         "<w:numFmt", '<w:lvlRestart w:val="0"/><w:numFmt'

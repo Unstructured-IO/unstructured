@@ -1296,11 +1296,11 @@ class _ListLabels:
     def _is_section_break_mark(paragraph: Paragraph) -> bool:
         """True for an empty paragraph that only holds a section break; Word does not number it.
 
-        A paragraph that also holds a drawing, object, field, break or tab is not empty.
+        A paragraph that also holds any text, drawing, object, field, break or tab is not empty.
         """
         return (
             bool(paragraph._p.xpath("./w:pPr/w:sectPr"))
-            and not _paragraph_text(paragraph).strip()
+            and not _paragraph_text(paragraph)
             and not paragraph._p.xpath(_NON_TEXT_CONTENT_XPATH)
         )
 
