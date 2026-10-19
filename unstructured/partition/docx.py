@@ -63,6 +63,11 @@ from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
+_NON_TEXT_CONTENT_XPATH = (
+    ".//w:drawing | .//w:pict | .//w:object | .//w:br | .//w:tab | .//w:sym"
+    " | .//w:fldChar | .//w:fldSimple"
+)
+
 STYLE_TO_ELEMENT_MAPPING = {
     "Caption": Text,  # TODO(robinson) - add caption element type
     "Heading 1": Title,
@@ -1289,9 +1294,14 @@ class _ListLabels:
 
     @staticmethod
     def _is_section_break_mark(paragraph: Paragraph) -> bool:
-        """True for an empty paragraph that only holds a section break; Word does not number it."""
+        """True for an empty paragraph that only holds a section break; Word does not number it.
+
+        A paragraph that also holds a drawing, object, field, break or tab is not empty.
+        """
         return (
-            bool(paragraph._p.xpath("./w:pPr/w:sectPr")) and not _paragraph_text(paragraph).strip()
+            bool(paragraph._p.xpath("./w:pPr/w:sectPr"))
+            and not _paragraph_text(paragraph).strip()
+            and not paragraph._p.xpath(_NON_TEXT_CONTENT_XPATH)
         )
 
     def _render_label(self, paragraph: Paragraph) -> str:

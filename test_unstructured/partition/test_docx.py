@@ -1141,6 +1141,24 @@ def test_partition_docx_does_not_count_an_empty_paragraph_that_holds_a_section_b
     assert [e.text for e in elements] == ["1. a", "2. c"]
 
 
+@pytest.mark.parametrize("content", ["<w:drawing/>", "<w:pict/>", "<w:object/>", "<w:tab/>"])
+def test_partition_docx_counts_a_section_break_paragraph_that_holds_non_text_content(
+    tmp_path, content: str
+):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("", 1, 0), ("c", 1, 0)])
+    document = docx.Document(path)
+    paragraph = document.paragraphs[1]._p
+    paragraph.get_or_add_pPr().append(
+        parse_xml(f'<w:sectPr {_W_NS}><w:pgSz w:w="15840" w:h="12240"/></w:sectPr>')
+    )
+    paragraph.append(parse_xml(f"<w:r {_W_NS}>{content}</w:r>"))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "3. c"]
+
+
 def test_partition_docx_keeps_counting_child_levels_when_level_restart_is_zero(tmp_path):
     no_restart = _lvl_xml(1, "decimal", "%2.").replace(
         "<w:numFmt", '<w:lvlRestart w:val="0"/><w:numFmt'
