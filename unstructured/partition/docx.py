@@ -737,9 +737,7 @@ class _DocxPartitioner:
         style = self._list_labels.style_of(paragraph)
         if style is None:
             return False
-        if style.style_id not in self._style_outline_levels:
-            self._style_outline_levels[style.style_id] = self._style_has_outline_level(style)
-        return self._style_outline_levels[style.style_id]
+        return self._style_has_outline_level(style)
 
     @cached_property
     def _style_outline_levels(self) -> dict[str, bool]:
@@ -747,15 +745,25 @@ class _DocxPartitioner:
         return {}
 
     def _style_has_outline_level(self, style: Any) -> bool:
-        """True when the nearest `w:outlineLvl` in the chain starting at `style` is 0 to 8."""
-        seen: set[str] = set()
-        while style is not None and style.style_id not in seen:
-            seen.add(style.style_id)
+        """True when the nearest `w:outlineLvl` in the chain starting at `style` is 0 to 8.
+
+        The answer is recorded for every style on the way to it, so a chain is walked only once.
+        """
+        levels = self._style_outline_levels
+        walked: list[str] = []
+        result = False
+        while style is not None and style.style_id not in walked:
+            if style.style_id in levels:
+                result = levels[style.style_id]
+                break
+            walked.append(style.style_id)
             level = style.element.xpath("./w:pPr/w:outlineLvl/@w:val")
             if level:
-                return self._is_heading_outline_level(level[0])
+                result = self._is_heading_outline_level(level[0])
+                break
             style = style.base_style
-        return False
+        levels.update(dict.fromkeys(walked, result))
+        return result
 
     @staticmethod
     def _is_heading_outline_level(value: str) -> bool:

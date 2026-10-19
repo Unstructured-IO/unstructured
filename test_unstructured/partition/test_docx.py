@@ -15,10 +15,12 @@ import docx
 import pytest
 from docx.document import Document
 from docx.enum.section import WD_SECTION
+from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
 from docx.parts.document import DocumentPart
 from docx.section import Section
+from docx.styles.style import _CharacterStyle
 from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
 
@@ -889,6 +891,44 @@ def test_partition_docx_does_not_let_a_list_style_turn_a_numbered_heading_back_i
     (element,) = partition_docx(path)
 
     assert (isinstance(element, ListItem), element.text) == (False, "1. Overview")
+
+
+def test_partition_docx_resolves_a_long_style_chain_in_linear_time(tmp_path, monkeypatch):
+    style_count = 60
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    previous = document.styles["OutlinedStyle"]
+    for n in range(style_count):
+        style = document.styles.add_style(f"Chain{n}", WD_STYLE_TYPE.PARAGRAPH)
+        style.base_style = previous
+        previous = style
+        _add_direct_num_pr(document.add_paragraph(f"heading {n}", style=f"Chain{n}"))
+    document.save(path)
+    hops = 0
+    in_lookup = False
+    base_style = _CharacterStyle.base_style
+    outline_lookup = _DocxPartitioner._style_has_outline_level
+
+    def counting_base_style(self):
+        nonlocal hops
+        hops += in_lookup
+        return base_style.fget(self)
+
+    def tracked_outline_lookup(self, style):
+        nonlocal in_lookup
+        in_lookup = True
+        try:
+            return outline_lookup(self, style)
+        finally:
+            in_lookup = False
+
+    monkeypatch.setattr(_CharacterStyle, "base_style", property(counting_base_style))
+    monkeypatch.setattr(_DocxPartitioner, "_style_has_outline_level", tracked_outline_lookup)
+
+    elements = partition_docx(path)
+
+    assert not any(isinstance(e, ListItem) for e in elements)
+    assert hops <= 3 * style_count
 
 
 def test_partition_docx_labels_a_numbered_paragraph_that_is_classified_by_its_text(tmp_path):
