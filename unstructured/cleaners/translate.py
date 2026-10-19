@@ -67,7 +67,7 @@ def translate_text(text: str, source_lang: Optional[str] = None, target_lang: st
 
     translated_chunks: List[str] = []
     for chunk in chunks:
-        translated_chunks.append(_translate_text(text, model, tokenizer))
+        translated_chunks.append(_translate_text(chunk, model, tokenizer))
 
     return " ".join(translated_chunks)
 
