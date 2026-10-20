@@ -1,9 +1,15 @@
-## 0.27.32-dev5
+## 0.27.32
 
 ### Enhancements
 
+- **Read spooled uploads in place during file detection and partitioning, leaving spooled files at position 0. Generic file-like streams handled by `convert_to_bytes()` are rewound before and after reading; existing BytesIO and path-named buffered-reader cursor behavior is unchanged.**
+- **Bound memory in the OCR-only PDF renderer.** Stage renderer uploads with 1 MiB reads and render one page at a time. Release internally consumed page images promptly while preserving ownership of images yielded by the public generator.
+- **Stream original-element JSON compression through a spool that spills above 1 MiB, and avoid retaining image payloads when chunking without original elements. Preserve serialization bytes, metadata ordering and precision.** This removes collection-wide graph/JSON/compressed-buffer overlap and fragments individual large strings; individual elements, containers of short strings, sorted items and the final Base64 join still scale with their contents, so there is no hard per-fragment or process-memory bound. Large incompressible output requires writable temporary storage and can raise an I/O error if that storage is unavailable.
+- **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+- **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 - Expose `open_excel_workbook()` for integrations that read one worksheet at a time while
   retaining the worksheet cell limit and optional empty-row compaction.
+- Reduce XLSX subtable-detection memory with populated-cell traversal and render table HTML one row at a time while preserving Pandas formatting and element output.
 
 ## 0.27.31
 
