@@ -4,6 +4,13 @@
 
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
+## 0.27.32-dev3
+
+### Enhancements
+
+- Expose `open_excel_workbook()` for integrations that read one worksheet at a time while
+  retaining the worksheet cell limit and optional empty-row compaction.
+
 ## 0.27.32-dev2
 
 ### Enhancements
