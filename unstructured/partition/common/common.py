@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numbers
 import os
+import shutil
 import subprocess
 from enum import Enum
 from io import BufferedReader, BytesIO, TextIOWrapper
@@ -380,6 +381,17 @@ def rewind_if_spooled(file: _T) -> _T:
 
     # -- return `file` unchanged otherwise --
     return file
+
+
+def copy_file_to_stream(file: bytes | IO[bytes], destination: IO[bytes]) -> None:
+    """Copy bytes or the remaining stream to a destination with at most 1 MiB per read.
+
+    Streams remain open and their cursors advance; the caller owns rewind and cleanup.
+    """
+    if isinstance(file, bytes):
+        destination.write(file)
+    else:
+        shutil.copyfileobj(file, destination, length=1024 * 1024)
 
 
 def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
