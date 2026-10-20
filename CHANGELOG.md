@@ -5,6 +5,12 @@
 - Expose `open_excel_workbook()` for integrations that read one worksheet at a time while
   retaining the worksheet cell limit and optional empty-row compaction.
 
+## 0.27.32-dev0
+
+### Enhancements
+
+- **Read spooled uploads in place during file detection and partitioning, leaving spooled files at position 0. Generic file-like streams handled by `convert_to_bytes()` are rewound before and after reading; existing BytesIO and path-named buffered-reader cursor behavior is unchanged.**
+
 ## 0.27.31
 
 ### Fixes
