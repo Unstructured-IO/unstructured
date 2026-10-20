@@ -114,3 +114,26 @@ def test_metadata_json_preserves_original_and_continuation_field_order(empty):
         if empty
         else ["filename", "orig_elements", "is_continuation"]
     )
+
+
+def test_incompressible_originals_roll_compressed_spool_to_disk(monkeypatch):
+    import random
+    from contextlib import contextmanager
+
+    real_spool = base.tempfile.SpooledTemporaryFile
+    rolled = []
+
+    @contextmanager
+    def tracked_spool(*args, **kwargs):
+        with real_spool(*args, **kwargs) as spool:
+            yield spool
+            rolled.append(spool._rolled)
+
+    monkeypatch.setattr(base.tempfile, "SpooledTemporaryFile", tracked_spool)
+    payload = base64.b64encode(random.Random(4517).randbytes(2 * 1024 * 1024)).decode()
+    original = Image(
+        text="image", element_id="image", metadata=ElementMetadata(image_base64=payload)
+    )
+    encoded = base.elements_to_base64_gzipped_json([original])
+    assert rolled == [True]
+    assert base.elements_from_base64_gzipped_json(encoded)[0].to_dict() == original.to_dict()
