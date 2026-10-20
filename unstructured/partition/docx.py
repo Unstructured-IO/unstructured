@@ -63,10 +63,14 @@ from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
+_EMPTY_ELEMENTS = (
+    "r hyperlink sdt sdtContent smartTag ins del t delText bookmarkStart bookmarkEnd proofErr"
+    " permStart permEnd commentRangeStart commentRangeEnd lastRenderedPageBreak"
+)
 _CONTENT_XPATH = (
-    ".//w:t[string-length(.) > 0] | .//w:drawing | .//w:pict | .//w:object | .//w:br | .//w:tab"
-    " | .//w:cr | .//w:ptab | .//w:noBreakHyphen | .//w:sym | .//w:fldChar | .//w:fldSimple"
-    " | .//*[local-name()='oMath' or local-name()='oMathPara']"
+    ".//w:t[string-length(.) > 0] | .//*[not(ancestor-or-self::w:pPr | ancestor-or-self::w:rPr"
+    f" | ancestor-or-self::w:sdtPr) and not(contains(' {_EMPTY_ELEMENTS} ', concat(' ',"
+    " local-name(), ' ')))]"
 )
 
 STYLE_TO_ELEMENT_MAPPING = {
