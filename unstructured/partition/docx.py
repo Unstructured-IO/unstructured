@@ -63,9 +63,9 @@ from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
-_NON_TEXT_CONTENT_XPATH = (
-    ".//w:drawing | .//w:pict | .//w:object | .//w:br | .//w:tab | .//w:sym"
-    " | .//w:fldChar | .//w:fldSimple | .//*[local-name()='oMath' or local-name()='oMathPara']"
+_CONTENT_XPATH = (
+    ".//w:t[string-length(.) > 0] | .//w:drawing | .//w:pict | .//w:object | .//w:br | .//w:tab"
+    " | .//w:sym | .//w:fldChar | .//w:fldSimple | .//*[local-name()='oMath' or local-name()='oMathPara']"
 )
 
 STYLE_TO_ELEMENT_MAPPING = {
@@ -1297,12 +1297,11 @@ class _ListLabels:
     def _is_section_break_mark(paragraph: Paragraph) -> bool:
         """True for an empty paragraph that only holds a section break; Word does not number it.
 
-        A paragraph that also holds any text, drawing, object, field, break or tab is not empty.
+        A paragraph that also holds any text, even inside a content control, or a drawing, object,
+        field, break or tab is not empty.
         """
-        return (
-            bool(paragraph._p.xpath("./w:pPr/w:sectPr"))
-            and not _paragraph_text(paragraph)
-            and not paragraph._p.xpath(_NON_TEXT_CONTENT_XPATH)
+        return bool(paragraph._p.xpath("./w:pPr/w:sectPr")) and not paragraph._p.xpath(
+            _CONTENT_XPATH
         )
 
     def _render_label(self, paragraph: Paragraph) -> str:

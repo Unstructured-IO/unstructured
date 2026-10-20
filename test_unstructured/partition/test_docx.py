@@ -1212,6 +1212,25 @@ def test_partition_docx_counts_a_section_break_paragraph_whose_text_follows_a_pa
     ]
 
 
+def test_partition_docx_counts_a_section_break_paragraph_whose_text_is_in_a_content_control(
+    tmp_path,
+):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("", 1, 0), ("c", 1, 0), ("c1", 1, 1)])
+    document = docx.Document(path)
+    paragraph = document.paragraphs[1]._p
+    paragraph.get_or_add_pPr().append(
+        parse_xml(f'<w:sectPr {_W_NS}><w:pgSz w:w="15840" w:h="12240"/></w:sectPr>')
+    )
+    paragraph.append(
+        parse_xml(f"<w:sdt {_W_NS}><w:sdtContent><w:r><w:t>b</w:t></w:r></w:sdtContent></w:sdt>")
+    )
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "3. c", "a) c1"]
+
+
 def test_partition_docx_counts_a_section_break_paragraph_that_holds_only_an_equation(tmp_path):
     path = _numbered_docx(tmp_path, [("a", 1, 0), ("", 1, 0), ("c", 1, 0)])
     document = docx.Document(path)
