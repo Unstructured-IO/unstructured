@@ -1,8 +1,14 @@
-## 0.27.31-dev1
+## 0.27.32-dev1
 
 ### Fixes
 
 - **Stop dropping nested metadata values in `convert_to_csv()`.** Nested metadata such as `data_source` and `enrichment_origins` is flattened into sub-keys (`data_source_url`, `enrichment_origins_ner`, …), but the CSV column whitelist only contained the raw dict keys, so those sub-keys were filtered out and the corresponding columns stayed empty. The flattened sub-keys are now collected across rows and appended as columns, so the values are exported. The fixed `TABLE_FIELDNAMES` columns keep their names, order, and meaning, but the output can now carry *additional* columns: any metadata key not in the fixed set — including custom scalar fields such as `metadata.foobar` and flattened nested sub-keys — appears as an input-dependent extra column, and an ad-hoc metadata key that collides with a real top-level Element attribute (e.g. `embeddings`) is disambiguated as `metadata_<key>` rather than overwriting that column. Replacement names are allocated once per distinct field across the whole batch, so two distinct metadata fields never collapse onto a single column and the resulting name is independent of metadata insertion order and row order. Consumers should select columns by name instead of relying on an exact header or fixed field count.
+
+## 0.27.31
+
+### Fixes
+
+- **Label numbered headings and keep them out of list items; stop numbering section-break paragraphs.** A numbered paragraph of any element type now carries its label in the text, a numbered heading is no longer classified as a `ListItem` whether its number comes from its style or its own formatting, and an empty paragraph that only holds a section break no longer consumes a list number. A numbered paragraph with a heading outline level (0 to 8) counts as a heading even when it is body text, such as a numbered clause, so it is no longer a `ListItem`.
 
 ## 0.27.30
 
