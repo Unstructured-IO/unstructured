@@ -533,7 +533,6 @@ def test_it_uses_metadata_file_path_extension_for_a_rolled_over_SpooledTemporary
     with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
         spooled_file.write(b"# Heading\n\nSome *markdown* text.\n")
         assert spooled_file._rolled
-        assert not isinstance(spooled_file.name, str)
 
         assert detect_filetype(file=spooled_file, metadata_file_path="notes.md") == FileType.MD
 
@@ -1041,7 +1040,6 @@ class Describe_FileTypeDetectionContext:
     def and_it_ignores_a_file_name_that_is_not_a_string(self):
         with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
             spooled_file.write(b"<html></html>")
-            assert not isinstance(spooled_file.name, str)
 
             ctx = _FileTypeDetectionContext(file=spooled_file, metadata_file_path="a/b/c.html")
 
@@ -1473,3 +1471,10 @@ def test_office_files_when_document_archive_has_non_standard_prefix():
         file_path=input_path("file_type/test_document_from_office365.docx")
     )
     assert predicted_type == FileType.DOCX
+
+
+@pytest.mark.parametrize("name", ["temporary-upload", Path("temporary-upload"), 42, None])
+def test_extensionless_stream_names_fall_back_to_metadata_file_path(name):
+    file = io.BytesIO(b"# Heading\n\nSome *markdown* text.\n")
+    file.name = name
+    assert detect_filetype(file=file, metadata_file_path="notes.md") == FileType.MD

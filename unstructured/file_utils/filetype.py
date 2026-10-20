@@ -512,8 +512,12 @@ class _FileTypeDetectionContext:
         with self.open() as file:
             # -- a temporary file (including a rolled-over `SpooledTemporaryFile`) can have an
             # -- integer file-descriptor as its name, which carries no extension.
-            if isinstance(name := getattr(file, "name", None), (str, os.PathLike)) and name:
-                return os.path.splitext(name)[1].lower()
+            if (
+                isinstance(name := getattr(file, "name", None), (str, os.PathLike))
+                and name
+                and (extension := os.path.splitext(name)[1].lower())
+            ):
+                return extension
 
         # -- otherwise use metadata file-path when provided --
         if file_path := self._metadata_file_path:

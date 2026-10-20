@@ -65,7 +65,6 @@ def partition_tsv(
             f.seek(start)
             dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
 
-
     html_table = HtmlTable.from_html_text(
         dataframe.to_html(index=False, header=include_header, na_rep="")
     )
