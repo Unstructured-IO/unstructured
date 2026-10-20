@@ -80,6 +80,21 @@ def test_convert_to_bytes_leaves_a_BufferedReader_over_a_file_descriptor_open():
         os.fstat(tmp.fileno())
 
 
+@pytest.mark.parametrize("mode", ["rb", "r"])
+def test_convert_to_bytes_reads_a_file_opened_by_bytes_path_without_moving_it(
+    tmp_path: pathlib.Path, mode: str
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(b"sample content")
+
+    with open(os.fsencode(path), mode) as file:
+        file.read(3)
+        position = file.tell()
+
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+        assert file.tell() == position
+
+
 def test_convert_to_bytes_raises_for_an_object_that_is_not_a_seekable_stream():
     with pytest.raises(ValueError, match="Invalid file-like object type"):
         common.convert_to_bytes(object())  # pyright: ignore[reportArgumentType]
