@@ -45,6 +45,20 @@ test-no-extras:
 		test_${PACKAGE_NAME}/partition/html/test_partition.py \
 		test_${PACKAGE_NAME}/partition/test_xml.py
 
+.PHONY: test-langdetect-rs
+test-langdetect-rs:
+	UNSTRUCTURED_USE_LANGDETECT_RS=true uv run --no-sync python -c \
+		'import langdetect_rs as rs; from unstructured.partition.common import lang; assert lang.detect_langs is rs.detect_langs'
+	CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	UNSTRUCTURED_USE_LANGDETECT_RS=true \
+	uv run --no-sync pytest -n auto \
+		test_${PACKAGE_NAME}/partition/common/test_lang.py \
+		test_${PACKAGE_NAME}/partition/test_text.py \
+		test_${PACKAGE_NAME}/partition/test_email.py \
+		test_${PACKAGE_NAME}/partition/html/test_partition.py \
+		test_${PACKAGE_NAME}/partition/test_xml.py
+
 .PHONY: test-extra-csv
 test-extra-csv:
 	CI=$(CI) uv run --no-sync pytest -n auto \

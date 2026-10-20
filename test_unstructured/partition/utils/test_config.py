@@ -31,6 +31,19 @@ def test_env_override(monkeypatch: pytest.MonkeyPatch):
     assert env_config.IMAGE_CROP_PAD == 1
 
 
+@pytest.mark.parametrize(
+    ("value", "expected"), [(None, False), ("", False), ("0", False), ("1", True), ("true", True)]
+)
+def test_use_langdetect_rs(monkeypatch: pytest.MonkeyPatch, value: str | None, expected: bool):
+    if value is None:
+        monkeypatch.delenv("UNSTRUCTURED_USE_LANGDETECT_RS", raising=False)
+    else:
+        monkeypatch.setenv("UNSTRUCTURED_USE_LANGDETECT_RS", value)
+    from unstructured.partition.utils.config import env_config
+
+    assert env_config.UNSTRUCTURED_USE_LANGDETECT_RS is expected
+
+
 def test_global_working_dir_defaults_to_the_user_cache(monkeypatch: pytest.MonkeyPatch):
     """The default location, asserted with the feature disabled so nothing is created."""
     monkeypatch.delenv("GLOBAL_WORKING_DIR", raising=False)
