@@ -86,6 +86,10 @@ def test_image_upload_reads_are_bounded_and_leave_borrowed_stream_open(tmp_path)
         is_image=True,
         extract_image_block_to_payload=True,
     )
+    assert element.metadata.image_base64 is not None
+    with PILImage.open(io.BytesIO(base64.b64decode(element.metadata.image_base64))) as crop:
+        assert crop.width > 0
+        assert crop.height > 0
     assert not stream.closed
     assert stream.tell() == len(raw)
     stream.seek(0)

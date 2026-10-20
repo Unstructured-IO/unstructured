@@ -1,14 +1,14 @@
 """Measure peak memory of PIL image extraction and hash its output for cross-checkout comparison.
 
-Run with PYTHONPATH pointing at the desired library checkout. The deterministic
-100-megapixel BMP is written a row at a time, so fixture generation is bounded.
+Run with PYTHONPATH pointing at the desired library checkout. Requires the `image`
+extra (`pip install "unstructured[image]"`). The deterministic 100-megapixel BMP is
+written a row at a time, so fixture generation is bounded.
 """
 
 import argparse
 import hashlib
 import json
 import random
-import resource
 import struct
 import sys
 import tempfile
@@ -18,6 +18,18 @@ from pathlib import Path
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import ElementMetadata, Image
 from unstructured.partition.pdf_image.pdf_image_utils import save_elements
+
+
+def _peak_rss_kib() -> int:
+    """Peak resident memory of this process in KiB."""
+    if sys.platform == "win32":
+        import psutil
+
+        return psutil.Process().memory_info().peak_wset // 1024
+    import resource
+
+    peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    return peak // 1024 if sys.platform == "darwin" else peak
 
 
 def _positive_int(value: str) -> int:
@@ -78,14 +90,13 @@ def main() -> None:
             digest.update(json.dumps(metadata, sort_keys=True).encode())
             for offset in range(0, len(payload), 65536):
                 digest.update(payload[offset : offset + 65536].encode())
-        peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print(
             json.dumps(
                 {
                     "side": side,
                     "count": len(elements),
                     "seconds": seconds,
-                    "peak_rss_kib": peak // 1024 if sys.platform == "darwin" else peak,
+                    "peak_rss_kib": _peak_rss_kib(),
                     "output_sha256": digest.hexdigest(),
                     "payload_bytes_each": len(elements[0].metadata.image_base64 or ""),
                 }
