@@ -65,7 +65,7 @@ from unstructured.utils import is_temp_file_path
 
 _NON_TEXT_CONTENT_XPATH = (
     ".//w:drawing | .//w:pict | .//w:object | .//w:br | .//w:tab | .//w:sym"
-    " | .//w:fldChar | .//w:fldSimple"
+    " | .//w:fldChar | .//w:fldSimple | .//*[local-name()='oMath' or local-name()='oMathPara']"
 )
 
 STYLE_TO_ELEMENT_MAPPING = {
@@ -461,7 +461,7 @@ class _DocxPartitioner:
                 yield from self._iter_table_element(block_item)
 
     def _classify_paragraph_to_element(
-        self, paragraph: Paragraph, is_continuation: bool = False
+        self, paragraph: Paragraph, label: str = ""
     ) -> Iterator[Element]:
         """Generate zero-or-one document element for `paragraph`.
 
@@ -469,16 +469,10 @@ class _DocxPartitioner:
         does not contribute to the document-element stream and will not cause an element to be
         emitted.
 
-        Word counts every numbered paragraph, so the list counters advance for a blank one and for
-        one that is not a list-item; a numbered paragraph's label is prefixed to the text of
-        whatever element it becomes.
-
-        `is_continuation` is True for a fragment of a paragraph split by a page-break, other than
-        the first. Such a fragment is part of a numbered paragraph already labeled and gets no
-        label.
+        `label` is the auto-numbering label of the numbered paragraph this is, or a fragment of, and
+        is prefixed to the text of whatever element it becomes.
         """
         text = _paragraph_text(paragraph)
-        label = "" if is_continuation else self._list_labels.label(paragraph)
 
         # -- blank paragraphs are commonly used for spacing between paragraphs and do not
         # -- contribute to the document-element stream
@@ -715,8 +709,11 @@ class _DocxPartitioner:
 
         Its type is then left to the text heuristics, like any other numbered heading.
         """
-        is_numbered = "<w:numPr>" in paragraph._p.xml or self._list_labels.has_style_numbering(
-            paragraph
+        own_num_ids = paragraph._p.xpath("./w:pPr/w:numPr/w:numId/@w:val")
+        is_numbered = (
+            own_num_ids[0] not in ("", "0")
+            if own_num_ids
+            else self._list_labels.has_style_numbering(paragraph)
         )
         return is_numbered and self._is_numbered_heading(paragraph)
 
@@ -766,7 +763,7 @@ class _DocxPartitioner:
             if level:
                 result = self._is_heading_outline_level(level[0])
                 break
-            style = style.base_style
+            style = getattr(style, "base_style", None)
         levels.update(dict.fromkeys(walked, result))
         return result
 
@@ -823,12 +820,13 @@ class _DocxPartitioner:
             if following_paragraph_fragment:
                 yield from iter_paragraph_items(following_paragraph_fragment)
 
-        seen_fragment = False
+        label = self._list_labels.label(paragraph)
         for item in iter_paragraph_items(paragraph):
             if isinstance(item, Paragraph):
-                yield from self._classify_paragraph_to_element(item, seen_fragment)
+                yield from self._classify_paragraph_to_element(item, label)
                 yield from self._iter_paragraph_images(item)
-                seen_fragment = True
+                if _paragraph_text(item).strip():
+                    label = ""
             else:
                 yield from self._opts.increment_page_number()
 
@@ -1109,14 +1107,15 @@ class _DocxPartitioner:
     def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
         """Determine category depth from paragraph metadata"""
 
+        style_name = self._style_name(paragraph)
+        depth = self._parse_category_depth_by_style_name(style_name)
+        if depth > 0 and self._style_based_element_type(paragraph) is Title:
+            return depth
+
         # Determine category depth from paragraph ilvl xpath
         xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
         if xpath:
             return round(float(xpath[0]))
-
-        # Determine category depth from style name
-        style_name = self._style_name(paragraph)
-        depth = self._parse_category_depth_by_style_name(style_name)
 
         if depth > 0:
             return depth

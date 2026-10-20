@@ -1175,6 +1175,93 @@ def test_partition_docx_counts_a_section_break_paragraph_that_holds_whitespace(
     assert [e.text for e in elements] == ["1. a", "3. c"]
 
 
+def test_partition_docx_extracts_a_numbered_paragraph_in_a_style_based_on_a_numbering_style(
+    tmp_path,
+):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    numbering_style = document.styles.add_style("ListStyle", WD_STYLE_TYPE.LIST)
+    style = document.styles.add_style("Clause", WD_STYLE_TYPE.PARAGRAPH)
+    style.element.insert(1, parse_xml(f'<w:basedOn {_W_NS} w:val="{numbering_style.style_id}"/>'))
+    _add_direct_num_pr(document.add_paragraph("Scope", style="Clause"))
+    document.add_paragraph("after")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["Scope", "after"]
+
+
+def test_partition_docx_counts_a_section_break_paragraph_whose_text_follows_a_page_break(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("", 1, 0), ("c", 1, 0)])
+    document = docx.Document(path)
+    paragraph = document.paragraphs[1]._p
+    paragraph.get_or_add_pPr().append(
+        parse_xml(f'<w:sectPr {_W_NS}><w:pgSz w:w="15840" w:h="12240"/></w:sectPr>')
+    )
+    paragraph.append(parse_xml(f"<w:r {_W_NS}><w:rPr><w:b/></w:rPr></w:r>"))
+    paragraph.append(parse_xml(f"<w:r {_W_NS}><w:lastRenderedPageBreak/><w:t>b text</w:t></w:r>"))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements if not isinstance(e, PageBreak)] == [
+        "1. a",
+        "2. b text",
+        "3. c",
+    ]
+
+
+def test_partition_docx_counts_a_section_break_paragraph_that_holds_only_an_equation(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("", 1, 0), ("c", 1, 0)])
+    document = docx.Document(path)
+    paragraph = document.paragraphs[1]._p
+    paragraph.get_or_add_pPr().append(
+        parse_xml(f'<w:sectPr {_W_NS}><w:pgSz w:w="15840" w:h="12240"/></w:sectPr>')
+    )
+    paragraph.append(
+        parse_xml(
+            '<m:oMath xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">'
+            "<m:r><m:t>x</m:t></m:r></m:oMath>"
+        )
+    )
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["1. a", "3. c"]
+
+
+def test_partition_docx_keeps_the_heading_depth_of_a_directly_numbered_heading(tmp_path):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    for text, style in [("Chapter", "Heading 1"), ("Section", "Heading 2")]:
+        _add_direct_num_pr(document.add_paragraph(text, style=style))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text, e.metadata.category_depth) for e in elements] == [
+        (Title, "1. Chapter", 0),
+        (Title, "2. Section", 1),
+    ]
+
+
+def test_partition_docx_keeps_a_list_style_when_numbering_is_disabled_on_an_outlined_paragraph(
+    tmp_path,
+):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    paragraph = document.add_paragraph("x", style="List Paragraph")
+    _add_direct_num_pr(paragraph, num_id=0)
+    paragraph._p.get_or_add_pPr().append(parse_xml(f'<w:outlineLvl {_W_NS} w:val="0"/>'))
+    document.save(path)
+
+    (element,) = partition_docx(path)
+
+    assert (type(element), element.text) == (ListItem, "x")
+
+
 def test_partition_docx_keeps_counting_child_levels_when_level_restart_is_zero(tmp_path):
     no_restart = _lvl_xml(1, "decimal", "%2.").replace(
         "<w:numFmt", '<w:lvlRestart w:val="0"/><w:numFmt'
