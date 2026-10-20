@@ -109,11 +109,14 @@ def _get_leaf_elements(
     """Parse the XML tree in a memory efficient manner if possible."""
     element_stack: list[etree._Element] = []  # pyright: ignore[reportPrivateUsage]
 
-    element_iterator = etree.iterparse(file, events=("start", "end"), resolve_entities=False)
+    element_iterator = etree.iterparse(
+        file, events=("start", "end", "comment", "pi"), resolve_entities=False
+    )
     # NOTE(alan) If xml_path is used for filtering, I've yet to find a good way to stream
     # elements through in a memory efficient way, so we bite the bullet and load it all into
     # memory.
-    if xml_path is not None:
+    xpath_selection = xml_path is not None
+    if xpath_selection:
         _, element = next(element_iterator)
         compiled_path = etree.XPath(xml_path)
         element_iterator = (("end", el) for el in compiled_path(element))
@@ -121,10 +124,23 @@ def _get_leaf_elements(
     for event, element in element_iterator:
         if event == "start":
             element_stack.append(element)
-
-        if event == "end":
+            # -- text that precedes this element's children comes before them in the document, so
+            # -- emit it when the element starts rather than when it ends --
             if element.text is not None and element.text.strip():
                 yield element.text
+        elif xpath_selection:
+            # -- an XPath-selected element is streamed as an "end" event only, so its text has not
+            # -- been emitted yet --
+            if element.text is not None and element.text.strip():
+                yield element.text
+
+            element.clear()
+        else:
+            # -- mixed content: text that follows this element (or an inline comment or
+            # -- processing instruction) is still content of the enclosing element and is emitted
+            # -- here, in document order --
+            if element.tail is not None and element.tail.strip():
+                yield element.tail
 
             element.clear()
 
