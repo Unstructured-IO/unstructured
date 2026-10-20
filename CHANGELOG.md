@@ -1,3 +1,9 @@
+## 0.27.32-dev4
+
+### Enhancements
+
+- **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
+
 ## 0.27.31
 
 ### Fixes
