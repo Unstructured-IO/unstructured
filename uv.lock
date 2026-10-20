@@ -7233,6 +7233,7 @@ name = "unstructured"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
+    { name = "certifi" },
     { name = "charset-normalizer" },
     { name = "emoji" },
     { name = "filelock" },
@@ -7416,6 +7417,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.14.3,<5.0.0" },
+    { name = "certifi", specifier = ">=2026.10.19" },
     { name = "charset-normalizer", specifier = ">=3.4.4,<4.0.0" },
     { name = "emoji", specifier = ">=2.15.0,<3.0.0" },
     { name = "filelock", specifier = ">=3.12.0,<4.0.0" },
