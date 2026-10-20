@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import shutil
 import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
@@ -14,6 +13,7 @@ from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
+from unstructured.partition.common.common import copy_file_to_stream
 from unstructured.partition.common.lang import tesseract_to_paddle_language
 from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
 from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_image, valid_text
@@ -81,10 +81,7 @@ def process_data_with_ocr(
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
         with open(tmp_file_path, "wb") as tmp_file:
-            if isinstance(data, bytes):
-                tmp_file.write(data)
-            else:
-                shutil.copyfileobj(data, tmp_file, length=1024 * 1024)
+            copy_file_to_stream(data, tmp_file)
 
         merged_layouts = process_file_with_ocr(
             filename=tmp_file_path,

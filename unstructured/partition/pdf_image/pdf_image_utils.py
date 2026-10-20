@@ -3,7 +3,6 @@ from __future__ import annotations
 import base64
 import os
 import re
-import shutil
 import tempfile
 import unicodedata
 from contextlib import contextmanager
@@ -22,7 +21,7 @@ from unstructured_inference.inference.pdf_image import PdfRenderTooLargeError
 from unstructured.documents.elements import ElementType
 from unstructured.errors import UnprocessableEntityError
 from unstructured.logger import logger
-from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.common import copy_file_to_stream, exactly_one
 from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:
@@ -443,17 +442,17 @@ def _pdf_source_path(filename: str, file: Optional[bytes | IO[bytes]]) -> Iterat
         path = os.path.join(directory, "upload.pdf")
         with open(path, "wb") as destination:
             if isinstance(file, bytes):
-                destination.write(file)
+                copy_file_to_stream(file, destination)
             elif isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
                 getattr(file, "name", None), str
             ):
                 with open(file.name, "rb") as source:
-                    shutil.copyfileobj(source, destination, length=1024 * 1024)
+                    copy_file_to_stream(source, destination)
             elif callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
                 position = file.tell() if isinstance(file, BytesIO) else 0
                 try:
                     file.seek(0)
-                    shutil.copyfileobj(file, destination, length=1024 * 1024)
+                    copy_file_to_stream(file, destination)
                 finally:
                     file.seek(position)
             else:
