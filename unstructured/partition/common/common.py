@@ -400,11 +400,14 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
             return f.read()
 
     if callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
+        # -- a pipe or socket cannot be rewound, so its remaining content is read once --
+        if callable(seekable := getattr(file, "seekable", None)) and not seekable():
+            if isinstance(file, TextIOWrapper):
+                # -- the wrapper may already hold decoded text read ahead from the pipe --
+                return file.read().encode(file.encoding, file.errors)
+            return file.read()
         # -- a text file is read as bytes through its binary buffer --
         source = file.buffer if isinstance(file, TextIOWrapper) else file
-        # -- a pipe or socket cannot be rewound, so its remaining bytes are read once --
-        if callable(seekable := getattr(file, "seekable", None)) and not seekable():
-            return source.read()
         file.seek(0)
         f_bytes = source.read()
         file.seek(0)

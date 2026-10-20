@@ -122,6 +122,17 @@ def test_convert_to_bytes_reads_a_pipe_that_cannot_seek(mode: str):
         assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
 
 
+def test_convert_to_bytes_keeps_text_already_buffered_from_a_text_pipe():
+    read_fd, write_fd = os.pipe()
+    with os.fdopen(write_fd, "wb") as writer:
+        writer.write("sample content, café".encode("utf-8"))
+
+    with os.fdopen(read_fd, "r", encoding="utf-8") as file:
+        assert file.read(1) == "s"
+
+        assert common.convert_to_bytes(file) == "ample content, café".encode("utf-8")  # pyright: ignore[reportArgumentType]
+
+
 def test_convert_to_bytes_reads_bytes_from_a_text_file_opened_on_a_descriptor(
     tmp_path: pathlib.Path,
 ):
