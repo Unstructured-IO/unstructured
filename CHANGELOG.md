@@ -1,9 +1,15 @@
-## 0.27.32-dev5
+## 0.27.32-dev3
 
 ### Enhancements
 
 - Expose `open_excel_workbook()` for integrations that read one worksheet at a time while
   retaining the worksheet cell limit and optional empty-row compaction.
+
+## 0.27.32-dev2
+
+### Enhancements
+
+- **Stream original-element JSON compression through a spool that spills above 1 MiB, and avoid retaining image payloads when chunking without original elements. Preserve serialization bytes, metadata ordering and precision.** This removes collection-wide graph/JSON/compressed-buffer overlap and fragments individual large strings; individual elements, containers of short strings, sorted items and the final Base64 join still scale with their contents, so there is no hard per-fragment or process-memory bound. Large incompressible output requires writable temporary storage and can raise an I/O error if that storage is unavailable.
 
 ## 0.27.32-dev1
 
