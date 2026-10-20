@@ -4,11 +4,12 @@
 
 - **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
 
-## 0.27.32-dev0
+## 0.27.32-dev1
 
 ### Enhancements
 
 - **Read spooled uploads in place during file detection and partitioning, leaving spooled files at position 0. Generic file-like streams handled by `convert_to_bytes()` are rewound before and after reading; existing BytesIO and path-named buffered-reader cursor behavior is unchanged.**
+- **Bound memory in the OCR-only PDF renderer.** Stage renderer uploads with 1 MiB reads and render one page at a time. Release internally consumed page images promptly while preserving ownership of images yielded by the public generator.
 
 ## 0.27.31
 
