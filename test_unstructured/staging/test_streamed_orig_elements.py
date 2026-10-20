@@ -67,6 +67,47 @@ def test_streaming_compression_preserves_existing_bytes_and_input_metadata(count
     assert [element.to_dict() for element in elements] == [element.to_dict() for element in before]
 
 
+@pytest.mark.parametrize("field", ["extra", "enrichment_origins"])
+@pytest.mark.parametrize("container_type", ["dict", "list", "tuple"])
+@pytest.mark.parametrize("large_string", [False, True])
+def test_compression_preserves_standard_encoder_circular_reference_error(
+    field, container_type, large_string
+):
+    # Put a large string before the back-reference so the scan short-circuits and emission
+    # must detect the cycle itself. Without it, the scan must detect the cycle.
+    first = "x" * 70000 if large_string else "small"
+    if container_type == "dict":
+        cyclic = {"a": first}
+        cyclic["self"] = cyclic
+    else:
+        items = [first]
+        cyclic = tuple(items + [items]) if container_type == "tuple" else items
+        items.append(cyclic)
+    metadata = ElementMetadata()
+    setattr(metadata, field, cyclic)
+    element = NarrativeText("text", element_id="id", metadata=metadata)
+
+    adjusted = base._fix_metadata_field_precision([element])
+    with pytest.raises(ValueError, match="^Circular reference detected$") as expected:
+        json.dumps(base.elements_to_dicts(adjusted), sort_keys=True)
+    with pytest.raises(type(expected.value), match="^Circular reference detected$"):
+        base.elements_to_base64_gzipped_json([element])
+
+
+@pytest.mark.parametrize("large_string", [False, True])
+def test_compression_accepts_shared_noncyclic_containers(large_string):
+    shared = {"values": ["x" * 70000 if large_string else "small"]}
+    metadata = ElementMetadata()
+    metadata.extra = {"first": shared, "second": shared, "tuple": (shared, shared)}
+    element = NarrativeText("text", element_id="id", metadata=metadata)
+    adjusted = base._fix_metadata_field_precision([element])
+    expected = base64.b64encode(
+        zlib.compress(json.dumps(base.elements_to_dicts(adjusted), sort_keys=True).encode("utf-8"))
+    ).decode("ascii")
+
+    assert base.elements_to_base64_gzipped_json([element]) == expected
+
+
 def test_compression_does_not_retain_consumed_original_elements():
     references = []
 

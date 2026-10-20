@@ -253,6 +253,12 @@ def elements_to_base64_gzipped_json(elements: Iterable[Element]) -> str:
     possible when transported as JSON, for example in an HTTP response. This compressed form is also
     present when elements are in dict form ("element_dicts"). This function is not coupled to that
     purpose however and could have other uses.
+
+    Serialization avoids collection-wide graph and JSON staging and fragments individual large
+    strings. Individual elements, containers of short strings, sorted items, and the final Base64
+    join can still scale with their contents; this is not a hard fragment or process-memory bound.
+    Large incompressible output requires writable temporary storage for the compressed spool and
+    can raise an I/O error if that storage is unavailable.
     """
     compressor = zlib.compressobj()
     with tempfile.SpooledTemporaryFile(max_size=1024 * 1024) as compressed:
@@ -267,8 +273,8 @@ def elements_to_base64_gzipped_json(elements: Iterable[Element]) -> str:
         compressed.write(compressor.compress(b"]"))
         compressed.write(compressor.flush())
         compressed.seek(0)
-        # Multiples of three avoid padding between base64 fragments. Only the returned
-        # encoded value grows with the whole collection; compression buffers spill to disk.
+        # Multiples of three avoid padding between base64 fragments. Encoded fragments and
+        # their final join grow with the collection; the compressed spool spills to disk.
         return "".join(
             base64.b64encode(block).decode("ascii")
             for block in iter(lambda: compressed.read(65535), b"")
@@ -278,53 +284,78 @@ def elements_to_base64_gzipped_json(elements: Iterable[Element]) -> str:
 _JSON_STRING_FRAGMENT_SIZE = 65536
 
 
-def _has_large_string(value: Any) -> bool:
+def _has_large_string(value: Any, active_containers: Optional[set[int]] = None) -> bool:
     if isinstance(value, str):
         return len(value) > _JSON_STRING_FRAGMENT_SIZE
-    if isinstance(value, dict):
+    if not isinstance(value, (dict, list, tuple)):
+        return False
+    if active_containers is None:
+        active_containers = set()
+    container_id = id(value)
+    if container_id in active_containers:
+        raise ValueError("Circular reference detected")
+    active_containers.add(container_id)
+    try:
+        if isinstance(value, dict):
+            return any(
+                _has_large_string(key, active_containers)
+                or _has_large_string(item, active_containers)
+                for key, item in cast("dict[Any, Any]", value).items()
+            )
         return any(
-            _has_large_string(key) or _has_large_string(item)
-            for key, item in cast("dict[Any, Any]", value).items()
+            _has_large_string(item, active_containers) for item in cast("Sequence[Any]", value)
         )
-    if isinstance(value, (list, tuple)):
-        return any(_has_large_string(item) for item in cast("Sequence[Any]", value))
-    return False
+    finally:
+        active_containers.remove(container_id)
 
 
-def _iter_json_fragments(value: Any) -> Iterator[str]:
-    """Emit default, sorted-key JSON while escaping large strings in bounded fragments.
+def _iter_json_fragments(value: Any, active_containers: Optional[set[int]] = None) -> Iterator[str]:
+    """Emit default, sorted-key JSON, fragmenting individual large strings.
 
-    Values without a large string are encoded in one call to the standard encoder.
+    Values without a large string are encoded in one call to the standard encoder, so arbitrary
+    containers can exceed the string fragment size. This does not bound total working memory.
     """
-    if not _has_large_string(value):
-        yield json.dumps(value, sort_keys=True)
-    elif isinstance(value, str):
-        yield '"'
-        for start in range(0, len(value), _JSON_STRING_FRAGMENT_SIZE):
-            yield json.dumps(value[start : start + _JSON_STRING_FRAGMENT_SIZE])[1:-1]
-        yield '"'
-    elif isinstance(value, (list, tuple)):
-        yield "["
-        for index, item in enumerate(value):
-            if index:
-                yield ", "
-            yield from _iter_json_fragments(item)
-        yield "]"
-    else:
-        yield "{"
-        for index, (key, item) in enumerate(sorted(value.items())):
-            if index:
-                yield ", "
-            if not isinstance(key, str):
-                if isinstance(key, (int, float)) or key is None:
-                    key = json.dumps(key)
-                else:
-                    # Preserve the standard encoder's rejection of unsupported keys.
-                    json.dumps({key: item}, sort_keys=True)
-            yield from _iter_json_fragments(key)
-            yield ": "
-            yield from _iter_json_fragments(item)
-        yield "}"
+    if active_containers is None:
+        active_containers = set()
+    is_container = isinstance(value, (dict, list, tuple))
+    container_id = id(value)
+    if is_container:
+        if container_id in active_containers:
+            raise ValueError("Circular reference detected")
+        active_containers.add(container_id)
+    try:
+        if not _has_large_string(value):
+            yield json.dumps(value, sort_keys=True)
+        elif isinstance(value, str):
+            yield '"'
+            for start in range(0, len(value), _JSON_STRING_FRAGMENT_SIZE):
+                yield json.dumps(value[start : start + _JSON_STRING_FRAGMENT_SIZE])[1:-1]
+            yield '"'
+        elif isinstance(value, (list, tuple)):
+            yield "["
+            for index, item in enumerate(value):
+                if index:
+                    yield ", "
+                yield from _iter_json_fragments(item, active_containers)
+            yield "]"
+        else:
+            yield "{"
+            for index, (key, item) in enumerate(sorted(value.items())):
+                if index:
+                    yield ", "
+                if not isinstance(key, str):
+                    if isinstance(key, (int, float)) or key is None:
+                        key = json.dumps(key)
+                    else:
+                        # Preserve the standard encoder's rejection of unsupported keys.
+                        json.dumps({key: item}, sort_keys=True)
+                yield from _iter_json_fragments(key, active_containers)
+                yield ": "
+                yield from _iter_json_fragments(item, active_containers)
+            yield "}"
+    finally:
+        if is_container:
+            active_containers.remove(container_id)
 
 
 def elements_to_dicts(elements: Iterable[Element]) -> list[dict[str, Any]]:
