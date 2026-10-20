@@ -621,7 +621,11 @@ class PreChunkBuilder:
             self._text_segments = []
             self._text_len = 0
 
-        if not self._opts.include_orig_elements and isinstance(element, Image) and not element.text:
+        if (
+            not self._opts.include_orig_elements
+            and isinstance(element, Image)
+            and not element.text.strip()
+        ):
             if self._elements and isinstance(self._elements[-1], _MetadataOnlyImage):
                 self._elements[-1].add(element)
             else:

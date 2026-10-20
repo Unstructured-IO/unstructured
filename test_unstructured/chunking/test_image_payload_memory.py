@@ -22,7 +22,12 @@ def _elements(seed):
     elements = []
     for index in range(50):
         kind = randomizer.choice([Image, Image, Image, NarrativeText, Title, Table, PageBreak])
-        text = "" if kind in (Image, PageBreak) else (" text" * randomizer.randrange(1, 30))
+        if kind is Image:
+            text = randomizer.choice(["", " ", "\n\t "])
+        elif kind is PageBreak:
+            text = ""
+        else:
+            text = " text" * randomizer.randrange(1, 30)
         metadata = ElementMetadata(
             filename=f"file-{index % 3}.pdf",
             page_number=index // 10,
@@ -69,14 +74,15 @@ def test_excluding_originals_preserves_chunk_boundaries_and_metadata(seed, chunk
         )
 
 
+@pytest.mark.parametrize("image_text", ["", " \n\t"])
 @pytest.mark.parametrize("include_text", [False, True])
-def test_empty_image_payloads_are_released_while_the_input_is_consumed(include_text):
+def test_empty_image_payloads_are_released_while_the_input_is_consumed(include_text, image_text):
     references = []
 
     def images():
         for _ in range(100):
             # Fresh payloads model a streamed image partitioner rather than a caller-owned list.
-            image = Image(text="", metadata=ElementMetadata(image_base64="x" * 1024 * 1024))
+            image = Image(text=image_text, metadata=ElementMetadata(image_base64="x" * 1024 * 1024))
             references.append(weakref.ref(image))
             assert sum(ref() is not None for ref in references) <= 2
             yield image
