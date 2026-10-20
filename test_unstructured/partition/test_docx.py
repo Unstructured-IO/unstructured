@@ -1153,7 +1153,7 @@ def test_partition_docx_does_not_count_an_empty_paragraph_that_holds_a_section_b
         "<w:noBreakHyphen/>",
         '<w:footnoteReference w:id="1"/>',
         '<w:endnoteReference w:id="1"/>',
-        "<w:fldSimple w:instr='PAGE'/>",
+        '<w:fldChar w:fldCharType="begin"/>',
     ],
 )
 def test_partition_docx_counts_a_section_break_paragraph_that_holds_non_text_content(
