@@ -4,6 +4,8 @@
 
 - **Keep non-ASCII email names and addresses readable.** `partition_email()` formatted the `sent_from`, `sent_to`, `cc_recipient` and `bcc_recipient` metadata with `email.utils.formataddr()`, which wrote a non-ASCII display name as an RFC 2047 encoded-word (`=?utf-8?b?5byg5Lyf?= <zhang@example.cn>` for 张伟) and raised `UnicodeEncodeError` on a non-ASCII address (RFC 6532), failing the whole message. Names and addresses are now kept as written; ASCII ones are formatted as before.
 
+- **Compare bounding boxes for elements that have no page number.** `catch_overlapping_and_nested_bboxes()` sized its per-page lists from the page number of the *last* element, so it raised `IndexError` for an empty element list, for elements with no page number at all (the loop that buckets the boxes already treats those as page 1), and for any list whose last element is not on the highest page. The page count is now the highest page number present, which is no pages at all for an empty element list.
+
 ## 0.27.29
 
 ### Fixes
