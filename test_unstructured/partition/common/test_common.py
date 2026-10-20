@@ -122,6 +122,20 @@ def test_convert_to_bytes_reads_a_pipe_that_cannot_seek(mode: str):
         assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
 
 
+def test_convert_to_bytes_reads_bytes_from_a_text_file_opened_on_a_descriptor(
+    tmp_path: pathlib.Path,
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(b"sample content")
+
+    with os.fdopen(os.open(path, os.O_RDONLY), "r", encoding="utf-8") as file:
+        file.read(3)
+
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+        assert file.tell() == 0
+        assert file.read() == "sample content"
+
+
 def test_convert_to_bytes_raises_for_an_object_that_is_not_a_seekable_stream():
     with pytest.raises(ValueError, match="Invalid file-like object type"):
         common.convert_to_bytes(object())  # pyright: ignore[reportArgumentType]
