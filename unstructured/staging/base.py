@@ -293,17 +293,18 @@ def _container_items(value: dict[Any, Any] | Sequence[Any]) -> Iterator[Any]:
         yield from value
 
 
-def _has_large_string(value: Any) -> bool:
-    """Whether `value` holds a string longer than one JSON fragment, at any nesting depth.
+def _containers_with_large_strings(value: Any) -> set[int]:
+    """Ids of the containers in `value` that hold a string longer than one JSON fragment.
 
-    The walk uses an explicit stack, so nesting the standard encoder accepts never exhausts the
-    interpreter's recursion limit here. A container that appears inside itself raises the standard
-    encoder's circular-reference error.
+    Each container is classified once, even when it is shared, so the work is linear in the size
+    of `value`. The walk uses an explicit stack, so nesting the standard encoder accepts never
+    exhausts the interpreter's recursion limit here. A container that appears inside itself raises
+    the standard encoder's circular-reference error.
     """
-    if isinstance(value, str):
-        return len(value) > _JSON_STRING_FRAGMENT_SIZE
     if not isinstance(value, (dict, list, tuple)):
-        return False
+        return set()
+    large: set[int] = set()
+    classified: set[int] = set()
     active_containers = {id(value)}
     stack = [(id(value), _container_items(cast("dict[Any, Any] | Sequence[Any]", value)))]
     while stack:
@@ -311,18 +312,25 @@ def _has_large_string(value: Any) -> bool:
         for item in items:
             if isinstance(item, str):
                 if len(item) > _JSON_STRING_FRAGMENT_SIZE:
-                    return True
+                    large.add(container_id)
             elif isinstance(item, (dict, list, tuple)):
                 item_id = id(item)
                 if item_id in active_containers:
                     raise ValueError("Circular reference detected")
+                if item_id in classified:
+                    if item_id in large:
+                        large.add(container_id)
+                    continue
                 active_containers.add(item_id)
                 stack.append((item_id, _container_items(item)))
                 break
         else:
             stack.pop()
             active_containers.remove(container_id)
-    return False
+            classified.add(container_id)
+            if stack and container_id in large:
+                large.add(stack[-1][0])
+    return large
 
 
 class _Nested:
@@ -343,18 +351,21 @@ def _iter_json_fragments(value: Any) -> Iterator[str]:
     interpreter's recursion limit.
     """
     active_containers: set[int] = set()
-    stack = [_json_parts(value, active_containers)]
+    large_containers = _containers_with_large_strings(value)
+    stack = [_json_parts(value, active_containers, large_containers)]
     while stack:
         part = next(stack[-1], None)
         if part is None:
             stack.pop()
         elif isinstance(part, _Nested):
-            stack.append(_json_parts(part.value, active_containers))
+            stack.append(_json_parts(part.value, active_containers, large_containers))
         else:
             yield part
 
 
-def _json_parts(value: Any, active_containers: set[int]) -> Iterator[str | _Nested]:
+def _json_parts(
+    value: Any, active_containers: set[int], large_containers: set[int]
+) -> Iterator[str | _Nested]:
     """JSON fragments of `value`, with nested values left as `_Nested` markers to expand."""
     is_container = isinstance(value, (dict, list, tuple))
     container_id = id(value)
@@ -363,7 +374,12 @@ def _json_parts(value: Any, active_containers: set[int]) -> Iterator[str | _Nest
             raise ValueError("Circular reference detected")
         active_containers.add(container_id)
     try:
-        if not _has_large_string(value):
+        has_large_string = (
+            len(value) > _JSON_STRING_FRAGMENT_SIZE
+            if isinstance(value, str)
+            else is_container and container_id in large_containers
+        )
+        if not has_large_string:
             yield json.dumps(value, sort_keys=True)
         elif isinstance(value, str):
             yield '"'

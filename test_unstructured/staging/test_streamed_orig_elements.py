@@ -200,3 +200,22 @@ def test_compression_accepts_metadata_nested_as_deeply_as_the_standard_encoder_d
         zlib.compress(json.dumps(base.elements_to_dicts(adjusted), sort_keys=True).encode("utf-8"))
     ).decode("utf-8")
     assert base.elements_to_base64_gzipped_json([element]) == expected
+
+
+def test_nested_large_strings_are_classified_once_per_container(monkeypatch):
+    depth, width = 60, 200
+    value = "x" * 70000
+    for _ in range(depth):
+        value = [0] * width + [value]
+    visited = 0
+    original = base._container_items
+
+    def counting_container_items(container):
+        nonlocal visited
+        for item in original(container):
+            visited += 1
+            yield item
+
+    monkeypatch.setattr(base, "_container_items", counting_container_items)
+    assert "".join(base._iter_json_fragments(value)) == json.dumps(value, sort_keys=True)
+    assert visited <= depth * (width + 1)
