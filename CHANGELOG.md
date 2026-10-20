@@ -1,8 +1,20 @@
-## 0.27.29-dev1
+## 0.27.31-dev1
 
 ### Fixes
 
 - **Stop dropping nested metadata values in `convert_to_csv()`.** Nested metadata such as `data_source` and `enrichment_origins` is flattened into sub-keys (`data_source_url`, `enrichment_origins_ner`, …), but the CSV column whitelist only contained the raw dict keys, so those sub-keys were filtered out and the corresponding columns stayed empty. The flattened sub-keys are now collected across rows and appended as columns, so the values are exported. The fixed `TABLE_FIELDNAMES` columns keep their names, order, and meaning, but the output can now carry *additional* columns: any metadata key not in the fixed set — including custom scalar fields such as `metadata.foobar` and flattened nested sub-keys — appears as an input-dependent extra column, and an ad-hoc metadata key that collides with a real top-level Element attribute (e.g. `embeddings`) is disambiguated as `metadata_<key>` rather than overwriting that column. Replacement names are allocated once per distinct field across the whole batch, so two distinct metadata fields never collapse onto a single column and the resulting name is independent of metadata insertion order and row order. Consumers should select columns by name instead of relying on an exact header or fixed field count.
+
+## 0.27.30
+
+### Fixes
+
+- **Keep non-ASCII email names and addresses readable.** `partition_email()` formatted the `sent_from`, `sent_to`, `cc_recipient` and `bcc_recipient` metadata with `email.utils.formataddr()`, which wrote a non-ASCII display name as an RFC 2047 encoded-word (`=?utf-8?b?5byg5Lyf?= <zhang@example.cn>` for 张伟) and raised `UnicodeEncodeError` on a non-ASCII address (RFC 6532), failing the whole message. Names and addresses are now kept as written; ASCII ones are formatted as before.
+
+## 0.27.29
+
+### Fixes
+
+- **Read XLS files whose Workbook stream ends in padding.** `partition_xlsx()` raised `struct.error` for many `.xls` files written by `xlwt`: the msoffcrypto encryption check reads the Workbook stream as 4-byte record headers and fails on the few bytes of padding at its end (nolze/msoffcrypto-tool#83). Such a file is now read as not encrypted; password-protected `.xls` files are still rejected.
 
 ## 0.27.28
 
