@@ -7,7 +7,7 @@ import copy
 import heapq
 import itertools
 import uuid
-from functools import cached_property
+from functools import cached_property, lru_cache
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, NamedTuple, Sequence, cast
 
 import regex
@@ -91,18 +91,16 @@ class TokenCounter:
     def max_token_bytes(self) -> int:
         """Longest byte length of any single token in this encoding.
 
-        Encoded tokens partition the UTF-8 byte string, so
-        `ceil(len(text.encode()) / max_token_bytes)` is a valid lower bound on its token count.
-        That bound lets a caller reject an oversized text without tokenizing it, even though a
-        prefix's token count is not an upper bound on the whole (see `_fits_token_budget`).
+        Tokens partition the encoded text with at most `max_token_bytes` characters per token
+        (each character occupies at least one byte), so `ceil(len(text) / max_token_bytes)` is a
+        valid lower bound on its token count. That bound lets a caller reject an oversized text
+        without tokenizing or encoding it, even though a prefix's token count is not an upper
+        bound on the whole (see `_fits_token_budget`).
+
+        The vocabulary traversal is shared process-wide per resolved encoding, so counters built
+        repeatedly for the same tokenizer (e.g. one per oversized HTML cell) traverse it once.
         """
-        longest = 1
-        for token_id in range(self._encoder.n_vocab):
-            try:
-                longest = max(longest, len(self._encoder.decode_single_token_bytes(token_id)))
-            except KeyError:
-                continue  # -- special-token ids are not part of the ordinary byte tokens --
-        return longest
+        return _max_token_bytes_for_encoding(self._encoder)
 
     def validate(self) -> None:
         """Resolve the tokenizer now, raising if it is unknown or tiktoken is not installed.
@@ -113,6 +111,26 @@ class TokenCounter:
         both forms raising at the same call site.
         """
         _ = self._encoder
+
+
+@lru_cache(maxsize=None)
+def _max_token_bytes_for_encoding(_encoder: Any) -> int:
+    """Longest byte length of any single token in `_encoder`'s vocabulary.
+
+    Keyed by the encoding object, which tiktoken caches and returns as a process-wide singleton
+    for a given encoding name, so every counter for that tokenizer shares one traversal. The
+    bound is immutable for a resolved encoding, which makes the shared cache safe.
+
+    `_encoder` is excluded from the public name because lru_cache keys on the object itself and
+    the parameter is only used to reach the vocabulary.
+    """
+    longest = 1
+    for token_id in range(_encoder.n_vocab):
+        try:
+            longest = max(longest, len(_encoder.decode_single_token_bytes(token_id)))
+        except KeyError:
+            continue  # -- special-token ids are not part of the ordinary byte tokens --
+    return longest
 
 
 # ================================================================================================
@@ -2872,15 +2890,18 @@ class _TextSplitter:
         """True when `s` fits within the configured token budget.
 
         Doubling prefixes of `s` are measured before the whole string, and the whole `s` is
-        measured only when every probe fits or when a cheap bound proves that measure affordable.
-        A text-only table routes its complete flattened text through here, which made this check
-        quadratic when the whole remainder was measured for every chunk.
+        measured only when every probe fits or when the character-length bound leaves a whole
+        measurement possible. A text-only table routes its complete flattened text through here,
+        which made this check quadratic when the whole remainder was processed for every chunk;
+        both probes and the bound keep per-call work independent of the suffix length.
 
         Token counts are not monotone in prefix length -- truncating a run can make the prefix
         tokenize to one more token than the completed run (``'0' * 15`` is two GPT-2 tokens but
         ``'0' * 16`` is one). A prefix overflow therefore does not reject `s` by itself: token
-        counting is done on the whole string unless the byte-length bound already exceeds the
-        budget, in which case no tokenization of the unread suffix can bring it under.
+        counting is done on the whole string unless the character-length bound already exceeds
+        the budget, in which case no unread suffix can bring the count under. The bound needs no
+        encoding of the suffix, so it stays consistent with the tokenizer's accepted input
+        (e.g. lone surrogate code units) and linear in the suffix length.
         """
         maxlen = self._opts.hard_max
         measure = self._opts.measure
@@ -2892,10 +2913,13 @@ class _TextSplitter:
             if measure(s[:end]) > maxlen:
                 if end == n:
                     return False
-                # -- every token covers at most `max_token_bytes` bytes of the encoded text, --
-                # -- so this is a valid lower bound on the token count of the whole string -- #
+                # -- conservative rejection that does not touch the unread suffix: each --
+                # -- character occupies at least one byte and a token covers at most --
+                # -- `max_token_bytes` of them, so this floor holds for the whole string -- #
+                # -- without encoding it (a text-only table re-splits a barely shorter -- #
+                # -- suffix per chunk, so encoding the suffix here is quadratic) -- #
                 assert token_counter is not None  # token mode is the only caller
-                token_floor = -(-len(s.encode("utf-8")) // token_counter.max_token_bytes)
+                token_floor = -(-n // token_counter.max_token_bytes)
                 if token_floor > maxlen:
                     return False
                 return measure(s) <= maxlen
@@ -2957,17 +2981,32 @@ class _TextSplitter:
         # -- budget, `_token_window_end()` retains `1` and tolerates that indivisible overflow.
         best_pos = window_end
 
-        # -- try to find a whitespace boundary near best_pos, searching backwards --
+        # -- Try whitespace positions right-to-left, but evaluate each whitespace run once: --
+        # -- above position zero every position in a run emits the same candidate (`rstrip` -- #
+        # -- removes the whole trailing run), and slicing a prefix per position makes this -- #
+        # -- scan quadratic on a long indentation run. A run starting at position zero is the -- #
+        # -- one exception: its prefixes are all whitespace, which `_emitted_prefix` keeps as -- #
+        # -- content, so each position there emits a different candidate and is visited one -- #
+        # -- at a time (the window probe keeps their count small, since an all-whitespace -- #
+        # -- prefix is never stripped and overflows within a short length) -- #
         split_pos = best_pos
-        for i in range(best_pos, 0, -1):
-            if i < len(s) and s[i].isspace():
-                cand_fragment = self._emitted_prefix(s, i)
-                if not cand_fragment or measure(cand_fragment) == 0:
-                    continue
-                if overlap > 0 and measure(cand_fragment) <= overlap:
-                    continue
+        i = min(best_pos, len(s) - 1)
+        while i > 0:
+            if not s[i].isspace():
+                i -= 1
+                continue
+            cand_fragment = self._emitted_prefix(s, i)
+            measure_value = measure(cand_fragment)
+            if cand_fragment and measure_value > 0 and (overlap == 0 or measure_value > overlap):
                 split_pos = i
                 break
+            run_start = i
+            while run_start > 0 and s[run_start - 1].isspace():
+                run_start -= 1
+            if run_start > 0:
+                i = run_start - 1
+            else:
+                i -= 1
 
         # -- ensure the fragment still fits after whitespace adjustment --
         fragment = self._emitted_prefix(s, split_pos)

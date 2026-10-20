@@ -397,6 +397,86 @@ def test_partition_tsv_html_disabled_bounds_token_measurement_work(monkeypatch: 
     assert work[1] <= 40 * len(raw)
 
 
+def test_partition_tsv_html_disabled_bounds_byte_conversion_work():
+    """Chunking a text-only table must not convert the unread suffix to bytes per chunk."""
+    import cProfile
+    import pstats
+
+    pytest.importorskip("tiktoken")
+    row_count = 20_000
+    raw = b"a\tb\n" * row_count
+
+    profile = cProfile.Profile()
+    profile.enable()
+    try:
+        chunks = partition_tsv(
+            file=io.BytesIO(raw),
+            infer_table_structure=False,
+            chunking_strategy="basic",
+            max_tokens=100,
+            tokenizer="cl100k_base",
+            overlap=0,
+        )
+    finally:
+        profile.disable()
+
+    assert len(chunks) > 1
+    encode_entry = next(
+        (
+            value
+            for func_name, value in pstats.Stats(profile).stats.items()
+            if func_name[0] == "~" and "method 'encode' of 'str' objects" in func_name[2]
+        ),
+        None,
+    )
+    # -- sanity: per-chunk work (element-id hashing) does convert chunk-sized strings -- #
+    assert encode_entry is not None
+    encode_callers = list(encode_entry[4])
+    # -- a per-chunk UTF-8 conversion of the unread suffix is quadratic at a fixed budget, --
+    # -- so the chunking splitter itself must not convert strings to bytes at all -- #
+    assert not any(caller[0].endswith("unstructured/chunking/base.py") for caller in encode_callers)
+
+
+# -- shared vocabulary bound across HTML cell splitters -----------------------------------------
+
+
+def test_partition_tsv_html_cells_share_one_vocabulary_traversal(monkeypatch: pytest.MonkeyPatch):
+    """Oversized HTML cells must not each re-traverse the tokenizer vocabulary."""
+    tiktoken = pytest.importorskip("tiktoken")
+    import unstructured.chunking.base as chunking_base
+
+    original_decode = tiktoken.Encoding.decode_single_token_bytes
+    decode_calls = [0]
+
+    def counting_decode_single_token_bytes(self, token: int) -> bytes:
+        decode_calls[0] += 1
+        return original_decode(self, token)
+
+    monkeypatch.setattr(
+        tiktoken.Encoding, "decode_single_token_bytes", counting_decode_single_token_bytes
+    )
+
+    def traversal_calls_for(row_count: int) -> int:
+        chunking_base._max_token_bytes_for_encoding.cache_clear()
+        decode_calls[0] = 0
+        raw = (b"id\t" + b"a!" * 200 + b"\n") * row_count
+        chunks = partition_tsv(
+            file=io.BytesIO(raw),
+            chunking_strategy="basic",
+            max_tokens=100,
+            tokenizer="gpt2",
+        )
+        assert chunks
+        return decode_calls[0]
+
+    few_rows = traversal_calls_for(5)
+    many_rows = traversal_calls_for(50)
+
+    assert few_rows > 0
+    # -- the bound is per encoding, so adding oversized cells adds no vocabulary work -- #
+    assert many_rows == few_rows
+
+
 @pytest.mark.parametrize("chunking_strategy", ["basic", "by_title"])
 @pytest.mark.parametrize("via_partition", [False, True])
 def test_partition_tsv_html_disabled_many_short_rows_keeps_ordered_payload(
