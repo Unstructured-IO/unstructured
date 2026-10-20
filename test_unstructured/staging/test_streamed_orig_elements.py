@@ -8,7 +8,12 @@ import zlib
 
 import pytest
 
-from unstructured.documents.elements import ElementMetadata, Image, NarrativeText
+from unstructured.documents.elements import (
+    DataSourceMetadata,
+    ElementMetadata,
+    Image,
+    NarrativeText,
+)
 from unstructured.staging import base
 
 
@@ -178,3 +183,17 @@ def test_incompressible_originals_roll_compressed_spool_to_disk(monkeypatch):
     encoded = base.elements_to_base64_gzipped_json([original])
     assert rolled == [True]
     assert base.elements_from_base64_gzipped_json(encoded)[0].to_dict() == original.to_dict()
+
+
+def test_compression_accepts_metadata_nested_as_deeply_as_the_standard_encoder_does():
+    nested = "small"
+    for _ in range(600):
+        nested = [nested]
+    metadata = ElementMetadata(data_source=DataSourceMetadata(record_locator={"extra": nested}))
+    element = NarrativeText("text", element_id="id", metadata=metadata)
+
+    adjusted = base._fix_metadata_field_precision([element])
+    expected = base64.b64encode(
+        zlib.compress(json.dumps(base.elements_to_dicts(adjusted), sort_keys=True).encode("utf-8"))
+    ).decode("utf-8")
+    assert base.elements_to_base64_gzipped_json([element]) == expected

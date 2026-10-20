@@ -284,29 +284,45 @@ def elements_to_base64_gzipped_json(elements: Iterable[Element]) -> str:
 _JSON_STRING_FRAGMENT_SIZE = 65536
 
 
-def _has_large_string(value: Any, active_containers: Optional[set[int]] = None) -> bool:
+def _container_items(value: dict[Any, Any] | Sequence[Any]) -> Iterator[Any]:
+    if isinstance(value, dict):
+        for key, item in value.items():
+            yield key
+            yield item
+    else:
+        yield from value
+
+
+def _has_large_string(value: Any) -> bool:
+    """Whether `value` holds a string longer than one JSON fragment, at any nesting depth.
+
+    The walk uses an explicit stack, so nesting the standard encoder accepts never exhausts the
+    interpreter's recursion limit here. A container that appears inside itself raises the standard
+    encoder's circular-reference error.
+    """
     if isinstance(value, str):
         return len(value) > _JSON_STRING_FRAGMENT_SIZE
     if not isinstance(value, (dict, list, tuple)):
         return False
-    if active_containers is None:
-        active_containers = set()
-    container_id = id(value)
-    if container_id in active_containers:
-        raise ValueError("Circular reference detected")
-    active_containers.add(container_id)
-    try:
-        if isinstance(value, dict):
-            return any(
-                _has_large_string(key, active_containers)
-                or _has_large_string(item, active_containers)
-                for key, item in cast("dict[Any, Any]", value).items()
-            )
-        return any(
-            _has_large_string(item, active_containers) for item in cast("Sequence[Any]", value)
-        )
-    finally:
-        active_containers.remove(container_id)
+    active_containers = {id(value)}
+    stack = [(id(value), _container_items(cast("dict[Any, Any] | Sequence[Any]", value)))]
+    while stack:
+        container_id, items = stack[-1]
+        for item in items:
+            if isinstance(item, str):
+                if len(item) > _JSON_STRING_FRAGMENT_SIZE:
+                    return True
+            elif isinstance(item, (dict, list, tuple)):
+                item_id = id(item)
+                if item_id in active_containers:
+                    raise ValueError("Circular reference detected")
+                active_containers.add(item_id)
+                stack.append((item_id, _container_items(item)))
+                break
+        else:
+            stack.pop()
+            active_containers.remove(container_id)
+    return False
 
 
 def _iter_json_fragments(value: Any, active_containers: Optional[set[int]] = None) -> Iterator[str]:
