@@ -325,14 +325,37 @@ def _has_large_string(value: Any) -> bool:
     return False
 
 
-def _iter_json_fragments(value: Any, active_containers: Optional[set[int]] = None) -> Iterator[str]:
+class _Nested:
+    """A value whose JSON fragments are emitted in place of this marker."""
+
+    __slots__ = ("value",)
+
+    def __init__(self, value: Any):
+        self.value = value
+
+
+def _iter_json_fragments(value: Any) -> Iterator[str]:
     """Emit default, sorted-key JSON, fragmenting individual large strings.
 
     Values without a large string are encoded in one call to the standard encoder, so arbitrary
     containers can exceed the string fragment size. This does not bound total working memory.
+    Nested containers are walked with an explicit stack, so nesting depth is not limited by the
+    interpreter's recursion limit.
     """
-    if active_containers is None:
-        active_containers = set()
+    active_containers: set[int] = set()
+    stack = [_json_parts(value, active_containers)]
+    while stack:
+        part = next(stack[-1], None)
+        if part is None:
+            stack.pop()
+        elif isinstance(part, _Nested):
+            stack.append(_json_parts(part.value, active_containers))
+        else:
+            yield part
+
+
+def _json_parts(value: Any, active_containers: set[int]) -> Iterator[str | _Nested]:
+    """JSON fragments of `value`, with nested values left as `_Nested` markers to expand."""
     is_container = isinstance(value, (dict, list, tuple))
     container_id = id(value)
     if is_container:
@@ -352,7 +375,7 @@ def _iter_json_fragments(value: Any, active_containers: Optional[set[int]] = Non
             for index, item in enumerate(value):
                 if index:
                     yield ", "
-                yield from _iter_json_fragments(item, active_containers)
+                yield _Nested(item)
             yield "]"
         else:
             yield "{"
@@ -365,13 +388,13 @@ def _iter_json_fragments(value: Any, active_containers: Optional[set[int]] = Non
                     else:
                         # Preserve the standard encoder's rejection of unsupported keys.
                         json.dumps({key: item}, sort_keys=True)
-                yield from _iter_json_fragments(key, active_containers)
+                yield _Nested(key)
                 yield ": "
-                yield from _iter_json_fragments(item, active_containers)
+                yield _Nested(item)
             yield "}"
     finally:
         if is_container:
-            active_containers.remove(container_id)
+            active_containers.discard(container_id)
 
 
 def elements_to_dicts(elements: Iterable[Element]) -> list[dict[str, Any]]:

@@ -185,9 +185,12 @@ def test_incompressible_originals_roll_compressed_spool_to_disk(monkeypatch):
     assert base.elements_from_base64_gzipped_json(encoded)[0].to_dict() == original.to_dict()
 
 
-def test_compression_accepts_metadata_nested_as_deeply_as_the_standard_encoder_does():
-    nested = "small"
-    for _ in range(600):
+@pytest.mark.parametrize(
+    ("leaf", "depth"), [("small", 600), ("x" * 70000, 1100)], ids=["small-leaf", "large-leaf"]
+)
+def test_compression_accepts_metadata_nested_as_deeply_as_the_standard_encoder_does(leaf, depth):
+    nested = leaf
+    for _ in range(depth):
         nested = [nested]
     metadata = ElementMetadata(data_source=DataSourceMetadata(record_locator={"extra": nested}))
     element = NarrativeText("text", element_id="id", metadata=metadata)
