@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numbers
+import os
 import subprocess
 from enum import Enum
 from io import BufferedReader, BytesIO, TextIOWrapper
@@ -393,7 +394,7 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
         return file.getvalue()
 
     if isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
-        getattr(file, "name", None), (str, bytes)
+        getattr(file, "name", None), (str, bytes, os.PathLike)
     ):
         with open(file.name, "rb") as f:
             return f.read()

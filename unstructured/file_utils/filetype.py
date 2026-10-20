@@ -510,10 +510,11 @@ class _FileTypeDetectionContext:
         """Best filename-extension we can muster, "" when there is no available source."""
         # -- get from file_path, or file when it has a name (path) --
         with self.open() as file:
-            # -- a temporary file (including a rolled-over `SpooledTemporaryFile`) can have an
-            # -- integer file-descriptor as its name, which carries no extension.
+            # -- a temporary file can have an integer file-descriptor as its name, which carries
+            # -- no extension, and a spool is named by its temporary file, never by the document.
             if (
-                isinstance(name := getattr(file, "name", None), (str, os.PathLike))
+                not isinstance(file, tempfile.SpooledTemporaryFile)
+                and isinstance(name := getattr(file, "name", None), (str, os.PathLike))
                 and name
                 and (extension := os.path.splitext(name)[1].lower())
             ):

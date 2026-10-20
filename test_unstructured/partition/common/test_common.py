@@ -95,6 +95,23 @@ def test_convert_to_bytes_reads_a_file_opened_by_bytes_path_without_moving_it(
         assert file.tell() == position
 
 
+@pytest.mark.parametrize("text", [False, True])
+def test_convert_to_bytes_reads_a_file_named_by_a_path_object_without_moving_it(
+    tmp_path: pathlib.Path, text: bool
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(b"sample content")
+    reader = io.BufferedReader(io.FileIO(path))
+    file = io.TextIOWrapper(reader, encoding="utf-8") if text else reader
+
+    with file:
+        file.read(3)
+        position = file.tell()
+
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+        assert file.tell() == position
+
+
 def test_convert_to_bytes_raises_for_an_object_that_is_not_a_seekable_stream():
     with pytest.raises(ValueError, match="Invalid file-like object type"):
         common.convert_to_bytes(object())  # pyright: ignore[reportArgumentType]

@@ -537,6 +537,20 @@ def test_it_uses_metadata_file_path_extension_for_a_rolled_over_SpooledTemporary
         assert detect_filetype(file=spooled_file, metadata_file_path="notes.md") == FileType.MD
 
 
+def test_it_ignores_the_temporary_file_name_of_a_rolled_over_SpooledTemporaryFile():
+    # -- on Windows a rolled-over spool is named by its temporary file, never the upload --
+    with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
+        spooled_file.write(b"# Heading\n\nSome *markdown* text.\n")
+        spooled_file.seek(0)
+        named = tempfile.NamedTemporaryFile(suffix=".tmp")  # noqa: SIM115 - closed by the spool
+        named.write(spooled_file.read())
+        spooled_file._file.close()  # pyright: ignore[reportPrivateUsage]
+        spooled_file._file = named  # pyright: ignore[reportPrivateUsage]
+        assert spooled_file.name.endswith(".tmp")
+
+        assert detect_filetype(file=spooled_file, metadata_file_path="notes.md") == FileType.MD
+
+
 def test_it_preserves_a_path_like_stream_name_extension():
     file = io.BytesIO(b"# Heading\n\nSome *markdown* text.\n")
     file.name = Path("notes.md")
