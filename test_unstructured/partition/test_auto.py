@@ -343,6 +343,41 @@ def test_auto_partition_bmp_from_filename(tmp_path: pathlib.Path):
     assert "</thead><tbody><tr>" in table[0]
 
 
+@pytest.mark.parametrize("strategy", [PartitionStrategy.AUTO, PartitionStrategy.OCR_ONLY])
+def test_auto_partition_webp_from_filename(strategy: str, tmp_path: pathlib.Path):
+    webp_filename = str(tmp_path / "layout-parser-paper-fast.webp")
+    with Image.open(example_doc_path("img/layout-parser-paper-fast.jpg")) as img:
+        img.save(webp_filename, lossless=True)
+
+    elements = partition(filename=webp_filename, strategy=strategy)
+
+    assert any("LayoutParser" in e.text for e in elements)
+    assert all(e.metadata.filetype == "image/webp" for e in elements)
+
+
+@pytest.mark.parametrize(
+    ("extension", "infer_table_structure"),
+    [(".bmp", True), (".heic", False), (".jpg", False), (".png", False), (".webp", False)],
+)
+def test_auto_partition_webp_skips_table_inference_by_default_like_png(
+    extension: str, infer_table_structure: bool, request: FixtureRequest, tmp_path: pathlib.Path
+):
+    partition_pdf_or_image_ = function_mock(
+        request, "unstructured.partition.image.partition_pdf_or_image", return_value=[]
+    )
+    if extension == ".heic":
+        # -- HEIC comes from the example documents; the other images are written with Pillow --
+        image_path = example_doc_path("img/DA-1p.heic")
+    else:
+        image_path = str(tmp_path / f"image{extension}")
+        Image.new("RGB", (64, 64), "white").save(image_path)
+
+    partition(filename=image_path)
+
+    call_kwargs = partition_pdf_or_image_.call_args.kwargs
+    assert call_kwargs["infer_table_structure"] is infer_table_structure
+
+
 @pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
 def test_auto_partition_image_element_extraction(extract_image_block_to_payload: bool):
     extract_image_block_types = ["Image", "Table"]
@@ -1470,15 +1505,15 @@ def test_auto_partition_preserves_attachment_filetype_when_container_filename_is
     assert all(e.metadata.filetype == FileType.TXT.mime_type for e in attachment_elements)
 
 
-def test_detect_filetype_maps_file_to_bytes_io_when_spooled_temp_file_used(mocker):
+def test_detect_filetype_reads_a_spooled_temp_file_in_place(mocker):
     detect_filetype_mock = MagicMock(return_value=FileType.JSON)
     mocker.patch("unstructured.file_utils.filetype._FileTypeDetector", detect_filetype_mock)
     with tempfile.SpooledTemporaryFile() as f:
         f.write(b'{"text": Hello, world!}')
         f.seek(0)
         detect_filetype(file=f)
-    file_detection_context = detect_filetype_mock.file_type.call_args[0][0]
-    assert file_detection_context.text_head == '{"text": Hello, world!}'
+        file_detection_context = detect_filetype_mock.file_type.call_args[0][0]
+        assert file_detection_context.text_head == '{"text": Hello, world!}'
 
 
 # -- .languages -----------------------------------------------------------

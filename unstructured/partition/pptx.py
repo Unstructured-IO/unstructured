@@ -6,9 +6,7 @@ unlike the `.ppt` format which was binary and proprietary.
 
 from __future__ import annotations
 
-import io
 from functools import cached_property
-from tempfile import SpooledTemporaryFile
 from typing import IO, Any, Iterator, Protocol, Sequence
 
 import pptx
@@ -36,6 +34,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
+from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_email_address,
@@ -232,7 +231,7 @@ class _PptxPartitioner:
             if self._is_bulleted_paragraph(paragraph):
                 yield ListItem(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             elif is_email_address(text):
-                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
+                yield EmailAddress(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             elif is_possible_narrative_text(text):
                 yield NarrativeText(
                     text=text,
@@ -290,7 +289,11 @@ class _PptxPartitioner:
                     detection_origin=DETECTION_ORIGIN,
                 )
             elif is_email_address(text):
-                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
+                yield EmailAddress(
+                    text=text,
+                    metadata=self._opts.text_metadata(category_depth=depth),
+                    detection_origin=DETECTION_ORIGIN,
+                )
             else:
                 # increment the category depth by the paragraph increment in the shape
                 yield Title(
@@ -359,6 +362,7 @@ class PptxPartitionerOptions:
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
         # -- options object maintains page-number state --
+        self._starting_page_number = starting_page_number
         self._page_counter = starting_page_number - 1
 
     @classmethod
@@ -385,7 +389,7 @@ class PptxPartitionerOptions:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
         self._page_counter += 1
         # -- no page-break before first page --
-        if self._page_counter < 2:
+        if self._page_counter == self._starting_page_number:
             return
         # -- only emit page-breaks when enabled --
         if self._include_page_breaks:
@@ -449,15 +453,8 @@ class PptxPartitionerOptions:
         if self._file_path:
             return self._file_path
 
-        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
-        # -- exception when Zipfile tries to open it. The pptx format is a zip archive so we need
-        # -- to work around that bug here.
-        if isinstance(self._file, SpooledTemporaryFile):
-            self._file.seek(0)
-            return io.BytesIO(self._file.read())
-
         if self._file:
-            return self._file
+            return rewind_if_spooled(self._file)
 
         raise ValueError(
             "No PPTX document specified, either `filename` or `file` argument must be provided"
