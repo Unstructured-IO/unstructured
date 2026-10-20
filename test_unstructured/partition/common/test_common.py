@@ -112,6 +112,16 @@ def test_convert_to_bytes_reads_a_file_named_by_a_path_object_without_moving_it(
         assert file.tell() == position
 
 
+@pytest.mark.parametrize("mode", ["rb", "r"])
+def test_convert_to_bytes_reads_a_pipe_that_cannot_seek(mode: str):
+    read_fd, write_fd = os.pipe()
+    with os.fdopen(write_fd, "wb") as writer:
+        writer.write(b"sample content")
+
+    with os.fdopen(read_fd, mode) as file:
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+
+
 def test_convert_to_bytes_raises_for_an_object_that_is_not_a_seekable_stream():
     with pytest.raises(ValueError, match="Invalid file-like object type"):
         common.convert_to_bytes(object())  # pyright: ignore[reportArgumentType]
