@@ -1,3 +1,10 @@
+## 0.27.32-dev5
+
+### Enhancements
+
+- Expose `open_excel_workbook()` for integrations that read one worksheet at a time while
+  retaining the worksheet cell limit and optional empty-row compaction.
+
 ## 0.27.31
 
 ### Fixes
