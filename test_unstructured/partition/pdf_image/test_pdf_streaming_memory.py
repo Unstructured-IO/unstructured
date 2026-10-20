@@ -220,3 +220,17 @@ def test_file_opened_by_bytes_path_is_reread_from_its_path(mode, tmp_path):
         with pdf_image_utils._pdf_source_path("", source) as copied_path:
             assert Path(copied_path).read_bytes() == payload
         assert source.tell() == 5
+
+
+@pytest.mark.parametrize("text", [False, True])
+def test_file_named_by_a_path_object_is_reread_from_its_path(text, tmp_path):
+    payload = b"document" * 300000
+    path = tmp_path / "source.pdf"
+    path.write_bytes(payload)
+    reader = io.BufferedReader(io.FileIO(path))
+    source = io.TextIOWrapper(reader, encoding="latin-1") if text else reader
+    with source:
+        source.seek(5)
+        with pdf_image_utils._pdf_source_path("", source) as copied_path:
+            assert Path(copied_path).read_bytes() == payload
+        assert source.tell() == 5

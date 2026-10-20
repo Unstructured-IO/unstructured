@@ -444,7 +444,7 @@ def _pdf_source_path(filename: str, file: Optional[bytes | IO[bytes]]) -> Iterat
             if isinstance(file, bytes):
                 copy_file_to_stream(file, destination)
             elif isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
-                getattr(file, "name", None), (str, bytes)
+                getattr(file, "name", None), (str, bytes, os.PathLike)
             ):
                 with open(file.name, "rb") as source:
                     copy_file_to_stream(source, destination)
