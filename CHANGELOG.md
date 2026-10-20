@@ -1,3 +1,9 @@
+## 0.27.31
+
+### Fixes
+
+- **Drop the empty entry of an email address group.** `partition_email()` reported a header such as `To: undisclosed-recipients:;`, an RFC 5322 group with no members, as `sent_to=[""]`, and the same for `cc_recipient` and `bcc_recipient`. Entries without an address are now dropped, so such a header gives `None`, and a group with members gives only their addresses.
+
 ## 0.27.30
 
 ### Fixes
