@@ -4,6 +4,12 @@
 
 - **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
 
+## 0.27.32-dev0
+
+### Enhancements
+
+- **Read spooled uploads in place during file detection and partitioning, leaving spooled files at position 0. Generic file-like streams handled by `convert_to_bytes()` are rewound before and after reading; existing BytesIO and path-named buffered-reader cursor behavior is unchanged.**
+
 ## 0.27.31
 
 ### Fixes
