@@ -65,7 +65,8 @@ from unstructured.utils import is_temp_file_path
 
 _CONTENT_XPATH = (
     ".//w:t[string-length(.) > 0] | .//w:drawing | .//w:pict | .//w:object | .//w:br | .//w:tab"
-    " | .//w:sym | .//w:fldChar | .//w:fldSimple | .//*[local-name()='oMath' or local-name()='oMathPara']"
+    " | .//w:sym | .//w:fldChar | .//w:fldSimple"
+    " | .//*[local-name()='oMath' or local-name()='oMathPara']"
 )
 
 STYLE_TO_ELEMENT_MAPPING = {
