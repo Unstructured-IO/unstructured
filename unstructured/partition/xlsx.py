@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import struct
+from contextlib import contextmanager
 from functools import cached_property
 from typing import IO, Any, Iterator, Optional
 
@@ -145,6 +146,73 @@ def partition_xlsx(
     return elements
 
 
+class ExcelWorkbookReader:
+    """A validated workbook supporting worksheet-at-a-time reads."""
+
+    def __init__(self, reader: Any):
+        self._reader = reader
+
+    @property
+    def sheet_names(self) -> list[str]:
+        """Worksheet titles in workbook order."""
+        return self._reader.sheet_names
+
+    def parse(self, sheet_name: str, *, header: int | None = None) -> pd.DataFrame:
+        """Read one worksheet with the validated engine and row-compaction policy."""
+        return self._reader.parse(sheet_name=sheet_name, header=header)
+
+
+@contextmanager
+def open_excel_workbook(
+    file_bytes: bytes, *, compact_empty_rows: bool = False
+) -> Iterator[ExcelWorkbookReader]:
+    """Open a workbook after rejecting password-protected files and validating its cell count.
+
+    The returned Pandas reader supports reading individual sheets in workbook order. Callers
+    should release each data-frame before parsing the next sheet. Empty-row compaction is safe
+    for subtable detection, but must be disabled when sheet row coordinates are significant.
+    The context closes the reader even if parsing or processing a worksheet fails.
+    """
+    _reject_encrypted_workbook(file_bytes)
+    if file_bytes.startswith(_ZIP_SIGNATURE):
+        engine = "openpyxl"
+    elif file_bytes.startswith(_OLE_SIGNATURE):
+        engine = "xlrd"
+    else:
+        raise UnprocessableEntityError("Not a valid XLSX or XLS file.")
+    compact_empty_rows = compact_empty_rows and engine == "openpyxl"
+    _check_worksheet_cell_count(file_bytes, engine, env_config.XLSX_MAX_CELLS, compact_empty_rows)
+    reader = (
+        _RowCompactingOpenpyxlReader(io.BytesIO(file_bytes))
+        if compact_empty_rows
+        else pd.ExcelFile(io.BytesIO(file_bytes), engine=engine)
+    )
+    try:
+        yield ExcelWorkbookReader(reader)
+    finally:
+        reader.close()
+
+
+def _reject_encrypted_workbook(file_bytes: bytes) -> None:
+    """Raise `UnprocessableEntityError` for a file that is not an Office file or is encrypted."""
+    try:
+        office_file = OfficeFile(io.BytesIO(file_bytes))
+    except FileFormatError as e:
+        raise UnprocessableEntityError("Not a valid XLSX file.") from e
+
+    try:
+        is_encrypted = office_file.is_encrypted()
+    except struct.error:
+        # -- msoffcrypto reads an XLS "Workbook" stream as 4-byte record headers and raises when
+        # -- the stream ends in fewer than 4 bytes of padding, as in many files written by
+        # -- `xlwt` (nolze/msoffcrypto-tool#83). The FilePass record of an encrypted XLS
+        # -- directly follows its BOF record, so the check finds it before any padding.
+        is_encrypted = False
+
+    if is_encrypted:
+        raise UnprocessableEntityError("XLSX file is password protected.")
+
+
 class _XlsxPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
@@ -199,47 +267,10 @@ class _XlsxPartitionerOptions:
     @cached_property
     def sheets(self) -> dict[str, pd.DataFrame]:
         """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
-        try:
-            office_file = OfficeFile(io.BytesIO(self._file_bytes))
-        except FileFormatError as e:
-            raise UnprocessableEntityError("Not a valid XLSX file.") from e
-
-        try:
-            is_encrypted = office_file.is_encrypted()
-        except struct.error:
-            # -- msoffcrypto reads an XLS "Workbook" stream as 4-byte record headers and raises when
-            # -- the stream ends in fewer than 4 bytes of padding, as in many files written by
-            # -- `xlwt` (nolze/msoffcrypto-tool#83). The FilePass record of an encrypted XLS
-            # -- directly follows its BOF record, so the check finds it before any padding.
-            is_encrypted = False
-
-        if is_encrypted:
-            raise UnprocessableEntityError("XLSX file is password protected.")
-
-        # -- Pandas allocates a dense data-frame spanning every worksheet out to its farthest
-        # -- populated cell, so a tiny file with one far-away cell can exhaust memory. Measure
-        # -- that span cheaply before reading, and pin the engine to the one that was measured.
-        # -- A whole worksheet is rendered as-is, empty rows and all, so only subtable detection
-        # -- reads it with runs of empty rows compacted.
-        engine = self._excel_engine
-        compact_empty_rows = engine == "openpyxl" and self.find_subtable
-        _check_worksheet_cell_count(
-            self._file_bytes, engine, env_config.XLSX_MAX_CELLS, compact_empty_rows
-        )
-
-        if compact_empty_rows:
-            reader = _RowCompactingOpenpyxlReader(io.BytesIO(self._file_bytes))
-            try:
-                return reader.parse(sheet_name=None, header=self.header_row_idx)
-            finally:
-                reader.close()
-
-        return pd.read_excel(
-            io.BytesIO(self._file_bytes),
-            sheet_name=None,
-            header=self.header_row_idx,
-            engine=engine,
-        )
+        with open_excel_workbook(self._file_bytes, compact_empty_rows=self.find_subtable) as reader:
+            return {
+                name: reader.parse(name, header=self.header_row_idx) for name in reader.sheet_names
+            }
 
     @cached_property
     def _excel_engine(self) -> str:
