@@ -208,3 +208,15 @@ def test_nameless_buffered_stream_is_copied_through_read_and_seek():
         assert Path(copied_path).read_bytes() == payload
     assert not source.closed
     assert source.tell() == 0
+
+
+@pytest.mark.parametrize("mode", ["rb", "r"])
+def test_file_opened_by_bytes_path_is_reread_from_its_path(mode, tmp_path):
+    payload = b"document" * 300000
+    path = tmp_path / "source.pdf"
+    path.write_bytes(payload)
+    with open(os.fsencode(path), mode, encoding=None if mode == "rb" else "latin-1") as source:
+        source.seek(5)
+        with pdf_image_utils._pdf_source_path("", source) as copied_path:
+            assert Path(copied_path).read_bytes() == payload
+        assert source.tell() == 5
