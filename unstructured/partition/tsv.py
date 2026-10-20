@@ -13,7 +13,7 @@ from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import (
     exactly_one,
-    spooled_to_bytes_io_if_needed,
+    rewind_if_spooled,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.csv import check_cell_count, read_delimited_text
@@ -58,7 +58,7 @@ def partition_tsv(
         assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
-        f = spooled_to_bytes_io_if_needed(file)
+        f = rewind_if_spooled(file)
         with _rereadable(f) as f:
             start = f.tell()
             check_cell_count(f, "\t", None, header=include_header)
