@@ -589,6 +589,99 @@ class DescribeTextSplitterTokenMode:
         assert work[0] <= 64
         assert work[1] <= 2 * len(text)
 
+    def it_returns_fitting_text_unchanged_when_a_prefix_overflows(self, _tiktoken_installed: None):
+        """A truncated run can take more tokens than the completed one; a fit stays whole."""
+        opts = ChunkingOptions(max_tokens=242, tokenizer="gpt2")
+        text = "a!" * 120 + "a" + "0" * 16
+
+        fragment, remainder = _TextSplitter(opts)(text)
+
+        assert fragment == text
+        assert remainder == ""
+
+    def it_splits_long_tab_indentation_within_the_token_budget(self, _tiktoken_installed: None):
+        """Leading code indentation is emitted in budget-sized chunks, not one oversized one."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base")
+        split = _TextSplitter(opts)
+        text = "\t" * 100_000 + "print(1)"
+
+        fragments: list[str] = []
+        remainder = text
+        while remainder:
+            prior = remainder
+            fragment, remainder = split(prior)
+            assert fragment
+            assert opts.measure(fragment) <= 100
+            assert len(remainder) < len(prior)
+            fragments.append(fragment)
+
+        assert "".join(fragments) == text
+        assert fragments[-1].endswith("print(1)")
+
+    def it_bounds_tokenizer_work_on_long_tab_indentation(
+        self, _tiktoken_installed: None, monkeypatch: pytest.MonkeyPatch
+    ):
+        """The fallback scan must not re-measure every prefix of a long indentation run."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base", overlap=0)
+        split = _TextSplitter(opts)
+        original_count = chunking_base.TokenCounter.count
+        work = [0, 0]
+
+        def counting_count(self: chunking_base.TokenCounter, text: str) -> int:
+            work[0] += 1
+            work[1] += len(text)
+            return original_count(self, text)
+
+        monkeypatch.setattr(chunking_base.TokenCounter, "count", counting_count)
+
+        text = "\t" * 100_000 + "print(1)"
+        fragment, remainder = split(text)
+
+        assert fragment
+        assert len(remainder) < len(text)
+        assert opts.measure(fragment) <= 100
+        assert work[0] <= 64
+        # -- the old fallback tokenized the whole tab run twice; bounded work stays under one --
+        # -- pass over the text (the fitting window probes plus a short fallback scan) -- #
+        assert work[1] < len(text)
+
+
+# ================================================================================================
+# PUBLIC TOKEN CHUNKING
+# ================================================================================================
+
+
+class DescribePublicTokenChunking:
+    """Regression suite for public basic and by-title chunkers in token mode."""
+
+    @pytest.fixture
+    def _tiktoken_installed(self):
+        """Skip test if tiktoken is not installed."""
+        pytest.importorskip("tiktoken")
+
+    @pytest.mark.parametrize("chunker", [chunk_elements, chunk_by_title])
+    def it_chunks_long_tab_indentation_within_the_token_budget(
+        self, chunker, _tiktoken_installed: None
+    ):
+        import tiktoken
+
+        text = "\t" * 100_000 + "print(1)"
+        chunks = list(chunker([CodeSnippet(text)], max_tokens=100, tokenizer="cl100k_base"))
+
+        encoder = tiktoken.get_encoding("cl100k_base")
+        assert len(chunks) > 1
+        assert all(len(encoder.encode_ordinary(chunk.text)) <= 100 for chunk in chunks)
+        assert "".join(chunk.text for chunk in chunks) == text
+
+    @pytest.mark.parametrize("chunker", [chunk_elements, chunk_by_title])
+    def it_keeps_a_fitting_text_whole_when_a_prefix_overflows(
+        self, chunker, _tiktoken_installed: None
+    ):
+        text = "a!" * 120 + "a" + "0" * 16
+        chunks = list(chunker([Text(text)], max_tokens=242, tokenizer="gpt2"))
+
+        assert [chunk.text for chunk in chunks] == [text]
+
 
 # ================================================================================================
 # PRE-CHUNKER

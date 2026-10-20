@@ -87,6 +87,23 @@ class TokenCounter:
         """Return the number of tokens in `text`."""
         return len(self._encoder.encode_ordinary(text))
 
+    @cached_property
+    def max_token_bytes(self) -> int:
+        """Longest byte length of any single token in this encoding.
+
+        Encoded tokens partition the UTF-8 byte string, so
+        `ceil(len(text.encode()) / max_token_bytes)` is a valid lower bound on its token count.
+        That bound lets a caller reject an oversized text without tokenizing it, even though a
+        prefix's token count is not an upper bound on the whole (see `_fits_token_budget`).
+        """
+        longest = 1
+        for token_id in range(self._encoder.n_vocab):
+            try:
+                longest = max(longest, len(self._encoder.decode_single_token_bytes(token_id)))
+            except KeyError:
+                continue  # -- special-token ids are not part of the ordinary byte tokens --
+        return longest
+
     def validate(self) -> None:
         """Resolve the tokenizer now, raising if it is unknown or tiktoken is not installed.
 
@@ -2854,20 +2871,34 @@ class _TextSplitter:
     def _fits_token_budget(self, s: str) -> bool:
         """True when `s` fits within the configured token budget.
 
-        Doubling prefixes of `s` are measured before the whole string: once a prefix overflows
-        the budget `s` cannot fit either, so the cost of deciding stays bounded by that prefix
-        rather than by a whole text that may not fit. A text-only table routes its complete
-        flattened text through here, which made this check quadratic when done on the whole
-        remainder for every chunk. The whole `s` is measured only when every probe fits.
+        Doubling prefixes of `s` are measured before the whole string, and the whole `s` is
+        measured only when every probe fits or when a cheap bound proves that measure affordable.
+        A text-only table routes its complete flattened text through here, which made this check
+        quadratic when the whole remainder was measured for every chunk.
+
+        Token counts are not monotone in prefix length -- truncating a run can make the prefix
+        tokenize to one more token than the completed run (``'0' * 15`` is two GPT-2 tokens but
+        ``'0' * 16`` is one). A prefix overflow therefore does not reject `s` by itself: token
+        counting is done on the whole string unless the byte-length bound already exceeds the
+        budget, in which case no tokenization of the unread suffix can bring it under.
         """
         maxlen = self._opts.hard_max
         measure = self._opts.measure
+        token_counter = self._opts.token_counter
         n = len(s)
         end = min(n, 256)
 
         while True:
             if measure(s[:end]) > maxlen:
-                return False
+                if end == n:
+                    return False
+                # -- every token covers at most `max_token_bytes` bytes of the encoded text, --
+                # -- so this is a valid lower bound on the token count of the whole string -- #
+                assert token_counter is not None  # token mode is the only caller
+                token_floor = -(-len(s.encode("utf-8")) // token_counter.max_token_bytes)
+                if token_floor > maxlen:
+                    return False
+                return measure(s) <= maxlen
             if end == n:
                 return True
             end = min(n, 2 * end)
@@ -2930,7 +2961,7 @@ class _TextSplitter:
         split_pos = best_pos
         for i in range(best_pos, 0, -1):
             if i < len(s) and s[i].isspace():
-                cand_fragment = s[:i].rstrip()
+                cand_fragment = self._emitted_prefix(s, i)
                 if not cand_fragment or measure(cand_fragment) == 0:
                     continue
                 if overlap > 0 and measure(cand_fragment) <= overlap:
@@ -2939,9 +2970,9 @@ class _TextSplitter:
                 break
 
         # -- ensure the fragment still fits after whitespace adjustment --
-        fragment = s[:split_pos].rstrip()
+        fragment = self._emitted_prefix(s, split_pos)
         if not fragment or measure(fragment) > maxlen:
-            fragment = s[:best_pos].rstrip()
+            fragment = self._emitted_prefix(s, best_pos)
             split_pos = best_pos
 
         if not fragment:
@@ -2949,7 +2980,12 @@ class _TextSplitter:
             split_pos = len(fragment)
 
         is_whitespace_split = split_pos < len(s) and s[split_pos].isspace()
-        raw_remainder = s[split_pos:].lstrip() if is_whitespace_split else s[split_pos:]
+        # -- A whitespace-only fragment is content here (long code indentation), not a -- #
+        # -- separator, so the rest of that whitespace must stay in the remainder. -- #
+        if is_whitespace_split and fragment.strip():
+            raw_remainder = s[split_pos:].lstrip()
+        else:
+            raw_remainder = s[split_pos:]
 
         if overlap > 0 and fragment:
             tail = self._get_token_overlap_tail(fragment, overlap)
@@ -2978,15 +3014,19 @@ class _TextSplitter:
         partial word can tokenize into more tokens than the completed word), so this is a
         consistent approximation like the fallback's; callers pad it by a short margin before
         bounding a search so a fitting candidate just beyond the probe cannot be lost.
+
+        Each probe measures the text a split there would actually emit (see `_emitted_prefix`),
+        not the raw slice. Measuring a raw leading-whitespace prefix as `""` would let the window
+        grow across a long indentation run and make the fallback scan quadratic.
         """
         measure = self._opts.measure
         n = len(s)
         low, high = 1, 1
 
-        # -- exponential probe: find a prefix length whose stripped text overflows the budget --
+        # -- exponential probe: find a prefix length whose emitted text overflows the budget --
         while high < n:
             high = min(n, max(2 * high, 256))
-            if measure(s[:high].rstrip()) > maxlen:
+            if measure(self._emitted_prefix(s, high)) > maxlen:
                 break
             low = high
 
@@ -2996,12 +3036,22 @@ class _TextSplitter:
         # -- refine between the last fitting length and the first overflowing one --
         while high - low > 1:
             mid = (low + high) // 2
-            if measure(s[:mid].rstrip()) <= maxlen:
+            if measure(self._emitted_prefix(s, mid)) <= maxlen:
                 low = mid
             else:
                 high = mid
 
         return low
+
+    @staticmethod
+    def _emitted_prefix(s: str, end: int) -> str:
+        """Text a split at `end` would emit before whitespace trimming.
+
+        Splits strip trailing whitespace, but a prefix made only of whitespace must not become
+        an empty chunk: long code indentation is content and is emitted as-is. No prefix of a
+        non-empty string is empty, which keeps splits making progress.
+        """
+        return s[:end].rstrip() or s[:end]
 
     def _get_token_overlap_tail(self, text: str, target_tokens: int) -> str:
         """Extract tail of text containing approximately `target_tokens` tokens.
