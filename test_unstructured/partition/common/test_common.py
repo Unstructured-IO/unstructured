@@ -1,6 +1,9 @@
+import io
 import logging
+import os
 import pathlib
 from multiprocessing import Pool
+from tempfile import SpooledTemporaryFile, TemporaryFile
 
 import numpy as np
 import pytest
@@ -28,6 +31,125 @@ from unstructured.documents.elements import (
     Image as ImageElement,
 )
 from unstructured.partition.common import common
+
+
+def test_rewind_if_spooled_rewinds_without_copying():
+    with SpooledTemporaryFile(max_size=1, mode="w+b") as spooled_file:
+        spooled_file.write(b"sample content")
+
+        result = common.rewind_if_spooled(spooled_file)
+
+        assert result is spooled_file
+        assert result.tell() == 0
+        assert result.read() == b"sample content"
+
+
+@pytest.mark.parametrize("max_size", [0, 1])
+def test_convert_to_bytes_reads_a_SpooledTemporaryFile_and_rewinds_it(max_size: int):
+    with SpooledTemporaryFile(max_size=max_size) as spooled_file:
+        spooled_file.write(b"sample content")
+
+        assert common.convert_to_bytes(spooled_file) == b"sample content"
+        assert spooled_file.tell() == 0
+
+
+def test_convert_to_bytes_reads_any_seekable_binary_stream_and_rewinds_it():
+    with TemporaryFile() as file:
+        file.write(b"sample content")
+
+        assert common.convert_to_bytes(file) == b"sample content"
+        assert file.tell() == 0
+
+
+def test_convert_to_bytes_reads_a_BufferedReader_without_a_path_name():
+    file = io.BufferedReader(io.BytesIO(b"sample content"))
+
+    assert common.convert_to_bytes(file) == b"sample content"
+    assert file.tell() == 0
+
+
+def test_convert_to_bytes_leaves_a_BufferedReader_over_a_file_descriptor_open():
+    with TemporaryFile() as tmp:
+        tmp.write(b"sample content")
+        tmp.flush()
+        file = io.BufferedReader(io.FileIO(tmp.fileno(), "rb", closefd=False))
+
+        assert common.convert_to_bytes(file) == b"sample content"
+        assert file.tell() == 0
+        assert not tmp.closed
+        os.fstat(tmp.fileno())
+
+
+@pytest.mark.parametrize("mode", ["rb", "r"])
+def test_convert_to_bytes_reads_a_file_opened_by_bytes_path_without_moving_it(
+    tmp_path: pathlib.Path, mode: str
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(b"sample content")
+
+    with open(os.fsencode(path), mode) as file:
+        file.read(3)
+        position = file.tell()
+
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+        assert file.tell() == position
+
+
+@pytest.mark.parametrize("text", [False, True])
+def test_convert_to_bytes_reads_a_file_named_by_a_path_object_without_moving_it(
+    tmp_path: pathlib.Path, text: bool
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(b"sample content")
+    reader = io.BufferedReader(io.FileIO(path))
+    file = io.TextIOWrapper(reader, encoding="utf-8") if text else reader
+
+    with file:
+        file.read(3)
+        position = file.tell()
+
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+        assert file.tell() == position
+
+
+@pytest.mark.parametrize("mode", ["rb", "r"])
+def test_convert_to_bytes_reads_a_pipe_that_cannot_seek(mode: str):
+    read_fd, write_fd = os.pipe()
+    with os.fdopen(write_fd, "wb") as writer:
+        writer.write(b"sample content")
+
+    with os.fdopen(read_fd, mode) as file:
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+
+
+def test_convert_to_bytes_keeps_text_already_buffered_from_a_text_pipe():
+    read_fd, write_fd = os.pipe()
+    with os.fdopen(write_fd, "wb") as writer:
+        writer.write("sample content, café".encode("utf-8"))
+
+    with os.fdopen(read_fd, "r", encoding="utf-8") as file:
+        assert file.read(1) == "s"
+
+        assert common.convert_to_bytes(file) == "ample content, café".encode("utf-8")  # pyright: ignore[reportArgumentType]
+
+
+def test_convert_to_bytes_reads_bytes_from_a_text_file_opened_on_a_descriptor(
+    tmp_path: pathlib.Path,
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(b"sample content")
+
+    with os.fdopen(os.open(path, os.O_RDONLY), "r", encoding="utf-8") as file:
+        file.read(3)
+
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+        assert file.tell() == 0
+        assert file.read() == "sample content"
+
+
+def test_convert_to_bytes_raises_for_an_object_that_is_not_a_seekable_stream():
+    with pytest.raises(ValueError, match="Invalid file-like object type"):
+        common.convert_to_bytes(object())  # pyright: ignore[reportArgumentType]
 
 
 class MockPageLayout(layout.PageLayout):
