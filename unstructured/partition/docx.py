@@ -1109,7 +1109,9 @@ class _DocxPartitioner:
 
         style_name = self._style_name(paragraph)
         depth = self._parse_category_depth_by_style_name(style_name)
-        if depth > 0 and self._style_based_element_type(paragraph) is Title:
+        if self._style_based_element_type(paragraph) is Title and (
+            depth > 0 or style_name.startswith("Heading")
+        ):
             return depth
 
         # Determine category depth from paragraph ilvl xpath
@@ -1402,7 +1404,7 @@ class _ListLabels:
                 num_id, style_id = style_num_id, style.style_id
             if ilvl is None:
                 ilvl = style_ilvl
-            style = style.base_style
+            style = getattr(style, "base_style", None)
         return num_id, ilvl, style_id
 
     def _num_pr_values(self, num_prs: list[Any]) -> tuple[str | None, int | None]:

@@ -1189,7 +1189,7 @@ def test_partition_docx_extracts_a_numbered_paragraph_in_a_style_based_on_a_numb
 
     elements = partition_docx(path)
 
-    assert [e.text for e in elements] == ["Scope", "after"]
+    assert [e.text for e in elements] == ["1. Scope", "after"]
 
 
 def test_partition_docx_counts_a_section_break_paragraph_whose_text_follows_a_page_break(tmp_path):
@@ -1244,6 +1244,43 @@ def test_partition_docx_keeps_the_heading_depth_of_a_directly_numbered_heading(t
     assert [(type(e), e.text, e.metadata.category_depth) for e in elements] == [
         (Title, "1. Chapter", 0),
         (Title, "2. Section", 1),
+    ]
+
+
+def test_partition_docx_gives_a_numbered_heading_one_style_depth_whatever_its_list_level(tmp_path):
+    path = _numbered_docx(tmp_path, [])
+    document = docx.Document(path)
+    _add_direct_num_pr(document.add_paragraph("Chapter", style="Heading 1"), ilvl=1)
+    _add_direct_num_pr(document.add_paragraph("Section", style="Heading 2"), ilvl=0)
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(e.text, e.metadata.category_depth) for e in elements] == [
+        ("a) Chapter", 0),
+        ("1. Section", 1),
+    ]
+    assert elements[1].metadata.parent_id == elements[0].id
+
+
+def test_partition_docx_restarts_the_child_level_after_a_split_section_break_paragraph(tmp_path):
+    path = _numbered_docx(tmp_path, [("a", 1, 0), ("a1", 1, 1), ("", 1, 0), ("b1", 1, 1)])
+    document = docx.Document(path)
+    paragraph = document.paragraphs[2]._p
+    paragraph.get_or_add_pPr().append(
+        parse_xml(f'<w:sectPr {_W_NS}><w:pgSz w:w="15840" w:h="12240"/></w:sectPr>')
+    )
+    paragraph.append(parse_xml(f"<w:r {_W_NS}><w:rPr><w:b/></w:rPr></w:r>"))
+    paragraph.append(parse_xml(f"<w:r {_W_NS}><w:lastRenderedPageBreak/><w:t>b</w:t></w:r>"))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements if not isinstance(e, PageBreak)] == [
+        "1. a",
+        "a) a1",
+        "2. b",
+        "a) b1",
     ]
 
 
