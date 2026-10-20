@@ -9,6 +9,8 @@ import io
 import json
 import os
 import shutil
+import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -508,6 +510,54 @@ def test_it_detects_EMPTY_from_empty_file_like_object():
         assert detect_filetype(file=f) == FileType.EMPTY
 
 
+@pytest.mark.parametrize("max_size", [0, 1])
+def test_it_detects_a_SpooledTemporaryFile_in_place_and_rewinds_it(max_size: int):
+    with open(example_doc_path("simple.docx"), "rb") as f:
+        content = f.read()
+
+    with tempfile.SpooledTemporaryFile(max_size=max_size) as spooled_file:
+        spooled_file.write(content)
+        spooled_file.seek(0)
+
+        with patch.object(
+            _FileTypeDetectionContext, "new", wraps=_FileTypeDetectionContext.new
+        ) as new_:
+            file_type = detect_filetype(file=spooled_file)
+
+        assert file_type == FileType.DOCX
+        assert new_.call_args.kwargs["file"] is spooled_file
+        assert spooled_file.tell() == 0
+
+
+def test_it_uses_metadata_file_path_extension_for_a_rolled_over_SpooledTemporaryFile():
+    with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
+        spooled_file.write(b"# Heading\n\nSome *markdown* text.\n")
+        assert spooled_file._rolled
+
+        assert detect_filetype(file=spooled_file, metadata_file_path="notes.md") == FileType.MD
+
+
+def test_it_ignores_the_temporary_file_name_of_a_rolled_over_SpooledTemporaryFile():
+    # -- on Windows a rolled-over spool is named by its temporary file, never the upload --
+    with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
+        spooled_file.write(b"# Heading\n\nSome *markdown* text.\n")
+        spooled_file.seek(0)
+        named = tempfile.NamedTemporaryFile(suffix=".tmp")  # noqa: SIM115 - closed by the spool
+        named.write(spooled_file.read())
+        spooled_file._file.close()  # pyright: ignore[reportPrivateUsage]
+        spooled_file._file = named  # pyright: ignore[reportPrivateUsage]
+        assert spooled_file.name.endswith(".tmp")
+
+        assert detect_filetype(file=spooled_file, metadata_file_path="notes.md") == FileType.MD
+
+
+def test_it_preserves_a_path_like_stream_name_extension():
+    file = io.BytesIO(b"# Heading\n\nSome *markdown* text.\n")
+    file.name = Path("notes.md")
+
+    assert detect_filetype(file=file) == FileType.MD
+
+
 def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
     file_path = example_doc_path("csv-with-escaped-commas.csv")
 
@@ -1001,6 +1051,14 @@ class Describe_FileTypeDetectionContext:
 
         assert _FileTypeDetectionContext(file=file).extension == ""
 
+    def and_it_ignores_a_file_name_that_is_not_a_string(self):
+        with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
+            spooled_file.write(b"<html></html>")
+
+            ctx = _FileTypeDetectionContext(file=spooled_file, metadata_file_path="a/b/c.html")
+
+            assert ctx.extension == ".html"
+
     # -- .file_head ---------------------------------------------
 
     def it_grabs_the_first_8k_bytes_of_the_file_for_use_by_magic(self):
@@ -1427,3 +1485,10 @@ def test_office_files_when_document_archive_has_non_standard_prefix():
         file_path=input_path("file_type/test_document_from_office365.docx")
     )
     assert predicted_type == FileType.DOCX
+
+
+@pytest.mark.parametrize("name", ["temporary-upload", Path("temporary-upload"), 42, None])
+def test_extensionless_stream_names_fall_back_to_metadata_file_path(name):
+    file = io.BytesIO(b"# Heading\n\nSome *markdown* text.\n")
+    file.name = name
+    assert detect_filetype(file=file, metadata_file_path="notes.md") == FileType.MD
