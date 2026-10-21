@@ -35,6 +35,8 @@
 
 - **Keep non-ASCII email names and addresses readable.** `partition_email()` formatted the `sent_from`, `sent_to`, `cc_recipient` and `bcc_recipient` metadata with `email.utils.formataddr()`, which wrote a non-ASCII display name as an RFC 2047 encoded-word (`=?utf-8?b?5byg5Lyf?= <zhang@example.cn>` for 张伟) and raised `UnicodeEncodeError` on a non-ASCII address (RFC 6532), failing the whole message. Names and addresses are now kept as written; ASCII ones are formatted as before.
 
+- **Keep the text that follows an inline node in XML.** `partition_xml(xml_keep_tags=False)` extracted the text of each element only when that element ended, so it emitted the text *before* an element's children after their text and dropped the text *after* a child element, comment, or processing instruction entirely. `<p>Run <command>pip install thing</command> then restart the service.</p>` lost `then restart the service.` An element's text is now emitted when the element starts and the text following it when it ends, so all text appears in document order.
+
 ## 0.27.29
 
 ### Fixes

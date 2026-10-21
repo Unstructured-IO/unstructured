@@ -206,6 +206,31 @@ def test_partition_xml_with_narrative_line_breaks():
     assert str(elements[1]).strip().endswith("Conures are feathery and like to dance.")
 
 
+@pytest.mark.parametrize(
+    ("xml_text", "expected_texts"),
+    [
+        # -- text following a child element is content of the enclosing element and appears after
+        # -- that child's text in the document --
+        (
+            "<manual><section><title>Installation</title>"
+            "<p>Run <command>pip install thing</command> then restart the service.</p>"
+            "</section></manual>",
+            ["Installation", "Run ", "pip install thing", " then restart the service."],
+        ),
+        # -- text following a comment is content too --
+        ("<root><p>alpha<!-- a note -->beta</p></root>", ["alpha", "beta"]),
+        # -- text following a processing instruction is content too --
+        ("<root><p>alpha<?php echo 1; ?>beta</p></root>", ["alpha", "beta"]),
+    ],
+)
+def test_partition_xml_keeps_text_that_follows_an_inline_node(
+    xml_text: str, expected_texts: list[str]
+):
+    elements = partition_xml(text=xml_text)
+
+    assert [element.text for element in elements] == expected_texts
+
+
 def test_add_chunking_strategy_on_partition_xml():
     file_path = example_doc_path("factbook.xml")
     elements = partition_xml(file_path)
