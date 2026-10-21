@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from contextlib import ExitStack
+from io import BytesIO
+from pathlib import Path
+from tempfile import SpooledTemporaryFile
+
 import pytest
 from pytest_mock import MockerFixture
 
@@ -12,6 +17,64 @@ from unstructured.partition.json import partition_json
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.partition.xml import partition_xml
 from unstructured.staging.base import elements_to_json
+
+
+@pytest.mark.parametrize("source", ["filename", "file", "bytesio", "spooled"])
+@pytest.mark.parametrize("xml_path", [None, "//item"])
+@pytest.mark.parametrize(
+    ("encoding", "text"), [("windows-1252", "Café crème"), ("windows-1251", "Привет")]
+)
+def test_partition_xml_honors_explicit_encoding(
+    tmp_path: Path, source: str, xml_path: str | None, encoding: str, text: str
+):
+    data = f"<root><item>{text}</item></root>".encode(encoding)
+    path = tmp_path / "encoded.xml"
+    path.write_bytes(data)
+
+    with ExitStack() as stack:
+        if source == "filename":
+            kwargs = {"filename": str(path)}
+        elif source == "file":
+            kwargs = {"file": stack.enter_context(path.open("rb"))}
+        elif source == "bytesio":
+            kwargs = {"file": BytesIO(data)}
+        else:
+            stream = stack.enter_context(SpooledTemporaryFile(max_size=1))
+            stream.write(data)
+            stream.seek(0)
+            kwargs = {"file": stream}
+
+        elements = partition_xml(**kwargs, encoding=encoding, xml_path=xml_path, languages=["eng"])
+
+    assert [element.text for element in elements] == [text]
+
+
+def test_partition_xml_explicit_encoding_overrides_declaration():
+    data = '<?xml version="1.0" encoding="UTF-8"?><root><item>Café</item></root>'.encode(
+        "windows-1252"
+    )
+
+    elements = partition_xml(file=BytesIO(data), encoding="windows-1252", languages=["eng"])
+
+    assert [element.text for element in elements] == ["Café"]
+
+
+def test_partition_xml_detects_declared_encoding():
+    data = '<?xml version="1.0" encoding="windows-1252"?><root><item>Café</item></root>'.encode(
+        "windows-1252"
+    )
+
+    elements = partition_xml(file=BytesIO(data), languages=["eng"])
+
+    assert [element.text for element in elements] == ["Café"]
+
+
+def test_partition_xml_does_not_apply_byte_encoding_to_text():
+    elements = partition_xml(
+        text="<root><item>Café 中文</item></root>", encoding="windows-1252", languages=["eng"]
+    )
+
+    assert [element.text for element in elements] == ["Café 中文"]
 
 
 @pytest.mark.parametrize("filename", ["factbook.xml", "factbook-utf-16.xml"])

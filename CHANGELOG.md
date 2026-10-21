@@ -4,6 +4,10 @@
 
 - **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
 
+### Fixes
+
+- **Honor explicit encodings when extracting XML text.** `partition_xml(encoding=...)` now passes the encoding to the XML parser for file and file-like inputs, including XPath selections. Previously, only the `xml_keep_tags=True` branch used it.
+
 ## 0.27.33
 
 ### Fixes
