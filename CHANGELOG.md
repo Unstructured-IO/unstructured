@@ -2,6 +2,12 @@
 
 - Reject HTTP error responses before URL partitioning so error pages are not ingested as documents.
 
+## 0.27.34-dev0
+
+### Enhancements
+
+- **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+
 ## 0.27.33
 
 ### Fixes
