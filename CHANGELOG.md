@@ -1,4 +1,8 @@
-## 0.27.34
+## 0.27.34-dev0
+
+### Enhancements
+
+- **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
 
 ### Fixes
 
