@@ -1,3 +1,10 @@
+## 0.27.34-dev0
+
+### Fixes
+
+- **`partition_via_api()` now forwards the accepted `content_type` to the API.** The parameter has long been part of the signature and documented as "a string defining the file content in MIME type", but it was never read: the SDK request was built from `content` and `file_name` only, so the caller's MIME type never reached the server, which fell back to sniffing the file name. The value is now sent as the `content_type` multipart form field on `PartitionParameters`, which exists on the advertised minimum SDK 0.25.9; omitting it leaves the SDK's existing file-name inference unchanged.
+- **Keep the uncompressed MIME hint for gzip uploads.** When `gz_uncompressed_content_type` is supplied, the outer container MIME (e.g. `application/gzip`) is no longer forwarded as a form-level `content_type`: the server decompresses first and treats that hint as truth ahead of the inner MIME, so a non-partitionable outer type would drop the explicit uncompressed type and select the wrong partitioner. The inner `gz_uncompressed_content_type` still reaches the API.
+
 ## 0.27.33
 
 ### Fixes

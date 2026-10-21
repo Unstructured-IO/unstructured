@@ -102,7 +102,19 @@ def partition_via_api(
     # -- advertised SDK range (`>=0.25.9`); `shared.Files` only gains the field in 0.26.0+, so
     # -- passing it there raises TypeError on the declared minimum SDK. Leave it unset when the
     # -- caller did not specify one so the SDK keeps inferring the MIME type from the file name.
-    content_type_kwargs = {"content_type": content_type} if content_type is not None else {}
+    #
+    # -- For a gzip upload the caller may pass `gz_uncompressed_content_type` (routed through
+    # -- `request_kwargs`) to name the decompressed document's MIME. The server decompresses
+    # -- first and then treats a form-level `content_type` hint as truth ahead of that inner
+    # -- MIME; forwarding the outer container MIME (e.g. `application/gzip`, which is not
+    # -- partitionable) would therefore drop the explicit inner type. Suppress the outer hint
+    # -- in that case so the inner MIME governs, matching pre-PR behavior.
+    suppress_outer_content_type = "gz_uncompressed_content_type" in request_kwargs
+    content_type_kwargs = (
+        {}
+        if suppress_outer_content_type or content_type is None
+        else {"content_type": content_type}
+    )
 
     if filename is not None:
         with open(filename, "rb") as f:
