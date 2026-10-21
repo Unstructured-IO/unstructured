@@ -1,8 +1,22 @@
-## 0.27.34-dev0
+## 0.27.35-dev0
 
 ### Fixes
 
 - **Stop dropping nested metadata values in `convert_to_csv()`.** Nested metadata such as `data_source` and `enrichment_origins` is flattened into sub-keys (`data_source_url`, `enrichment_origins_ner`, …), but the CSV column whitelist only contained the raw dict keys, so those sub-keys were filtered out and the corresponding columns stayed empty. The flattened sub-keys are now collected across rows and appended as columns, so the values are exported. The fixed `TABLE_FIELDNAMES` columns keep their names, order, and meaning, but the output can now carry *additional* columns: any metadata key not in the fixed set — including custom scalar fields such as `metadata.foobar` and flattened nested sub-keys — appears as an input-dependent extra column, and an ad-hoc metadata key that collides with a real top-level Element attribute (e.g. `embeddings`) is disambiguated as `metadata_<key>` rather than overwriting that column. Replacement names are allocated once per distinct field across the whole batch, so two distinct metadata fields never collapse onto a single column and the resulting name is independent of metadata insertion order and row order. Consumers should select columns by name instead of relying on an exact header or fixed field count.
+
+## 0.27.34-dev1
+
+### Enhancements
+
+- **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+- **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
+
+## 0.27.33
+
+### Fixes
+
+- **Don't copy a very large split element into every chunk.** When one element over 1,000,000 characters (text, HTML and image data) is split into several chunks, those chunks no longer get `.metadata.orig_elements`, and a warning is logged. Before, each chunk serialized its own copy: the 7 MB spreadsheet from #3872 split into 12,555 chunks and produced about 54 GB of JSON. Smaller elements and elements that aren't split are unchanged.
+- **Bump locked `certifi` to 2026.10.19.** The release removes the emSign ECC Root CA - G3 root after eight eMudhra intermediate CA private keys were compromised. `requests` and `httpx` trust certifi's bundle and do not check revocation, so with the older bundle they accepted certificates chaining to that root. Docker images built from the lockfile pick it up; `certifi` is now also required at `>=2026.10.19`, so pip installs pick up the new bundle too.
 
 ## 0.27.32
 
