@@ -1,8 +1,15 @@
-## 0.27.34
+## 0.27.34-dev2
 
 ### Fixes
 
 - **Read a single-column CSV file as one column.** When no delimiter was found across the sample, `partition_csv()` sniffed one from the first line among every character, as Pandas does, and took a repeated letter or space: the header `Note` was split on its `t`, so the file raised a Pandas `ParserError` as soon as a later line held more of them, and `Header`, `Value1` came back as `H ad r Valu 1 None`. The first line is now sniffed for `,`, `;`, `|` and tab only, and a file with none of them is read as one column. This is the case reported on #2616 after that issue was closed.
+
+## 0.27.34-dev1
+
+### Enhancements
+
+- **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+- **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ## 0.27.33
 
