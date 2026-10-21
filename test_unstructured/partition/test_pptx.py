@@ -396,6 +396,35 @@ def test_add_chunking_strategy_by_title_on_partition_pptx():
     assert chunk_elements == chunks
 
 
+def test_partition_pptx_reads_line_breaks_as_newlines(tmp_path: pathlib.Path):
+    """A line break (Shift+Enter) reaches the text as a newline, not as a vertical tab."""
+    filename = str(tmp_path / "test-line-breaks.pptx")
+    prs = pptx.Presentation()
+    slide = prs.slides.add_slide(prs.slide_layouts[5])
+    for text_frame, first, second in (
+        (slide.shapes.title.text_frame, "Quarterly", "results"),
+        (
+            slide.shapes.add_textbox(Inches(1), Inches(2), Inches(5), Inches(1)).text_frame,
+            "First line",
+            "second line",
+        ),
+        (slide.notes_slide.notes_text_frame, "Note one", "note two"),
+    ):
+        paragraph = text_frame.paragraphs[0]
+        paragraph.add_run().text = first
+        paragraph.add_line_break()
+        paragraph.add_run().text = second
+    prs.save(filename)
+
+    elements = partition_pptx(filename, include_slide_notes=True)
+
+    assert [e.text for e in elements] == [
+        "Note one\nnote two",
+        "Quarterly\nresults",
+        "First line\nsecond line",
+    ]
+
+
 def test_partition_pptx_title_shape_detection(tmp_path: pathlib.Path):
     """This tests if the title attribute of a shape is correctly categorized as a title"""
     filename = str(tmp_path / "test-title-shape.pptx")
