@@ -5,10 +5,11 @@ import csv
 import io
 import json
 import re
+import tempfile
 import zlib
 from copy import copy
 from datetime import datetime
-from typing import Any, Iterable, Optional, Sequence, cast
+from typing import Any, Iterable, Iterator, Optional, Sequence, cast
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -252,19 +253,164 @@ def elements_to_base64_gzipped_json(elements: Iterable[Element]) -> str:
     possible when transported as JSON, for example in an HTTP response. This compressed form is also
     present when elements are in dict form ("element_dicts"). This function is not coupled to that
     purpose however and could have other uses.
+
+    Serialization avoids collection-wide graph and JSON staging and fragments individual large
+    strings. Individual elements, containers of short strings, sorted items, and the final Base64
+    join can still scale with their contents; this is not a hard fragment or process-memory bound.
+    Large incompressible output requires writable temporary storage for the compressed spool and
+    can raise an I/O error if that storage is unavailable.
     """
-    # -- adjust floating-point precision of coordinates down for a more compact str value --
-    precision_adjusted_elements = _fix_metadata_field_precision(elements)
-    # -- serialize elements as dicts --
-    element_dicts = elements_to_dicts(precision_adjusted_elements)
-    # -- serialize the dicts to JSON (bytes) --
-    json_bytes = json.dumps(element_dicts, sort_keys=True).encode("utf-8")
-    # -- compress the JSON bytes with gzip compression --
-    deflated_bytes = zlib.compress(json_bytes)
-    # -- base64-encode those bytes so they can be serialized as a JSON string value --
-    b64_deflated_bytes = base64.b64encode(deflated_bytes)
-    # -- convert to a string suitable for serializing in JSON --
-    return b64_deflated_bytes.decode("utf-8")
+    compressor = zlib.compressobj()
+    with tempfile.SpooledTemporaryFile(max_size=1024 * 1024) as compressed:
+        compressed.write(compressor.compress(b"["))
+        for index, element in enumerate(elements):
+            if index:
+                compressed.write(compressor.compress(b", "))
+            # Keep precision adjustment and element serialization local to one element.
+            adjusted = _fix_metadata_field_precision((element,))[0]
+            for fragment in _iter_json_fragments(adjusted.to_dict()):
+                compressed.write(compressor.compress(fragment.encode("utf-8")))
+        compressed.write(compressor.compress(b"]"))
+        compressed.write(compressor.flush())
+        compressed.seek(0)
+        # Multiples of three avoid padding between base64 fragments. Encoded fragments and
+        # their final join grow with the collection; the compressed spool spills to disk.
+        return "".join(
+            base64.b64encode(block).decode("ascii")
+            for block in iter(lambda: compressed.read(65535), b"")
+        )
+
+
+_JSON_STRING_FRAGMENT_SIZE = 65536
+
+
+def _container_items(value: dict[Any, Any] | Sequence[Any]) -> Iterator[Any]:
+    if isinstance(value, dict):
+        for key, item in value.items():
+            yield key
+            yield item
+    else:
+        yield from value
+
+
+def _containers_with_large_strings(value: Any) -> set[int]:
+    """Ids of the containers in `value` that hold a string longer than one JSON fragment.
+
+    Each container is classified once, even when it is shared, so the work is linear in the size
+    of `value`. The walk uses an explicit stack, so nesting the standard encoder accepts never
+    exhausts the interpreter's recursion limit here. A container that appears inside itself raises
+    the standard encoder's circular-reference error.
+    """
+    if not isinstance(value, (dict, list, tuple)):
+        return set()
+    large: set[int] = set()
+    classified: set[int] = set()
+    active_containers = {id(value)}
+    stack = [(id(value), _container_items(cast("dict[Any, Any] | Sequence[Any]", value)))]
+    while stack:
+        container_id, items = stack[-1]
+        for item in items:
+            if isinstance(item, str):
+                if len(item) > _JSON_STRING_FRAGMENT_SIZE:
+                    large.add(container_id)
+            elif isinstance(item, (dict, list, tuple)):
+                item_id = id(item)
+                if item_id in active_containers:
+                    raise ValueError("Circular reference detected")
+                if item_id in classified:
+                    if item_id in large:
+                        large.add(container_id)
+                    continue
+                active_containers.add(item_id)
+                stack.append((item_id, _container_items(item)))
+                break
+        else:
+            stack.pop()
+            active_containers.remove(container_id)
+            classified.add(container_id)
+            if stack and container_id in large:
+                large.add(stack[-1][0])
+    return large
+
+
+class _Nested:
+    """A value whose JSON fragments are emitted in place of this marker."""
+
+    __slots__ = ("value",)
+
+    def __init__(self, value: Any):
+        self.value = value
+
+
+def _iter_json_fragments(value: Any) -> Iterator[str]:
+    """Emit default, sorted-key JSON, fragmenting individual large strings.
+
+    Values without a large string are encoded in one call to the standard encoder, so arbitrary
+    containers can exceed the string fragment size. This does not bound total working memory.
+    Nested containers are walked with an explicit stack, so nesting depth is not limited by the
+    interpreter's recursion limit.
+    """
+    active_containers: set[int] = set()
+    large_containers = _containers_with_large_strings(value)
+    stack = [_json_parts(value, active_containers, large_containers)]
+    while stack:
+        part = next(stack[-1], None)
+        if part is None:
+            stack.pop()
+        elif isinstance(part, _Nested):
+            stack.append(_json_parts(part.value, active_containers, large_containers))
+        else:
+            yield part
+
+
+def _json_parts(
+    value: Any, active_containers: set[int], large_containers: set[int]
+) -> Iterator[str | _Nested]:
+    """JSON fragments of `value`, with nested values left as `_Nested` markers to expand."""
+    is_container = isinstance(value, (dict, list, tuple))
+    container_id = id(value)
+    if is_container:
+        if container_id in active_containers:
+            raise ValueError("Circular reference detected")
+        active_containers.add(container_id)
+    try:
+        has_large_string = (
+            len(value) > _JSON_STRING_FRAGMENT_SIZE
+            if isinstance(value, str)
+            else is_container and container_id in large_containers
+        )
+        if not has_large_string:
+            yield json.dumps(value, sort_keys=True)
+        elif isinstance(value, str):
+            yield '"'
+            for start in range(0, len(value), _JSON_STRING_FRAGMENT_SIZE):
+                yield json.dumps(value[start : start + _JSON_STRING_FRAGMENT_SIZE])[1:-1]
+            yield '"'
+        elif isinstance(value, (list, tuple)):
+            yield "["
+            for index, item in enumerate(value):
+                if index:
+                    yield ", "
+                yield _Nested(item)
+            yield "]"
+        else:
+            yield "{"
+            for index, (key, item) in enumerate(sorted(value.items())):
+                if index:
+                    yield ", "
+                if not isinstance(key, str):
+                    if isinstance(key, (int, float)) or key is None:
+                        key = json.dumps(key)
+                    else:
+                        # Preserve the standard encoder's rejection of unsupported keys.
+                        json.dumps({key: item}, sort_keys=True)
+                yield _Nested(key)
+                yield ": "
+                yield _Nested(item)
+            yield "}"
+    finally:
+        if is_container:
+            active_containers.discard(container_id)
 
 
 def elements_to_dicts(elements: Iterable[Element]) -> list[dict[str, Any]]:
