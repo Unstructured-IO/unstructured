@@ -4,6 +4,12 @@
 
 - **Extract text from vector-heavy PDFs with the `fast` strategy.** `partition_pdf` skips PDFMiner text extraction when `is_pdf_too_complex` flags a PDF, which leaves `fast` with no text source, so drawing-heavy PDFs (CAD and engineering sheets, or any page whose graphics operators outnumber its text operators 20:1 past 10,000 operators) silently returned zero elements. This affected PDFs of 1 MB or more since 0.21.12 and every PDF since 0.27.0, when the check began inspecting small files. `fast` now extracts these PDFs with PDFMiner, and raises `UnprocessableEntityError` for a PDF whose content streams exceed the decoding limits instead of returning nothing. Other strategies still skip text extraction for both cases. The new `pdf_complexity` reports which reason applies; `is_pdf_too_complex` is unchanged.
 
+## 0.27.33-dev0
+
+### Fixes
+
+- **Don't copy a very large split element into every chunk.** When one element over 1,000,000 characters (text, HTML and image data) is split into several chunks, those chunks no longer get `.metadata.orig_elements`, and a warning is logged. Before, each chunk serialized its own copy: the 7 MB spreadsheet from #3872 split into 12,555 chunks and produced about 54 GB of JSON. Smaller elements and elements that aren't split are unchanged.
+
 ## 0.27.32
 
 ### Enhancements
