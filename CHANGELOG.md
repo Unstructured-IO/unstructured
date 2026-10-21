@@ -1,8 +1,44 @@
-## 0.27.29-dev0
+## 0.27.34
 
 ### Fixes
 
 - **DOCX content in content controls and tracked revisions is no longer skipped.** `partition_docx()` read only what python-docx finds directly under the body, a table cell, a header or a footer, and directly in a paragraph. So it dropped the paragraphs, tables, rows and runs held in a content control (`w:sdt`, used by forms, templates and Word's document-property fields), text inserted or moved with track changes on and not yet accepted (`w:ins`, `w:moveTo`), and runs in custom XML markup, smart tags, simple fields and bidirectional spans. These wrappers are now replaced by their content before partitioning. Deleted and moved-away text still stays out, the automatic table of contents is still skipped, and a content control's placeholder text is not emitted. Resolves #3553 and #1821.
+
+## 0.27.33
+
+### Fixes
+
+- **Don't copy a very large split element into every chunk.** When one element over 1,000,000 characters (text, HTML and image data) is split into several chunks, those chunks no longer get `.metadata.orig_elements`, and a warning is logged. Before, each chunk serialized its own copy: the 7 MB spreadsheet from #3872 split into 12,555 chunks and produced about 54 GB of JSON. Smaller elements and elements that aren't split are unchanged.
+- **Bump locked `certifi` to 2026.10.19.** The release removes the emSign ECC Root CA - G3 root after eight eMudhra intermediate CA private keys were compromised. `requests` and `httpx` trust certifi's bundle and do not check revocation, so with the older bundle they accepted certificates chaining to that root. Docker images built from the lockfile pick it up; `certifi` is now also required at `>=2026.10.19`, so pip installs pick up the new bundle too.
+
+## 0.27.32
+
+### Enhancements
+
+- **Read spooled uploads in place during file detection and partitioning, leaving spooled files at position 0. Generic file-like streams handled by `convert_to_bytes()` are rewound before and after reading; existing BytesIO and path-named buffered-reader cursor behavior is unchanged.**
+- **Bound memory in the OCR-only PDF renderer.** Stage renderer uploads with 1 MiB reads and render one page at a time. Release internally consumed page images promptly while preserving ownership of images yielded by the public generator.
+- **Stream original-element JSON compression through a spool that spills above 1 MiB, and avoid retaining image payloads when chunking without original elements. Preserve serialization bytes, metadata ordering and precision.** This removes collection-wide graph/JSON/compressed-buffer overlap and fragments individual large strings; individual elements, containers of short strings, sorted items and the final Base64 join still scale with their contents, so there is no hard per-fragment or process-memory bound. Large incompressible output requires writable temporary storage and can raise an I/O error if that storage is unavailable.
+- Expose `open_excel_workbook()` for integrations that read one worksheet at a time while
+  retaining the worksheet cell limit and optional empty-row compaction.
+- Reduce XLSX subtable-detection memory with populated-cell traversal and render table HTML one row at a time while preserving Pandas formatting and element output.
+
+## 0.27.31
+
+### Fixes
+
+- **Label numbered headings and keep them out of list items; stop numbering section-break paragraphs.** A numbered paragraph of any element type now carries its label in the text, a numbered heading is no longer classified as a `ListItem` whether its number comes from its style or its own formatting, and an empty paragraph that only holds a section break no longer consumes a list number. A numbered paragraph with a heading outline level (0 to 8) counts as a heading even when it is body text, such as a numbered clause, so it is no longer a `ListItem`.
+
+## 0.27.30
+
+### Fixes
+
+- **Keep non-ASCII email names and addresses readable.** `partition_email()` formatted the `sent_from`, `sent_to`, `cc_recipient` and `bcc_recipient` metadata with `email.utils.formataddr()`, which wrote a non-ASCII display name as an RFC 2047 encoded-word (`=?utf-8?b?5byg5Lyf?= <zhang@example.cn>` for 张伟) and raised `UnicodeEncodeError` on a non-ASCII address (RFC 6532), failing the whole message. Names and addresses are now kept as written; ASCII ones are formatted as before.
+
+## 0.27.29
+
+### Fixes
+
+- **Read XLS files whose Workbook stream ends in padding.** `partition_xlsx()` raised `struct.error` for many `.xls` files written by `xlwt`: the msoffcrypto encryption check reads the Workbook stream as 4-byte record headers and fails on the few bytes of padding at its end (nolze/msoffcrypto-tool#83). Such a file is now read as not encrypted; password-protected `.xls` files are still rejected.
 
 ## 0.27.28
 
