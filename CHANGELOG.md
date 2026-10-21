@@ -1,8 +1,12 @@
-## 0.27.34-dev0
+## 0.27.34-dev1
 
 ### Enhancements
 
 - **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+
+### Fixes
+
+- **Read CSV and TSV cells as the file holds them.** `partition_csv()` and `partition_tsv()` left Pandas to interpret every cell, so a cell that says `N/A`, `NULL` or `None` came out empty, a column of whole numbers with one empty cell read as floats (`12` became `12.0`), and a code such as `007` lost its leading zeros. Each cell is now read as text, exactly as written.
 
 ## 0.27.33
 
