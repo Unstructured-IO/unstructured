@@ -1,8 +1,9 @@
-## 0.27.34-dev0
+## 0.27.34-dev1
 
 ### Enhancements
 
 - **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+- **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ## 0.27.33
 
