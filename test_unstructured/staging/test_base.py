@@ -12,8 +12,10 @@ import pytest
 
 from test_unstructured.unit_utils import assign_hash_ids, input_path
 from unstructured.documents.elements import (
+    TYPE_TO_TEXT_ELEMENT_MAP,
     Address,
     CheckBox,
+    CompositeElement,
     CoordinatesMetadata,
     CoordinateSystem,
     DataSourceMetadata,
@@ -420,6 +422,31 @@ def test_convert_to_coco():
     limited_coco = base.convert_to_coco(missing_elements)
     assert full_coco["annotations"][0]["area"]
     assert limited_coco["annotations"][0]["area"] is None
+
+
+def test_convert_to_coco_handles_element_types_outside_the_text_element_map():
+    elements = [
+        Title(text="Title", element_id="1"),
+        CompositeElement(text="chunk", element_id="2"),
+        TableChunk(text="table chunk", element_id="3"),
+        CheckBox(checked=True, element_id="4"),
+    ]
+    mapped_types = sorted(TYPE_TO_TEXT_ELEMENT_MAP)
+
+    coco = base.convert_to_coco(elements)
+
+    # -- ids of the mapped types are unchanged; the extra types are appended after them --
+    assert coco["categories"] == [
+        {"id": i + 1, "name": name}
+        for i, name in enumerate([*mapped_types, "CheckBox", "TableChunk"])
+    ]
+    category_ids = {c["name"]: c["id"] for c in coco["categories"]}
+    assert [a["category_id"] for a in coco["annotations"]] == [
+        category_ids["Title"],
+        category_ids["CompositeElement"],
+        category_ids["TableChunk"],
+        category_ids["CheckBox"],
+    ]
 
 
 def test_flatten_dict():

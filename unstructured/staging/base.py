@@ -951,6 +951,9 @@ def convert_to_coco(
     coco_dataset["images"] = images
     # Handle Categories
     categories = sorted(set(TYPE_TO_TEXT_ELEMENT_MAP.keys()))
+    # -- element types not in TYPE_TO_TEXT_ELEMENT_MAP go after the mapped ones so the
+    # -- existing category ids do not shift --
+    categories += [cat for cat in ("CheckBox", "TableChunk") if cat not in categories]
     categories = [{"id": i + 1, "name": cat} for i, cat in enumerate(categories)]
     coco_dataset["categories"] = categories
     # Handle Annotations

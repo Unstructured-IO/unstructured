@@ -1,3 +1,9 @@
+## 0.27.34-dev0
+
+### Fixes
+
+- **Convert `CheckBox` and `TableChunk` elements to COCO.** `convert_to_coco()` built its categories only from `TYPE_TO_TEXT_ELEMENT_MAP`, which leaves out these two types, and raised `IndexError` on them, for example on chunked output containing a split table. Both now get categories appended after the existing ones, so the ids of existing categories are unchanged.
+
 ## 0.27.33
 
 ### Fixes
