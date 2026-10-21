@@ -1,8 +1,12 @@
-## 0.27.34-dev0
+## 0.27.34-dev1
 
 ### Enhancements
 
 - **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+
+### Fixes
+
+- **Keep XML text that runs through child elements.** `partition_xml()` emitted only the `.text` of each element, so in `<p>The <b>quick</b> brown fox.</p>` the words after a child element were lost and the rest came out in pieces and out of order (`quick`, then `The `). An element with text of its own now reads as one text, `The quick brown fox.`. Elements that only hold other elements, such as a record of fields, are partitioned as before.
 
 ## 0.27.33
 

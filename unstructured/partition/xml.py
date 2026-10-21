@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 from io import BytesIO
-from typing import IO, Any, Iterator, cast
+from typing import IO, Any, Callable, Iterator, cast
 
 from lxml import etree
 
@@ -116,17 +116,54 @@ def _get_leaf_elements(
     if xml_path is not None:
         _, element = next(element_iterator)
         compiled_path = etree.XPath(xml_path)
-        element_iterator = (("end", el) for el in compiled_path(element))
+
+        def texts_of(element: etree._Element) -> tuple[str, list[str]]:  # pyright: ignore
+            return _element_texts(element, texts_of)
+
+        for matched in compiled_path(element):
+            yield from texts_of(matched)[1]
+        return
+
+    # -- the texts of each element that has ended, kept until its parent ends --
+    finished: dict[etree._Element, tuple[str, list[str]]] = {}  # pyright: ignore
 
     for event, element in element_iterator:
         if event == "start":
             element_stack.append(element)
 
         if event == "end":
-            if element.text is not None and element.text.strip():
-                yield element.text
-
-            element.clear()
+            texts = _element_texts(element, finished.pop)
+            if element.getparent() is None:
+                yield from texts[1]
+            else:
+                finished[element] = texts
+            # -- the tail is text of the parent, read when the parent ends --
+            element.clear(keep_tail=True)
 
         while element_stack and element_stack[-1].getparent() is None:
             element_stack.pop()
+
+
+def _element_texts(
+    element: etree._Element,  # pyright: ignore[reportPrivateUsage]
+    texts_of: Callable[[etree._Element], tuple[str, list[str]]],  # pyright: ignore
+) -> tuple[str, list[str]]:
+    """All the text of `element` in document order, and the texts it is partitioned into.
+
+    An element with text of its own, before a child or in a child's tail, is one text that runs
+    through its children, as in `<p>The <b>quick</b> brown fox.</p>`. Any other element is the
+    texts of its child elements, one each. `texts_of` gives the same pair for a child element.
+    """
+    text = element.text or ""
+    parts, blocks, has_own_text = [text], [], bool(text.strip())
+    for child in element:
+        # -- a comment or processing instruction adds only its tail --
+        if isinstance(child.tag, str):
+            child_text, child_blocks = texts_of(child)
+            parts.append(child_text)
+            blocks.extend(child_blocks)
+        tail = child.tail or ""
+        parts.append(tail)
+        has_own_text = has_own_text or bool(tail.strip())
+    full_text = "".join(parts)
+    return full_text, [full_text] if has_own_text else blocks

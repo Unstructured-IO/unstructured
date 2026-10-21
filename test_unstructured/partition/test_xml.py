@@ -206,6 +206,24 @@ def test_partition_xml_with_narrative_line_breaks():
     assert str(elements[1]).strip().endswith("Conures are feathery and like to dance.")
 
 
+@pytest.mark.parametrize("xml_path", [None, ".//body"])
+def test_partition_xml_keeps_text_that_runs_through_child_elements(xml_path: str | None):
+    xml_text = (
+        "<doc><body><title>Report</title>"
+        "<p>The <b>quick</b> brown <i>fox</i> jumps<!-- a comment --> over the dog.</p>"
+        "<list><item>One</item><item>Two</item></list></body></doc>"
+    )
+
+    elements = partition_xml(text=xml_text, xml_path=xml_path)
+
+    assert [e.text for e in elements] == [
+        "Report",
+        "The quick brown fox jumps over the dog.",
+        "One",
+        "Two",
+    ]
+
+
 def test_add_chunking_strategy_on_partition_xml():
     file_path = example_doc_path("factbook.xml")
     elements = partition_xml(file_path)
