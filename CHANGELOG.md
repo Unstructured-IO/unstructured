@@ -1,8 +1,15 @@
-## 0.27.34
+## 0.27.34-dev2
 
 ### Fixes
 
 - **DOCX content in content controls and tracked revisions is no longer skipped.** `partition_docx()` read only what python-docx finds directly under the body, a table cell, a header or a footer, and directly in a paragraph. So it dropped the paragraphs, tables, rows and runs held in a content control (`w:sdt`, used by forms, templates and Word's document-property fields), text inserted or moved with track changes on and not yet accepted (`w:ins`, `w:moveTo`), and runs in custom XML markup, smart tags, simple fields and bidirectional spans. These wrappers are now replaced by their content before partitioning. Deleted and moved-away text still stays out, the automatic table of contents is still skipped, and a content control's placeholder text is not emitted. Resolves #3553 and #1821.
+
+## 0.27.34-dev1
+
+### Enhancements
+
+- **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+- **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ## 0.27.33
 
