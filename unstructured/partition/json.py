@@ -22,6 +22,7 @@ from unstructured.partition.common.json_partitioning import (
     elements_from_arbitrary_value,
     is_element_shaped_dict,
     loads_strict_json,
+    read_json_text,
     rehydrate_elements,
 )
 from unstructured.partition.common.metadata import get_last_modified_date, set_element_hierarchy
@@ -35,6 +36,7 @@ def _apply_chunking(
     file: Optional[IO[bytes]],
     text: Optional[str],
     metadata_last_modified: Optional[str],
+    encoding: Optional[str],
     kwargs: dict[str, Any],
 ) -> list[Element]:
     """Apply the requested chunking strategy before final metadata processing."""
@@ -43,6 +45,7 @@ def _apply_chunking(
         "file": file,
         "text": text,
         "metadata_last_modified": metadata_last_modified,
+        "encoding": encoding,
         **kwargs,
     }
     chunking_strategy = call_args.pop("chunking_strategy", None)
@@ -58,6 +61,7 @@ def partition_json(
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    encoding: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a JSON document into its constituent elements.
@@ -74,7 +78,7 @@ def partition_json(
 
     An empty or whitespace-only document yields no elements. The mode is chosen by a shape
     predicate: a non-empty array whose every item looks like a serialized element (recognized
-    `type` with its required field of the right type, and a dict `metadata` when present)
+    `type` with its required field of the right type, and a `metadata` when present)
     rehydrates; anything else partitions as arbitrary JSON, including an array mixing
     element-shaped and arbitrary items (no partial rehydration). An element-shaped payload whose
     contents cannot be rehydrated (e.g. corrupt `metadata`) raises `ValueError`. Limitation: a
@@ -89,6 +93,9 @@ def partition_json(
         A file-like object as bytes --> open(filename, "rb").
     text
         The string representation of the .json document.
+    encoding
+        The encoding method used to decode the input bytes when drawn from `filename` or `file`.
+        Defaults to detecting the encoding when not specified.
     metadata_last_modified
         The last modified date for the document.
     """
@@ -101,12 +108,10 @@ def partition_json(
     if blank_text:
         file_text = text or ""
     elif filename is not None:
-        with open(filename, encoding="utf8") as f:
-            file_text = f.read()
+        file_text = read_json_text(filename=filename, encoding=encoding)
 
     elif file is not None:
-        file_content = file.read()
-        file_text = file_content if isinstance(file_content, str) else file_content.decode()
+        file_text = read_json_text(file=file, encoding=encoding)
         file.seek(0)
 
     elif text is not None:
@@ -132,6 +137,7 @@ def partition_json(
             file=file,
             text=text,
             metadata_last_modified=metadata_last_modified,
+            encoding=encoding,
             kwargs=kwargs,
         )
         metadata_filename = kwargs.get("metadata_filename")
@@ -161,6 +167,7 @@ def partition_json(
             file=file,
             text=text,
             metadata_last_modified=metadata_last_modified,
+            encoding=encoding,
             kwargs=kwargs,
         )
         elements = set_element_hierarchy(elements)
