@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import codecs
 import copy
 from io import BytesIO
 from typing import IO, Any, Iterator, cast
@@ -45,7 +46,10 @@ def partition_xml(
     text
         The text of the XML file.
     encoding
-        The encoding method used to decode the text input. If None, utf-8 will be used.
+        The encoding used to decode `filename` or `file`. When None, the XML parser detects
+        the encoding when extracting text; when retaining tags, text encoding detection is used.
+        The Python `utf-8-sig` codec and its aliases are accepted for UTF-8 with or without a BOM.
+        Does not affect an already-decoded `text` input.
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags.
@@ -78,6 +82,7 @@ def partition_xml(
             file=file,
             text=text,
             xml_path=xml_path,
+            encoding=encoding,
         )
         for leaf_element in leaf_elements:
             if leaf_element:
@@ -89,14 +94,21 @@ def partition_xml(
 
 
 def get_leaf_elements(
-    filename: str | None, file: IO[bytes] | None, text: str | None, xml_path: str | None
+    filename: str | None,
+    file: IO[bytes] | None,
+    text: str | None,
+    xml_path: str | None,
+    *,
+    encoding: str | None = None,
 ) -> Iterator[str | None]:
     """Get leaf elements from the XML tree defined in filename, file, or text."""
     exactly_one(filename=filename, file=file, text=text)
     if filename:
-        return _get_leaf_elements(filename, xml_path=xml_path)
+        return _get_leaf_elements(filename, xml_path=xml_path, encoding=encoding)
     elif file:
-        return _get_leaf_elements(file=rewind_if_spooled(file), xml_path=xml_path)
+        return _get_leaf_elements(
+            file=rewind_if_spooled(file), xml_path=xml_path, encoding=encoding
+        )
     else:
         b = BytesIO(bytes(cast(str, text), encoding="utf-8"))
         return _get_leaf_elements(b, xml_path=xml_path)
@@ -105,11 +117,23 @@ def get_leaf_elements(
 def _get_leaf_elements(
     file: str | IO[bytes],
     xml_path: str | None,
+    *,
+    encoding: str | None = None,
 ) -> Iterator[str | None]:
     """Parse the XML tree in a memory efficient manner if possible."""
     element_stack: list[etree._Element] = []  # pyright: ignore[reportPrivateUsage]
 
-    element_iterator = etree.iterparse(file, events=("start", "end"), resolve_entities=False)
+    if encoding is not None:
+        try:
+            is_utf8_sig = codecs.lookup(encoding).name == "utf-8-sig"
+        except LookupError:
+            is_utf8_sig = False
+        if is_utf8_sig:
+            encoding = "UTF-8"
+
+    element_iterator = etree.iterparse(
+        file, events=("start", "end"), encoding=encoding, resolve_entities=False
+    )
     # NOTE(alan) If xml_path is used for filtering, I've yet to find a good way to stream
     # elements through in a memory efficient way, so we bite the bullet and load it all into
     # memory.
