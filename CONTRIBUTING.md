@@ -92,9 +92,13 @@ The version format stays the same: several commits on `main` can share a
    are lost.
 4. Publish the release using the existing process. Publication workflows are
    unchanged by this convention.
-5. Immediately open and merge a human-authored PR that bumps `main` to the next
-   development version, for example `0.27.35-dev1`. Resume ordinary merges only
-   after this bump. No other commit should retain the released final version.
+5. Publishing the release automatically opens a PR for the next patch `-dev`
+   version. Another maintainer must approve it and enqueue it if auto-merge
+   could not be enabled. The PR author is the owner of `GH_CREATE_PR_TOKEN`;
+   that owner cannot approve their own PR. Ordinary PRs fail `check-version`
+   until the bump lands. If the workflow fails (for example, the token expires),
+   open and merge the bump PR by hand. The workflow depends on that existing
+   secret; maintainers can retry it with `workflow_dispatch` and the release tag.
 
 Ordinary PRs never need to think about the version. The guard checks the merge
 result, so a stale PR that does not edit the version file passes after `main`
@@ -107,8 +111,7 @@ not count as final releases.
 
 The guard does not validate the commit a human selects when creating a GitHub
 Release. Maintainers must still select the release commit and immediately merge
-the next development bump. Automated post-release development bumps and
-automated tagging/publishing remain future work.
+the next development bump. Automated tagging remains future work.
 
 ### License
 
