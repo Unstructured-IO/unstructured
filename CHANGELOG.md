@@ -11,8 +11,6 @@
 
 ### Fixes
 
-- **Honor explicit encodings when extracting XML text.** `partition_xml(encoding=...)` now passes the encoding to the XML parser for file and file-like inputs, including XPath selections. Python's `utf-8-sig` codec and its aliases are mapped to an explicit UTF-8 override, with or without a BOM. Previously, only the `xml_keep_tags=True` branch used the encoding.
-
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 
 - **Read CSV and TSV cells as the file holds them.** `partition_csv()` and `partition_tsv()` left Pandas to interpret every cell, so a cell that says `N/A`, `NULL` or `None` came out empty, a column of whole numbers with one empty cell read as floats (`12` became `12.0`), and a code such as `007` lost its leading zeros. Each cell is now read as text, exactly as written.
