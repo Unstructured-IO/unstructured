@@ -1,8 +1,8 @@
-## 0.27.34
+## 0.27.35
 
 - Reject HTTP error responses before URL partitioning so error pages are not ingested as documents.
 
-## 0.27.34-dev6
+## 0.27.34
 
 ### Enhancements
 
