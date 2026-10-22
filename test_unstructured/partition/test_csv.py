@@ -249,8 +249,8 @@ def test_partition_csv_rejects_a_wide_first_line_before_pandas_reads_it(
         # -- every line ending counts as a row, so the blank line makes this 4 rows (Pandas
         # -- reads 3): the measure is an upper bound --
         ("a;b;c\n1;2\n\n4\n", 3 * 4),
-        # -- single-column file; the sniffer finds "a" as the delimiter, giving 2 columns --
-        ("a\nb\nc\nd\n", 4 * 2),
+        # -- single-column file, read as one column --
+        ("a\nb\nc\nd\n", 4 * 1),
         ('"x,\ny",z\n1\n', 2 * 2),  # -- quoted delimiter and newline start no field or row --
         ("a,b\r\nc,d\re,f", 3 * 2),  # -- "\r\n", "\r" and an unterminated last line --
     ],
@@ -356,6 +356,29 @@ def test_partition_csv_reads_a_file_with_no_usable_delimiter_as_one_column():
 
     assert (
         elements[0].metadata.text_as_html == "<table><tr><td>a</td></tr><tr><td>b</td></tr></table>"
+    )
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        # -- the sniffer took the "t" of "Note" for the delimiter, and the second line, with two of
+        # -- them, raised a Pandas `ParserError` --
+        b"Note\nfirst entry\nwatch the date\nok\n",
+        # -- the "e" of "Header", so each value was split around its "e" --
+        b"Header\nValue1\nValue2\n",
+        # -- a space, when the first line is two words --
+        b"Customer name\nAnn Lee\nBo\n",
+    ],
+)
+def test_partition_csv_reads_a_single_column_file_as_one_column(content: bytes):
+    lines = content.decode().splitlines()
+
+    elements = partition_csv(file=io.BytesIO(content))
+
+    assert elements[0].text == " ".join(lines)
+    assert elements[0].metadata.text_as_html == (
+        "<table>" + "".join(f"<tr><td>{line}</td></tr>" for line in lines) + "</table>"
     )
 
 

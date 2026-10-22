@@ -1,4 +1,4 @@
-## 0.27.34-dev6
+## 0.27.34-dev7
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
+
+- **Read a single-column CSV file as one column.** When no delimiter was found across the sample, `partition_csv()` sniffed one from the first line among every character, as Pandas does, and took a repeated letter or space: the header `Note` was split on its `t`, so the file raised a Pandas `ParserError` as soon as a later line held more of them, and `Header`, `Value1` came back as `H ad r Valu 1 None`. The first line is now sniffed for `,`, `;`, `|` and tab only, and a file with none of them is read as one column. This is the case reported on #2616 after that issue was closed.
 
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 
