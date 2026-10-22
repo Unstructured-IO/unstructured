@@ -4,12 +4,19 @@
 
 - **Stop dropping nested metadata values in `convert_to_csv()`.** Nested metadata such as `data_source` and `enrichment_origins` is flattened into sub-keys (`data_source_url`, `enrichment_origins_ner`, …), but the CSV column whitelist only contained the raw dict keys, so those sub-keys were filtered out and the corresponding columns stayed empty. The flattened sub-keys are now collected across rows and appended as columns, so the values are exported. The fixed `TABLE_FIELDNAMES` columns keep their names, order, and meaning, but the output can now carry *additional* columns: any metadata key not in the fixed set — including custom scalar fields such as `metadata.foobar` and flattened nested sub-keys — appears as an input-dependent extra column, and an ad-hoc metadata key that collides with a real top-level Element attribute (e.g. `embeddings`) is disambiguated as `metadata_<key>` rather than overwriting that column. Replacement names are allocated once per distinct field across the whole batch, so two distinct metadata fields never collapse onto a single column and the resulting name is independent of metadata insertion order and row order. Consumers should select columns by name instead of relying on an exact header or fixed field count.
 
-## 0.27.34-dev1
 
+## 0.27.34-dev4
 ### Enhancements
 
 - **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
+
+### Fixes
+
+- **Drop empty email address-group entries.** An empty group such as `undisclosed-recipients:;` now produces no recipient instead of an empty string. Groups with members retain their addresses.
+
+- **Read a PowerPoint line break as a newline.** python-pptx returns a line break (Shift+Enter, `a:br`) as a vertical tab, so `partition_pptx()` put `\x0b` into the text of titles, text boxes and slide notes (`"Quarterly\x0bresults"`). It now reads `"Quarterly\nresults"`.
+- **`partition_json()` and `partition_ndjson()` now honor `encoding=`.** Both read the source with a hard-coded UTF-8 (`open(filename, encoding="utf8")`, and a bare `.decode()` for a file-like object), while the `encoding` argument callers pass -- directly or through `partition()` -- was swallowed by `**kwargs`. A UTF-16 or otherwise non-UTF-8 document therefore raised `UnicodeDecodeError` even when its encoding was stated explicitly. Both partitioners now accept `encoding`, and `partition()` forwards it to them. An explicit encoding is authoritative; when none is given, valid UTF-8 is preserved and charset detection is used only for bytes that are not valid UTF-8, so a detector's confident guess cannot silently rewrite text that would have decoded correctly. The existing file-like contract is unchanged: the stream is read once from its current position, an already-decoded `str` passes through, and the object is never reopened.
 
 ## 0.27.33
 
