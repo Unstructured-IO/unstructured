@@ -104,11 +104,15 @@ def read_delimited_text(
     own.
     """
     reader = _LoneCarriageReturnReader(file, encoding)
+    # -- each cell is read as the text the file holds: by default Pandas empties a cell that says
+    # -- "N/A", "NULL" or "None", turns a column of whole numbers with one empty cell into floats
+    # -- (12 reads "12.0") and drops the leading zeros of a code such as "007" --
+    cells_as_written = {"dtype": str, "keep_default_na": False}
     if sep is None:
         sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
         # -- the C engine does not sniff, so keep the Python engine this path has always used --
-        return pd.read_csv(reader, sep=sep, header=header, engine="python")
-    return pd.read_csv(reader, sep=sep, header=header)
+        return pd.read_csv(reader, sep=sep, header=header, engine="python", **cells_as_written)
+    return pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
 
 
 def check_cell_count(
