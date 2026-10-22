@@ -2,12 +2,12 @@
 # Print an action and versions; this script never changes the checkout.
 set -euo pipefail
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-# shellcheck source=scripts/check-new-release-version.sh
+# CI checks each script separately; the shared functions are checked on their own.
+# shellcheck disable=SC1091
 source "$script_dir/check-new-release-version.sh"
 
 plan_bump() {
   local tag=${1#v} current=$2 patch next digit carry=1 result='' i
-  local -a PARTS
   if [[ ! $tag =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
     echo "Skip non-package release: $1" >&2
     echo 'action=skip'
