@@ -66,15 +66,15 @@ no `breaking-change` label yet. Use an existing category label, and the
 releaser will move the entry to Breaking changes. No new labels are required
 to contribute.
 
-`CHANGELOG.md` is frozen, including its existing development heading. Keep it
+`CHANGELOG.md` is frozen, including its existing release headings. Keep it
 for historical links; do not add entries or synchronize it with the package.
 The version format stays the same: several commits on `main` can share a
-`-devN` version. Ordinary PRs, including dependency PRs, do not bump it.
+`-dev` or `-devN` version. Ordinary PRs, including dependency PRs, do not bump it.
 
 ### Release-day workflow (maintainers)
 
 1. Prepare a release PR that changes `unstructured/__version__.py` from the
-   current `-devN` version to its final version, for example `0.27.34-dev3` to
+   current development version to its final version, for example `0.27.34-dev3` to
    `0.27.34`. Do not edit the frozen changelog.
 2. Confirm that the final version has no existing tag or release. Compare
    versions with `packaging.version.Version` normalization (and remove an
@@ -90,7 +90,8 @@ The version format stays the same: several commits on `main` can share a
    changes into their own section, paste useful "Release note" text from PRs,
    and add significant security or dependency changes excluded by the filter.
    For the first release under this convention, also carry forward relevant
-   entries from the frozen development section so none are lost.
+   entries from the frozen changelog that are not in a published release so none
+   are lost.
 4. Publish the release using the existing process. Publication workflows are
    unchanged by this convention.
 5. Immediately open and merge a human-authored PR that bumps `main` to the next
