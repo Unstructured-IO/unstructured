@@ -1,10 +1,56 @@
+## 0.27.35-dev
+
+### Fixes
+
+- **Compare bounding boxes for elements that have no page number.** `catch_overlapping_and_nested_bboxes()` sized its per-page lists from the page number of the *last* element, so it raised `IndexError` for an empty element list, for elements with no page number at all (the loop that buckets the boxes already treats those as page 1), and for any list whose last element is not on the highest page. The page count is now the highest page number present, which is no pages at all for an empty element list.
+
+## 0.27.34
+
+### Enhancements
+
+- **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+- **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
+
+### Fixes
+
+- **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
+
+- **Read CSV and TSV cells as the file holds them.** `partition_csv()` and `partition_tsv()` left Pandas to interpret every cell, so a cell that says `N/A`, `NULL` or `None` came out empty, a column of whole numbers with one empty cell read as floats (`12` became `12.0`), and a code such as `007` lost its leading zeros. Each cell is now read as text, exactly as written.
+
+- **Drop empty email address-group entries.** An empty group such as `undisclosed-recipients:;` now produces no recipient instead of an empty string. Groups with members retain their addresses.
+
+- **Read a PowerPoint line break as a newline.** python-pptx returns a line break (Shift+Enter, `a:br`) as a vertical tab, so `partition_pptx()` put `\x0b` into the text of titles, text boxes and slide notes (`"Quarterly\x0bresults"`). It now reads `"Quarterly\nresults"`.
+- **`partition_json()` and `partition_ndjson()` now honor `encoding=`.** Both read the source with a hard-coded UTF-8 (`open(filename, encoding="utf8")`, and a bare `.decode()` for a file-like object), while the `encoding` argument callers pass -- directly or through `partition()` -- was swallowed by `**kwargs`. A UTF-16 or otherwise non-UTF-8 document therefore raised `UnicodeDecodeError` even when its encoding was stated explicitly. Both partitioners now accept `encoding`, and `partition()` forwards it to them. An explicit encoding is authoritative; when none is given, valid UTF-8 is preserved and charset detection is used only for bytes that are not valid UTF-8, so a detector's confident guess cannot silently rewrite text that would have decoded correctly. The existing file-like contract is unchanged: the stream is read once from its current position, an already-decoded `str` passes through, and the object is never reopened.
+
+## 0.27.33
+
+### Fixes
+
+- **Don't copy a very large split element into every chunk.** When one element over 1,000,000 characters (text, HTML and image data) is split into several chunks, those chunks no longer get `.metadata.orig_elements`, and a warning is logged. Before, each chunk serialized its own copy: the 7 MB spreadsheet from #3872 split into 12,555 chunks and produced about 54 GB of JSON. Smaller elements and elements that aren't split are unchanged.
+- **Bump locked `certifi` to 2026.10.19.** The release removes the emSign ECC Root CA - G3 root after eight eMudhra intermediate CA private keys were compromised. `requests` and `httpx` trust certifi's bundle and do not check revocation, so with the older bundle they accepted certificates chaining to that root. Docker images built from the lockfile pick it up; `certifi` is now also required at `>=2026.10.19`, so pip installs pick up the new bundle too.
+
+## 0.27.32
+
+### Enhancements
+
+- **Read spooled uploads in place during file detection and partitioning, leaving spooled files at position 0. Generic file-like streams handled by `convert_to_bytes()` are rewound before and after reading; existing BytesIO and path-named buffered-reader cursor behavior is unchanged.**
+- **Bound memory in the OCR-only PDF renderer.** Stage renderer uploads with 1 MiB reads and render one page at a time. Release internally consumed page images promptly while preserving ownership of images yielded by the public generator.
+- **Stream original-element JSON compression through a spool that spills above 1 MiB, and avoid retaining image payloads when chunking without original elements. Preserve serialization bytes, metadata ordering and precision.** This removes collection-wide graph/JSON/compressed-buffer overlap and fragments individual large strings; individual elements, containers of short strings, sorted items and the final Base64 join still scale with their contents, so there is no hard per-fragment or process-memory bound. Large incompressible output requires writable temporary storage and can raise an I/O error if that storage is unavailable.
+- Expose `open_excel_workbook()` for integrations that read one worksheet at a time while
+  retaining the worksheet cell limit and optional empty-row compaction.
+- Reduce XLSX subtable-detection memory with populated-cell traversal and render table HTML one row at a time while preserving Pandas formatting and element output.
+
+## 0.27.31
+
+### Fixes
+
+- **Label numbered headings and keep them out of list items; stop numbering section-break paragraphs.** A numbered paragraph of any element type now carries its label in the text, a numbered heading is no longer classified as a `ListItem` whether its number comes from its style or its own formatting, and an empty paragraph that only holds a section break no longer consumes a list number. A numbered paragraph with a heading outline level (0 to 8) counts as a heading even when it is body text, such as a numbered clause, so it is no longer a `ListItem`.
+
 ## 0.27.30
 
 ### Fixes
 
 - **Keep non-ASCII email names and addresses readable.** `partition_email()` formatted the `sent_from`, `sent_to`, `cc_recipient` and `bcc_recipient` metadata with `email.utils.formataddr()`, which wrote a non-ASCII display name as an RFC 2047 encoded-word (`=?utf-8?b?5byg5Lyf?= <zhang@example.cn>` for 张伟) and raised `UnicodeEncodeError` on a non-ASCII address (RFC 6532), failing the whole message. Names and addresses are now kept as written; ASCII ones are formatted as before.
-
-- **Compare bounding boxes for elements that have no page number.** `catch_overlapping_and_nested_bboxes()` sized its per-page lists from the page number of the *last* element, so it raised `IndexError` for an empty element list, for elements with no page number at all (the loop that buckets the boxes already treats those as page 1), and for any list whose last element is not on the highest page. The page count is now the highest page number present, which is no pages at all for an empty element list.
 
 ## 0.27.29
 
