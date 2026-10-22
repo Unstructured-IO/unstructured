@@ -462,6 +462,90 @@ def test_supplement_element_with_table_extraction():
     assert supplemented.text_as_html[0].startswith("<table>")
 
 
+TABLE_HTML = (
+    "<table>"
+    "<tr><td>Item</td><td>2022</td><td>2021</td></tr>"
+    "<tr><td>Revenue</td><td>100</td><td>90</td></tr>"
+    "<tr><td>Costs</td><td>40</td><td>35</td></tr>"
+    "</table>"
+)
+
+
+def test_table_text_in_row_order_reads_column_ordered_text_by_rows():
+    text = "Item Revenue Costs 2022 100 40 2021 90 35"
+
+    row_text = ocr.table_text_in_row_order(text, TABLE_HTML)
+
+    assert row_text == "Item 2022 2021 Revenue 100 90 Costs 40 35"
+
+
+def test_table_text_in_row_order_joins_cells_and_rows_with_single_spaces():
+    html = (
+        "<table><tr><td>Name</td><td></td><td>Amount  due</td></tr>"
+        "<tr><td>Alpha</td><td>x</td><td>10</td></tr></table>"
+    )
+    text = "Name Alpha x Amount due 10"
+
+    assert ocr.table_text_in_row_order(text, html) == "Name Amount due Alpha x 10"
+
+
+def test_table_text_in_row_order_keeps_text_already_in_row_order():
+    text = "Item 2022 2021 Revenue 100 90 Costs 40 35"
+    html_with_ocr_errors = TABLE_HTML.replace("Revenue", "Revenu3").replace("90", "9O")
+
+    assert ocr.table_text_in_row_order(text, html_with_ocr_errors) == text
+
+
+def test_table_text_in_row_order_keeps_text_when_cells_miss_words():
+    text = "Item Revenue Costs Taxes 2022 100 40 5 2021 90 35 4"
+
+    assert ocr.table_text_in_row_order(text, TABLE_HTML) == text
+
+
+@pytest.mark.parametrize("text", ["", " ", None])
+def test_table_text_in_row_order_keeps_text_without_words(text):
+    assert ocr.table_text_in_row_order(text, TABLE_HTML) == text
+
+
+def test_table_text_in_row_order_keeps_text_when_html_has_no_table():
+    text = "Item Revenue Costs 2022 100 40 2021 90 35"
+
+    assert ocr.table_text_in_row_order(text, "<div>Item 2022 2021</div>") == text
+
+
+def test_table_text_in_row_order_thresholds_are_configurable(monkeypatch):
+    text = "Item Revenue Costs 2022 100 40 2021 90 35"
+    monkeypatch.setenv("TABLE_TEXT_MIN_WORD_COVERAGE", "1.01")
+
+    assert ocr.table_text_in_row_order(text, TABLE_HTML) == text
+
+
+def test_supplement_element_with_table_extraction_sets_row_ordered_text():
+    cells = [
+        {"row_nums": [r], "column_nums": [c], "cell text": t, "column header": r == 0}
+        for r, row in enumerate([["Item", "2022", "2021"], ["Revenue", "100", "90"]])
+        for c, t in enumerate(row)
+    ]
+    tables_agent = MagicMock()
+    tables_agent.predict.return_value = cells
+    elements = LayoutElements(
+        element_coords=np.array([[0.0, 0.0, 10.0, 10.0], [0.0, 20.0, 10.0, 30.0]]),
+        texts=np.array(["Item Revenue 2022 100 2021 90", "a caption"]),
+        element_class_ids=np.array([0, 1]),
+        element_class_id_map={0: "Table", 1: "Text"},
+    )
+
+    with patch.object(ocr, "get_table_tokens", return_value=[]):
+        supplemented = ocr.supplement_element_with_table_extraction(
+            elements=elements,
+            image=Image.new("RGB", (20, 40)),
+            tables_agent=tables_agent,
+            ocr_agent=MagicMock(),
+        )
+
+    assert supplemented.texts.tolist() == ["Item 2022 2021 Revenue 100 90", "a caption"]
+
+
 def test_get_table_tokens(mock_ocr_layout):
     with patch.object(OCRAgentTesseract, "get_layout_from_image", return_value=mock_ocr_layout):
         ocr_agent = OCRAgent.get_agent(language="eng")

@@ -1,0 +1,68 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1222 >>
+stream
+BT /F2 16 Tf 80 700 Td (Annual Sales by Region) Tj ET
+BT /F1 11 Tf 80 670 Td (The table below lists unit sales for each region over three years.) Tj ET
+BT /F2 11 Tf 90 579 Td (Region) Tj ET
+BT /F2 11 Tf 260 579 Td (2021) Tj ET
+BT /F2 11 Tf 380 579 Td (2022) Tj ET
+BT /F2 11 Tf 500 579 Td (2023) Tj ET
+BT /F1 11 Tf 90 566 Td (North) Tj ET
+BT /F1 11 Tf 260 566 Td (1,204) Tj ET
+BT /F1 11 Tf 380 566 Td (1,350) Tj ET
+BT /F1 11 Tf 500 566 Td (1,512) Tj ET
+BT /F1 11 Tf 90 553 Td (South) Tj ET
+BT /F1 11 Tf 260 553 Td (980) Tj ET
+BT /F1 11 Tf 380 553 Td (1,045) Tj ET
+BT /F1 11 Tf 500 553 Td (1,110) Tj ET
+BT /F1 11 Tf 90 540 Td (East) Tj ET
+BT /F1 11 Tf 260 540 Td (1,530) Tj ET
+BT /F1 11 Tf 380 540 Td (1,610) Tj ET
+BT /F1 11 Tf 500 540 Td (1,705) Tj ET
+BT /F1 11 Tf 90 527 Td (West) Tj ET
+BT /F1 11 Tf 260 527 Td (870) Tj ET
+BT /F1 11 Tf 380 527 Td (925) Tj ET
+BT /F1 11 Tf 500 527 Td (990) Tj ET
+BT /F1 11 Tf 90 514 Td (Total) Tj ET
+BT /F1 11 Tf 260 514 Td (4,584) Tj ET
+BT /F1 11 Tf 380 514 Td (4,930) Tj ET
+BT /F1 11 Tf 500 514 Td (5,317) Tj ET
+0.5 w
+80 600 m 560 600 l S
+80 575 m 560 575 l S
+80 506 m 560 506 l S
+80 600 m 80 506 l S
+560 600 m 560 506 l S
+BT /F1 11 Tf 80 476 Td (Figures are in thousands of units.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000001525 00000 n 
+0000001595 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+1670
+%%EOF

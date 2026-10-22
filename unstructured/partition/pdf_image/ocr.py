@@ -1,16 +1,21 @@
 from __future__ import annotations
 
+import difflib
 import os
+import re
 import tempfile
+from collections import Counter
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
 import numpy as np
+from lxml.etree import ParserError
 
 # NOTE(yuming): Rename PIL.Image to avoid conflict with
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
 
+from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.common.common import copy_file_to_stream
@@ -301,7 +306,9 @@ def supplement_element_with_table_extraction(
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata fields "text_as_html" where
     the table's text content is rendered into a html string and "table_as_cells"
-    with the raw table cells output from table agent if env_config.EXTRACT_TABLE_AS_CELLS is True
+    with the raw table cells output from table agent if env_config.EXTRACT_TABLE_AS_CELLS is True.
+    The text of each such element is re-read row by row from its cells as described in
+    `table_text_in_row_order`.
     """
     from unstructured_inference.models.tables import cells_to_html
 
@@ -313,6 +320,7 @@ def supplement_element_with_table_extraction(
     table_ele_indices = np.where(elements.element_class_ids == table_id)[0]
     table_elements = elements.slice(table_ele_indices)
     padding = env_config.TABLE_IMAGE_CROP_PAD
+    elements.texts = elements.texts.astype(object)
     for i, element_coords in enumerate(table_elements.element_coords):
         cropped_image = image.crop(
             (
@@ -334,6 +342,10 @@ def supplement_element_with_table_extraction(
         # NOTE(christine): `tatr_cells == ""` means that the table was not recognized
         text_as_html = "" if tatr_cells == "" else cells_to_html(tatr_cells)
         elements.text_as_html[table_ele_indices[i]] = text_as_html
+        if text_as_html:
+            elements.texts[table_ele_indices[i]] = table_text_in_row_order(
+                elements.texts[table_ele_indices[i]], text_as_html
+            )
 
         if env_config.EXTRACT_TABLE_AS_CELLS:
             simple_table_cells = [
@@ -342,6 +354,49 @@ def supplement_element_with_table_extraction(
             elements.table_as_cells[table_ele_indices[i]] = simple_table_cells
 
     return elements
+
+
+def table_text_in_row_order(text: str | None, text_as_html: str) -> str | None:
+    """Return the text of a table read row by row from its inferred cells, when that is safe.
+
+    The aggregated text of a table region follows the order of the text blocks inside it, which
+    for many tables runs column by column. The cells in `text_as_html` are in row order (rows top
+    to bottom, cells left to right), so their text, joined by single spaces as in
+    `HtmlTable.text`, replaces `text` when both of these hold:
+
+    - The cells contain at least `TABLE_TEXT_MIN_WORD_COVERAGE` of the words of `text`. Below
+      that the inferred structure dropped part of the table and `text` is more complete.
+    - The word-order similarity between `text` and the cells is below
+      `TABLE_TEXT_MAX_ORDER_SIMILARITY`. Cell text comes from a separate OCR pass over the table
+      image, so when `text` already lists its words in about the same order, replacing it would
+      only trade its characters for OCR characters.
+
+    Otherwise, and when `text` has no words or `text_as_html` cannot be parsed, `text` is
+    returned unchanged.
+    """
+    words = _words(text or "")
+    if not words:
+        return text
+
+    try:
+        cells_text = HtmlTable.from_html_text(text_as_html).text
+    except (ParserError, ValueError):
+        return text
+
+    cell_words = _words(cells_text)
+    coverage = sum((Counter(words) & Counter(cell_words)).values()) / len(words)
+    if coverage < env_config.TABLE_TEXT_MIN_WORD_COVERAGE:
+        return text
+
+    order_similarity = difflib.SequenceMatcher(None, words, cell_words, autojunk=False).ratio()
+    if order_similarity >= env_config.TABLE_TEXT_MAX_ORDER_SIMILARITY:
+        return text
+
+    return cells_text
+
+
+def _words(text: str) -> list[str]:
+    return re.findall(r"\w+", text.lower())
 
 
 def get_table_tokens(
