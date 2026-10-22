@@ -20,6 +20,22 @@ env:
   DO_NOT_TRACK: "1"
 
 jobs:
+  check-version:
+    # Pushes have already landed; enforce ordering before merge, including the queue.
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    runs-on: ubuntu-latest
+    steps:
+      # Keep the default PR merge ref: a stale head can contain an old version.
+      - uses: actions/checkout@v4
+      - name: Test version guard
+        run: bash scripts/test-check-new-release-version.sh
+      - name: Check merge-result version
+        env:
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
+        run: |
+          git fetch --no-tags origin "$BASE_SHA"
+          VERSION_BASE_REF="$BASE_SHA" bash scripts/check-new-release-version.sh
+
   setup:
     strategy:
       matrix:
