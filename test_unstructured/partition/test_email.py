@@ -364,6 +364,23 @@ def test_partition_email_accepts_non_ascii_addresses():
     assert element.metadata.sent_to == ["Jürgen <jürgen@beispiel.de>", "alice@example.com"]
 
 
+def test_partition_email_drops_the_empty_entry_of_an_address_group():
+    # -- RFC 5322 group syntax: "undisclosed-recipients:;" names a group with no members --
+    msg = EmailMessage()
+    msg["From"] = "alice@example.com"
+    msg["To"] = "undisclosed-recipients:;"
+    msg["Cc"] = "Team: bob@example.com, carol@example.com;"
+    msg["Bcc"] = "undisclosed-recipients:;"
+    msg.set_content("Hello")
+
+    element = partition_email(file=io.BytesIO(msg.as_bytes()))[0]
+
+    assert element.metadata.sent_from == ["alice@example.com"]
+    assert element.metadata.sent_to is None
+    assert element.metadata.cc_recipient == ["bob@example.com", "carol@example.com"]
+    assert element.metadata.bcc_recipient is None
+
+
 # -- .metadata.filename --------------------------------------------------------------------------
 
 
