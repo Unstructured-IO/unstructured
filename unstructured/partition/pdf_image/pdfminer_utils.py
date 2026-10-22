@@ -8,7 +8,13 @@ from pdfminer import settings as pdfminer_settings
 from pdfminer.cmapdb import CMap, CMapDB
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTextLine
-from pdfminer.pdffont import PDFCIDFont, PDFFontError
+from pdfminer.pdffont import (
+    PDFCIDFont,
+    PDFFontError,
+    PDFTrueTypeFont,
+    PDFType1Font,
+    PDFType3Font,
+)
 from pdfminer.pdfinterp import LITERAL_FONT, PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdftypes import (
@@ -255,27 +261,70 @@ class CustomPDFCIDFont(PDFCIDFont):
             return CMap()
 
 
-class CustomPDFResourceManager(PDFResourceManager):
-    """A resource manager that uses CustomPDFCIDFont for CID font construction.
+class GlyphNameFallbackMixin:
+    """Recover characters that a simple font's ToUnicode CMap maps to U+0000.
 
-    This ensures embedded CMap streams are resolved during font construction,
-    not after, so all constructor-time state (WMode, widths) is correct.
+    Some producers emit ToUnicode entries of ``<0000>`` for glyphs they could not map,
+    most often ligatures such as "fi", "ff" and "ffi". pdfminer.six trusts the CMap and
+    emits a NUL character in place of the glyph, so "efficient" comes out as "e\\x00cient".
+    The font's encoding usually still names the glyph (``/Differences [... /ffi ...]``),
+    and that name maps to the right character, so it is used whenever the CMap yields NUL.
+    """
+
+    cid2unicode: dict[int, str]
+
+    def to_unichr(self, cid: int) -> str:
+        text = super().to_unichr(cid)  # type: ignore[misc]
+        if text == "\x00":
+            return self.cid2unicode.get(cid) or text
+        return text
+
+
+class CustomPDFType1Font(GlyphNameFallbackMixin, PDFType1Font):
+    pass
+
+
+class CustomPDFTrueTypeFont(GlyphNameFallbackMixin, PDFTrueTypeFont):
+    pass
+
+
+class CustomPDFType3Font(GlyphNameFallbackMixin, PDFType3Font):
+    pass
+
+
+_CUSTOM_FONT_CLASSES = {
+    "Type1": CustomPDFType1Font,
+    "MMType1": CustomPDFType1Font,
+    "TrueType": CustomPDFTrueTypeFont,
+    "Type3": CustomPDFType3Font,
+    "CIDFontType0": CustomPDFCIDFont,
+    "CIDFontType2": CustomPDFCIDFont,
+}
+
+
+class CustomPDFResourceManager(PDFResourceManager):
+    """A resource manager that constructs the custom font classes above.
+
+    CID fonts resolve embedded CMap streams during construction, so all constructor-time
+    state (WMode, widths) is correct; simple fonts recover glyphs that their ToUnicode CMap
+    maps to U+0000. Type0 fonts are delegated to pdfminer, which builds their descendant
+    font through this method again, so they end up on the custom CID font class too.
     """
 
     def get_font(self, objid, spec):
         subtype = literal_name(spec["Subtype"]) if "Subtype" in spec else "Type1"
+        font_class = _CUSTOM_FONT_CLASSES.get(subtype)
+        if font_class is None:
+            return super().get_font(objid, spec)
 
-        if subtype in ("CIDFontType0", "CIDFontType2"):
-            if objid and objid in self._cached_fonts:
-                return self._cached_fonts[objid]
-            if pdfminer_settings.STRICT and spec.get("Type") is not LITERAL_FONT:
-                raise PDFFontError("Type is not /Font")
-            font = CustomPDFCIDFont(self, spec)
-            if objid and self.caching:
-                self._cached_fonts[objid] = font
-            return font
-
-        return super().get_font(objid, spec)
+        if objid and objid in self._cached_fonts:
+            return self._cached_fonts[objid]
+        if pdfminer_settings.STRICT and spec.get("Type") is not LITERAL_FONT:
+            raise PDFFontError("Type is not /Font")
+        font = font_class(self, spec)
+        if objid and self.caching:
+            self._cached_fonts[objid] = font
+        return font
 
 
 class CustomPDFPageInterpreter(PDFPageInterpreter):
