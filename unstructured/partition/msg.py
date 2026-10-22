@@ -91,16 +91,14 @@ class MsgPartitionerOptions:
         None of these metadata fields change based on the element, so we just compute it once.
         """
         msg = self.msg
+        # -- header names are case-insensitive; Outlook writes `CC:`, `BCC:` and `Message-ID:` --
+        headers = {name.lower(): value for name, value in msg.message_headers.items()}
 
         sent_from = [s.strip() for s in sender.split(",")] if (sender := msg.sender) else None
         sent_to = [r.email_address for r in msg.recipients] or None
-        bcc_recipient = (
-            [c.strip() for c in bcc.split(",")] if (bcc := msg.message_headers.get("Bcc")) else None
-        )
-        cc_recipient = (
-            [c.strip() for c in cc.split(",")] if (cc := msg.message_headers.get("Cc")) else None
-        )
-        if email_message_id := msg.message_headers.get("Message-Id"):
+        bcc_recipient = [c.strip() for c in bcc.split(",")] if (bcc := headers.get("bcc")) else None
+        cc_recipient = [c.strip() for c in cc.split(",")] if (cc := headers.get("cc")) else None
+        if email_message_id := headers.get("message-id"):
             email_message_id = re.sub(r"^<|>$", "", email_message_id)  # Strip angle brackets
 
         element_metadata = ElementMetadata(
