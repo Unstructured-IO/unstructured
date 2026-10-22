@@ -521,7 +521,7 @@ def test_partition_pptx_hierarchy_sample_document():
     test_cases = [
         (0, None, "b2859226ba1f9243fb3f1b2ace889f43"),
         (1, "b2859226ba1f9243fb3f1b2ace889f43", "d13f8827e94541c8b818b0df8f942526"),
-        (None, None, "cbb95b030de22979af6bfa42969c8202"),
+        (None, "d13f8827e94541c8b818b0df8f942526", "cbb95b030de22979af6bfa42969c8202"),
         (0, None, "e535f799d1f0e79d6777efa873a16ce1"),
         (1, "e535f799d1f0e79d6777efa873a16ce1", "f02bbfb417ad60daa2ba35080e96262f"),
         (0, "f02bbfb417ad60daa2ba35080e96262f", "414dfce72ea53cd4649176af0d62a4c1"),
@@ -529,7 +529,7 @@ def test_partition_pptx_hierarchy_sample_document():
         (1, "414dfce72ea53cd4649176af0d62a4c1", "a33333f527851f700ca175acd04b8a2c"),
         (2, "a33333f527851f700ca175acd04b8a2c", "6f1b87689e4da2b0fb865bc5f92d5702"),
         (0, "f02bbfb417ad60daa2ba35080e96262f", "3f58e0be3b8e8b15cba7adc4eae68586"),
-        (None, None, "e5de1b503e64da424fb7d8113371e16d"),
+        (None, "f02bbfb417ad60daa2ba35080e96262f", "e5de1b503e64da424fb7d8113371e16d"),
         (0, None, "8319096532fe2e55f66c491ea8313150"),
         (0, "8319096532fe2e55f66c491ea8313150", "17a7e78277ab131a627cb4538bab7390"),
         (0, "8319096532fe2e55f66c491ea8313150", "41a9e1d0390f4edd77181142ceae51bc"),
@@ -543,8 +543,8 @@ def test_partition_pptx_hierarchy_sample_document():
         (1, "7f647b1f0f20c3db40c36ab57d9a5550", "6ec455f5f19782facf184886876c9a66"),
         (2, "6ec455f5f19782facf184886876c9a66", "5614b00c3f6bff23ebba1360e10f6428"),
         (0, "8319096532fe2e55f66c491ea8313150", "2f57a8d4182e6fd5bd5842b0a2d9841b"),
-        (None, None, "4120066d251ba675ade42e8a167ca61f"),
-        (None, None, "efb9d74b4f8be6308c9a9006da994e12"),
+        (None, "8319096532fe2e55f66c491ea8313150", "4120066d251ba675ade42e8a167ca61f"),
+        (None, "8319096532fe2e55f66c491ea8313150", "efb9d74b4f8be6308c9a9006da994e12"),
         (0, None, "fd08cacbaddafee5cbacc02528536ee5"),
     ]
 
