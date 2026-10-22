@@ -32,6 +32,12 @@ jobs:
           RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
         run: |
           bash scripts/post-release-dev-bump.sh "$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+      - name: Verify published release
+        if: steps.plan.outputs.action == 'bump'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: bash scripts/post-release-dev-bump.sh --verify-release "$RELEASE_TAG"
       - name: Check PR token
         if: steps.plan.outputs.action == 'bump'
         env:

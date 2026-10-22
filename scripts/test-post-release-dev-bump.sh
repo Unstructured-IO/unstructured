@@ -44,3 +44,15 @@ NEXT_VERSION=0.27.36-dev
 sed "s/^\(__version__ = \"\)[^\"]*\(\"\)/\1$NEXT_VERSION\2/" unstructured/__version__.py >"$tmp/updated"
 [[ $(cat "$tmp/updated") == '__version__ = "0.27.36-dev"  # pragma: no cover' ]]
 echo 'ok - update preserves version-file comment'
+
+# Mock the read-only GitHub query; no network or credentials are needed.
+gh() {
+  [[ $* == 'release view 0.27.35 --json isDraft,isPrerelease,publishedAt --jq '* ]] || return 2
+  printf '%s\n' "$MOCK_PUBLISHED"
+  return "$MOCK_STATUS"
+}
+export -f gh
+export MOCK_PUBLISHED=true MOCK_STATUS=0
+check 0 '' --verify-release 0.27.35
+MOCK_PUBLISHED=false check 1 'published final GitHub Release' --verify-release 0.27.35
+MOCK_STATUS=1 check 1 'published final GitHub Release' --verify-release 0.27.35

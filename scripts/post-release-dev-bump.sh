@@ -33,7 +33,17 @@ plan_bump() {
   fi
 }
 
-if [[ $# == 1 ]]; then
+verify_release() {
+  local published
+  if ! published=$(gh release view "$1" --json isDraft,isPrerelease,publishedAt --jq '.isDraft == false and .isPrerelease == false and .publishedAt != null') || [[ $published != true ]]; then
+    echo "::error::Tag $1 must identify a published final GitHub Release. No changes made." >&2
+    return 1
+  fi
+}
+
+if [[ ${1:-} == --verify-release ]]; then
+  verify_release "$2"
+elif [[ $# == 1 ]]; then
   plan_bump "$1" "$(read_version HEAD)"
 else
   plan_bump "$@"
