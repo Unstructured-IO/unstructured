@@ -296,6 +296,18 @@ class ENVConfig:
         return self._get_float("TEXT_COVERAGE_THRESHOLD", 0.25)
 
     @property
+    def TABLE_TEXT_MIN_WORD_COVERAGE(self) -> float:
+        """the minimum share of a table element's words that its inferred cells must contain for
+        the element text to be re-read row by row from the cells"""
+        return self._get_float("TABLE_TEXT_MIN_WORD_COVERAGE", 0.9)
+
+    @property
+    def TABLE_TEXT_MAX_ORDER_SIMILARITY(self) -> float:
+        """the word-order similarity between a table element's text and its inferred cells at or
+        above which the element text is considered already in row order and is kept as is"""
+        return self._get_float("TABLE_TEXT_MAX_ORDER_SIMILARITY", 0.8)
+
+    @property
     def PDF_CHAR_DUPLICATE_THRESHOLD(self) -> float:
         """Maximum pixel distance to consider two characters as duplicates (fake bold rendering).
 

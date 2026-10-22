@@ -29,6 +29,7 @@ from unstructured_inference.inference.layoutelement import LayoutElement
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
+from unstructured.common.html_table import HtmlTable
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
@@ -39,6 +40,7 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
+    Table,
     Text,
     Title,
 )
@@ -1411,6 +1413,22 @@ def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
     # numerical values with `strategy=PartitionStrategy.OCR_ONLY`
     filename = example_doc_path("pdf/all-number-table.pdf")
     assert pdf.partition_pdf(filename, strategy=PartitionStrategy.OCR_ONLY)
+
+
+def test_partition_pdf_hi_res_reads_table_text_by_rows():
+    # -- the text layer lays the table columns out as separate text blocks, so the text
+    # -- aggregated for the table region runs column by column
+    filename = example_doc_path("pdf/table-column-blocks.pdf")
+
+    elements = pdf.partition_pdf(
+        filename, strategy=PartitionStrategy.HI_RES, infer_table_structure=True
+    )
+
+    (table,) = [e for e in elements if isinstance(e, Table)]
+    assert table.text.startswith("Region 2021 2022 2023 North 1,204 1,350 1,512 South 980")
+    assert table.text == HtmlTable.from_html_text(table.metadata.text_as_html).text
+    (table_chunk,) = [c for c in chunk_by_title(elements) if isinstance(c, Table)]
+    assert table_chunk.text == table.text
 
 
 # As of pdfminer 221105, this pdf throws an error and requires a workaround
