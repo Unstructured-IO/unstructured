@@ -286,3 +286,12 @@ def test_partition_tsv_with_implicit_index_columns_matches_pandas_within_the_lim
         index=False, header=True, na_rep=""
     )
     assert table.text == HtmlTable.from_html_text(expected).text
+
+
+def test_partition_tsv_reads_each_cell_as_written(tmp_path: Path):
+    file_path = tmp_path / "cells.tsv"
+    file_path.write_text("name\tqty\tstatus\nPen\t12\tN/A\nInk\t\tNULL\n")
+
+    element = partition_tsv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name qty status Pen 12 N/A Ink NULL"

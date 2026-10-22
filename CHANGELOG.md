@@ -4,7 +4,7 @@
 
 - **Extract text from vector-heavy PDFs with the `fast` strategy.** `partition_pdf` skips PDFMiner text extraction when `is_pdf_too_complex` flags a PDF, which leaves `fast` with no text source, so drawing-heavy PDFs (CAD and engineering sheets, or any page whose graphics operators outnumber its text operators 20:1 past 10,000 operators) silently returned zero elements. This affected PDFs of 1 MB or more since 0.21.12 and every PDF since 0.27.0, when the check began inspecting small files. `fast` now extracts these PDFs with PDFMiner, and raises `UnprocessableEntityError` for a PDF whose content streams exceed the decoding limits instead of returning nothing. Other strategies still skip text extraction for both cases. The new `pdf_complexity` reports which reason applies; `is_pdf_too_complex` is unchanged.
 
-## 0.27.34-dev4
+## 0.27.34-dev5
 
 ### Enhancements
 
@@ -12,6 +12,8 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
+
+- **Read CSV and TSV cells as the file holds them.** `partition_csv()` and `partition_tsv()` left Pandas to interpret every cell, so a cell that says `N/A`, `NULL` or `None` came out empty, a column of whole numbers with one empty cell read as floats (`12` became `12.0`), and a code such as `007` lost its leading zeros. Each cell is now read as text, exactly as written.
 
 - **Drop empty email address-group entries.** An empty group such as `undisclosed-recipients:;` now produces no recipient instead of an empty string. Groups with members retain their addresses.
 
