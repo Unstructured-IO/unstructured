@@ -349,6 +349,56 @@ def test_catch_overlapping_and_nested_bboxes_keeps_category_past_element_99(n_fi
     assert overlapping_cases[0]["overlapping_case"] == "nested Title in Table"
 
 
+def test_catch_overlapping_and_nested_bboxes_returns_no_cases_for_no_elements():
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes([])
+
+    assert overlapping_flag is False
+    assert overlapping_cases == []
+
+
+def test_catch_overlapping_and_nested_bboxes_compares_elements_that_have_no_page_number():
+    # -- elements from a partitioner that assigns no page-number are all on page 1 --
+    elements = [
+        Title(
+            text="a nested title",
+            coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
+            coordinate_system=PixelSpace(width=20, height=20),
+        ),
+        NarrativeText(
+            text="text in the same box",
+            coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
+            coordinate_system=PixelSpace(width=20, height=20),
+        ),
+    ]
+
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(elements)
+
+    assert overlapping_flag is True
+    assert overlapping_cases[0]["overlapping_case"] == "nested NarrativeText in Title"
+
+
+def test_catch_overlapping_and_nested_bboxes_handles_pages_that_are_not_in_ascending_order():
+    elements = [
+        Title(
+            text="title on the second page",
+            coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
+            coordinate_system=PixelSpace(width=20, height=20),
+            metadata=ElementMetadata(page_number=2),
+        ),
+        NarrativeText(
+            text="text on the first page",
+            coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
+            coordinate_system=PixelSpace(width=20, height=20),
+            metadata=ElementMetadata(page_number=1),
+        ),
+    ]
+
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(elements)
+
+    assert overlapping_flag is False
+    assert overlapping_cases == []
+
+
 def test_only_returns_singleton_iterable():
     singleton_iterable = [42]
     result = utils.only(singleton_iterable)

@@ -1,8 +1,6 @@
-## 0.27.35-dev0
-
-### Fixes
-
-- **Read the `Cc`, `Bcc` and `Message-ID` headers of an Outlook message in any letter case.** `partition_msg()` looked these headers up as `Cc`, `Bcc` and `Message-Id`, but header names are case-insensitive. Outlook writes `CC`, `BCC` and `Message-ID`, and the Gmail message in `example-docs/fake-email.msg` has `Message-ID`, so such messages got no `cc_recipient`, `bcc_recipient` or `email_message_id` metadata. The headers are now matched without regard to case.
+> This changelog is frozen. From the next release onward, release notes live in
+> [GitHub Releases](https://github.com/Unstructured-IO/unstructured/releases).
+> The history below is preserved; do not add entries or rename version headings.
 
 ## 0.27.34
 
