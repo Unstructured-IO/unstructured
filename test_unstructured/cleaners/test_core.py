@@ -258,6 +258,28 @@ the fox met a friendly bear."""
     ]
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        # -- short items, which used to lose their bullets to the short-lines split --
+        ("Shopping list:\n• milk\n• bread", "Shopping list:\n\n• milk \n\n• bread"),
+        # -- long items, which used to be joined into the lead-in line --
+        (
+            "Shopping list:\n• fresh milk and cheese from the farm market\n• bread",
+            "Shopping list:\n\n• fresh milk and cheese from the farm market \n\n• bread",
+        ),
+        (
+            "Requirements:\n- install the latest Python release first\n- pip",
+            "Requirements:\n\n- install the latest Python release first \n\n- pip",
+        ),
+    ],
+)
+def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(
+    text: str, expected: str
+):
+    assert core.group_broken_paragraphs(text) == expected
+
+
 def test_group_bullet_paragraph_with_e_bullets():
     text = """e The big red fox
 is walking down the lane.

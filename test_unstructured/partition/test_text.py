@@ -117,6 +117,12 @@ def test_partition_text_from_filename_raises_econding_error(
         partition_text(filename=filename, encoding=encoding)
 
 
+def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line():
+    elements = partition_text(text="Shopping list:\n• milk\n• bread\n")
+
+    assert elements == [Title("Shopping list:"), ListItem("milk"), ListItem("bread")]
+
+
 def test_partition_text_from_file():
     with open(example_doc_path("fake-text.txt"), "rb") as f:
         elements = partition_text(file=f)

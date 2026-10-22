@@ -134,6 +134,24 @@ def group_bullet_paragraph(paragraph: str) -> list:
     return clean_paragraphs
 
 
+def _split_off_bullet_list(paragraph: str) -> list[str]:
+    """Split a paragraph before the first of its lines that starts with a bullet.
+
+    A list that follows its lead-in line without a blank line, such as "Shopping list:" followed
+    by "• milk" and "• bread" on the next lines, is then grouped as bullets. As one paragraph, its
+    bullets were split off from their items when the lines were short, and its items were joined
+    into the lead-in line when they were long.
+    """
+    lines = paragraph.split("\n")
+    lead_in = lines[0].strip()
+    if UNICODE_BULLETS_RE.match(lead_in) or E_BULLET_PATTERN.match(lead_in):
+        return [paragraph]
+    for idx in range(1, len(lines)):
+        if UNICODE_BULLETS_RE.match(lines[idx].strip()):
+            return ["\n".join(lines[:idx]), "\n".join(lines[idx:])]
+    return [paragraph]
+
+
 def group_broken_paragraphs(
     text: str,
     line_split: re.Pattern[str] = PARAGRAPH_PATTERN_RE,
@@ -159,7 +177,11 @@ def group_broken_paragraphs(
         else re.compile(PARAGRAPH_PATTERN)
     )
 
-    paragraphs = paragraph_split.split(text)
+    paragraphs = [
+        part
+        for paragraph in paragraph_split.split(text)
+        for part in _split_off_bullet_list(paragraph)
+    ]
     clean_paragraphs = []
     for paragraph in paragraphs:
         stripped_par = paragraph.strip()

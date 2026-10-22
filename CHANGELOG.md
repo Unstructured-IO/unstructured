@@ -1,4 +1,4 @@
-## 0.27.34-dev6
+## 0.27.34-dev7
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
+
+- **Keep a bulleted list that follows its lead-in line as list items.** When a list started on the line after its lead-in, with no blank line between them, `group_broken_paragraphs()` treated the lead-in and the list as one paragraph. With short items, the split into short lines cut every bullet off its item, so `partition_text()` returned `Shopping list:`, `milk` and `bread` as titles; with long items, all of them were joined into the lead-in line as one narrative text. The list now starts a paragraph of its own and its items become `ListItem` elements.
 
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 
