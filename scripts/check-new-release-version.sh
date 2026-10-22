@@ -85,8 +85,9 @@ main() {
   if [[ $# == 3 ]]; then
     tags=$(cat "$3")
   else
-    git fetch --tags --force origin
-    tags=$(git tag --list)
+    # Only names are needed; avoid downloading tagged commits and history.
+    tags=$(git ls-remote --tags --refs origin | cut -f2)
+    tags=${tags//refs\/tags\//}
   fi
   while IFS= read -r tag; do
     parse_version "$tag" || continue
