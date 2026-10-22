@@ -504,3 +504,12 @@ def test_partition_tsv_html_disabled_many_short_rows_keeps_ordered_payload(
     assert " ".join(chunk.text for chunk in chunks).split() == ["a", "b"] * row_count
     encode = tiktoken.get_encoding("cl100k_base").encode
     assert all(len(encode(chunk.text)) <= 100 for chunk in chunks)
+
+
+def test_partition_tsv_reads_each_cell_as_written(tmp_path: Path):
+    file_path = tmp_path / "cells.tsv"
+    file_path.write_text("name\tqty\tstatus\nPen\t12\tN/A\nInk\t\tNULL\n")
+
+    element = partition_tsv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name qty status Pen 12 N/A Ink NULL"

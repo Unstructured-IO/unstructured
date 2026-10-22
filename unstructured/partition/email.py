@@ -53,6 +53,18 @@ def _format_address(name: str, address: str) -> str:
     return f"{quotes}{name}{quotes} <{address}>"
 
 
+def _format_addresses(headers: list[str]) -> list[str] | None:
+    """The addresses in `headers`, formatted, or None when there are none.
+
+    An empty group such as "undisclosed-recipients:;" holds no address, and `getaddresses()`
+    reports it as `("", "")`, so entries without an address are dropped.
+    """
+    addrs = [
+        _format_address(name, addr) for name, addr in email.utils.getaddresses(headers) if addr
+    ]
+    return addrs or None
+
+
 @partition_runtime_telemetry("eml")
 def partition_email(
     filename: str | None = None,
@@ -151,8 +163,7 @@ class EmailPartitioningContext:
         bccs = self.msg.get_all("Bcc")
         if not bccs:
             return None
-        addrs = email.utils.getaddresses(bccs)
-        return [_format_address(*addr) for addr in addrs]
+        return _format_addresses(bccs)
 
     @cached_property
     def body_part(self) -> MIMEPart | None:
@@ -169,8 +180,7 @@ class EmailPartitioningContext:
         ccs = self.msg.get_all("Cc")
         if not ccs:
             return None
-        addrs = email.utils.getaddresses(ccs)
-        return [_format_address(*addr) for addr in addrs]
+        return _format_addresses(ccs)
 
     @cached_property
     def content_type_preference(self) -> tuple[str, ...]:
@@ -204,9 +214,8 @@ class EmailPartitioningContext:
         if not froms:
             # -- this should never occur because the From: header is mandatory per RFC 5322 --
             return None
-        addrs = email.utils.getaddresses(froms)
-        formatted_addrs = [_format_address(*addr) for addr in addrs]
-        return formatted_addrs[0]
+        formatted_addrs = _format_addresses(froms)
+        return formatted_addrs[0] if formatted_addrs else None
 
     @cached_property
     def message_id(self) -> str | None:
@@ -294,8 +303,7 @@ class EmailPartitioningContext:
         tos = self.msg.get_all("To")
         if not tos:
             return None
-        addrs = email.utils.getaddresses(tos)
-        return [_format_address(*addr) for addr in addrs]
+        return _format_addresses(tos)
 
     @cached_property
     def _filesystem_last_modified(self) -> str | None:

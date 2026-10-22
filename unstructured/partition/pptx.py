@@ -48,6 +48,15 @@ from unstructured.utils import is_temp_file_path
 DETECTION_ORIGIN = "pptx"
 
 
+def _break_lines(text: str) -> str:
+    """Line breaks (Shift+Enter, `a:br`) as newlines.
+
+    python-pptx reads a line break as a vertical tab (`\\v`), which would otherwise reach the
+    element text.
+    """
+    return text.replace("\v", "\n")
+
+
 def register_picture_partitioner(picture_partitioner: AbstractPicturePartitioner) -> None:
     """Specify a pluggable sub-partitioner to be used for partitioning PPTX images."""
     PptxPartitionerOptions.register_picture_partitioner(picture_partitioner)
@@ -199,7 +208,7 @@ class _PptxPartitioner:
         # -- not all notes slides have a text-frame (it's created on first use) --
         if not notes_text_frame:
             return
-        notes_text = notes_text_frame.text.strip()
+        notes_text = _break_lines(notes_text_frame.text).strip()
 
         # -- not all notes text-frams contain text (if it's all deleted the text-frame remains) --
         if not notes_text:
@@ -221,7 +230,7 @@ class _PptxPartitioner:
             return
 
         for paragraph in shape.text_frame.paragraphs:
-            text = paragraph.text
+            text = _break_lines(paragraph.text)
             if text.strip() == "":
                 continue
 
@@ -277,7 +286,7 @@ class _PptxPartitioner:
 
         depth = 0
         for paragraph in shape.text_frame.paragraphs:
-            text = paragraph.text
+            text = _break_lines(paragraph.text)
             if text.strip() == "":
                 continue
 
