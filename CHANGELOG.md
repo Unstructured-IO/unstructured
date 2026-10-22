@@ -1,4 +1,4 @@
-## 0.27.34-dev6
+## 0.27.34-dev7
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 
 ### Fixes
 
+- **Recognize US addresses in Alabama and Wyoming.** The state alternation in `US_CITY_STATE_ZIP_PATTERN` was wrapped in literal `{` and `}`, so `Alabama`, `Wyoming`, `AL` and `WY` matched only with a brace attached. `Birmingham, AL 35203` and `Cheyenne, Wyoming 82001` came out as `Title` from `partition_text` and as `Text` from `partition_html` and `partition_docx`; they are now `Address` elements like the other states.
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 
 - **Read CSV and TSV cells as the file holds them.** `partition_csv()` and `partition_tsv()` left Pandas to interpret every cell, so a cell that says `N/A`, `NULL` or `None` came out empty, a column of whole numbers with one empty cell read as floats (`12` became `12.0`), and a code such as `007` lost its leading zeros. Each cell is now read as text, exactly as written.

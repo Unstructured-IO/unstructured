@@ -225,6 +225,17 @@ def test_partition_text_captures_everything_even_with_linebreaks():
         assert element.metadata.filename is None
 
 
+def test_partition_text_recognizes_addresses_in_the_first_and_last_listed_states():
+    text = "Birmingham, AL 35203\n\nCheyenne, Wyoming 82001"
+
+    elements = partition_text(text=text)
+
+    assert elements == [
+        Address(text="Birmingham, AL 35203"),
+        Address(text="Cheyenne, Wyoming 82001"),
+    ]
+
+
 def test_partition_text_keeps_a_sentence_that_starts_with_an_email_address_narrative():
     text = (
         "billing@example.com\n"
