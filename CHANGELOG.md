@@ -1,8 +1,6 @@
-## 0.27.35-dev0
-
-### Fixes
-
-- **Keep a bulleted list that follows its lead-in line as list items.** When a list started on the line after its lead-in, with no blank line between them, `group_broken_paragraphs()` treated the lead-in and the list as one paragraph. With short items, the split into short lines cut every bullet off its item, so `partition_text()` returned `Shopping list:`, `milk` and `bread` as titles; with long items, all of them were joined into the lead-in line as one narrative text. The list now starts a paragraph of its own and its items become `ListItem` elements.
+> This changelog is frozen. From the next release onward, release notes live in
+> [GitHub Releases](https://github.com/Unstructured-IO/unstructured/releases).
+> The history below is preserved; do not add entries or rename version headings.
 
 ## 0.27.34
 
