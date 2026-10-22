@@ -31,8 +31,7 @@ jobs:
         env:
           RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
         run: |
-          current=$(sed -n 's/^__version__ = "\([^"]*\)"$/\1/p' unstructured/__version__.py)
-          bash scripts/post-release-dev-bump.sh "$RELEASE_TAG" "$current" >> "$GITHUB_OUTPUT"
+          bash scripts/post-release-dev-bump.sh "$RELEASE_TAG" >> "$GITHUB_OUTPUT"
       - name: Check PR token
         if: steps.plan.outputs.action == 'bump'
         env:
@@ -46,7 +45,8 @@ jobs:
         if: steps.plan.outputs.action == 'bump'
         env:
           NEXT_VERSION: ${{ steps.plan.outputs.next }}
-        run: printf '__version__ = "%s"\n' "$NEXT_VERSION" > unstructured/__version__.py
+        run: |
+          sed -i "s/^\(__version__ = \"\)[^\"]*\(\"\)/\1$NEXT_VERSION\2/" unstructured/__version__.py
       - name: Open development bump PR
         if: steps.plan.outputs.action == 'bump'
         id: pr

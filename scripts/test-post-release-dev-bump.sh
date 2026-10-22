@@ -25,3 +25,22 @@ check 1 'Unexpected main version' 0.27.35 0.27.36
 check 1 'Unexpected main version' 0.27.35 0.27.34
 check 1 'Unexpected main version' 0.27.35 0.27.35-dev9
 check 1 'Unexpected main version' 0.27.35 broken
+
+# Exercise main's version-file format, including its coverage comment.
+tmp=$(mktemp -d)
+export GIT_CONFIG_GLOBAL=/dev/null
+export GIT_CONFIG_NOSYSTEM=1
+mkdir "$tmp/repo"
+cd "$tmp/repo"
+git init -q
+git config user.name 'Bump test'
+git config user.email 'bump@example.invalid'
+mkdir unstructured
+printf '__version__ = "0.27.35"  # pragma: no cover\n' >unstructured/__version__.py
+git add .
+git commit -qm release
+check 0 'next=0.27.36-dev' 0.27.35
+NEXT_VERSION=0.27.36-dev
+sed "s/^\(__version__ = \"\)[^\"]*\(\"\)/\1$NEXT_VERSION\2/" unstructured/__version__.py >"$tmp/updated"
+[[ $(cat "$tmp/updated") == '__version__ = "0.27.36-dev"  # pragma: no cover' ]]
+echo 'ok - update preserves version-file comment'

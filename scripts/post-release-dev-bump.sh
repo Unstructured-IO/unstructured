@@ -33,4 +33,8 @@ plan_bump() {
   fi
 }
 
-plan_bump "$@"
+if [[ $# == 1 ]]; then
+  plan_bump "$1" "$(read_version HEAD)"
+else
+  plan_bump "$@"
+fi
