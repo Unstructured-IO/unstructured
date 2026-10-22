@@ -1,4 +1,4 @@
-## 0.27.34-dev6
+## 0.27.34-dev7
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
+
+- **Classify DOCX paragraphs with document languages.** Paragraph text classification previously always applied English heuristics, so non-English narrative text was misclassified. `partition_docx` now uses the caller-specified `languages`, or detects them from the document text when not provided, when checking for narrative text.
 
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 

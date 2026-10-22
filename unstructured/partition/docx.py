@@ -50,6 +50,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import rewind_if_spooled
+from unstructured.partition.common.lang import detect_languages
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -159,6 +160,7 @@ def partition_docx(
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
     strategy: str | None = None,
+    languages: list[str] | None = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -186,6 +188,9 @@ def partition_docx(
     starting_page_number
         Assign this number to the first page of this document and increment the page number from
         there.
+    languages
+        The languages present in the document, for use in language-aware element classification
+        and `metadata.languages`. Language is auto-detected when not provided.
     """
     opts = DocxPartitionerOptions.load(
         file=file,
@@ -194,6 +199,7 @@ def partition_docx(
         infer_table_structure=infer_table_structure,
         starting_page_number=starting_page_number,
         strategy=strategy,
+        languages=languages,
     )
 
     elements = _DocxPartitioner.iter_document_elements(opts)
@@ -223,12 +229,14 @@ class DocxPartitionerOptions:
         infer_table_structure: bool,
         starting_page_number: int = 1,
         strategy: str | None = None,
+        languages: list[str] | None = None,
     ):
         self._file = file
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
+        self._languages = languages
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
 
@@ -268,6 +276,16 @@ class DocxPartitionerOptions:
     def infer_table_structure(self) -> bool:
         """True when partitioner should compute and apply `text_as_html` metadata for tables."""
         return self._infer_table_structure
+
+    @cached_property
+    def languages(self) -> list[str]:
+        """The (human) languages present in the document, for language-aware classification.
+
+        User-specified `languages` when provided, otherwise detected from the document text.
+        Falls back to ["eng"] when no languages are available.
+        """
+        detected_languages = detect_languages(text=self._document_text, languages=self._languages)
+        return detected_languages if detected_languages is not None else ["eng"]
 
     @cached_property
     def last_modified(self) -> str | None:
@@ -327,6 +345,11 @@ class DocxPartitionerOptions:
         `unstructured.partition.utils.constants.PartitionStrategy` but resolve to str values.
         """
         return PartitionStrategy.HI_RES if self._strategy is None else self._strategy
+
+    @cached_property
+    def _document_text(self) -> str:
+        """The full text of the document, used for language detection."""
+        return " ".join(w_t.text or "" for w_t in self.document.element.body.xpath(".//w:t"))
 
     @cached_property
     def _document_contains_pagebreaks(self) -> bool:
@@ -1176,7 +1199,7 @@ class _DocxPartitioner:
             return Address
         if is_email_address(text):
             return EmailAddress
-        if is_possible_narrative_text(text):
+        if is_possible_narrative_text(text, languages=self._opts.languages):
             return NarrativeText
 
         return None
