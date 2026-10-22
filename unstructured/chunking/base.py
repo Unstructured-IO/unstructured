@@ -5,6 +5,7 @@ from __future__ import annotations
 import collections
 import copy
 import heapq
+import itertools
 import uuid
 from functools import cached_property
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, NamedTuple, Sequence, cast
@@ -21,6 +22,7 @@ from unstructured.documents.elements import (
     ConsolidationStrategy,
     Element,
     ElementMetadata,
+    Image,
     Table,
     TableChunk,
     Title,
@@ -44,6 +46,14 @@ CHUNK_MULTI_PAGE_DEFAULT: bool = True
 """When False, respect page-boundaries (no two elements from different page in same chunk).
 
 Only operative for "by_title" chunking strategy.
+"""
+
+SPLIT_ORIG_ELEMENTS_MAX_CHARS: int = 1_000_000
+"""Largest element, in characters of text, HTML and image payload, whose split chunks keep it.
+
+Every chunk split from an oversized element carries that whole element in
+`.metadata.orig_elements`, so serialized output grows with the square of the element size. Chunks
+split from a larger element get no `.metadata.orig_elements`.
 """
 
 BoundaryPredicate: TypeAlias = Callable[[Element], bool]
@@ -391,6 +401,15 @@ class ChunkingOptions:
                 " adjacent elements"
             )
 
+        # -- a negative `overlap` is a caller mistake, not a smaller overlap: on the
+        # -- character-split path it moves the remainder's start past the end of the fragment and
+        # -- silently deletes that many characters from the document, and with `overlap_all=True`
+        # -- `_text[-overlap:]` becomes a forward slice that repeats most of the chunk instead of
+        # -- its tail. Reject it here, as `new_after_n_chars` already is.
+        overlap_arg = self._kwargs.get("overlap")
+        if overlap_arg is not None and overlap_arg < 0:
+            raise ValueError(f"'overlap' argument must be >= 0, got {overlap_arg}")
+
         # -- overlap must be less than max-chars or the chunk text will never be consumed --
         if self.overlap >= hard_max:
             raise ValueError(
@@ -523,6 +542,55 @@ class PreChunker:
         return any(semantic_boundaries)
 
 
+class _MetadataOnlyImage(Image):
+    """Consolidation inputs for an empty-image run when originals are excluded."""
+
+    def __init__(self, image: Image):
+        super().__init__(text="")
+        self.field_values: dict[str, list[Any]] = {}
+        self._unique_values: dict[str, dict[Any, None]] = {}
+        self._record_ids: dict[str, dict[str, set[Any]]] = {}
+        self.add(image)
+
+    def add(self, image: Image) -> None:
+        strategies = ConsolidationStrategy.field_consolidation_strategies()
+        CS = ConsolidationStrategy
+        for name, value in image.metadata.known_fields.items():
+            if value is None:
+                continue
+            strategy = strategies[name]
+            if strategy is CS.DROP:
+                continue
+            if strategy is CS.FIRST:
+                self.field_values.setdefault(name, [value])
+            elif strategy is CS.LIST_CONCATENATE:
+                self.field_values.setdefault(name, [[]])[0].extend(value)
+            elif strategy is CS.LIST_UNIQUE:
+                unique = self._unique_values.setdefault(name, {})
+                kept = self.field_values.setdefault(name, [[]])[0]
+                for item in value:
+                    if item not in unique:
+                        unique[item] = None
+                        kept.append(item)
+            elif strategy is CS.STRING_CONCATENATE:
+                # Keep individual values: stripping a partially joined string would lose
+                # the separators contributed by empty values at either end of a run.
+                self.field_values.setdefault(name, []).append(value)
+            elif strategy is CS.DICT_LIST_UNIQUE:
+                merged = self.field_values.setdefault(name, [{}])[0]
+                record_ids = self._record_ids.setdefault(name, {})
+                for key, records in value.items():
+                    kept = merged.setdefault(key, [])
+                    seen = record_ids.setdefault(key, set())
+                    for record in records:
+                        record_id = tuple(sorted(record.items()))
+                        if record_id not in seen:
+                            seen.add(record_id)
+                            kept.append(record)
+            else:
+                raise NotImplementedError(f"metadata field {name!r} has no consolidation strategy")
+
+
 class PreChunkBuilder:
     """An element accumulator suitable for incrementally forming a pre-chunk.
 
@@ -562,7 +630,17 @@ class PreChunkBuilder:
             self._text_segments = []
             self._text_len = 0
 
-        self._elements.append(element)
+        if (
+            not self._opts.include_orig_elements
+            and isinstance(element, Image)
+            and not element.text.strip()
+        ):
+            if self._elements and isinstance(self._elements[-1], _MetadataOnlyImage):
+                self._elements[-1].add(element)
+            else:
+                self._elements.append(_MetadataOnlyImage(element))
+        else:
+            self._elements.append(element)
         if element.text:
             self._text_segments.append(element.text)
             # -- only track char-based length; token-based length computed on demand --
@@ -787,6 +865,24 @@ class PreChunk:
 # ================================================================================================
 
 
+def _payload_size(element: Element) -> int:
+    """Characters of text, HTML and image data `element` adds to `.metadata.orig_elements`."""
+    metadata = element.metadata
+    return (
+        len(element.text or "")
+        + len(metadata.text_as_html or "")
+        + len(metadata.image_base64 or "")
+    )
+
+
+def _warn_orig_elements_omitted(size: int) -> None:
+    logger.warning(
+        "Omitting .metadata.orig_elements from chunks split from an element of %d characters,"
+        " because each chunk would carry its own copy of the whole element.",
+        size,
+    )
+
+
 class _Chunker:
     """Forms chunks from a pre-chunk other than one containing only a `Table`.
 
@@ -797,6 +893,7 @@ class _Chunker:
         self._elements = list(elements)
         self._text = text
         self._opts = opts
+        self._omit_orig_elements = False
 
     @classmethod
     def iter_chunks(
@@ -821,6 +918,12 @@ class _Chunker:
 
         # -- emit first chunk --
         s, remainder = split(self._text)
+        # -- each chunk split from a very large element would repeat it in `.orig_elements` --
+        if remainder and self._opts.include_orig_elements and len(self._elements) == 1:
+            size = _payload_size(self._elements[0])
+            if size > SPLIT_ORIG_ELEMENTS_MAX_CHARS:
+                _warn_orig_elements_omitted(size)
+                self._omit_orig_elements = True
         yield CompositeElement(text=s, metadata=self._chunk_metadata())
 
         # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
@@ -859,6 +962,10 @@ class _Chunker:
 
         # -- collect all non-None field values in a list for each field, in element-order --
         for e in self._elements:
+            if isinstance(e, _MetadataOnlyImage):
+                for field_name, values in e.field_values.items():
+                    field_values[field_name].extend(values)
+                continue
             for field_name, value in iter_populated_fields(e.metadata):
                 field_values[field_name].append(value)
 
@@ -876,7 +983,7 @@ class _Chunker:
         "consolidated".
         """
         consolidated_metadata = ElementMetadata(**self._meta_kwargs)
-        if self._opts.include_orig_elements:
+        if self._opts.include_orig_elements and not self._omit_orig_elements:
             consolidated_metadata.orig_elements = self._orig_elements
         return consolidated_metadata
 
@@ -1126,9 +1233,23 @@ class _TableChunker:
         """
         table_id = str(uuid.uuid4())
         carried_header_row_count = max(0, num_carried_over_header_rows)
+        # -- each chunk split from a very large table would repeat it in `.orig_elements`; look
+        # -- ahead one pair because some split paths still produce a single chunk.
+        text_html_pairs = iter(text_html_pairs)
+        first_pairs = list(itertools.islice(text_html_pairs, 2))
+        size = _payload_size(self._table)
+        omit_orig_elements = (
+            len(first_pairs) > 1
+            and self._opts.include_orig_elements
+            and size > SPLIT_ORIG_ELEMENTS_MAX_CHARS
+        )
+        if omit_orig_elements:
+            _warn_orig_elements_omitted(size)
 
-        for chunk_index, (text, html) in enumerate(text_html_pairs):
+        for chunk_index, (text, html) in enumerate(itertools.chain(first_pairs, text_html_pairs)):
             metadata = self._metadata
+            if omit_orig_elements:
+                metadata.orig_elements = None
             if html is not None:
                 metadata.text_as_html = html
             else:

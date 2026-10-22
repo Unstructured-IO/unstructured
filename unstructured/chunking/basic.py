@@ -48,7 +48,9 @@ def chunk_elements(
         When `True` (default), add elements from pre-chunk to the `.metadata.orig_elements` field
         of the chunk(s) formed from that pre-chunk. Among other things, this allows access to
         original-element metadata that cannot be consolidated and is dropped in the course of
-        chunking.
+        chunking. Chunks split from an element larger than `SPLIT_ORIG_ELEMENTS_MAX_CHARS`
+        (1,000,000 characters of text, HTML and image data) get no `.metadata.orig_elements`,
+        since each of them would repeat the whole element.
     max_characters
         Hard maximum chunk length. No chunk will exceed this length. A single element that exceeds
         this length will be divided into two or more chunks using text-splitting. Mutually
