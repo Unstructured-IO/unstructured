@@ -1,4 +1,4 @@
-## 0.27.34-dev2
+## 0.27.34-dev3
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 
 ### Fixes
 
+- **Read a PowerPoint line break as a newline.** python-pptx returns a line break (Shift+Enter, `a:br`) as a vertical tab, so `partition_pptx()` put `\x0b` into the text of titles, text boxes and slide notes (`"Quarterly\x0bresults"`). It now reads `"Quarterly\nresults"`.
 - **`partition_json()` and `partition_ndjson()` now honor `encoding=`.** Both read the source with a hard-coded UTF-8 (`open(filename, encoding="utf8")`, and a bare `.decode()` for a file-like object), while the `encoding` argument callers pass -- directly or through `partition()` -- was swallowed by `**kwargs`. A UTF-16 or otherwise non-UTF-8 document therefore raised `UnicodeDecodeError` even when its encoding was stated explicitly. Both partitioners now accept `encoding`, and `partition()` forwards it to them. An explicit encoding is authoritative; when none is given, valid UTF-8 is preserved and charset detection is used only for bytes that are not valid UTF-8, so a detector's confident guess cannot silently rewrite text that would have decoded correctly. The existing file-like contract is unchanged: the stream is read once from its current position, an already-decoded `str` passes through, and the object is never reopened.
 
 ## 0.27.33
