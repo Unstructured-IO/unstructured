@@ -1,4 +1,4 @@
-## 0.27.34-dev6
+## 0.27.34-dev7
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
+
+- **`partition_email()` no longer drops the text after an inline attachment.** With the default `content_source="text/html"`, the body was the single part `EmailMessage.get_body()` returns. Apple Mail sends a message with a file placed inside its text as a `multipart/mixed` part holding an HTML part, the file, and another HTML part, so everything after the file was lost. The same happened to a mailing-list footer sent as a part of its own. Each inline text, alternative or related part of the `multipart/mixed` part that holds the body is now read, in order, and a part read as body text is not partitioned again as an attachment. A body with a second `multipart/alternative` part no longer raises `KeyError`.
 
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 

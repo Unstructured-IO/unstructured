@@ -1,0 +1,38 @@
+From: Sender <sender@example.com>
+To: Receiver <receiver@example.com>
+Subject: The quarterly report
+Date: Thu, 24 Sep 2026 10:00:00 +0200
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="alternative-boundary"
+
+--alternative-boundary
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Here is the report.
+
+<report.pdf>
+
+Let me know what you think.
+--alternative-boundary
+Content-Type: multipart/mixed; boundary="mixed-boundary"
+
+--mixed-boundary
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+<html><head></head><body><div>Here is the report.</div><div><br></div></body></html>
+--mixed-boundary
+Content-Type: application/pdf; name="report.pdf"
+Content-Disposition: inline; filename="report.pdf"
+Content-Transfer-Encoding: base64
+
+JVBERi0xLjQK
+--mixed-boundary
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+<html><head></head><body><div><br></div><div>Let me know what you think.</div></body></html>
+--mixed-boundary--
+
+--alternative-boundary--
