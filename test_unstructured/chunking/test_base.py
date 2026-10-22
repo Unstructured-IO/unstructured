@@ -679,28 +679,85 @@ class DescribeTextSplitterTokenMode:
         """Every whitespace run is evaluated once, so long tabs after short content stay cheap."""
         opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base", overlap=20)
         split = _TextSplitter(opts)
-        original_emitted_prefix = chunking_base._TextSplitter._emitted_prefix
+        original_trimmed_prefix = chunking_base._TextSplitter._trimmed_prefix
         candidate_work = [0, 0]
 
-        def counting_emitted_prefix(s: str, end: int) -> str:
+        def counting_trimmed_prefix(s: str, end: int) -> str:
             candidate_work[0] += 1
             candidate_work[1] += end
-            return original_emitted_prefix(s, end)
+            return original_trimmed_prefix(s, end)
 
         monkeypatch.setattr(
-            chunking_base._TextSplitter, "_emitted_prefix", staticmethod(counting_emitted_prefix)
+            chunking_base._TextSplitter, "_trimmed_prefix", staticmethod(counting_trimmed_prefix)
         )
 
         text = "a" + "\t" * 100_000 + "print(1)"
         fragment, remainder = split(text)
 
         assert fragment == "a"
-        assert remainder == "aprint(1)"
+        # -- the discarded tab run sits on the left of the cut, so the overlap must separate -- #
+        # -- the words it would otherwise fuse -- #
+        assert remainder == "a print(1)"
         assert opts.measure(fragment) <= 100
         # -- the old scan sliced a prefix at every tab position (~5e9 characters); each -- #
         # -- whitespace run now contributes one candidate evaluation -- #
         assert candidate_work[0] <= 64
         assert candidate_work[1] <= 64 * len(text)
+
+    @pytest.mark.parametrize(
+        ("run", "separators"),
+        [
+            (" ", None),
+            ("\n", None),
+            (" \n", None),
+            ("\t", ("\t",)),
+        ],
+    )
+    def it_bounds_preferred_separator_work_inside_one_whitespace_run(
+        self,
+        run: str,
+        separators: tuple[str, ...] | None,
+        _tiktoken_installed: None,
+        monkeypatch: pytest.MonkeyPatch,
+    ):
+        """A separator run covered by overlap is one candidate, not one per character."""
+        kwargs = {"max_tokens": 100, "tokenizer": "cl100k_base", "overlap": 20}
+        if separators is not None:
+            kwargs["text_splitting_separators"] = separators
+        opts = ChunkingOptions(**kwargs)
+        split = _TextSplitter(opts)
+        original_trimmed_prefix = chunking_base._TextSplitter._trimmed_prefix
+        candidate_work = [0, 0]
+
+        def counting_trimmed_prefix(s: str, end: int) -> str:
+            candidate_work[0] += 1
+            candidate_work[1] += end
+            return original_trimmed_prefix(s, end)
+
+        monkeypatch.setattr(
+            chunking_base._TextSplitter, "_trimmed_prefix", staticmethod(counting_trimmed_prefix)
+        )
+
+        text = "a" + run * 100_000 + "print(1)"
+        fragment, remainder = split(text)
+
+        assert fragment == "a"
+        assert remainder == "a print(1)"
+        assert candidate_work[0] <= 64
+        assert candidate_work[1] <= 64 * len(text)
+
+    def it_does_not_insert_a_space_into_an_unbroken_word(self, _tiktoken_installed: None):
+        """Overlap keeps concatenation direct when the cut had no whitespace on either side."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="gpt2", overlap=20)
+        text = "a!" * 200
+
+        fragment, remainder = _TextSplitter(opts)(text)
+
+        assert fragment
+        assert " " not in fragment
+        assert " " not in remainder
+        assert fragment in text
+        assert remainder in text
 
     @pytest.mark.parametrize("text", ["a!" * 128 + "\ud800", "a!" * 128 + "\ud83d\ude00"])
     def it_splits_text_with_surrogate_code_units(self, text: str, _tiktoken_installed: None):
@@ -757,13 +814,14 @@ class DescribePublicTokenChunking:
 
         assert [chunk.text for chunk in chunks] == [text]
 
+    @pytest.mark.parametrize("run", [" ", "\n", " \n", "\t"])
     @pytest.mark.parametrize("chunker", [chunk_elements, chunk_by_title])
-    def it_keeps_short_content_before_long_tabs_with_overlap(
-        self, chunker, _tiktoken_installed: None
+    def it_keeps_short_content_before_long_whitespace_with_overlap(
+        self, chunker, run: str, _tiktoken_installed: None
     ):
         import tiktoken
 
-        text = "a" + "\t" * 100_000 + "print(1)"
+        text = "a" + run * 100_000 + "print(1)"
         chunks = list(
             chunker([CodeSnippet(text)], max_tokens=100, tokenizer="cl100k_base", overlap=20)
         )
@@ -772,10 +830,11 @@ class DescribePublicTokenChunking:
         assert len(chunks) > 1
         assert all(len(encoder.encode_ordinary(chunk.text)) <= 100 for chunk in chunks)
         # -- the payload survives: the short content leads and the following code is not -- #
-        # -- lost to the indentation run (the overlap tail re-prefixes "a" to the code) -- #
+        # -- lost to the whitespace run (the overlap tail re-prefixes "a" to the code) -- #
         assert chunks[0].text == "a"
-        assert chunks[-1].text.endswith("print(1)")
-        assert "".join(chunk.text for chunk in chunks).endswith("print(1)")
+        assert chunks[-1].text == "a print(1)"
+        # -- the discarded whitespace is gone, but the words on either side do not fuse -- #
+        assert "aprint" not in "".join(chunk.text for chunk in chunks)
 
     @pytest.mark.parametrize("chunker", [chunk_elements, chunk_by_title])
     def it_chunks_a_text_with_a_lone_surrogate(self, chunker, _tiktoken_installed: None):

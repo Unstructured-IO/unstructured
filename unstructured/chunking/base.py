@@ -2948,19 +2948,23 @@ class _TextSplitter:
 
         # -- try each separator in order of preference --
         for pattern, sep_len in self._patterns:
+            # -- candidates inside one whitespace run all trim to the same fragment and --
+            # -- lstrip to the same remainder; evaluate the run once and skip the rest -- #
+            skip_from = -1
             # -- note: the (?r) flag makes finditer return matches right-to-left; the endpos
             # -- restriction means only candidates inside the token window are visited --
             for match in pattern.finditer(s, 0, min(len(s), search_end + sep_len)):
                 match_start, match_end = match.span()
-                fragment = s[:match_start].rstrip()
-                # -- check if fragment fits within token limit --
-                if measure(fragment) <= maxlen:
-                    # -- skip if fragment is too short (needs at least some content) --
-                    if not fragment or measure(fragment) == 0:
-                        continue
-                    # -- skip if prefix is wholly covered by overlap (cannot make progress) --
-                    if overlap > 0 and measure(fragment) <= overlap:
-                        continue
+                if skip_from >= 0 and match_start >= skip_from:
+                    continue
+                fragment = self._trimmed_prefix(s, match_start)
+                fragment_tokens = measure(fragment)
+                # -- a prefix wholly covered by overlap cannot make progress -- #
+                if (
+                    fragment
+                    and fragment_tokens <= maxlen
+                    and (overlap == 0 or fragment_tokens > overlap)
+                ):
                     raw_remainder = s[match_end:].lstrip()
                     # -- add overlap if configured --
                     if overlap > 0:
@@ -2969,12 +2973,16 @@ class _TextSplitter:
                         overlapped_remainder = (
                             (tail + " " + raw_remainder) if tail else raw_remainder
                         )
-                        if len(overlapped_remainder) >= len(s):
-                            continue
-                        return fragment, overlapped_remainder
-                    if len(raw_remainder) >= len(s):
-                        continue
-                    return fragment, raw_remainder
+                        if len(overlapped_remainder) < len(s):
+                            return fragment, overlapped_remainder
+                    elif len(raw_remainder) < len(s):
+                        return fragment, raw_remainder
+                # -- every separator in this whitespace run produces the same fragment and --
+                # -- remainder, so the next candidate can start left of the whole run -- #
+                run_start = match_start
+                while run_start > 0 and s[run_start - 1].isspace():
+                    run_start -= 1
+                skip_from = run_start
 
         # -- fallback: split on a whitespace boundary near the end of the token window --
         # -- Position zero cannot make progress. If even the first code point exceeds the token
@@ -3019,6 +3027,9 @@ class _TextSplitter:
             split_pos = len(fragment)
 
         is_whitespace_split = split_pos < len(s) and s[split_pos].isspace()
+        # -- A trailing whitespace run is trimmed from the fragment, so the cut has --
+        # -- whitespace on the left even when the next source character is not space -- #
+        left_trimmed = split_pos > len(fragment)
         # -- A whitespace-only fragment is content here (long code indentation), not a -- #
         # -- separator, so the rest of that whitespace must stay in the remainder. -- #
         if is_whitespace_split and fragment.strip():
@@ -3028,7 +3039,8 @@ class _TextSplitter:
 
         if overlap > 0 and fragment:
             tail = self._get_token_overlap_tail(fragment, overlap)
-            sep = " " if is_whitespace_split else ""
+            # -- do not fuse words across whitespace the split discarded on either side -- #
+            sep = " " if (is_whitespace_split or left_trimmed) else ""
             overlapped_remainder = (tail + sep + raw_remainder) if tail else raw_remainder
             if len(overlapped_remainder) < len(s):
                 return fragment, overlapped_remainder
@@ -3083,6 +3095,11 @@ class _TextSplitter:
         return low
 
     @staticmethod
+    def _trimmed_prefix(s: str, end: int) -> str:
+        """Text before `end` after the trailing whitespace every split removes."""
+        return s[:end].rstrip()
+
+    @staticmethod
     def _emitted_prefix(s: str, end: int) -> str:
         """Text a split at `end` would emit before whitespace trimming.
 
@@ -3090,7 +3107,7 @@ class _TextSplitter:
         an empty chunk: long code indentation is content and is emitted as-is. No prefix of a
         non-empty string is empty, which keeps splits making progress.
         """
-        return s[:end].rstrip() or s[:end]
+        return _TextSplitter._trimmed_prefix(s, end) or s[:end]
 
     def _get_token_overlap_tail(self, text: str, target_tokens: int) -> str:
         """Extract tail of text containing approximately `target_tokens` tokens.
