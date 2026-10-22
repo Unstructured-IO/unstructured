@@ -20,6 +20,31 @@ env:
   DO_NOT_TRACK: "1"
 
 jobs:
+  check-version:
+    # Push is skipped: this guard gates incoming changes, not the landed release commit.
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Test version guard
+        run: bash scripts/test-check-new-release-version.sh
+      - name: Check incoming version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          QUEUE_BASE: ${{ github.event.merge_group.base_sha }}
+        run: |
+          git fetch --force --tags origin
+          if [[ "$EVENT_NAME" == merge_group ]]; then
+            git fetch origin "$QUEUE_BASE"
+            base="$QUEUE_BASE"
+          else
+            git fetch origin +refs/heads/main:refs/remotes/origin/main
+            base=origin/main
+          fi
+          bash scripts/check-new-release-version.sh --git "$base"
+
   setup:
     strategy:
       matrix:

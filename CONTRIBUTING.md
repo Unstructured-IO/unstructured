@@ -76,14 +76,10 @@ The version format stays the same: several commits on `main` can share a
 1. Prepare a release PR that changes `unstructured/__version__.py` from the
    current development version to its final version, for example `0.27.34-dev3` to
    `0.27.34`. Do not edit the frozen changelog.
-2. Confirm that the final version has no existing tag or release. Compare
-   versions with `packaging.version.Version` normalization (and remove an
-   optional leading `v` from tags); `0.27.34-dev3` normalizes to `0.27.34.dev3`.
-   A final version may be introduced only by its release PR. Squash and merge
-   that PR so the final version is introduced in one commit. Do not merge
-   ordinary PRs while `main` has the final version. Before merging the release
-   PR, make sure the merge queue is empty. Do not queue other PRs until the
-   next development bump is merged.
+2. Squash and merge the release PR so the final version is introduced in one
+   commit. The `check-version` CI job rejects a final version already on the
+   base or represented by a package tag. For merge groups, it checks the queue
+   base commit, so an entry behind a release PR cannot reuse its final version.
 3. Create the GitHub Release and tag from that release commit as today. Click
    **Generate release notes**, select the previous package release tag as the
    starting point, and curate the result. Check category labels, move breaking
@@ -98,11 +94,15 @@ The version format stays the same: several commits on `main` can share a
    development version, for example `0.27.35-dev1`. Resume ordinary merges only
    after this bump. No other commit should retain the released final version.
 
-A CI guard against reuse of a final version is deferred. It must compare
-normalized versions against all tags and existing releases, and account for
-release creation after a PR check runs. Until then, maintainers own the check
-and merge ordering above. Automated post-release development bumps are round 2;
-automated tagging/publishing and tag-derived versions are optional future work.
+The previously deferred version guard is now implemented by `check-version`.
+Development versions must not be older than the latest final package tag.
+The guard treats `-dev`, `-dev0`, and `.dev0` as equivalent, accepts `v` and
+`unstructured_` tag prefixes, and ignores non-package tags. Development tags
+are not final releases. Ordinary PRs fail while the base retains a final
+version, until the next development bump lands. Maintainers must still create
+GitHub Releases from the correct release commit; CI does not validate that
+human action. Automated post-release development bumps and automated
+publishing remain future work.
 
 ### License
 
