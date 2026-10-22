@@ -638,3 +638,13 @@ def test_partition_csv_counts_index_names_the_python_engine_infers(
         partition_csv(file=io.BytesIO(data), include_header=True)
 
     read_csv_.assert_not_called()
+
+
+@pytest.mark.parametrize("include_header", [True, False])
+def test_partition_csv_reads_each_cell_as_written(tmp_path: Path, include_header: bool):
+    file_path = tmp_path / "cells.csv"
+    file_path.write_text("name,qty,status,code\nPen,12,N/A,007\nInk,,NULL,010\nPad,7,None,\n")
+
+    element = partition_csv(str(file_path), include_header=include_header)[0]
+
+    assert element.text == "name qty status code Pen 12 N/A 007 Ink NULL 010 Pad 7 None"
