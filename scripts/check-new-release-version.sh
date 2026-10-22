@@ -50,11 +50,19 @@ read_version() {
 }
 
 main() {
-  local current base normalized_current normalized_base dev tags tag latest=''
+  local current base base_ref normalized_current normalized_base dev tags tag latest=''
   local -a PARTS
   if [[ $# == 0 ]]; then
     current=$(read_version HEAD)
-    base=$(read_version "${VERSION_BASE_REF:-origin/main}")
+    if [[ ${VERSION_EVENT_NAME:-} == pull_request ]]; then
+      # The event payload can have an obsolete base SHA. The checked-out merge
+      # commit's first parent is the exact main snapshot used for this result.
+      git rev-parse --verify HEAD^2 >/dev/null
+      base_ref=HEAD^1
+    else
+      base_ref=${VERSION_BASE_REF:-origin/main}
+    fi
+    base=$(read_version "$base_ref")
   elif [[ $# == 2 || $# == 3 ]]; then
     current=$1
     base=$2

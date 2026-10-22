@@ -49,7 +49,7 @@ check 1 'invalid base version' 0.27.35-dev broken "$tmp/empty"
 # retains the old version, while main releases and bumps after the PR branches.
 export GIT_CONFIG_GLOBAL=/dev/null
 export GIT_CONFIG_NOSYSTEM=1
-unset VERSION_BASE_REF
+unset VERSION_BASE_REF VERSION_EVENT_NAME
 mkdir "$tmp/repo"
 cd "$tmp/repo"
 git init -q
@@ -60,6 +60,7 @@ printf '__version__ = "0.27.35-dev"\n' >unstructured/__version__.py
 git add .
 git commit -qm initial
 git branch -M main
+event_base=$(git rev-parse HEAD)
 git checkout -qb ordinary-pr
 printf 'ordinary change\n' >ordinary.txt
 git add .
@@ -78,12 +79,20 @@ git merge --no-ff -qm 'PR merge result' ordinary-pr
 # No origin remote exists: any attempted tag fetch would fail this test.
 EXPECT_MESSAGE="no tag lookup" check 0 'stale PR after release and bump uses merge result'
 # Simulate an obsolete PR event base. The merge parent stays aligned with HEAD.
-VERSION_BASE_REF=HEAD^1 EXPECT_MESSAGE="no tag lookup" check 0 'PR merge parent wins over obsolete event base'
+VERSION_EVENT_NAME=pull_request VERSION_BASE_REF=$event_base EXPECT_MESSAGE="no tag lookup" check 0 'PR merge parent wins over obsolete event base'
 # A real queue base can be a release commit ahead of origin/main.
 git checkout -qb queue-release
 printf '__version__ = "0.27.36"\n' >unstructured/__version__.py
 git commit -qam queue-release
 queue_base=$(git rev-parse HEAD)
+# Rebuild an ordinary PR merge while main contains an untagged final version.
+git checkout -qb final-ordinary
+printf 'final ordinary change\n' >final-ordinary.txt
+git add .
+git commit -qm final-ordinary
+git checkout -q queue-release
+git merge --no-ff -qm 'ordinary merge on final main' final-ordinary
+VERSION_EVENT_NAME=pull_request VERSION_BASE_REF=$event_base EXPECT_MESSAGE="next -dev bump must land first" check 1 'obsolete event base cannot allow ordinary PR on untagged final'
 printf 'queued change\n' >queued.txt
 git add .
 git commit -qm queue-entry

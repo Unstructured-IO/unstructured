@@ -34,13 +34,9 @@ jobs:
       - name: Check merge-result version
         env:
           QUEUE_BASE_SHA: ${{ github.event.merge_group.base_sha }}
-          EVENT_NAME: ${{ github.event_name }}
+          VERSION_EVENT_NAME: ${{ github.event_name }}
         run: |
-          if [[ "$EVENT_NAME" == pull_request ]]; then
-            # Event payloads can lag behind refs/pull/N/merge. Use its real base.
-            git rev-parse --verify HEAD^2 >/dev/null
-            export VERSION_BASE_REF=HEAD^1
-          else
+          if [[ "$VERSION_EVENT_NAME" == merge_group ]]; then
             git fetch --no-tags --depth=1 origin "$QUEUE_BASE_SHA"
             export VERSION_BASE_REF="$QUEUE_BASE_SHA"
           fi
