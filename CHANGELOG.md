@@ -1,8 +1,6 @@
-## 0.27.35-dev
-
-### Fixes
-
-- **Compare bounding boxes for elements that have no page number.** `catch_overlapping_and_nested_bboxes()` sized its per-page lists from the page number of the *last* element, so it raised `IndexError` for an empty element list, for elements with no page number at all (the loop that buckets the boxes already treats those as page 1), and for any list whose last element is not on the highest page. The page count is now the highest page number present, which is no pages at all for an empty element list.
+> This changelog is frozen. From the next release onward, release notes live in
+> [GitHub Releases](https://github.com/Unstructured-IO/unstructured/releases).
+> The history below is preserved; do not add entries or rename version headings.
 
 ## 0.27.34
 
