@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import enum
 import io
 import os
 import re
@@ -124,6 +125,16 @@ DEFAULT_MAX_CONTENT_STREAM_ARRAY_ENTRIES = 10_000  # array entries per page (pyp
 # can share one array). Set far above any real document; exceeding them logs at warning.
 DEFAULT_MAX_TOTAL_STREAM_BYTES = 1024 * 1024 * 1024  # 1 GB decoded bytes per document
 DEFAULT_MAX_TOTAL_ARRAY_ENTRIES = 1_000_000  # array entries decoded per document
+
+
+class PdfComplexity(enum.Enum):
+    """Why PDFMiner text extraction should be avoided for a PDF."""
+
+    VECTOR_HEAVY = "vector_heavy"
+    """Graphics operators dominate a page's text operators, as in CAD drawings."""
+    EXCEEDS_LIMITS = "exceeds_limits"
+    """A page's content streams exceed the decoded-byte or array-entry caps."""
+
 
 # increase the max pixels so high dpi values like 300 can still be under the PIL limit
 PILImage.MAX_IMAGE_PIXELS = 5e8
@@ -319,11 +330,19 @@ def partition_pdf_or_image(
     pdf_text_extractable = False
 
     if not is_image:
+        # -- fast reads text only through PDFMiner, so a vector-heavy PDF is still extracted
+        # -- and a PDF over the decoding limits is rejected rather than returned empty.
+        complexity = pdf_complexity(filename=filename, file=file)
+        if complexity is PdfComplexity.EXCEEDS_LIMITS and strategy == PartitionStrategy.FAST:
+            raise UnprocessableEntityError(
+                "PDF content streams exceed the decoding limits for text extraction, and the"
+                " fast strategy has no other way to read the document's text."
+            )
         try:
-            if is_pdf_too_complex(filename=filename, file=file):
+            if complexity is not None and strategy != PartitionStrategy.FAST:
                 logger.info(
                     "PDF is too complex for text extraction based on heuristic checks. "
-                    "Falling back to hi_res strategy without text extraction."
+                    "Skipping PDFMiner text extraction."
                 )
 
             else:
@@ -721,7 +740,7 @@ def _iter_frame_runs(image: PILImage.Image) -> Iterator[tuple[int, tuple[int, in
     yield getattr(image, "n_frames", 1), image.size
 
 
-def is_pdf_too_complex(
+def pdf_complexity(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     max_graphics_ops: int = 10_000,
@@ -732,9 +751,14 @@ def is_pdf_too_complex(
     max_content_stream_array_entries: int = DEFAULT_MAX_CONTENT_STREAM_ARRAY_ENTRIES,
     max_total_stream_bytes: int = DEFAULT_MAX_TOTAL_STREAM_BYTES,
     max_total_array_entries: int = DEFAULT_MAX_TOTAL_ARRAY_ENTRIES,
-) -> bool:
-    """Check if a PDF is likely a complex vector drawing (e.g., CAD/engineering docs)
-    that would be extremely slow or produce garbage results with PDFMiner text extraction.
+) -> Optional[PdfComplexity]:
+    """Return why PDFMiner text extraction should be avoided for a PDF, or None if it should not.
+
+    `PdfComplexity.VECTOR_HEAVY` means a page is likely a complex vector drawing (e.g.,
+    CAD/engineering docs) that would be extremely slow or produce garbage results with PDFMiner
+    text extraction. `PdfComplexity.EXCEEDS_LIMITS` means a page's content streams exceed one
+    of the ``max_*`` byte/entry caps below, a defense-in-depth against crafted content streams
+    (CVE-2026-33123).
 
     Try to minimize overhead with early exits:
     1. Avoid overhead by skipping files smaller than min_file_size_bytes.
@@ -742,9 +766,8 @@ def is_pdf_too_complex(
        decoded stream is smaller than min_raw_stream_bytes.
     3. For large streams, regex to count graphics without parsing the stream.
 
-    A page is flagged (returns True) on a high graphics-op count AND graphics-to-text
-    ratio, or, as defense-in-depth against crafted content streams (CVE-2026-33123),
-    when it exceeds any of the ``max_*`` byte/entry caps below.
+    A page is vector-heavy on a high graphics-op count AND graphics-to-text ratio. A PDF that
+    cannot be read is reported as None.
 
     Parameters
     ----------
@@ -798,10 +821,10 @@ def is_pdf_too_complex(
         elif filename:
             file_size = os.path.getsize(filename)
         else:
-            return False
+            return None
 
         if file_size < min_file_size_bytes:
-            return False
+            return None
 
         # Build reader
         if file is not None:
@@ -814,7 +837,7 @@ def is_pdf_too_complex(
             reader = PdfReader(filename)
 
         if not reader.pages:
-            return False
+            return None
 
         total_raw_bytes = 0
         total_array_entries = 0
@@ -843,7 +866,7 @@ def is_pdf_too_complex(
                         f"{max_content_stream_array_entries}. "
                         "Flagging PDF as too complex for text extraction."
                     )
-                    return True
+                    return PdfComplexity.EXCEEDS_LIMITS
                 # Charge every slot up front (non-stream entries are traversed too),
                 # so a shared non-stream array can't scale traversal with page count.
                 total_array_entries += len(contents)
@@ -853,7 +876,7 @@ def is_pdf_too_complex(
                         f"by page {page_index + 1}. "
                         "Flagging PDF as too complex for text extraction."
                     )
-                    return True
+                    return PdfComplexity.EXCEEDS_LIMITS
                 # bytearray append is amortized O(1); `bytes +=` was O(n^2).
                 accumulated = bytearray()
                 for item in contents:
@@ -870,7 +893,7 @@ def is_pdf_too_complex(
                             f"Page {page_index + 1} content stream exceeds pypdf's decode "
                             "limit. Flagging PDF as too complex for text extraction."
                         )
-                        return True
+                        return PdfComplexity.EXCEEDS_LIMITS
                     except Exception:
                         continue
                     total_raw_bytes += len(chunk)
@@ -880,7 +903,7 @@ def is_pdf_too_complex(
                             f"bytes by page {page_index + 1}. "
                             "Flagging PDF as too complex for text extraction."
                         )
-                        return True
+                        return PdfComplexity.EXCEEDS_LIMITS
                     # Check before copying so an oversized stream is never
                     # accumulated into the buffer or regex-scanned.
                     if len(accumulated) + len(chunk) > max_raw_stream_bytes:
@@ -889,7 +912,7 @@ def is_pdf_too_complex(
                             f"{max_raw_stream_bytes} bytes. "
                             "Flagging PDF as too complex for text extraction."
                         )
-                        return True
+                        return PdfComplexity.EXCEEDS_LIMITS
                     accumulated.extend(chunk)
                 raw_data = accumulated
             elif hasattr(contents, "get_data"):
@@ -900,7 +923,7 @@ def is_pdf_too_complex(
                         f"Page {page_index + 1} content stream exceeds pypdf's decode "
                         "limit. Flagging PDF as too complex for text extraction."
                     )
-                    return True
+                    return PdfComplexity.EXCEEDS_LIMITS
                 except Exception:
                     continue
                 total_raw_bytes += len(chunk)
@@ -910,14 +933,14 @@ def is_pdf_too_complex(
                         f"bytes by page {page_index + 1}. "
                         "Flagging PDF as too complex for text extraction."
                     )
-                    return True
+                    return PdfComplexity.EXCEEDS_LIMITS
                 if len(chunk) > max_raw_stream_bytes:
                     logger.info(
                         f"Page {page_index + 1} content stream exceeds "
                         f"{max_raw_stream_bytes} bytes. "
                         "Flagging PDF as too complex for text extraction."
                     )
-                    return True
+                    return PdfComplexity.EXCEEDS_LIMITS
                 # No copy: the regexes accept bytes and this is not mutated.
                 raw_data = chunk
 
@@ -944,11 +967,11 @@ def is_pdf_too_complex(
                     f"ratio: {min_graphics_to_text_ratio}). "
                     "Flagging PDF as too complex for text extraction."
                 )
-                return True
+                return PdfComplexity.VECTOR_HEAVY
 
     except Exception as e:
-        logger.debug(f"is_pdf_too_complex check failed: {e}")
-        return False
+        logger.debug(f"pdf_complexity check failed: {e}")
+        return None
 
     finally:
         # Restore original cursor position for file-like inputs
@@ -960,7 +983,40 @@ def is_pdf_too_complex(
         ):
             file.seek(original_pos)
 
-    return False
+    return None
+
+
+def is_pdf_too_complex(
+    filename: str = "",
+    file: Optional[Union[bytes, IO[bytes]]] = None,
+    max_graphics_ops: int = 10_000,
+    min_graphics_to_text_ratio: float = 20.0,
+    min_file_size_bytes: int = DEFAULT_MIN_FILE_SIZE_BYTES,
+    min_raw_stream_bytes: int = DEFAULT_MIN_RAW_STREAM_BYTES,
+    max_raw_stream_bytes: int = DEFAULT_MAX_RAW_STREAM_BYTES,
+    max_content_stream_array_entries: int = DEFAULT_MAX_CONTENT_STREAM_ARRAY_ENTRIES,
+    max_total_stream_bytes: int = DEFAULT_MAX_TOTAL_STREAM_BYTES,
+    max_total_array_entries: int = DEFAULT_MAX_TOTAL_ARRAY_ENTRIES,
+) -> bool:
+    """Whether PDFMiner text extraction should be avoided for a PDF, for any reason.
+
+    See `pdf_complexity` for the parameters and for which reason applies.
+    """
+    return (
+        pdf_complexity(
+            filename=filename,
+            file=file,
+            max_graphics_ops=max_graphics_ops,
+            min_graphics_to_text_ratio=min_graphics_to_text_ratio,
+            min_file_size_bytes=min_file_size_bytes,
+            min_raw_stream_bytes=min_raw_stream_bytes,
+            max_raw_stream_bytes=max_raw_stream_bytes,
+            max_content_stream_array_entries=max_content_stream_array_entries,
+            max_total_stream_bytes=max_total_stream_bytes,
+            max_total_array_entries=max_total_array_entries,
+        )
+        is not None
+    )
 
 
 def _enable_detect_vertical_if_rotated(
