@@ -12,7 +12,13 @@ from pytest_mock import MockerFixture
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
-from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
+from unstructured.documents.elements import (
+    Address,
+    EmailAddress,
+    ListItem,
+    NarrativeText,
+    Title,
+)
 from unstructured.file_utils.model import FileType
 from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
@@ -217,6 +223,23 @@ def test_partition_text_captures_everything_even_with_linebreaks():
     ]
     for element in elements:
         assert element.metadata.filename is None
+
+
+def test_partition_text_keeps_a_sentence_that_starts_with_an_email_address_narrative():
+    text = (
+        "billing@example.com\n"
+        "\n"
+        "billing@example.com is the address for every invoice question you have."
+    )
+
+    elements = partition_text(text=text)
+
+    assert elements == [
+        EmailAddress(text="billing@example.com"),
+        NarrativeText(
+            text="billing@example.com is the address for every invoice question you have."
+        ),
+    ]
 
 
 def test_partition_text_groups_broken_paragraphs():
