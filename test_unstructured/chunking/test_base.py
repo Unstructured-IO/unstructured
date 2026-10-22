@@ -1131,6 +1131,67 @@ class Describe_Chunker:
         with pytest.raises(StopIteration):
             next(chunk_iter)
 
+    def but_it_omits_orig_elements_when_the_split_element_is_too_large_to_repeat(
+        self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ):
+        monkeypatch.setattr(chunking_base, "SPLIT_ORIG_ELEMENTS_MAX_CHARS", 100)
+        text = (
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+            " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud"
+            " exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+        )
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+
+        chunks = list(_Chunker([Text(text)], text=text, opts=opts)._iter_chunks())
+
+        assert len(chunks) == 2
+        assert all(chunk.metadata.orig_elements is None for chunk in chunks)
+        assert "Omitting .metadata.orig_elements" in caplog.text
+
+    def and_it_keeps_orig_elements_for_a_large_element_that_is_not_split(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        monkeypatch.setattr(chunking_base, "SPLIT_ORIG_ELEMENTS_MAX_CHARS", 100)
+        element = Text("Short text.", metadata=ElementMetadata(text_as_html="<p>" + "x" * 200))
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+
+        chunks = list(_Chunker([element], text="Short text.", opts=opts)._iter_chunks())
+
+        assert len(chunks) == 1
+        assert chunks[0].metadata.orig_elements == [element]
+
+    def and_it_keeps_orig_elements_when_several_elements_are_split_together(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        # -- each element is under the limit; only their sum is over it --
+        monkeypatch.setattr(chunking_base, "SPLIT_ORIG_ELEMENTS_MAX_CHARS", 400)
+        elements = [
+            Text("a" * 150, metadata=ElementMetadata(text_as_html="<p>" + "x" * 57)),
+            Text("b" * 150, metadata=ElementMetadata(text_as_html="<p>" + "y" * 57)),
+        ]
+        text = "a" * 150 + "\n\n" + "b" * 150
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+
+        chunks = list(_Chunker(elements, text=text, opts=opts)._iter_chunks())
+
+        assert len(chunks) == 2
+        assert all(chunk.metadata.orig_elements == elements for chunk in chunks)
+
+    def and_it_keeps_orig_elements_when_an_over_window_text_still_forms_one_chunk(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        # -- the trailing newline puts the text one character over the window, but the splitter
+        # -- consumes it as a separator and produces a single chunk.
+        monkeypatch.setattr(chunking_base, "SPLIT_ORIG_ELEMENTS_MAX_CHARS", 100)
+        text = "x" * 200 + "\n"
+        element = CodeSnippet(text)
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+
+        chunks = list(_Chunker([element], text=text, opts=opts)._iter_chunks())
+
+        assert len(chunks) == 1
+        assert chunks[0].metadata.orig_elements == [element]
+
     def and_it_adds_the_is_continuation_flag_for_second_and_later_split_chunks(self):
         # --    |--------------------- 48 ---------------------|
         text = "'Lorem ipsum dolor' means 'Thank you very much'."
@@ -2621,6 +2682,40 @@ class Describe_TableChunker:
         assert chunk.text == "Lorem ipsum   dolor sit amet"
         assert chunk.metadata.orig_elements == [table]
         assert chunk.metadata.is_continuation
+
+    def but_it_omits_orig_elements_when_the_split_Table_is_too_large_to_repeat(
+        self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ):
+        monkeypatch.setattr(chunking_base, "SPLIT_ORIG_ELEMENTS_MAX_CHARS", 40)
+        table = Table(
+            "Header Col 1   Header Col 2\nLorem ipsum   dolor sit amet",
+            metadata=ElementMetadata(text_as_html="<table/>"),
+        )
+        opts = ChunkingOptions(max_characters=30, include_orig_elements=True)
+
+        chunks = list(_TableChunker.iter_chunks(table, overlap_prefix="", opts=opts))
+
+        assert len(chunks) == 2
+        assert all(isinstance(chunk, TableChunk) for chunk in chunks)
+        assert all(chunk.metadata.orig_elements is None for chunk in chunks)
+        assert "Omitting .metadata.orig_elements" in caplog.text
+
+    def and_it_keeps_orig_elements_when_a_large_Table_still_forms_one_chunk(
+        self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ):
+        # -- the HTML exceeds the window, so the table takes the split path, but a window under 50
+        # -- characters drops the HTML and the short text forms a single chunk.
+        monkeypatch.setattr(chunking_base, "SPLIT_ORIG_ELEMENTS_MAX_CHARS", 10)
+        table = Table(
+            "cell", metadata=ElementMetadata(text_as_html="<table><tr><td>cell</td></tr></table>")
+        )
+        opts = ChunkingOptions(max_characters=30, include_orig_elements=True)
+
+        chunks = list(_TableChunker.iter_chunks(table, overlap_prefix="", opts=opts))
+
+        assert len(chunks) == 1
+        assert chunks[0].metadata.orig_elements == [table]
+        assert "Omitting .metadata.orig_elements" not in caplog.text
 
     @pytest.mark.parametrize(
         ("text", "overlap_prefix", "expected_value"),

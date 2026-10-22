@@ -25,7 +25,7 @@ The following is a list of tasks to be completed before submitting a pull reques
     1. [ ] Make sure all new classes/functions/methods have docstrings.
     1. [ ] Make sure all new functions/methods have type hints (optional for tests).
     1. [ ] Make sure all new functions/methods have associated tests.
-    1. [ ] Update `CHANGELOG.md` and `__version__.py` if the core code has changed
+    1. [ ] Write a user-facing PR title and apply a category label (see below). Ordinary PRs do not edit `CHANGELOG.md` or bump `unstructured/__version__.py`.
 <br/><br/>
 1. Ensure environment is consistent
     1. [ ] Update dependencies in `.in` files if needed (pay special attention to whether the current PR depends on changes to internal repos that are not packaged - if so the commit needs to be bumped).
@@ -47,9 +47,62 @@ The following is a list of tasks to be completed before submitting a pull reques
 
 1. [ ] PR title should follow [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) standards.
       
-1. [ ] PR description should give enough detail that the reviewer knows what they reviewing - sometimes a copy-paste of the added `CHANGELOG.md` items is enough, sometimes more detail is needed.
+1. [ ] PR description should explain the change and its user impact. Add an optional "Release note" section when users need more detail than the title, especially for breaking changes.
 
 1. [ ] If applicable, add a testing section to the PR description that recommends steps a reviewer can take to verify the changes, e.g. a snippet of code they can run locally.
+
+### Release notes and versions
+
+The PR title becomes the entry in GitHub generated release notes. Write it for
+users and keep the conventional commit prefix. Apply `enhancement` for features,
+`bug` for fixes, or an appropriate existing label such as `documentation` for
+other changes. Maintainers can apply labels for external contributors.
+Dependency PRs use `dependencies` and are excluded from generated notes; the
+releaser must add user-relevant security updates during curation.
+
+For breaking changes, add `!` to the title (for example `feat!: …`). Add a
+"Release note" section that explains the impact and how to migrate. There is
+no `breaking-change` label yet. Use an existing category label, and the
+releaser will move the entry to Breaking changes. No new labels are required
+to contribute.
+
+`CHANGELOG.md` is frozen, including its existing release headings. Keep it
+for historical links; do not add entries or synchronize it with the package.
+The version format stays the same: several commits on `main` can share a
+`-dev` or `-devN` version. Ordinary PRs, including dependency PRs, do not bump it.
+
+### Release-day workflow (maintainers)
+
+1. Prepare a release PR that changes `unstructured/__version__.py` from the
+   current development version to its final version, for example `0.27.34-dev3` to
+   `0.27.34`. Do not edit the frozen changelog.
+2. Confirm that the final version has no existing tag or release. Compare
+   versions with `packaging.version.Version` normalization (and remove an
+   optional leading `v` from tags); `0.27.34-dev3` normalizes to `0.27.34.dev3`.
+   A final version may be introduced only by its release PR. Squash and merge
+   that PR so the final version is introduced in one commit. Do not merge
+   ordinary PRs while `main` has the final version. Before merging the release
+   PR, make sure the merge queue is empty. Do not queue other PRs until the
+   next development bump is merged.
+3. Create the GitHub Release and tag from that release commit as today. Click
+   **Generate release notes**, select the previous package release tag as the
+   starting point, and curate the result. Check category labels, move breaking
+   changes into their own section, paste useful "Release note" text from PRs,
+   and add significant security or dependency changes excluded by the filter.
+   For the first release under this convention, also carry forward relevant
+   entries from the frozen changelog that are not in a published release so none
+   are lost.
+4. Publish the release using the existing process. Publication workflows are
+   unchanged by this convention.
+5. Immediately open and merge a human-authored PR that bumps `main` to the next
+   development version, for example `0.27.35-dev1`. Resume ordinary merges only
+   after this bump. No other commit should retain the released final version.
+
+A CI guard against reuse of a final version is deferred. It must compare
+normalized versions against all tags and existing releases, and account for
+release creation after a PR check runs. Until then, maintainers own the check
+and merge ordering above. Automated post-release development bumps are round 2;
+automated tagging/publishing and tag-derived versions are optional future work.
 
 ### License
 

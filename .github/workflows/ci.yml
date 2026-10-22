@@ -290,22 +290,6 @@ jobs:
         sudo apt-get install diffstat
         uv run --no-sync ./test_unstructured_ingest/check-diff-expected-output-markdown.sh
 
-  changelog:
-    runs-on: ubuntu-latest
-    steps:
-    # need to checkout otherwise paths-filter will fail on merge-queue trigger
-    - uses: actions/checkout@v4
-    - if: github.ref != 'refs/heads/main'
-      uses: dorny/paths-filter@v3
-      id: changes
-      with:
-        filters: |
-          src:
-            - 'unstructured/**'
-
-    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
-      uses: dangoslen/changelog-enforcer@v3
-
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)
   test_dockerfile:
