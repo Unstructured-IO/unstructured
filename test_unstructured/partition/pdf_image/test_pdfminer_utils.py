@@ -1,7 +1,16 @@
 from importlib import reload
 from unittest.mock import MagicMock, patch
 
-from pdfminer.layout import LTChar, LTContainer, LTFigure, LTLayoutContainer, LTTextLine
+import pytest
+from pdfminer.layout import (
+    LTChar,
+    LTComponent,
+    LTContainer,
+    LTFigure,
+    LTLayoutContainer,
+    LTPage,
+    LTTextLine,
+)
 from pdfminer.pdftypes import PDFStream
 
 from test_unstructured.unit_utils import example_doc_path
@@ -12,6 +21,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     deduplicate_chars_in_text_line,
     extract_text_objects,
     get_text_with_deduplication,
+    overlaps_page,
 )
 from unstructured.partition.utils import config as partition_config
 
@@ -789,3 +799,23 @@ endcmap"""
         font2 = rsrcmgr.get_font(42, spec)
 
         assert font1 is font2
+
+
+@pytest.mark.parametrize(
+    ("bbox", "expected"),
+    [
+        ((72, 700, 300, 712), True),  # inside the page
+        ((0, 0, 612, 792), True),  # exactly the page box
+        ((72, -4, 300, 8), True),  # straddles the bottom edge
+        ((600, 700, 700, 712), True),  # straddles the right edge
+        ((72, -212, 300, -200), False),  # below the page
+        ((72, 1000, 300, 1012), False),  # above the page
+        ((-300, 700, -72, 712), False),  # left of the page
+        ((700, 700, 900, 712), False),  # right of the page
+        ((72, 792, 300, 804), False),  # touches the top edge from outside
+        ((-10, -10, 0, 0), False),  # touches a corner from outside
+    ],
+)
+def test_overlaps_page(bbox, expected):
+    page_layout = LTPage(1, (0, 0, 612, 792))
+    assert overlaps_page(LTComponent(bbox), page_layout) is expected

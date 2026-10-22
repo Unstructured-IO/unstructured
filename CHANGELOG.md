@@ -1,3 +1,7 @@
+## 0.27.35
+
+- **Ignore PDF text and images that lie entirely outside the page.** A PDF content stream can place text or images beyond the page's MediaBox, where they are never rendered; pages split out of a longer document, for example, can still carry the neighbouring pages' text at off-page offsets. pdfminer still extracts these objects, so the `fast` strategy and the extracted text layer merged into `hi_res` results turned them into elements with coordinates off the page and text that does not appear on it. Text and image regions whose box has no overlap with the page box are now dropped. Regions that partially overlap the page are kept and their coordinates are not clipped.
+
 ## 0.27.34
 
 ### Enhancements

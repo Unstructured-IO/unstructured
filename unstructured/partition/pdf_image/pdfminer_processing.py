@@ -22,6 +22,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     extract_text_objects,
     get_text_with_deduplication,
     open_pdfminer_pages_generator,
+    overlaps_page,
     rect_to_bbox,
 )
 from unstructured.partition.utils.config import env_config
@@ -500,7 +501,7 @@ def process_page_layout_from_pdfminer(
             char_dedup_threshold = env_config.PDF_CHAR_DUPLICATE_THRESHOLD
             for inner_obj in inner_text_objects:
                 inner_bbox = rect_to_bbox(inner_obj.bbox, page_height)
-                if not _validate_bbox(inner_bbox):
+                if not _validate_bbox(inner_bbox) or not overlaps_page(inner_obj, page_layout):
                     continue
                 # Use deduplication to handle fake bold text (characters rendered twice)
                 texts.append(get_text_with_deduplication(inner_obj, char_dedup_threshold))
@@ -511,7 +512,7 @@ def process_page_layout_from_pdfminer(
             inner_image_objects = extract_image_objects(obj)
             for img_obj in inner_image_objects:
                 inner_bbox = rect_to_bbox(img_obj.bbox, page_height)
-                if not _validate_bbox(inner_bbox):
+                if not _validate_bbox(inner_bbox) or not overlaps_page(img_obj, page_layout):
                     continue
                 texts.append(None)
                 element_coords.append(inner_bbox)
@@ -533,7 +534,7 @@ def process_page_layout_from_pdfminer(
                 char_dedup_threshold = env_config.PDF_CHAR_DUPLICATE_THRESHOLD
                 for inner_obj in extract_text_objects(obj):
                     inner_bbox = rect_to_bbox(inner_obj.bbox, page_height)
-                    if not _validate_bbox(inner_bbox):
+                    if not _validate_bbox(inner_bbox) or not overlaps_page(inner_obj, page_layout):
                         continue
                     texts.append(get_text_with_deduplication(inner_obj, char_dedup_threshold))
                     element_coords.append(inner_bbox)
