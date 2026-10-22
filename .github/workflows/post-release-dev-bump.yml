@@ -1,0 +1,89 @@
+name: Post-release development bump
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published final package tag to retry
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: post-release-dev-bump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      # Always use main's trusted scripts, including on manual re-runs.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Plan development bump
+        id: plan
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          bash scripts/post-release-dev-bump.sh "$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+      - name: Verify published release
+        if: steps.plan.outputs.action == 'bump'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: bash scripts/post-release-dev-bump.sh --verify-release "$RELEASE_TAG"
+      - name: Check PR token
+        if: steps.plan.outputs.action == 'bump'
+        env:
+          GH_TOKEN: ${{ secrets.GH_CREATE_PR_TOKEN }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo '::error::GH_CREATE_PR_TOKEN is missing. Bump main by hand per CONTRIBUTING.md release-day step 5.'
+            exit 1
+          fi
+      - name: Update version file
+        if: steps.plan.outputs.action == 'bump'
+        env:
+          NEXT_VERSION: ${{ steps.plan.outputs.next }}
+        run: |
+          sed -i "s/^\(__version__ = \"\)[^\"]*\(\"\)/\1$NEXT_VERSION\2/" unstructured/__version__.py
+      - name: Open development bump PR
+        if: steps.plan.outputs.action == 'bump'
+        id: pr
+        continue-on-error: true
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GH_CREATE_PR_TOKEN }}
+          base: main
+          branch: chore/post-release-dev-bump-${{ steps.plan.outputs.next }}
+          add-paths: unstructured/__version__.py
+          commit-message: 'chore: start ${{ steps.plan.outputs.next }} after ${{ steps.plan.outputs.released }} release'
+          title: 'chore: start ${{ steps.plan.outputs.next }} after ${{ steps.plan.outputs.released }} release'
+          labels: github_actions
+          body: |
+            Opened automatically after release ${{ steps.plan.outputs.released }} to start ${{ steps.plan.outputs.next }}.
+            One maintainer other than the token owner must approve this PR. If auto-merge is unavailable, enqueue it manually.
+            Ordinary PRs fail check-version until this bump lands.
+
+            authored by codex
+      - name: Report PR creation failure
+        if: steps.plan.outputs.action == 'bump' && (steps.pr.outcome == 'failure' || steps.pr.outputs.pull-request-number == '')
+        run: |
+          echo '::error::Could not open the development bump PR. Check GH_CREATE_PR_TOKEN permissions and expiry; bump main by hand per CONTRIBUTING.md release-day step 5.'
+          exit 1
+      - name: Enable squash auto-merge
+        if: steps.pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_CREATE_PR_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+        run: |
+          if ! gh pr merge "$PR_NUMBER" --auto --squash; then
+            echo '::warning::Could not enable auto-merge. A maintainer must approve and enqueue the development bump PR manually.'
+          fi
