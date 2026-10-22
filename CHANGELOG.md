@@ -18,7 +18,7 @@
 
 ### Fixes
 
-- **`partition_tsv()` honours `infer_table_structure`.** The function had no `infer_table_structure` parameter, so the argument was absorbed by `**kwargs` and dropped: `Table.metadata.text_as_html` was set even for `partition(..., infer_table_structure=False)`, or for a `skip_infer_table_types` list containing `tsv`. `partition_csv()`, `partition_xlsx()`, `partition_docx()` and `partition_odt()` all gate that field on the flag, and `decide_table_extraction()` in `partition/auto.py` passes it to every non-special partitioner. The parameter now has the same name, default and docstring as its siblings.
+- **`partition_tsv()` honours `infer_table_structure`.** The function had no `infer_table_structure` parameter, so the argument was absorbed by `**kwargs` and dropped: `Table.metadata.text_as_html` was set even for `partition(..., infer_table_structure=False)`, or for a `skip_infer_table_types` list containing `tsv`. `partition_csv()`, `partition_xlsx()`, `partition_docx()` and `partition_odt()` all gate that field on the flag, and `decide_table_extraction()` in `partition/auto.py` passes it to every non-special partitioner. The parameter now has the same name, default and docstring as its siblings. Disabling HTML also makes the text-only table path reachable, so token chunking now guarantees progress when a candidate prefix is wholly covered by overlap, bounds the separator/fallback scan to the fitting window, shares the encoding-wide token bound across HTML cells, and rejects an unread suffix without encoding it.
 
 ## 0.27.33
 
