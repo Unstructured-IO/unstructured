@@ -6,9 +6,7 @@ unlike the `.ppt` format which was binary and proprietary.
 
 from __future__ import annotations
 
-import io
 from functools import cached_property
-from tempfile import SpooledTemporaryFile
 from typing import IO, Any, Iterator, Protocol, Sequence
 
 import pptx
@@ -36,6 +34,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
+from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_email_address,
@@ -47,6 +46,15 @@ from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 DETECTION_ORIGIN = "pptx"
+
+
+def _break_lines(text: str) -> str:
+    """Line breaks (Shift+Enter, `a:br`) as newlines.
+
+    python-pptx reads a line break as a vertical tab (`\\v`), which would otherwise reach the
+    element text.
+    """
+    return text.replace("\v", "\n")
 
 
 def register_picture_partitioner(picture_partitioner: AbstractPicturePartitioner) -> None:
@@ -200,7 +208,7 @@ class _PptxPartitioner:
         # -- not all notes slides have a text-frame (it's created on first use) --
         if not notes_text_frame:
             return
-        notes_text = notes_text_frame.text.strip()
+        notes_text = _break_lines(notes_text_frame.text).strip()
 
         # -- not all notes text-frams contain text (if it's all deleted the text-frame remains) --
         if not notes_text:
@@ -222,7 +230,7 @@ class _PptxPartitioner:
             return
 
         for paragraph in shape.text_frame.paragraphs:
-            text = paragraph.text
+            text = _break_lines(paragraph.text)
             if text.strip() == "":
                 continue
 
@@ -278,7 +286,7 @@ class _PptxPartitioner:
 
         depth = 0
         for paragraph in shape.text_frame.paragraphs:
-            text = paragraph.text
+            text = _break_lines(paragraph.text)
             if text.strip() == "":
                 continue
 
@@ -454,15 +462,8 @@ class PptxPartitionerOptions:
         if self._file_path:
             return self._file_path
 
-        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
-        # -- exception when Zipfile tries to open it. The pptx format is a zip archive so we need
-        # -- to work around that bug here.
-        if isinstance(self._file, SpooledTemporaryFile):
-            self._file.seek(0)
-            return io.BytesIO(self._file.read())
-
         if self._file:
-            return self._file
+            return rewind_if_spooled(self._file)
 
         raise ValueError(
             "No PPTX document specified, either `filename` or `file` argument must be provided"

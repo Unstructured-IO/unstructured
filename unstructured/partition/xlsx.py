@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import io
 import struct
+from contextlib import contextmanager
 from functools import cached_property
 from typing import IO, Any, Iterator, Optional
 
-import networkx as nx
 import numpy as np
 import openpyxl
 import pandas as pd
@@ -15,6 +15,8 @@ import xlrd
 from msoffcrypto import OfficeFile
 from msoffcrypto.exceptions import FileFormatError
 from pandas.io.excel._openpyxl import OpenpyxlReader
+from pandas.io.formats.format import DataFrameFormatter
+from pandas.io.formats.html import HTMLFormatter
 from typing_extensions import Self, TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
@@ -96,12 +98,10 @@ def partition_xlsx(
         opts.sheets.items(), start=starting_page_number
     ):
         if not opts.find_subtable:
-            html_table = HtmlTable.from_html_text(
-                sheet.to_html(index=False, header=opts.include_header, na_rep="")
-            )
+            text, html = _render_table(sheet, opts)
 
             metadata = ElementMetadata(
-                text_as_html=html_table.html if infer_table_structure else None,
+                text_as_html=html,
                 page_name=sheet_name,
                 page_number=page_number,
                 filename=opts.metadata_file_path,
@@ -109,7 +109,7 @@ def partition_xlsx(
             )
             metadata.detection_origin = DETECTION_ORIGIN
 
-            elements.append(Table(text=html_table.text, metadata=metadata))
+            elements.append(Table(text=text, metadata=metadata))
 
         else:
             for component in _ConnectedComponents.from_worksheet_df(sheet):
@@ -124,14 +124,10 @@ def partition_xlsx(
                 # -- emit core-table (if it exists) as a `Table` element --
                 core_table = subtable_parser.core_table
                 if core_table is not None:
-                    html_table = HtmlTable.from_html_text(
-                        core_table.to_html(index=False, header=opts.include_header, na_rep="")
-                    )
-                    element = Table(text=html_table.text)
+                    text, html = _render_table(core_table, opts)
+                    element = Table(text=text)
                     element.metadata = _get_metadata(sheet_name, page_number, opts)
-                    element.metadata.text_as_html = (
-                        html_table.html if opts.infer_table_structure else None
-                    )
+                    element.metadata.text_as_html = html
                     elements.append(element)
 
                 # -- no core-table is emitted if it's empty (all rows are single-cell rows) --
@@ -143,6 +139,108 @@ def partition_xlsx(
                     elements.append(element)
 
     return elements
+
+
+class _TableRowRenderer(HTMLFormatter):
+    """Apply Pandas' column formatting while retaining only one row of HTML at a time."""
+
+    def __init__(self, frame: pd.DataFrame, *, header: bool, include_html: bool):
+        super().__init__(DataFrameFormatter(frame, index=False, header=header, na_rep=""))
+        self._html = io.StringIO() if include_html else None
+        self._text = io.StringIO()
+
+    def write_tr(self, *args: Any, **kwargs: Any) -> None:
+        self.elements.clear()
+        super().write_tr(*args, **kwargs)
+        table = HtmlTable.from_html_text("<table>" + "\n".join(self.elements) + "</table>")
+        self.elements.clear()
+        if self._html is not None:
+            self._html.write(table.html[len("<table>") : -len("</table>")])
+        if table.text:
+            if self._text.tell():
+                self._text.write(" ")
+            self._text.write(table.text)
+
+    def table_text_and_html(self) -> tuple[str, str | None]:
+        self.render()
+        html = None
+        if self._html is not None:
+            html = "<table>" + self._html.getvalue() + "</table>"
+        return self._text.getvalue(), html
+
+
+def _render_table(frame: pd.DataFrame, opts: _XlsxPartitionerOptions) -> tuple[str, str | None]:
+    """Render normalized text and optional HTML without a worksheet-sized HTML tree."""
+    return _TableRowRenderer(
+        frame, header=opts.include_header, include_html=opts.infer_table_structure
+    ).table_text_and_html()
+
+
+class ExcelWorkbookReader:
+    """A validated workbook supporting worksheet-at-a-time reads."""
+
+    def __init__(self, reader: Any):
+        self._reader = reader
+
+    @property
+    def sheet_names(self) -> list[str]:
+        """Worksheet titles in workbook order."""
+        return self._reader.sheet_names
+
+    def parse(self, sheet_name: str, *, header: int | None = None) -> pd.DataFrame:
+        """Read one worksheet with the validated engine and row-compaction policy."""
+        return self._reader.parse(sheet_name=sheet_name, header=header)
+
+
+@contextmanager
+def open_excel_workbook(
+    file_bytes: bytes, *, compact_empty_rows: bool = False
+) -> Iterator[ExcelWorkbookReader]:
+    """Open a workbook after rejecting password-protected files and validating its cell count.
+
+    The returned Pandas reader supports reading individual sheets in workbook order. Callers
+    should release each data-frame before parsing the next sheet. Empty-row compaction is safe
+    for subtable detection, but must be disabled when sheet row coordinates are significant.
+    The context closes the reader even if parsing or processing a worksheet fails.
+    """
+    _reject_encrypted_workbook(file_bytes)
+    if file_bytes.startswith(_ZIP_SIGNATURE):
+        engine = "openpyxl"
+    elif file_bytes.startswith(_OLE_SIGNATURE):
+        engine = "xlrd"
+    else:
+        raise UnprocessableEntityError("Not a valid XLSX or XLS file.")
+    compact_empty_rows = compact_empty_rows and engine == "openpyxl"
+    _check_worksheet_cell_count(file_bytes, engine, env_config.XLSX_MAX_CELLS, compact_empty_rows)
+    reader = (
+        _RowCompactingOpenpyxlReader(io.BytesIO(file_bytes))
+        if compact_empty_rows
+        else pd.ExcelFile(io.BytesIO(file_bytes), engine=engine)
+    )
+    try:
+        yield ExcelWorkbookReader(reader)
+    finally:
+        reader.close()
+
+
+def _reject_encrypted_workbook(file_bytes: bytes) -> None:
+    """Raise `UnprocessableEntityError` for a file that is not an Office file or is encrypted."""
+    try:
+        office_file = OfficeFile(io.BytesIO(file_bytes))
+    except FileFormatError as e:
+        raise UnprocessableEntityError("Not a valid XLSX file.") from e
+
+    try:
+        is_encrypted = office_file.is_encrypted()
+    except struct.error:
+        # -- msoffcrypto reads an XLS "Workbook" stream as 4-byte record headers and raises when
+        # -- the stream ends in fewer than 4 bytes of padding, as in many files written by
+        # -- `xlwt` (nolze/msoffcrypto-tool#83). The FilePass record of an encrypted XLS
+        # -- directly follows its BOF record, so the check finds it before any padding.
+        is_encrypted = False
+
+    if is_encrypted:
+        raise UnprocessableEntityError("XLSX file is password protected.")
 
 
 class _XlsxPartitionerOptions:
@@ -199,47 +297,10 @@ class _XlsxPartitionerOptions:
     @cached_property
     def sheets(self) -> dict[str, pd.DataFrame]:
         """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
-        try:
-            office_file = OfficeFile(io.BytesIO(self._file_bytes))
-        except FileFormatError as e:
-            raise UnprocessableEntityError("Not a valid XLSX file.") from e
-
-        try:
-            is_encrypted = office_file.is_encrypted()
-        except struct.error:
-            # -- msoffcrypto reads an XLS "Workbook" stream as 4-byte record headers and raises when
-            # -- the stream ends in fewer than 4 bytes of padding, as in many files written by
-            # -- `xlwt` (nolze/msoffcrypto-tool#83). The FilePass record of an encrypted XLS
-            # -- directly follows its BOF record, so the check finds it before any padding.
-            is_encrypted = False
-
-        if is_encrypted:
-            raise UnprocessableEntityError("XLSX file is password protected.")
-
-        # -- Pandas allocates a dense data-frame spanning every worksheet out to its farthest
-        # -- populated cell, so a tiny file with one far-away cell can exhaust memory. Measure
-        # -- that span cheaply before reading, and pin the engine to the one that was measured.
-        # -- A whole worksheet is rendered as-is, empty rows and all, so only subtable detection
-        # -- reads it with runs of empty rows compacted.
-        engine = self._excel_engine
-        compact_empty_rows = engine == "openpyxl" and self.find_subtable
-        _check_worksheet_cell_count(
-            self._file_bytes, engine, env_config.XLSX_MAX_CELLS, compact_empty_rows
-        )
-
-        if compact_empty_rows:
-            reader = _RowCompactingOpenpyxlReader(io.BytesIO(self._file_bytes))
-            try:
-                return reader.parse(sheet_name=None, header=self.header_row_idx)
-            finally:
-                reader.close()
-
-        return pd.read_excel(
-            io.BytesIO(self._file_bytes),
-            sheet_name=None,
-            header=self.header_row_idx,
-            engine=engine,
-        )
+        with open_excel_workbook(self._file_bytes, compact_empty_rows=self.find_subtable) as reader:
+            return {
+                name: reader.parse(name, header=self.header_row_idx) for name in reader.sheet_names
+            }
 
     @cached_property
     def _excel_engine(self) -> str:
@@ -341,40 +402,47 @@ class _ConnectedComponents:
     @cached_property
     def _connected_components(self) -> list[_ConnectedComponent]:
         """The `_ConnectedComponent` objects comprising this collection."""
-        # -- produce a 2D-graph representing the populated cells of the worksheet (or subsheet).
-        # -- A 2D-graph relates each populated cell to the one above, below, left, and right of it.
-        # -- Only populated cells become nodes; a worksheet is mostly empty when it has a stray
-        # -- far-away cell, and a node per empty cell would cost ~1KB each.
-        # -- `dtype=bool` is required: `.notna()` on an empty (0x0) worksheet produces a float64
-        # -- array, and `&` on floats raises `TypeError: ufunc 'bitwise_and' not supported` below --
-        populated = self._worksheet_df.notna().to_numpy(dtype=bool)
-        graph: nx.Graph = nx.Graph()  # pyright: ignore[reportMissingTypeArgument]
-        graph.add_nodes_from(_cell_coordinates(*np.nonzero(populated)))  # pyright: ignore
-        # -- vertical edges, between each populated cell and a populated cell below it --
-        rows, cols = np.nonzero(populated[:-1, :] & populated[1:, :])
-        graph.add_edges_from(  # pyright: ignore
-            zip(_cell_coordinates(rows, cols), _cell_coordinates(rows + 1, cols))
-        )
-        # -- horizontal edges, between each populated cell and a populated cell right of it --
-        rows, cols = np.nonzero(populated[:, :-1] & populated[:, 1:])
-        graph.add_edges_from(  # pyright: ignore
-            zip(_cell_coordinates(rows, cols), _cell_coordinates(rows, cols + 1))
-        )
-
-        # -- compute sets of nodes representing each connected-component --
-        connected_node_sets: Iterator[set[_CellCoordinate]]
-        connected_node_sets = nx.connected_components(  # pyright: ignore[reportUnknownMemberType]
-            graph
-        )
-
         return list(
             self._merge_overlapping_tables(
                 [
-                    _ConnectedComponent(self._worksheet_df, component_node_set)
-                    for component_node_set in connected_node_sets
+                    _ConnectedComponent(self._worksheet_df, cells)
+                    for cells in self._iter_connected_node_sets()
                 ]
             )
         )
+
+    def _iter_connected_node_sets(self) -> Iterator[set[_CellCoordinate]]:
+        """Sets of 4-neighbor connected populated-cell coordinates in row-major order."""
+        populated_cell_mask = self._worksheet_df.notna().to_numpy(dtype=bool)
+        row_indices, col_indices = np.nonzero(populated_cell_mask)
+        row_coordinates, col_coordinates = row_indices.tolist(), col_indices.tolist()
+        unvisited_cells = set(zip(row_coordinates, col_coordinates))
+
+        for cell in zip(row_coordinates, col_coordinates):
+            if cell not in unvisited_cells:
+                continue
+
+            component_node_set: set[_CellCoordinate] = set()
+            cells_to_visit = [cell]
+            unvisited_cells.remove(cell)
+
+            while cells_to_visit:
+                row_idx, col_idx = cells_to_visit.pop()
+                component_node_set.add((row_idx, col_idx))
+
+                for neighbor in (
+                    (row_idx - 1, col_idx),
+                    (row_idx + 1, col_idx),
+                    (row_idx, col_idx - 1),
+                    (row_idx, col_idx + 1),
+                ):
+                    if neighbor not in unvisited_cells:
+                        continue
+
+                    unvisited_cells.remove(neighbor)
+                    cells_to_visit.append(neighbor)
+
+            yield component_node_set
 
     def _merge_overlapping_tables(
         self, connected_components: list[_ConnectedComponent]
@@ -496,11 +564,6 @@ class _SubtableParser:
                 next_row_idx -= 1
 
         return tuple(reversed(list(iter_trailing_single_cell_row_indices())))
-
-
-def _cell_coordinates(rows: np.ndarray, cols: np.ndarray) -> Iterator[_CellCoordinate]:
-    """Generate `(row, col)` cell-coordinates as Python ints from parallel index arrays."""
-    return zip(rows.tolist(), cols.tolist())
 
 
 # -- the most empty rows `_RowCompactingOpenpyxlReader` keeps before a worksheet's first value --
