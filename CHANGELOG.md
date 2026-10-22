@@ -1,4 +1,10 @@
-## 0.27.34-dev7
+## 0.27.35
+
+### Fixes
+
+- **Read hi_res table text row by row.** With `infer_table_structure=True`, a `Table` element's `.text` was the text found inside the table region in text-block order. Many PDFs lay a table's columns out as separate text blocks, so the text ran column by column (`Region North South 2021 1,204 980 ...`) while `.metadata.text_as_html` listed the same cells row by row. `.text` is now read from the inferred cells, rows top to bottom and cells left to right (`Region 2021 North 1,204 South 980 ...`), the same text table chunks get when they are split on rows. Because the cell text comes from OCR of the table image, `.text` is kept as it was when the cells miss more than 10% of its words or when its words are already in nearly the same order; `TABLE_TEXT_MIN_WORD_COVERAGE` and `TABLE_TEXT_MAX_ORDER_SIMILARITY` set those thresholds. `.metadata.text_as_html` is unchanged.
+
+## 0.27.34
 
 ### Enhancements
 
@@ -6,8 +12,6 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
-
-- **Read hi_res table text row by row.** With `infer_table_structure=True`, a `Table` element's `.text` was the text found inside the table region in text-block order. Many PDFs lay a table's columns out as separate text blocks, so the text ran column by column (`Region North South 2021 1,204 980 ...`) while `.metadata.text_as_html` listed the same cells row by row. `.text` is now read from the inferred cells, rows top to bottom and cells left to right (`Region 2021 North 1,204 South 980 ...`), the same text table chunks get when they are split on rows. Because the cell text comes from OCR of the table image, `.text` is kept as it was when the cells miss more than 10% of its words or when its words are already in nearly the same order; `TABLE_TEXT_MIN_WORD_COVERAGE` and `TABLE_TEXT_MAX_ORDER_SIMILARITY` set those thresholds. `.metadata.text_as_html` is unchanged.
 
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 
