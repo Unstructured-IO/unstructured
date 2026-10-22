@@ -22,12 +22,20 @@ from unstructured.staging.base import elements_to_json
 @pytest.mark.parametrize("source", ["filename", "file", "bytesio", "spooled"])
 @pytest.mark.parametrize("xml_path", [None, "//item"])
 @pytest.mark.parametrize(
-    ("encoding", "text"), [("windows-1252", "Café crème"), ("windows-1251", "Привет")]
+    ("encoding", "byte_encoding", "text"),
+    [
+        ("windows-1252", "windows-1252", "Café crème"),
+        ("windows-1251", "windows-1251", "Привет"),
+        ("utf-8-sig", "utf-8", "Café 中文"),
+        ("utf-8-sig", "utf-8-sig", "Café 中文"),
+        ("utf_8_sig", "utf-8", "Café 中文"),
+        ("utf_8_sig", "utf-8-sig", "Café 中文"),
+    ],
 )
 def test_partition_xml_honors_explicit_encoding(
-    tmp_path: Path, source: str, xml_path: str | None, encoding: str, text: str
+    tmp_path: Path, source: str, xml_path: str | None, encoding: str, byte_encoding: str, text: str
 ):
-    data = f"<root><item>{text}</item></root>".encode(encoding)
+    data = f"<root><item>{text}</item></root>".encode(byte_encoding)
     path = tmp_path / "encoded.xml"
     path.write_bytes(data)
 
@@ -46,17 +54,58 @@ def test_partition_xml_honors_explicit_encoding(
 
         elements = partition_xml(**kwargs, encoding=encoding, xml_path=xml_path, languages=["eng"])
 
+        if "file" in kwargs:
+            assert not kwargs["file"].closed
+            kwargs["file"].seek(0)
+            assert kwargs["file"].read() == data
+
     assert [element.text for element in elements] == [text]
 
 
-def test_partition_xml_explicit_encoding_overrides_declaration():
-    data = '<?xml version="1.0" encoding="UTF-8"?><root><item>Café</item></root>'.encode(
-        "windows-1252"
+@pytest.mark.parametrize("xml_path", [None, "//item"])
+@pytest.mark.parametrize(
+    ("encoding", "byte_encoding", "declaration"),
+    [
+        ("windows-1252", "windows-1252", "UTF-8"),
+        ("utf-8-sig", "utf-8", "windows-1252"),
+        ("utf-8-sig", "utf-8-sig", "windows-1252"),
+        ("utf_8_sig", "utf-8", "windows-1252"),
+        ("utf_8_sig", "utf-8-sig", "windows-1252"),
+    ],
+)
+def test_partition_xml_explicit_encoding_overrides_declaration(
+    encoding: str, byte_encoding: str, declaration: str, xml_path: str | None
+):
+    data = (f'<?xml version="1.0" encoding="{declaration}"?><root><item>Café</item></root>').encode(
+        byte_encoding
     )
 
-    elements = partition_xml(file=BytesIO(data), encoding="windows-1252", languages=["eng"])
+    stream = BytesIO(data)
+    elements = partition_xml(file=stream, encoding=encoding, xml_path=xml_path, languages=["eng"])
 
     assert [element.text for element in elements] == ["Café"]
+    assert not stream.closed
+
+
+@pytest.mark.parametrize("xml_path", [None, "//item"])
+def test_partition_xml_preserves_libxml2_encoding_names(xml_path: str | None):
+    data = "<root><item>Café</item></root>".encode("utf-32-be")
+
+    elements = partition_xml(
+        file=BytesIO(data), encoding="UCS-4", xml_path=xml_path, languages=["eng"]
+    )
+
+    assert [element.text for element in elements] == ["Café"]
+
+
+@pytest.mark.parametrize("xml_path", [None, "//item"])
+def test_partition_xml_rejects_unknown_encoding_without_closing_stream(xml_path: str | None):
+    stream = BytesIO(b"<root><item>Example</item></root>")
+
+    with pytest.raises(LookupError, match="unknown encoding"):
+        partition_xml(file=stream, encoding="not-an-encoding", xml_path=xml_path)
+
+    assert not stream.closed
 
 
 def test_partition_xml_detects_declared_encoding():

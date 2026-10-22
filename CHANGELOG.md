@@ -6,7 +6,7 @@
 
 ### Fixes
 
-- **Honor explicit encodings when extracting XML text.** `partition_xml(encoding=...)` now passes the encoding to the XML parser for file and file-like inputs, including XPath selections. Previously, only the `xml_keep_tags=True` branch used it.
+- **Honor explicit encodings when extracting XML text.** `partition_xml(encoding=...)` now passes the encoding to the XML parser for file and file-like inputs, including XPath selections. Python's `utf-8-sig` codec and its aliases are mapped to an explicit UTF-8 override, with or without a BOM. Previously, only the `xml_keep_tags=True` branch used the encoding.
 
 ## 0.27.33
 

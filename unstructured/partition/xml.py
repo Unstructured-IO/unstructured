@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import codecs
 import copy
 from io import BytesIO
 from typing import IO, Any, Iterator, cast
@@ -47,6 +48,7 @@ def partition_xml(
     encoding
         The encoding used to decode `filename` or `file`. When None, the XML parser detects
         the encoding when extracting text; when retaining tags, text encoding detection is used.
+        The Python `utf-8-sig` codec and its aliases are accepted for UTF-8 with or without a BOM.
         Does not affect an already-decoded `text` input.
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
@@ -120,6 +122,14 @@ def _get_leaf_elements(
 ) -> Iterator[str | None]:
     """Parse the XML tree in a memory efficient manner if possible."""
     element_stack: list[etree._Element] = []  # pyright: ignore[reportPrivateUsage]
+
+    if encoding is not None:
+        try:
+            is_utf8_sig = codecs.lookup(encoding).name == "utf-8-sig"
+        except LookupError:
+            is_utf8_sig = False
+        if is_utf8_sig:
+            encoding = "UTF-8"
 
     element_iterator = etree.iterparse(
         file, events=("start", "end"), encoding=encoding, resolve_entities=False
