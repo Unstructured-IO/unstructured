@@ -7,7 +7,16 @@ from typing import BinaryIO, List, Mapping, Optional, Tuple, Union
 from pdfminer import settings as pdfminer_settings
 from pdfminer.cmapdb import CMap, CMapDB
 from pdfminer.converter import PDFPageAggregator
-from pdfminer.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTextLine
+from pdfminer.layout import (
+    LAParams,
+    LTChar,
+    LTComponent,
+    LTContainer,
+    LTImage,
+    LTItem,
+    LTPage,
+    LTTextLine,
+)
 from pdfminer.pdffont import PDFCIDFont, PDFFontError
 from pdfminer.pdfinterp import LITERAL_FONT, PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
@@ -342,6 +351,23 @@ def extract_text_objects(parent_object: LTItem) -> List[LTTextLine]:
             objects.extend(extract_text_objects(child))
 
     return objects
+
+
+def overlaps_page(item: LTComponent, page_layout: LTPage) -> bool:
+    """Return whether a pdfminer layout item overlaps the visible area of its page.
+
+    pdfminer places every layout item in the same frame as the page's MediaBox, which
+    ``page_layout.bbox`` spans. A content stream can position text or images beyond those
+    bounds; such items are never rendered on the page. An item counts as on the page when its
+    box shares a positive area with the page box, so items that partially overlap the page are
+    kept unchanged and items that only touch a page edge from outside are not.
+    """
+    return (
+        item.x0 < page_layout.x1
+        and item.x1 > page_layout.x0
+        and item.y0 < page_layout.y1
+        and item.y1 > page_layout.y0
+    )
 
 
 def rect_to_bbox(

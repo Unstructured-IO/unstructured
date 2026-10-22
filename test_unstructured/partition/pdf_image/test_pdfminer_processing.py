@@ -524,6 +524,78 @@ def test_partition_pdf_fast_recovers_form_field_text():
     assert "123 Main Street" in blob
 
 
+# Text a page content stream places relative to a 612x792 MediaBox: two lines inside the page,
+# one straddling the bottom edge, and four entirely outside it.
+ON_PAGE_TEXT = [("Visible heading", 72, 700), ("Visible body line", 72, 600)]
+STRADDLING_TEXT = [("Straddling bottom edge", 72, -4)]
+OFF_PAGE_TEXT = [
+    ("Hidden below page", 72, -200),
+    ("Hidden above page", 72, 1000),
+    ("Hidden left of page", -400, 500),
+    ("Hidden right of page", 700, 500),
+]
+
+
+def _build_off_page_text_pdf(path: str) -> None:
+    """Write a 1-page PDF whose content stream draws text both on and beyond its MediaBox."""
+    from pypdf import PdfWriter
+    from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
+
+    writer = PdfWriter()
+    writer.add_blank_page(width=612, height=792)
+    page = writer.pages[0]
+
+    font = DictionaryObject(
+        {
+            NameObject("/Type"): NameObject("/Font"),
+            NameObject("/Subtype"): NameObject("/Type1"),
+            NameObject("/BaseFont"): NameObject("/Helvetica"),
+        }
+    )
+    page[NameObject("/Resources")] = DictionaryObject(
+        {NameObject("/Font"): DictionaryObject({NameObject("/F1"): writer._add_object(font)})}
+    )
+    content = DecodedStreamObject()
+    content.set_data(
+        "".join(
+            f"BT /F1 12 Tf {x} {y} Td ({text}) Tj ET\n"
+            for text, x, y in ON_PAGE_TEXT + STRADDLING_TEXT + OFF_PAGE_TEXT
+        ).encode()
+    )
+    page[NameObject("/Contents")] = writer._add_object(content)
+
+    with open(path, "wb") as f:
+        writer.write(f)
+
+
+def test_process_file_with_pdfminer_drops_text_outside_the_page():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pdf_path = os.path.join(tmp_dir, "off-page.pdf")
+        _build_off_page_text_pdf(pdf_path)
+        layout, _ = process_file_with_pdfminer(pdf_path)
+
+    texts = [str(t).strip() for t in layout[0].texts if t]
+    for text, _, _ in ON_PAGE_TEXT + STRADDLING_TEXT:
+        assert text in texts
+    for text, _, _ in OFF_PAGE_TEXT:
+        assert text not in texts
+
+
+def test_partition_pdf_fast_drops_text_outside_the_page():
+    from unstructured.partition.pdf import partition_pdf
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pdf_path = os.path.join(tmp_dir, "off-page.pdf")
+        _build_off_page_text_pdf(pdf_path)
+        elements = partition_pdf(filename=pdf_path, strategy="fast")
+
+    blob = "\n".join(el.text for el in elements)
+    for text, _, _ in ON_PAGE_TEXT + STRADDLING_TEXT:
+        assert text in blob
+    for text, _, _ in OFF_PAGE_TEXT:
+        assert text not in blob
+
+
 @patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())
 def test_laprams_are_passed_from_partition_to_pdfminer(pdfminer_mock):
     partition(

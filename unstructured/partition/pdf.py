@@ -65,6 +65,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
     get_text_with_deduplication,
     open_pdfminer_pages_generator,
+    overlaps_page,
     rect_to_bbox,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
@@ -535,6 +536,8 @@ def _process_pdfminer_pages(
             annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
 
         for obj in page_layout:
+            if not overlaps_page(obj, page_layout):
+                continue
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
             bbox = (x1, y1, x2, y2)
 
