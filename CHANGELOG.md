@@ -1,4 +1,4 @@
-## 0.27.34-dev6
+## 0.27.34-dev7
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
+
+- **Read spreadsheet cells as the workbook holds them.** `partition_xlsx()` let Pandas infer a dtype per column, so one empty cell turned a column of whole numbers into floats (`12` came out as `12.0`) and a column of booleans into `1.0` and `0.0`. Cells are now read as the values they hold. This applies to `.xlsx` and `.xls`, with and without `find_subtable`.
 
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 

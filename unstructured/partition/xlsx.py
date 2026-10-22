@@ -188,8 +188,13 @@ class ExcelWorkbookReader:
         return self._reader.sheet_names
 
     def parse(self, sheet_name: str, *, header: int | None = None) -> pd.DataFrame:
-        """Read one worksheet with the validated engine and row-compaction policy."""
-        return self._reader.parse(sheet_name=sheet_name, header=header)
+        """Read one worksheet with the validated engine and row-compaction policy.
+
+        Each cell is read as the value the workbook holds. Pandas otherwise infers a dtype per
+        column, so one empty cell turns a column of whole numbers into floats ("12" is written
+        "12.0") and a column of booleans into 1.0 and 0.0.
+        """
+        return self._reader.parse(sheet_name=sheet_name, header=header, dtype=object)
 
 
 @contextmanager
