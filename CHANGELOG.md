@@ -1,4 +1,10 @@
-## 0.27.34-dev7
+## 0.27.35-dev0
+
+### Fixes
+
+- **Keep XML text that runs through child elements, and keep the texts of a record apart.** `partition_xml()` emitted only the `.text` of each element, so in `<p>The <b>quick</b> brown fox.</p>` the words after a child element were lost and the rest came out in pieces and out of order (`quick`, then `The `). An element with text of its own now reads as one text, `The quick brown fox.`, including the text around a comment or processing instruction. A container of separate texts, such as a record of fields or a list of items, keeps its texts apart, also inside prose: `<body>Inventory:<record>...</record></body>` gives `Inventory:` and then each field. Texts are emitted as soon as they are complete, so a large file streams with bounded memory, and an `xml_path` match inside another match is not read twice.
+
+## 0.27.34
 
 ### Enhancements
 
@@ -6,8 +12,6 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
-
-- **Keep XML text that runs through child elements.** `partition_xml()` emitted only the `.text` of each element, so in `<p>The <b>quick</b> brown fox.</p>` the words after a child element were lost and the rest came out in pieces and out of order (`quick`, then `The `). An element with text of its own now reads as one text, `The quick brown fox.`. Elements that only hold other elements, such as a record of fields, are partitioned as before.
 
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 
