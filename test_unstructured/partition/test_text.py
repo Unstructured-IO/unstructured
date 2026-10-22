@@ -117,10 +117,33 @@ def test_partition_text_from_filename_raises_econding_error(
         partition_text(filename=filename, encoding=encoding)
 
 
-def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line():
-    elements = partition_text(text="Shopping list:\n• milk\n• bread\n")
-
-    assert elements == [Title("Shopping list:"), ListItem("milk"), ListItem("bread")]
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "Shopping list:\n• milk\n• bread\n",
+            [Title("Shopping list:"), ListItem("milk"), ListItem("bread")],
+        ),
+        (
+            "Fruits:\n  - apple\n  - pear\nVegetables:\n  - carrot\n",
+            [
+                Title("Fruits:"),
+                ListItem("apple"),
+                ListItem("pear"),
+                Title("Vegetables:"),
+                ListItem("carrot"),
+            ],
+        ),
+        (
+            "These rules must be followed\n*without exception* in all deployments.\n",
+            [NarrativeText("These rules must be followed *without exception* in all deployments.")],
+        ),
+    ],
+)
+def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(
+    text: str, expected: list
+):
+    assert partition_text(text=text) == expected
 
 
 def test_partition_text_from_file():

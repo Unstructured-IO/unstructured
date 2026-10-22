@@ -272,6 +272,30 @@ the fox met a friendly bear."""
             "Requirements:\n- install the latest Python release first\n- pip",
             "Requirements:\n\n- install the latest Python release first \n\n- pip",
         ),
+        # -- a wrapped item keeps its continuation line --
+        (
+            "Requirements:\n- install the latest Python release first and then\n"
+            "  configure the environment\n- pip",
+            "Requirements:\n\n- install the latest Python release first and then configure the"
+            " environment \n\n- pip",
+        ),
+        # -- the next lead-in starts a part of its own, also with indented bullets --
+        (
+            "Fruits:\n- apple\nVegetables:\n- carrot",
+            "Fruits:\n\n- apple\n\nVegetables:\n\n- carrot",
+        ),
+        (
+            "Fruits:\n  - apple\n  - pear\nVegetables:\n  - carrot",
+            "Fruits:\n\n- apple \n\n- pear\n\nVegetables:\n\n- carrot",
+        ),
+        # -- "* " starts an item, and a bullet with no space after it still does --
+        ("Steps:\n* first\n* second", "Steps:\n\n* first \n\n* second"),
+        ("Items:\n\u25cbitem one\n\u25cbitem two", "Items:\n\n\u25cbitem one \n\n\u25cbitem two"),
+        # -- emphasis is not a bullet --
+        (
+            "These rules must be followed\n*without exception* in all deployments.",
+            "These rules must be followed *without exception* in all deployments.",
+        ),
     ],
 )
 def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(

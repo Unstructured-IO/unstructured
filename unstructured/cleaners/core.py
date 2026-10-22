@@ -134,22 +134,57 @@ def group_bullet_paragraph(paragraph: str) -> list:
     return clean_paragraphs
 
 
-def _split_off_bullet_list(paragraph: str) -> list[str]:
-    """Split a paragraph before the first of its lines that starts with a bullet.
+def _starts_list_item(line: str) -> bool:
+    """Whether a line starts with a bullet.
 
-    A list that follows its lead-in line without a blank line, such as "Shopping list:" followed
-    by "• milk" and "• bread" on the next lines, is then grouped as bullets. As one paragraph, its
-    bullets were split off from their items when the lines were short, and its items were joined
-    into the lead-in line when they were long.
+    `*` also marks emphasis in prose, as in "*without exception* in all deployments", so it
+    starts an item only when whitespace or the end of the line follows it.
+    """
+    stripped = line.strip()
+    bullet = UNICODE_BULLETS_RE.match(stripped)
+    if bullet is None:
+        return False
+    return bullet.group() != "*" or len(stripped) == 1 or stripped[1].isspace()
+
+
+def _split_off_bullet_lists(paragraph: str) -> list[str]:
+    """Split a paragraph into its bulleted lists and the lines around them.
+
+    A list can follow its lead-in line without a blank line, such as "Shopping list:" followed
+    by "• milk" and "• bread" on the next lines. As one paragraph, its bullets were split off from
+    their items when the lines were short, and its items were joined into the lead-in line when
+    they were long.
+
+    A line after an item continues that item when the line before it is long enough to have
+    wrapped (five words or more, as in the short-lines check below) or when it starts in
+    lowercase, unless it ends with ":" and an item follows it. Any other line starts the next
+    part, such as "Vegetables:" in "Fruits:\\n- apple\\nVegetables:\\n- carrot".
     """
     lines = paragraph.split("\n")
-    lead_in = lines[0].strip()
-    if UNICODE_BULLETS_RE.match(lead_in) or E_BULLET_PATTERN.match(lead_in):
+    first_line = lines[0].strip()
+    if UNICODE_BULLETS_RE.match(first_line) or E_BULLET_PATTERN.match(first_line):
         return [paragraph]
-    for idx in range(1, len(lines)):
-        if UNICODE_BULLETS_RE.match(lines[idx].strip()):
-            return ["\n".join(lines[:idx]), "\n".join(lines[idx:])]
-    return [paragraph]
+
+    parts: list[str] = []
+    start = 0
+    in_list = False
+    for idx, line in enumerate(lines):
+        if _starts_list_item(line):
+            if not in_list:
+                if idx > start:
+                    parts.append("\n".join(lines[start:idx]))
+                start, in_list = idx, True
+            continue
+        text = line.strip()
+        if not in_list or not text:
+            continue
+        lead_in = text.endswith(":") and idx + 1 < len(lines) and _starts_list_item(lines[idx + 1])
+        wrapped = len(lines[idx - 1].strip().split(" ")) >= 5 or text[0].islower()
+        if lead_in or not wrapped:
+            parts.append("\n".join(lines[start:idx]))
+            start, in_list = idx, False
+    parts.append("\n".join(lines[start:]))
+    return parts
 
 
 def group_broken_paragraphs(
@@ -180,7 +215,7 @@ def group_broken_paragraphs(
     paragraphs = [
         part
         for paragraph in paragraph_split.split(text)
-        for part in _split_off_bullet_list(paragraph)
+        for part in _split_off_bullet_lists(paragraph)
     ]
     clean_paragraphs = []
     for paragraph in paragraphs:
