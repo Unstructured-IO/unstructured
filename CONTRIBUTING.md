@@ -79,7 +79,9 @@ The version format stays the same: several commits on `main` can share a
 2. Squash and merge the release PR so the final version is introduced in one
    commit. The `check-version` CI job rejects a final version that already has
    a version tag. It also blocks ordinary PRs while the base holds a final
-   version, including merge-queue entries behind a release PR.
+   version, including merge-queue entries behind a release PR. These checks
+   block merges only while `check-version` is a required status check on
+   `main`.
 3. Create the GitHub Release and tag from that release commit as today. Click
    **Generate release notes**, select the previous package release tag as the
    starting point, and curate the result. Check category labels, move breaking
