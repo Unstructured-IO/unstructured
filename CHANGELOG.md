@@ -1,3 +1,7 @@
+> This changelog is frozen. From the next release onward, release notes live in
+> [GitHub Releases](https://github.com/Unstructured-IO/unstructured/releases).
+> The history below is preserved; do not add entries or rename version headings.
+
 ## 0.27.34
 
 ### Enhancements
