@@ -11,6 +11,7 @@ from tempfile import SpooledTemporaryFile
 from typing import Callable
 
 import pytest
+from lxml import etree
 from pytest_mock import MockerFixture
 
 from test_unstructured.unit_utils import example_doc_path
@@ -18,7 +19,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.partition.xml import get_leaf_elements, partition_xml
+from unstructured.partition.xml import _partition_events, get_leaf_elements, partition_xml
 from unstructured.staging.base import elements_to_json
 
 
@@ -458,6 +459,16 @@ def _nested_records(depth: int) -> bytes:
     return (level * depth + "</section>" * depth).encode()
 
 
+def _blank_sections(count: int) -> bytes:
+    # -- blank records nested in sections: no text is emitted, and none may be kept --
+    section = "<section>" + "<record> </record>" * 500 + "</section>"
+    return ("<root>" + section * count + "</root>").encode()
+
+
+def _comments(count: int) -> bytes:
+    return ("<root>" + "<!-- c -->   \n<?pi x?>\n" * count + "</root>").encode()
+
+
 def _peak_memory_while_partitioning(xml: bytes) -> int:
     tracemalloc.start()
     try:
@@ -474,6 +485,8 @@ def _peak_memory_while_partitioning(xml: bytes) -> int:
         (_whitespace_records, 10_000, 100_000),
         (_records, 10_000, 100_000),
         (_nested_records, 20, 200),
+        (_blank_sections, 20, 200),
+        (_comments, 10_000, 100_000),
     ],
 )
 def test_partition_xml_keeps_pending_text_bounded(
@@ -485,6 +498,55 @@ def test_partition_xml_keeps_pending_text_bounded(
     large_peak = _peak_memory_while_partitioning(make_xml(large))
 
     assert large_peak < 2 * small_peak
+
+
+_BETWEEN_RECORDS = (
+    "<root><record><a>A</a><b>B</b></record>BETWEEN"
+    "<wrapper><record><a>C</a><b>D</b></record></wrapper>{after}</root>"
+)
+
+
+@pytest.mark.parametrize(
+    ("after", "expected_texts"),
+    [("", ["A", "B", "BETWEEN", "C", "D"]), ("AFTER", ["A", "B", "BETWEEN", "C", "D", "AFTER"])],
+)
+@pytest.mark.parametrize("read_size", [None, 1, 3, 7])
+def test_partition_xml_keeps_text_between_records_in_document_order(
+    after: str, expected_texts: list[str], read_size: int | None
+):
+    xml = _BETWEEN_RECORDS.format(after=after).encode()
+    file = io.BytesIO(xml) if read_size is None else _TrickleFile(xml, read_size)
+
+    assert list(get_leaf_elements(None, file, None, None)) == expected_texts
+    assert [e.text for e in partition_xml(text=xml.decode(), xml_path=".")] == expected_texts
+
+
+def test_partition_xml_releases_a_tail_it_has_read_before_the_parent_ends():
+    tail = " " * 1000 + "BETWEEN"
+    xml = f"<root><record><a>A</a><b>B</b></record>{tail}<record><a>C</a><b>D</b></record></root>"
+    records: list[etree._Element] = []  # pyright: ignore[reportPrivateUsage]
+
+    def events():
+        events = ("start", "end", "comment", "pi")
+        for event, node in etree.iterparse(_TrickleFile(xml.encode(), 7), events=events):
+            if event == "end" and node.tag == "record":
+                records.append(node)
+            yield event, node
+
+    texts = _partition_events(events(), clear=True)
+
+    assert [next(texts) for _ in range(3)] == ["A", "B", tail]
+    # -- the root is still open, and the record keeps no copy of the text it handed over --
+    assert records[0].tail is None
+    assert list(texts) == ["C", "D"]
+
+
+def test_partition_xml_leaves_the_tree_unchanged_when_it_does_not_clear_it():
+    root = etree.fromstring("<root><record><a>A</a><b>B</b></record>BETWEEN<record/></root>")
+
+    events = etree.iterwalk(root, events=("start", "end", "comment", "pi"))
+    assert list(_partition_events(events, clear=False)) == ["A", "B", "BETWEEN"]
+    assert root[0].tail == "BETWEEN"
 
 
 def test_partition_xml_streams_the_texts_of_a_large_file():

@@ -151,8 +151,9 @@ def _get_leaf_elements(
     yield from _partition_events(element_iterator, clear=True)
 
 
-# -- Pieces a run without text of its own holds before its children are emitted as blocks, so a
-# -- long run of leaf elements, or of whitespace, is not kept until the document ends.
+# -- Pieces a run without text of its own holds, those of its inline children included, before
+# -- they are emitted as blocks, so a long run of leaf elements, of blank elements nested at any
+# -- depth, or of whitespace, is not kept until the document ends.
 _MAX_PENDING_PIECES = 1000
 
 
@@ -179,7 +180,7 @@ class _Run:
     whose pieces are referenced rather than copied, so nested inline elements are joined once.
     """
 
-    __slots__ = ("pieces", "has_text", "items")
+    __slots__ = ("pieces", "has_text", "items", "weight")
 
     def __init__(self):
         self.pieces: list[str | _Inline] = []
@@ -187,6 +188,8 @@ class _Run:
         self.has_text = False
         # -- inline children with text that is more than whitespace --
         self.items = 0
+        # -- the pieces held, counting those of inline children, which `pieces` only references --
+        self.weight = 0
 
     @property
     def nonblank(self) -> bool:
@@ -195,6 +198,7 @@ class _Run:
     def add_text(self, text: str | None) -> None:
         if text:
             self.pieces.append(text)
+            self.weight += 1
             self.has_text = self.has_text or not text.isspace()
 
     def add_inline(self, child: _Run) -> None:
@@ -202,7 +206,13 @@ class _Run:
         if not child.has_text and child.items == 1:
             inner = next(p.inner for p in child.pieces if isinstance(p, _Inline) and p.nonblank)
         self.pieces.append(_Inline(child.pieces, child.nonblank, inner))
+        self.weight += child.weight + 1
         self.items += child.nonblank
+
+    @property
+    def over_budget(self) -> bool:
+        """Whether the run holds too much to wait for text of its own, which would join it."""
+        return not self.has_text and self.weight >= _MAX_PENDING_PIECES
 
     def blocks(self) -> Iterator[str]:
         """One text when the run has text of its own, as prose does, else one per inline child."""
@@ -233,10 +243,20 @@ def _flatten(pieces: list[str | _Inline]) -> str:
 class _Frame:
     """An element that has started and not ended yet."""
 
-    __slots__ = ("element", "run", "text_read", "tail_owner", "has_children", "structural")
+    __slots__ = (
+        "element",
+        "clear",
+        "run",
+        "text_read",
+        "tail_owner",
+        "has_children",
+        "structural",
+    )
 
-    def __init__(self, element: etree._Element):  # pyright: ignore[reportPrivateUsage]
+    def __init__(self, element: etree._Element, clear: bool):  # pyright: ignore[reportPrivateUsage]
         self.element = element
+        # -- whether the tree may be changed, which the streaming route does to release text --
+        self.clear = clear
         self.run = _Run()
         self.text_read = False
         # -- the last child node whose tail is not read yet --
@@ -253,6 +273,9 @@ class _Frame:
             self.text_read = True
         if self.tail_owner is not None:
             self.run.add_text(self.tail_owner.tail)
+            if self.clear:
+                # -- the run holds the tail now; the node, still attached, need not --
+                self.tail_owner.tail = None
             self.tail_owner = None
 
 
@@ -269,7 +292,9 @@ def _partition_events(
     only when the parser has finished it, at the end of an element or of a later sibling.
     """
     stack: list[_Frame] = []
-    # -- the frames below this index have nothing pending: no run, text or tail --
+    # -- the frames below this index have nothing pending: no run, text or tail. Whatever gives a
+    # -- frame pending text lowers it to that frame, or a flush would skip the frame and emit its
+    # -- text after texts that follow it --
     clean = 0
 
     def flush() -> Iterator[str]:
@@ -288,11 +313,15 @@ def _partition_events(
             if stack:
                 stack[-1].catch_up()
                 stack[-1].has_children = True
-            stack.append(_Frame(node))
+                if stack[-1].run.over_budget:
+                    yield from flush()
+            stack.append(_Frame(node, clear))
         elif event in ("comment", "pi"):
             # -- a comment or processing instruction adds only its tail, to its parent's text --
             if stack and node.getparent() is stack[-1].element:
                 stack[-1].catch_up()
+                if stack[-1].run.over_budget:
+                    yield from flush()
                 stack[-1].tail_owner = node
                 clean = min(clean, len(stack) - 1)
         elif event == "end":
@@ -308,10 +337,11 @@ def _partition_events(
             else:
                 parent = stack[-1]
                 parent.run.add_inline(run)
-                if not parent.run.has_text and len(parent.run.pieces) >= _MAX_PENDING_PIECES:
+                if parent.run.over_budget:
                     yield from flush()
             if stack:
                 stack[-1].tail_owner = node
+                clean = min(clean, len(stack) - 1)
             if clear:
                 # -- the tail is text of the parent, read once the parent has it complete --
                 node.clear(keep_tail=True)
