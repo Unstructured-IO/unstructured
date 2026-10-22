@@ -2,7 +2,17 @@ from __future__ import annotations
 
 import math
 import os
-from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    BinaryIO,
+    Collection,
+    Iterable,
+    List,
+    Optional,
+    Union,
+    cast,
+)
 
 import numpy as np
 from pdfminer.layout import LAParams, LTChar, LTContainer, LTTextBox
@@ -46,6 +56,7 @@ def process_file_with_pdfminer(
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
     rotation_corrections: Optional[List[int]] = None,
+    skip_pages: Optional[Collection[int]] = None,
 ) -> tuple[List[List["TextRegion"]], List[List]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
@@ -55,6 +66,7 @@ def process_file_with_pdfminer(
             password=password,
             pdfminer_config=pdfminer_config,
             rotation_corrections=rotation_corrections,
+            skip_pages=skip_pages,
         )
         return extracted_layout, layouts_links
 
@@ -571,6 +583,7 @@ def process_data_with_pdfminer(
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
     rotation_corrections: Optional[List[int]] = None,
+    skip_pages: Optional[Collection[int]] = None,
 ) -> tuple[List[LayoutElements], List[List]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image
@@ -579,6 +592,9 @@ def process_data_with_pdfminer(
     counter-clockwise) that unstructured-inference applied to the rendered page images to
     make their text upright. Mirroring those rotations onto the extracted coordinates keeps
     the pdfminer layer aligned with the object-detection layer.
+
+    ``skip_pages`` holds zero-based indexes of pages whose content is not interpreted; they
+    still yield an empty layout so the result stays aligned with the document's pages.
     """
 
     from unstructured_inference.inference.layoutelement import LayoutElements
@@ -588,7 +604,9 @@ def process_data_with_pdfminer(
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(file, password=password, pdfminer_config=pdfminer_config)
+        open_pdfminer_pages_generator(
+            file, password=password, pdfminer_config=pdfminer_config, skip_pages=skip_pages
+        )
     ):
         width, height = page_layout.width, page_layout.height
 

@@ -2261,3 +2261,73 @@ def test_hi_res_groups_rotated_page_text_into_words():
     assert len(single_chars) == 0, (
         f"Rotated page produced {len(single_chars)} single-char elements: {single_chars[:10]}"
     )
+
+
+def test_find_complex_pdf_pages_reports_only_the_complex_pages():
+    class Stream:
+        def __init__(self, data):
+            self.data = data
+
+        def get_data(self):
+            return self.data
+
+    vector_heavy = b" ".join([b"m"] * 120 + [b"Tj"] * 2)
+    prose = b" ".join([b"Tj"] * 120 + [b"m"] * 2)
+    reader = mock.Mock()
+    reader.pages = [
+        {"/Contents": Stream(prose)},
+        {"/Contents": Stream(vector_heavy)},
+        {"/Contents": Stream(prose)},
+        {"/Contents": Stream(vector_heavy)},
+    ]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        pages = pdf.find_complex_pdf_pages(
+            file=b"x" * 20,
+            max_graphics_ops=100,
+            min_graphics_to_text_ratio=20.0,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+
+    assert pages == {1, 3}
+
+
+def test_find_complex_pdf_pages_flags_every_page_when_a_document_wide_cap_is_exceeded():
+    class EmptyStream:
+        def get_data(self):
+            return b""
+
+    contents = ArrayObject([EmptyStream() for _ in range(60)])
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": contents} for _ in range(3)]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        pages = pdf.find_complex_pdf_pages(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_content_stream_array_entries=100,
+            max_total_array_entries=100,
+        )
+
+    assert pages == {0, 1, 2}
+
+
+def test_partition_pdf_or_image_skips_only_complex_pages_for_text_extraction():
+    """A complex page removes only itself from hi_res text extraction; the other pages keep
+    their text layer."""
+    with (
+        mock.patch.object(pdf, "find_complex_pdf_pages", return_value={1}),
+        mock.patch.object(pdf, "extractable_elements") as mock_extract,
+        mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[]) as mock_local,
+    ):
+        pdf.partition_pdf_or_image(
+            example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+            strategy=PartitionStrategy.HI_RES,
+        )
+
+    mock_extract.assert_not_called()
+    mock_local.assert_called_once()
+    assert mock_local.call_args.kwargs["pdf_text_extractable"] is True
+    assert mock_local.call_args.kwargs["pdfminer_skip_pages"] == {1}

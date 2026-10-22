@@ -7,7 +7,17 @@ import os
 import re
 import warnings
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Iterator, NoReturn, Optional, Union, cast
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Any,
+    Collection,
+    Iterator,
+    NoReturn,
+    Optional,
+    Union,
+    cast,
+)
 
 import numpy as np
 import wrapt
@@ -317,13 +327,15 @@ def partition_pdf_or_image(
 
     extracted_elements: list[list[Element]] = []
     pdf_text_extractable = False
+    complex_pages: set[int] = set()
 
     if not is_image:
         try:
-            if is_pdf_too_complex(filename=filename, file=file):
+            complex_pages = find_complex_pdf_pages(filename=filename, file=file)
+            if complex_pages:
                 logger.info(
-                    "PDF is too complex for text extraction based on heuristic checks. "
-                    "Falling back to hi_res strategy without text extraction."
+                    f"{len(complex_pages)} PDF page(s) are too complex for text extraction "
+                    "based on heuristic checks. Text extraction skips those pages."
                 )
 
             else:
@@ -384,7 +396,11 @@ def partition_pdf_or_image(
                 ocr_languages=ocr_languages,
                 metadata_last_modified=metadata_last_modified or last_modified,
                 hi_res_model_name=hi_res_model_name,
-                pdf_text_extractable=pdf_text_extractable,
+                # Pages flagged as complex are excluded from text extraction; the remaining
+                # pages are still worth extracting even though the document as a whole was
+                # not treated as text-extractable when choosing the strategy.
+                pdf_text_extractable=pdf_text_extractable or bool(complex_pages),
+                pdfminer_skip_pages=complex_pages,
                 extract_images_in_pdf=extract_images_in_pdf,
                 extract_image_block_types=extract_image_block_types,
                 extract_image_block_output_dir=extract_image_block_output_dir,
@@ -733,8 +749,39 @@ def is_pdf_too_complex(
     max_total_stream_bytes: int = DEFAULT_MAX_TOTAL_STREAM_BYTES,
     max_total_array_entries: int = DEFAULT_MAX_TOTAL_ARRAY_ENTRIES,
 ) -> bool:
-    """Check if a PDF is likely a complex vector drawing (e.g., CAD/engineering docs)
-    that would be extremely slow or produce garbage results with PDFMiner text extraction.
+    """True when at least one page of the PDF is flagged by `find_complex_pdf_pages`."""
+    return bool(
+        find_complex_pdf_pages(
+            filename=filename,
+            file=file,
+            max_graphics_ops=max_graphics_ops,
+            min_graphics_to_text_ratio=min_graphics_to_text_ratio,
+            min_file_size_bytes=min_file_size_bytes,
+            min_raw_stream_bytes=min_raw_stream_bytes,
+            max_raw_stream_bytes=max_raw_stream_bytes,
+            max_content_stream_array_entries=max_content_stream_array_entries,
+            max_total_stream_bytes=max_total_stream_bytes,
+            max_total_array_entries=max_total_array_entries,
+        )
+    )
+
+
+def find_complex_pdf_pages(
+    filename: str = "",
+    file: Optional[Union[bytes, IO[bytes]]] = None,
+    max_graphics_ops: int = 10_000,
+    min_graphics_to_text_ratio: float = 20.0,
+    min_file_size_bytes: int = DEFAULT_MIN_FILE_SIZE_BYTES,
+    min_raw_stream_bytes: int = DEFAULT_MIN_RAW_STREAM_BYTES,
+    max_raw_stream_bytes: int = DEFAULT_MAX_RAW_STREAM_BYTES,
+    max_content_stream_array_entries: int = DEFAULT_MAX_CONTENT_STREAM_ARRAY_ENTRIES,
+    max_total_stream_bytes: int = DEFAULT_MAX_TOTAL_STREAM_BYTES,
+    max_total_array_entries: int = DEFAULT_MAX_TOTAL_ARRAY_ENTRIES,
+) -> set[int]:
+    """Find the pages of a PDF that are likely complex vector drawings (e.g., CAD/engineering
+    docs) that would be extremely slow or produce garbage results with PDFMiner text
+    extraction. Returns their zero-based page indexes so text extraction can skip exactly
+    those pages and still run on the rest of the document.
 
     Try to minimize overhead with early exits:
     1. Avoid overhead by skipping files smaller than min_file_size_bytes.
@@ -742,9 +789,10 @@ def is_pdf_too_complex(
        decoded stream is smaller than min_raw_stream_bytes.
     3. For large streams, regex to count graphics without parsing the stream.
 
-    A page is flagged (returns True) on a high graphics-op count AND graphics-to-text
-    ratio, or, as defense-in-depth against crafted content streams (CVE-2026-33123),
-    when it exceeds any of the ``max_*`` byte/entry caps below.
+    A page is flagged on a high graphics-op count AND graphics-to-text ratio, or when it
+    exceeds a per-page ``max_*`` cap. As defense-in-depth against crafted content streams
+    (CVE-2026-33123), exceeding a document-wide cap or pypdf's decode limit flags every
+    page and stops scanning.
 
     Parameters
     ----------
@@ -753,8 +801,8 @@ def is_pdf_too_complex(
     file
         A file-like object or bytes.
     max_graphics_ops
-        If any page exceeds this many graphics operators AND the graphics-to-text ratio
-        exceeds `min_graphics_to_text_ratio`, the PDF is considered too complex.
+        A page is flagged when it exceeds this many graphics operators AND the
+        graphics-to-text ratio exceeds `min_graphics_to_text_ratio`.
     min_graphics_to_text_ratio
         Minimum ratio of graphics ops to text ops required (in conjunction with
         `max_graphics_ops`) to flag a page as too complex.
@@ -781,6 +829,7 @@ def is_pdf_too_complex(
     """
 
     original_pos: Optional[int] = None
+    complex_pages: set[int] = set()
 
     try:
         # Preserve file cursor position for file-like inputs
@@ -798,10 +847,10 @@ def is_pdf_too_complex(
         elif filename:
             file_size = os.path.getsize(filename)
         else:
-            return False
+            return set()
 
         if file_size < min_file_size_bytes:
-            return False
+            return set()
 
         # Build reader
         if file is not None:
@@ -814,8 +863,9 @@ def is_pdf_too_complex(
             reader = PdfReader(filename)
 
         if not reader.pages:
-            return False
+            return set()
 
+        all_pages = set(range(len(reader.pages)))
         total_raw_bytes = 0
         total_array_entries = 0
         for page_index, page in enumerate(reader.pages):
@@ -841,9 +891,10 @@ def is_pdf_too_complex(
                         f"Page {page_index + 1} /Contents array has {len(contents)} "
                         f"entries, exceeding the limit of "
                         f"{max_content_stream_array_entries}. "
-                        "Flagging PDF as too complex for text extraction."
+                        "Skipping text extraction for this page."
                     )
-                    return True
+                    complex_pages.add(page_index)
+                    continue
                 # Charge every slot up front (non-stream entries are traversed too),
                 # so a shared non-stream array can't scale traversal with page count.
                 total_array_entries += len(contents)
@@ -853,9 +904,10 @@ def is_pdf_too_complex(
                         f"by page {page_index + 1}. "
                         "Flagging PDF as too complex for text extraction."
                     )
-                    return True
+                    return all_pages
                 # bytearray append is amortized O(1); `bytes +=` was O(n^2).
                 accumulated = bytearray()
+                page_is_complex = False
                 for item in contents:
                     # Decode each stream in its own try: a bomb fails closed, but an
                     # otherwise-unreadable stream only skips itself, so the remaining
@@ -870,7 +922,7 @@ def is_pdf_too_complex(
                             f"Page {page_index + 1} content stream exceeds pypdf's decode "
                             "limit. Flagging PDF as too complex for text extraction."
                         )
-                        return True
+                        return all_pages
                     except Exception:
                         continue
                     total_raw_bytes += len(chunk)
@@ -880,17 +932,21 @@ def is_pdf_too_complex(
                             f"bytes by page {page_index + 1}. "
                             "Flagging PDF as too complex for text extraction."
                         )
-                        return True
+                        return all_pages
                     # Check before copying so an oversized stream is never
                     # accumulated into the buffer or regex-scanned.
                     if len(accumulated) + len(chunk) > max_raw_stream_bytes:
                         logger.info(
                             f"Page {page_index + 1} content stream exceeds "
                             f"{max_raw_stream_bytes} bytes. "
-                            "Flagging PDF as too complex for text extraction."
+                            "Skipping text extraction for this page."
                         )
-                        return True
+                        page_is_complex = True
+                        break
                     accumulated.extend(chunk)
+                if page_is_complex:
+                    complex_pages.add(page_index)
+                    continue
                 raw_data = accumulated
             elif hasattr(contents, "get_data"):
                 try:
@@ -900,7 +956,7 @@ def is_pdf_too_complex(
                         f"Page {page_index + 1} content stream exceeds pypdf's decode "
                         "limit. Flagging PDF as too complex for text extraction."
                     )
-                    return True
+                    return all_pages
                 except Exception:
                     continue
                 total_raw_bytes += len(chunk)
@@ -910,14 +966,15 @@ def is_pdf_too_complex(
                         f"bytes by page {page_index + 1}. "
                         "Flagging PDF as too complex for text extraction."
                     )
-                    return True
+                    return all_pages
                 if len(chunk) > max_raw_stream_bytes:
                     logger.info(
                         f"Page {page_index + 1} content stream exceeds "
                         f"{max_raw_stream_bytes} bytes. "
-                        "Flagging PDF as too complex for text extraction."
+                        "Skipping text extraction for this page."
                     )
-                    return True
+                    complex_pages.add(page_index)
+                    continue
                 # No copy: the regexes accept bytes and this is not mutated.
                 raw_data = chunk
 
@@ -942,13 +999,13 @@ def is_pdf_too_complex(
                     f"{num_text_ops} text ops (ratio: {ratio:.1f}). "
                     f"Exceeds thresholds (ops: {max_graphics_ops}, "
                     f"ratio: {min_graphics_to_text_ratio}). "
-                    "Flagging PDF as too complex for text extraction."
+                    "Skipping text extraction for this page."
                 )
-                return True
+                complex_pages.add(page_index)
 
     except Exception as e:
-        logger.debug(f"is_pdf_too_complex check failed: {e}")
-        return False
+        logger.debug(f"find_complex_pdf_pages check failed: {e}")
+        return set()
 
     finally:
         # Restore original cursor position for file-like inputs
@@ -960,7 +1017,7 @@ def is_pdf_too_complex(
         ):
             file.seek(original_pos)
 
-    return False
+    return complex_pages
 
 
 def _enable_detect_vertical_if_rotated(
@@ -999,6 +1056,7 @@ def _partition_pdf_or_image_local(
     pdf_image_dpi: Optional[int] = None,
     metadata_last_modified: Optional[str] = None,
     pdf_text_extractable: bool = False,
+    pdfminer_skip_pages: Optional[Collection[int]] = None,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
@@ -1093,6 +1151,7 @@ def _partition_pdf_or_image_local(
                 password=password,
                 pdfminer_config=pdfminer_config,
                 rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
+                skip_pages=pdfminer_skip_pages,
             )
             if pdf_text_extractable
             else ([], [])
@@ -1156,6 +1215,7 @@ def _partition_pdf_or_image_local(
                 password=password,
                 pdfminer_config=pdfminer_config,
                 rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
+                skip_pages=pdfminer_skip_pages,
             )
             if pdf_text_extractable
             else ([], [])

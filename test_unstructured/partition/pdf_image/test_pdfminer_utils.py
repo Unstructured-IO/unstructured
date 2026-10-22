@@ -12,6 +12,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     deduplicate_chars_in_text_line,
     extract_text_objects,
     get_text_with_deduplication,
+    open_pdfminer_pages_generator,
 )
 from unstructured.partition.utils import config as partition_config
 
@@ -789,3 +790,18 @@ endcmap"""
         font2 = rsrcmgr.get_font(42, spec)
 
         assert font1 is font2
+
+
+def test_open_pdfminer_pages_generator_skips_pages_but_keeps_their_geometry():
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    with open(filename, "rb") as fp:
+        full = list(open_pdfminer_pages_generator(fp))
+    with open(filename, "rb") as fp:
+        partial = list(open_pdfminer_pages_generator(fp, skip_pages={0}))
+
+    assert len(full) == len(partial) == 2
+    full_first, skipped_first = full[0][1], partial[0][1]
+    assert (skipped_first.width, skipped_first.height) == (full_first.width, full_first.height)
+    assert len(full_first) > 0
+    assert len(skipped_first) == 0
+    assert len(partial[1][1]) == len(full[1][1])
