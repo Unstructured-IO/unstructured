@@ -1,3 +1,7 @@
+## 0.27.35
+
+- **Recover ligatures that a PDF font maps to U+0000.** Some PDF producers write ToUnicode entries of `<0000>` for glyphs they could not map, typically the "fi", "ff" and "ffi" ligatures, so pdfminer emitted a NUL character in their place and "efficient" came out as `e\x00cient`. When the CMap yields NUL and the font's encoding names the glyph, that name's character is used instead, so the word is extracted whole.
+
 ## 0.27.34
 
 ### Enhancements

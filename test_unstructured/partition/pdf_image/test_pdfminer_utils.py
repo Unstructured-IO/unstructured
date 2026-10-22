@@ -1,17 +1,21 @@
+import io
 from importlib import reload
 from unittest.mock import MagicMock, patch
 
-from pdfminer.layout import LTChar, LTContainer, LTFigure, LTLayoutContainer, LTTextLine
+from pdfminer.cmapdb import FileUnicodeMap
+from pdfminer.layout import LTChar, LTContainer, LTFigure, LTLayoutContainer, LTTextBox, LTTextLine
 from pdfminer.pdftypes import PDFStream
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.pdf_image.pdfminer_utils import (
     CustomPDFPageInterpreter,
+    CustomPDFType1Font,
     _is_duplicate_char,
     deduplicate_chars_in_text_line,
     extract_text_objects,
     get_text_with_deduplication,
+    open_pdfminer_pages_generator,
 )
 from unstructured.partition.utils import config as partition_config
 
@@ -789,3 +793,83 @@ endcmap"""
         font2 = rsrcmgr.get_font(42, spec)
 
         assert font1 is font2
+
+
+def _simple_font_with_tounicode(cid2unichr: dict[int, str], cid2unicode: dict[int, str]):
+    font = object.__new__(CustomPDFType1Font)
+    font.unicode_map = FileUnicodeMap()
+    font.unicode_map.cid2unichr = cid2unichr
+    font.cid2unicode = cid2unicode
+    return font
+
+
+def test_to_unichr_recovers_glyph_the_tounicode_cmap_maps_to_nul():
+    font = _simple_font_with_tounicode({33: "\x00", 34: "A"}, {33: "\ufb03", 34: "B"})
+
+    assert font.to_unichr(33) == "\ufb03"
+    assert font.to_unichr(34) == "A"
+
+
+def test_to_unichr_keeps_nul_when_the_encoding_does_not_name_the_glyph():
+    font = _simple_font_with_tounicode({33: "\x00"}, {})
+
+    assert font.to_unichr(33) == "\x00"
+
+
+def _pdf_with_nul_ligature_mapping() -> bytes:
+    """One page of Helvetica text where character code 33 is the "fi" ligature by its
+    encoding but is mapped to U+0000 by the ToUnicode CMap."""
+    from pypdf import PdfWriter
+    from pypdf.generic import (
+        ArrayObject,
+        DecodedStreamObject,
+        DictionaryObject,
+        NameObject,
+        NumberObject,
+    )
+
+    writer = PdfWriter()
+    page = writer.add_blank_page(width=300, height=100)
+
+    tounicode = DecodedStreamObject()
+    tounicode.set_data(
+        b"/CIDInit /ProcSet findresource begin 12 dict begin begincmap\n"
+        b"1 begincodespacerange <00> <FF> endcodespacerange\n"
+        b"1 beginbfchar <21> <0000> endbfchar\n"
+        b"endcmap CMapName currentdict /CMap defineresource pop end end"
+    )
+    encoding = DictionaryObject(
+        {
+            NameObject("/Type"): NameObject("/Encoding"),
+            NameObject("/BaseEncoding"): NameObject("/WinAnsiEncoding"),
+            NameObject("/Differences"): ArrayObject([NumberObject(33), NameObject("/fi")]),
+        }
+    )
+    font = DictionaryObject(
+        {
+            NameObject("/Type"): NameObject("/Font"),
+            NameObject("/Subtype"): NameObject("/Type1"),
+            NameObject("/BaseFont"): NameObject("/Helvetica"),
+            NameObject("/Encoding"): encoding,
+            NameObject("/ToUnicode"): writer._add_object(tounicode),
+        }
+    )
+    page[NameObject("/Resources")] = DictionaryObject(
+        {NameObject("/Font"): DictionaryObject({NameObject("/F1"): writer._add_object(font)})}
+    )
+    content = DecodedStreamObject()
+    content.set_data(b"BT /F1 24 Tf 20 40 Td (e!cient) Tj ET")
+    page[NameObject("/Contents")] = writer._add_object(content)
+
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+def test_open_pdfminer_pages_generator_extracts_ligature_mapped_to_nul():
+    pdf_bytes = io.BytesIO(_pdf_with_nul_ligature_mapping())
+    _, page_layout = next(open_pdfminer_pages_generator(pdf_bytes))
+    text = "".join(obj.get_text() for obj in page_layout if isinstance(obj, LTTextBox))
+
+    assert "\x00" not in text
+    assert text.strip() == "e\ufb01cient"
