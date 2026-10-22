@@ -1,4 +1,10 @@
-## 0.27.34-dev7
+## 0.27.35-dev0
+
+### Fixes
+
+- **Read the `Cc`, `Bcc` and `Message-ID` headers of an Outlook message in any letter case.** `partition_msg()` looked these headers up as `Cc`, `Bcc` and `Message-Id`, but header names are case-insensitive. Outlook writes `CC`, `BCC` and `Message-ID`, and the Gmail message in `example-docs/fake-email.msg` has `Message-ID`, so such messages got no `cc_recipient`, `bcc_recipient` or `email_message_id` metadata. The headers are now matched without regard to case.
+
+## 0.27.34
 
 ### Enhancements
 
@@ -6,8 +12,6 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
-
-- **Read the `Cc`, `Bcc` and `Message-ID` headers of an Outlook message in any letter case.** `partition_msg()` looked these headers up as `Cc`, `Bcc` and `Message-Id`, but header names are case-insensitive. Outlook writes `CC`, `BCC` and `Message-ID`, and the Gmail message in `example-docs/fake-email.msg` has `Message-ID`, so such messages got no `cc_recipient`, `bcc_recipient` or `email_message_id` metadata. The headers are now matched without regard to case.
 
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 
