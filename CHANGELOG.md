@@ -1,8 +1,6 @@
-## 0.27.35-dev0
-
-### Fixes
-
-- **Keep XML text that runs through child elements, and keep the texts of a record apart.** `partition_xml()` emitted only the `.text` of each element, so in `<p>The <b>quick</b> brown fox.</p>` the words after a child element were lost and the rest came out in pieces and out of order (`quick`, then `The `). An element with text of its own now reads as one text, `The quick brown fox.`, including the text around a comment or processing instruction. A container of separate texts, such as a record of fields or a list of items, keeps its texts apart, also inside prose: `<body>Inventory:<record>...</record></body>` gives `Inventory:` and then each field. Texts are emitted as soon as they are complete, so a large file streams with bounded memory, and an `xml_path` match inside another match is not read twice.
+> This changelog is frozen. From the next release onward, release notes live in
+> [GitHub Releases](https://github.com/Unstructured-IO/unstructured/releases).
+> The history below is preserved; do not add entries or rename version headings.
 
 ## 0.27.34
 
