@@ -60,12 +60,11 @@ other changes. Maintainers can apply labels for external contributors.
 Dependency PRs use `dependencies` and are excluded from generated notes; the
 releaser must add user-relevant security updates during curation.
 
-For breaking changes, use a `!` in the conventional commit title and include a
-"Release note" section with the impact and migration steps. The release-note
-configuration reserves `breaking-change` for a Breaking changes group, but that
-label does not currently exist. Until maintainers agree to add it, use an
-existing category label and have the releaser move the entry during curation.
-No new labels are required to contribute.
+For breaking changes, add `!` to the title (for example `feat!: …`). Add a
+"Release note" section that explains the impact and how to migrate. There is
+no `breaking-change` label yet. Use an existing category label, and the
+releaser will move the entry to Breaking changes. No new labels are required
+to contribute.
 
 `CHANGELOG.md` is frozen, including its existing development heading. Keep it
 for historical links; do not add entries or synchronize it with the package.
@@ -82,7 +81,9 @@ The version format stays the same: several commits on `main` can share a
    optional leading `v` from tags); `0.27.34-dev3` normalizes to `0.27.34.dev3`.
    A final version may be introduced only by its release PR. Squash and merge
    that PR so the final version is introduced in one commit. Do not merge
-   ordinary PRs while `main` has the final version.
+   ordinary PRs while `main` has the final version. Before merging the release
+   PR, make sure the merge queue is empty. Do not queue other PRs until the
+   next development bump is merged.
 3. Create the GitHub Release and tag from that release commit as today. Click
    **Generate release notes**, select the previous package release tag as the
    starting point, and curate the result. Check category labels, move breaking
