@@ -593,7 +593,10 @@ def catch_overlapping_and_nested_bboxes(
 ) -> tuple[bool, list[dict[str, Any]]]:
     """Catch overlapping and nested bounding boxes cases across a list of elements."""
 
-    num_pages = elements[-1].metadata.page_number or 0
+    # -- page-numbers are 1-based and an element without one is on page 1, like the per-element
+    # -- default below, so an empty element-list has no pages to compare and every element above
+    # -- page 1 gets its own page-bucket --
+    num_pages = max((element.metadata.page_number or 1 for element in elements), default=0)
     pages_of_bboxes: list[list[Points]] = [[] for _ in range(num_pages)]
 
     text_labels: list[list[str]] = [[] for _ in range(num_pages)]
