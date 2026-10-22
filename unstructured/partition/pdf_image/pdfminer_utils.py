@@ -2,7 +2,7 @@ import os
 import re
 import tempfile
 import zlib
-from typing import BinaryIO, List, Mapping, Optional, Tuple, Union
+from typing import BinaryIO, Collection, List, Mapping, Optional, Tuple, Union
 
 from pdfminer import settings as pdfminer_settings
 from pdfminer.cmapdb import CMap, CMapDB
@@ -491,15 +491,31 @@ def get_text_with_deduplication(
 
 
 @requires_dependencies(["pikepdf", "pypdf"])
+def _layout_without_contents(interpreter: PDFPageInterpreter, device: PDFPageAggregator, page):
+    """Produce the page's layout with its geometry (media box, rotation) but none of its
+    content stream interpreted, so a skipped page still occupies its slot in the output."""
+    page.contents = []
+    interpreter.process_page(page)
+    return device.get_result()
+
+
 def open_pdfminer_pages_generator(
-    fp: BinaryIO, password: Optional[str] = None, pdfminer_config: Optional[PDFMinerConfig] = None
+    fp: BinaryIO,
+    password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
+    skip_pages: Optional[Collection[int]] = None,
 ):
-    """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
+    """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs.
+
+    Pages whose zero-based index is in ``skip_pages`` are yielded with an empty layout
+    instead of being interpreted.
+    """
 
     import pikepdf
 
     from unstructured.partition.pdf_image.pypdf_utils import get_page_data
 
+    skip_pages = frozenset(skip_pages or ())
     device, interpreter = init_pdfminer(pdfminer_config=pdfminer_config)
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
@@ -507,6 +523,9 @@ def open_pdfminer_pages_generator(
             pages = PDFPage.get_pages(fp, password=password or "")
             # Detect invalid dictionary construct for entire PDF
             for i, page in enumerate(pages):
+                if i in skip_pages:
+                    yield page, _layout_without_contents(interpreter, device, page)
+                    continue
                 try:
                     # Detect invalid dictionary construct for one page
                     interpreter.process_page(page)
@@ -530,7 +549,10 @@ def open_pdfminer_pages_generator(
             with pikepdf.Pdf.open(fp) as pdf:
                 pdf.save(tmp_file_path)
             pages = PDFPage.get_pages(open(tmp_file_path, "rb"))  # noqa: SIM115
-            for page in pages:
+            for i, page in enumerate(pages):
+                if i in skip_pages:
+                    yield page, _layout_without_contents(interpreter, device, page)
+                    continue
                 interpreter.process_page(page)
                 page_layout = device.get_result()
                 yield page, page_layout

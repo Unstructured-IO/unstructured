@@ -1,3 +1,7 @@
+## 0.27.35
+
+- **Skip text extraction only on the PDF pages that are too complex for it.** The complexity heuristic (a very high graphics-to-text operator ratio, typical of CAD drawings) flagged the whole document when one page tripped it, so `hi_res` ran without the text layer on every page and the output depended on how the document was split into chunks. The heuristic now reports the offending pages through `find_complex_pdf_pages()`, and `hi_res` text extraction skips exactly those pages while the rest of the document keeps its text layer. Strategy selection is unchanged, and `is_pdf_too_complex()` still answers for the whole document.
+
 ## 0.27.34
 
 ### Enhancements

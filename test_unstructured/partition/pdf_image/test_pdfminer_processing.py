@@ -680,3 +680,13 @@ class TestDeduplicateLtchars:
         assert len(result) == 5
         text = "".join(c.get_text() for c in result)
         assert text == "HELLO"
+
+
+def test_process_file_with_pdfminer_skip_pages_yields_empty_aligned_layouts():
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    layouts, links = process_file_with_pdfminer(filename=filename, skip_pages={0})
+
+    assert len(layouts) == 2
+    assert len(links) == 2
+    assert len(layouts[0]) == 0
+    assert len(layouts[1]) > 0
