@@ -133,13 +133,19 @@ _MAX_PENDING_PIECES = 1000
 
 
 class _Inline:
-    """The pieces of an inline child element, and whether any of them is more than whitespace."""
+    """The pieces of an inline child element, and whether any of them is more than whitespace.
 
-    __slots__ = ("pieces", "nonblank")
+    `inner` is the text the element stands for on its own: its pieces, or for a wrapper around a
+    single child, as `<paragraph> <content>...</content> </paragraph>`, that child's, without the
+    wrapper's whitespace.
+    """
 
-    def __init__(self, pieces: list[str | _Inline], nonblank: bool):
+    __slots__ = ("pieces", "nonblank", "inner")
+
+    def __init__(self, pieces: list[str | _Inline], nonblank: bool, inner: list[str | _Inline]):
         self.pieces = pieces
         self.nonblank = nonblank
+        self.inner = inner
 
 
 class _Run:
@@ -168,7 +174,10 @@ class _Run:
             self.has_text = self.has_text or not text.isspace()
 
     def add_inline(self, child: _Run) -> None:
-        self.pieces.append(_Inline(child.pieces, child.nonblank))
+        inner = child.pieces
+        if not child.has_text and child.items == 1:
+            inner = next(p.inner for p in child.pieces if isinstance(p, _Inline) and p.nonblank)
+        self.pieces.append(_Inline(child.pieces, child.nonblank, inner))
         self.items += child.nonblank
 
     def blocks(self) -> Iterator[str]:
@@ -178,7 +187,7 @@ class _Run:
             return
         for piece in self.pieces:
             if isinstance(piece, _Inline) and piece.nonblank:
-                yield _flatten(piece.pieces)
+                yield _flatten(piece.inner)
 
 
 def _flatten(pieces: list[str | _Inline]) -> str:

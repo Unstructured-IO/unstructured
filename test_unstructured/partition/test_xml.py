@@ -259,6 +259,16 @@ def test_partition_xml_keeps_structural_children_of_prose_apart(
     assert [e.text for e in elements] == expected_texts
 
 
+def test_partition_xml_reads_a_wrapper_as_the_text_it_wraps():
+    # -- the indentation around a lone child is not part of its text --
+    xml_text = (
+        "<doc>\n  <paragraph>\n    <content>Text one.</content>\n  </paragraph>\n"
+        "  <paragraph>\n    <content>Text two.</content>\n  </paragraph>\n</doc>"
+    )
+
+    assert list(get_leaf_elements(None, None, xml_text, None)) == ["Text one.", "Text two."]
+
+
 @pytest.mark.parametrize(
     ("xml_text", "xml_path", "expected_texts"),
     [
