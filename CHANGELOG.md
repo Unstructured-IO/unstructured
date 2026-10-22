@@ -1,4 +1,8 @@
-## 0.27.34-dev7
+## 0.27.35
+
+- **Ignore PDF text and images that lie entirely outside the page.** A PDF content stream can place text or images beyond the page's MediaBox, where they are never rendered; pages split out of a longer document, for example, can still carry the neighbouring pages' text at off-page offsets. pdfminer still extracts these objects, so the `fast` strategy and the extracted text layer merged into `hi_res` results turned them into elements with coordinates off the page and text that does not appear on it. Text and image regions whose box has no overlap with the page box are now dropped. Regions that partially overlap the page are kept and their coordinates are not clipped.
+
+## 0.27.34
 
 ### Enhancements
 
@@ -6,8 +10,6 @@
 - **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
-
-- **Ignore PDF text and images that lie entirely outside the page.** A PDF content stream can place text or images beyond the page's MediaBox, where they are never rendered; pages split out of a longer document, for example, can still carry the neighbouring pages' text at off-page offsets. pdfminer still extracts these objects, so the `fast` strategy and the extracted text layer merged into `hi_res` results turned them into elements with coordinates off the page and text that does not appear on it. Text and image regions whose box has no overlap with the page box are now dropped. Regions that partially overlap the page are kept and their coordinates are not clipped.
 
 - **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
 
