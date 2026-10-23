@@ -160,10 +160,11 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     lowercase, unless it ends with ":" and an item follows it. Any other line starts the next
     part, such as "Vegetables:" in "Fruits:\\n- apple\\nVegetables:\\n- carrot".
     """
-    lines = paragraph.split("\n")
-    first_line = lines[0].strip()
-    if UNICODE_BULLETS_RE.match(first_line) or E_BULLET_PATTERN.match(first_line):
+    stripped = paragraph.strip()
+    if UNICODE_BULLETS_RE.match(stripped) or E_BULLET_PATTERN.match(stripped):
         return [paragraph]
+
+    lines = paragraph.split("\n")
 
     parts: list[str] = []
     start = 0
@@ -185,6 +186,22 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
             start, in_list = idx, False
     parts.append("\n".join(lines[start:]))
     return parts
+
+
+def _list_items(paragraph: str) -> list[str]:
+    """Split a list that `_split_off_bullet_lists` split off into its items.
+
+    An item starts only at a line that `_starts_list_item` accepts, and the lines after it are
+    joined to it, so emphasis inside an item, as in "- must be *really* safe", stays text.
+    """
+    items: list[str] = []
+    for line in paragraph.split("\n"):
+        text = line.strip()
+        if _starts_list_item(line) or not items:
+            items.append(text)
+        elif text:
+            items[-1] = f"{items[-1]} {text}"
+    return items
 
 
 def group_broken_paragraphs(
@@ -212,18 +229,23 @@ def group_broken_paragraphs(
         else re.compile(PARAGRAPH_PATTERN)
     )
 
-    paragraphs = [
-        part
-        for paragraph in paragraph_split.split(text)
-        for part in _split_off_bullet_lists(paragraph)
-    ]
+    # -- each part, and whether its paragraph was split into lists and the lines around them --
+    paragraphs: list[tuple[str, bool]] = []
+    for paragraph in paragraph_split.split(text):
+        parts = _split_off_bullet_lists(paragraph)
+        paragraphs.extend((part, len(parts) > 1) for part in parts)
     clean_paragraphs = []
-    for paragraph in paragraphs:
+    for paragraph, split_off in paragraphs:
         stripped_par = paragraph.strip()
         if not stripped_par:
             continue
 
-        if UNICODE_BULLETS_RE.match(stripped_par) or E_BULLET_PATTERN.match(stripped_par):
+        if split_off and _starts_list_item(stripped_par):
+            clean_paragraphs.extend(_list_items(paragraph))
+            continue
+        if not split_off and (
+            UNICODE_BULLETS_RE.match(stripped_par) or E_BULLET_PATTERN.match(stripped_par)
+        ):
             clean_paragraphs.extend(group_bullet_paragraph(paragraph))
             continue
         # NOTE(robinson) - This block is to account for lines like the following that shouldn't be

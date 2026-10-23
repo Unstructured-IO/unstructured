@@ -262,22 +262,22 @@ the fox met a friendly bear."""
     ("text", "expected"),
     [
         # -- short items, which used to lose their bullets to the short-lines split --
-        ("Shopping list:\n• milk\n• bread", "Shopping list:\n\n• milk \n\n• bread"),
+        ("Shopping list:\n• milk\n• bread", "Shopping list:\n\n• milk\n\n• bread"),
         # -- long items, which used to be joined into the lead-in line --
         (
             "Shopping list:\n• fresh milk and cheese from the farm market\n• bread",
-            "Shopping list:\n\n• fresh milk and cheese from the farm market \n\n• bread",
+            "Shopping list:\n\n• fresh milk and cheese from the farm market\n\n• bread",
         ),
         (
             "Requirements:\n- install the latest Python release first\n- pip",
-            "Requirements:\n\n- install the latest Python release first \n\n- pip",
+            "Requirements:\n\n- install the latest Python release first\n\n- pip",
         ),
         # -- a wrapped item keeps its continuation line --
         (
             "Requirements:\n- install the latest Python release first and then\n"
             "  configure the environment\n- pip",
             "Requirements:\n\n- install the latest Python release first and then configure the"
-            " environment \n\n- pip",
+            " environment\n\n- pip",
         ),
         # -- the next lead-in starts a part of its own, also with indented bullets --
         (
@@ -286,15 +286,39 @@ the fox met a friendly bear."""
         ),
         (
             "Fruits:\n  - apple\n  - pear\nVegetables:\n  - carrot",
-            "Fruits:\n\n- apple \n\n- pear\n\nVegetables:\n\n- carrot",
+            "Fruits:\n\n- apple\n\n- pear\n\nVegetables:\n\n- carrot",
         ),
         # -- "* " starts an item, and a bullet with no space after it still does --
-        ("Steps:\n* first\n* second", "Steps:\n\n* first \n\n* second"),
-        ("Items:\n\u25cbitem one\n\u25cbitem two", "Items:\n\n\u25cbitem one \n\n\u25cbitem two"),
+        ("Steps:\n* first\n* second", "Steps:\n\n* first\n\n* second"),
+        ("Items:\n\u25cbitem one\n\u25cbitem two", "Items:\n\n\u25cbitem one\n\n\u25cbitem two"),
         # -- emphasis is not a bullet --
         (
             "These rules must be followed\n*without exception* in all deployments.",
             "These rules must be followed *without exception* in all deployments.",
+        ),
+        # -- nor is emphasis inside an item, also on a wrapped line --
+        (
+            "Requirements:\n- This installation must always be *really* safe\n- Next step\n",
+            "Requirements:\n\n- This installation must always be *really* safe\n\n- Next step",
+        ),
+        (
+            "Requirements:\n- This installation must always be\n"
+            "*really* safe for every deployment\n- Next step\n",
+            "Requirements:\n\n- This installation must always be *really* safe for every"
+            " deployment\n\n- Next step",
+        ),
+        # -- a list after a leading line break keeps its continuation lines --
+        (
+            "\n- Install\n  SQL Server for the database\n- Verify setup\n",
+            "- Install SQL Server for the database \n\n- Verify setup",
+        ),
+        (
+            "\r\n- Install\r\n  SQL Server for the database\r\n- Verify setup\r\n",
+            "- Install SQL Server for the database \n\n- Verify setup",
+        ),
+        (
+            "\n- Install\n  2019 edition of SQL Server\n- Verify setup\n",
+            "- Install 2019 edition of SQL Server \n\n- Verify setup",
         ),
     ],
 )

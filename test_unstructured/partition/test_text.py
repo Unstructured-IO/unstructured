@@ -138,6 +138,31 @@ def test_partition_text_from_filename_raises_econding_error(
             "These rules must be followed\n*without exception* in all deployments.\n",
             [NarrativeText("These rules must be followed *without exception* in all deployments.")],
         ),
+        (
+            "Requirements:\n- This installation must always be *really* safe\n- Next step\n",
+            [
+                Title("Requirements:"),
+                ListItem("This installation must always be *really* safe"),
+                ListItem("Next step"),
+            ],
+        ),
+        (
+            "Requirements:\n- This installation must always be\n"
+            "*really* safe for every deployment\n- Next step\n",
+            [
+                Title("Requirements:"),
+                ListItem("This installation must always be *really* safe for every deployment"),
+                ListItem("Next step"),
+            ],
+        ),
+        (
+            "\n- Install\n  SQL Server for the database\n- Verify setup\n",
+            [ListItem("Install SQL Server for the database"), ListItem("Verify setup")],
+        ),
+        (
+            "\r\n- Install\r\n  2019 edition of SQL Server\r\n- Verify setup\r\n",
+            [ListItem("Install 2019 edition of SQL Server"), ListItem("Verify setup")],
+        ),
     ],
 )
 def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(
