@@ -263,11 +263,9 @@ the fox met a friendly bear."""
     [
         # -- short items, which used to lose their bullets to the short-lines split --
         ("Shopping list:\n• milk\n• bread", "Shopping list:\n\n• milk \n\n• bread"),
-        ("Steps:\n* first\n* second", "Steps:\n\n* first \n\n* second"),
-        # -- a list whose items start with numbers is still a list after its lead-in line --
         (
-            "Ingredients:\n* 4 eggs\n* 2 cups of flour",
-            "Ingredients:\n\n* 4 eggs \n\n* 2 cups of flour",
+            "Tasks:\n\u25cf write the tests\n\u25cf ship it",
+            "Tasks:\n\n\u25cf write the tests \n\n\u25cf ship it",
         ),
         ("Items:\n\u25cbitem one\n\u25cbitem two", "Items:\n\n\u25cbitem one \n\n\u25cbitem two"),
         # -- long items, which used to be joined into the lead-in line --
@@ -275,23 +273,14 @@ the fox met a friendly bear."""
             "Shopping list:\n• fresh milk and cheese from the farm market\n• bread",
             "Shopping list:\n\n• fresh milk and cheese from the farm market \n\n• bread",
         ),
-        (
-            "Requirements:\n- install the latest Python release first\n- pip",
-            "Requirements:\n\n- install the latest Python release first \n\n- pip",
-        ),
-        # -- also with a middle dot as the bullet --
-        (
-            "Shopping list:\n\u00b7 milk\n\u00b7 bread",
-            "Shopping list:\n\n\u00b7 milk \n\n\u00b7 bread",
-        ),
         # -- the next lead-in starts a part of its own, also with indented bullets --
         (
-            "Fruits:\n- apple\nVegetables:\n- carrot",
-            "Fruits:\n\n- apple\n\nVegetables:\n\n- carrot",
+            "Fruits:\n• apple\nVegetables:\n• carrot",
+            "Fruits:\n\n• apple\n\nVegetables:\n\n• carrot",
         ),
         (
-            "Fruits:\n  - Buy fresh apples from the local orchard\nVegetables:\n  - carrot",
-            "Fruits:\n\n- Buy fresh apples from the local orchard\n\nVegetables:\n\n- carrot",
+            "Fruits:\n  • Buy fresh apples from the local orchard\nVegetables:\n  • carrot",
+            "Fruits:\n\n• Buy fresh apples from the local orchard\n\nVegetables:\n\n• carrot",
         ),
     ],
 )
@@ -304,44 +293,25 @@ def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(
 @pytest.mark.parametrize(
     "paragraph",
     [
-        # -- a bullet glyph outside the start of a line can be emphasis, a unit, a multiplication
-        #    dot or an inline item --
-        "These rules must be followed\n*without exception* in all deployments.",
-        "Required *production* settings:\n- Install the latest Python version first\n",
-        "Tasks:\n- Install\n*Important security\nrequirements*:\n- Require multifactor auth\n",
-        "Tasks:\r\n- Install\r\n*Important security\r\nrequirements*:\r\n- Require MFA\r\n",
-        "Requirements:\n- Tighten the bolt to 10 N\u00b7m of torque\n",
-        "Calculations:\n- Multiply the two numbers 3 \u00b7 4 to get twelve\n",
-        "Calculations:\n- Multiply the two numbers 3 \u2219 4 to get twelve\n",
+        # -- "-", "*" and "·" can also start a line as a sign, emphasis or an operator --
+        "Steps:\n- first\n- second\n",
+        "Steps:\n* first\n* second\n",
+        "Shopping list:\n\u00b7 milk\n\u00b7 bread\n",
+        "Shopping list:\n• milk\n- bread\n",
+        "These rules must be followed\n*without exception* in all deployments.\n",
+        # -- a bullet inside a line can be an inline item --
         "Shopping list:\n• milk • eggs • bread\n",
-        "Shopping list: • fresh milk and eggs\n- bread\n",
+        "Shopping list: • fresh milk and eggs\n• bread\n",
         # -- a line that starts with "e " can be an OCR bullet --
-        "Steps:\n- first\ne second\n",
-        # -- a bullet after a line that does not end with ":" can be a dash or a sign in prose --
-        "The temperature dropped to\n- 5 degrees overnight.\n",
-        "The results of the experiment were clear\n\u2013 nobody in the lab had expected them.\n",
-        # -- also when a list after a lead-in line comes before or after that bullet --
-        "The temperature dropped to\n- 5 degrees overnight.\nObservations:\n- Ice on the lake\n",
-        "The temperature dropped to\r\n- 5 degrees overnight.\r\nObservations:\r\n- Ice formed\r\n",
-        "Observations:\n- Ice\nThe temperature dropped to\n- 5 degrees overnight.\n",
-        "Observations:\r\n- Ice\r\nThe temperature dropped to\r\n- 5 degrees overnight.\r\n",
+        "Steps:\n• first\ne second\n",
+        # -- a bullet line without a lead-in line --
+        "The results of the experiment were clear\n• nobody in the lab had expected them.\n",
         # -- a line after an item that is not the next lead-in can continue the item or prose --
-        "Observations:\n- Ice formed on the lake\nThe temperature dropped to\n- 5 degrees.\n",
-        "Observations:\r\n- Ice formed on the lake\r\nThe air cooled to\r\n- 5 degrees.\r\n",
-        "Observations:\n- Ice formed on the lake\nand the temperature dropped to\n- 5 degrees.\n",
-        "Requirements:\n- install the latest Python release and then\n  configure it\n- pip\n",
-        # -- a middle dot before a digit can be a product wrapped from the line above --
-        "Calculations:\n- Multiply the two numbers 3\n\u00b7 4 to get twelve\n",
-        "Calculations:\r\n- Multiply the two numbers 3\r\n\u2219 4 to get twelve\r\n",
-        # -- so can a product sign before another operand after a line that ends in a number --
-        "Calculations:\n- Multiply the two numbers 3\n\u00b7 -4 to get negative twelve\n",
-        "Calculations:\r\n- Multiply the two numbers 3\r\n\u2219 -4 to get negative twelve\r\n",
-        "Calculations:\n- Multiply the two numbers 3\n\u00b7 .5 to get one and a half\n",
-        "Calculations:\n- Multiply the two numbers 3\n\u00b7 (4 + 5) to get twenty-seven\n",
-        "Calculations:\r\n- Multiply the two numbers 3\r\n* 4 to get twelve\r\n",
+        "Observations:\n• Ice formed on the lake\nThe temperature dropped overnight.\n",
+        "Requirements:\n• install the latest Python release and then\n  configure it\n• pip\n",
     ],
 )
-def test_split_off_bullet_lists_keeps_a_paragraph_whole(paragraph: str):
+def test_split_off_bullet_lists_keeps_an_ambiguous_paragraph_whole(paragraph: str):
     assert core._split_off_bullet_lists(paragraph) == [paragraph]
 
 
@@ -349,13 +319,16 @@ def test_split_off_bullet_lists_keeps_a_paragraph_whole(paragraph: str):
     ("text", "expected"),
     [
         (
-            "Document title\fDocument subtitle\n- check\n",
-            "Document title\n\nDocument subtitle\n\n- check",
+            "Document title\fDocument subtitle\n• check\n",
+            "Document title\n\nDocument subtitle\n\n• check",
         ),
         ("Document title\fDocument subtitle\n", "Document title\n\nDocument subtitle"),
         # -- a custom line_split keeps its own split, inside a list too --
-        ("Items:\n- first\f- second\n", "Items:\n\n- first\n\n- second"),
-        ("Items:\n- first\fNotes after the list\n", "Items:\n\n- first\n\nNotes after the list"),
+        ("Items:\n• first\f• second\n", "Items:\n\n• first\n\n• second"),
+        (
+            "Items:\n• first\fNotes after the list\n",
+            "Items:\n\n• first\n\nNotes after the list",
+        ),
     ],
 )
 def test_group_broken_paragraphs_splits_the_lines_around_a_list_with_a_custom_line_split(
@@ -367,7 +340,7 @@ def test_group_broken_paragraphs_splits_the_lines_around_a_list_with_a_custom_li
 
 def test_split_off_bullet_lists_keeps_a_long_wrapped_list_item_whole():
     continuation = "\n".join(f"and then wrapped line {i} of the item" for i in range(20000))
-    text = f"Steps:\n- the first item starts here\n{continuation}\n- second"
+    text = f"Steps:\n• the first item starts here\n{continuation}\n• second"
 
     assert core._split_off_bullet_lists(text) == [text]
 

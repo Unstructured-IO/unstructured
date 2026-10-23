@@ -101,7 +101,6 @@ BULLET_SPLIT_RE_0W = re.compile(
     f"(?:(?={UNAMBIGUOUS_BULLETS_PATTERN})(?<!{UNAMBIGUOUS_BULLETS_PATTERN}))"
     f"|(?:(?:(?<=\\n)|\\A){NON_NEWLINE_WHITESPACE}(?={QUALIFIED_AMBIGUOUS_BULLET}))",
 )
-UNAMBIGUOUS_BULLETS_RE = re.compile(UNAMBIGUOUS_BULLETS_PATTERN)
 E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 
 # NOTE(klaijan) - Captures reference of format [1] or [i] or [a] at any point in the line.

@@ -127,15 +127,7 @@ def test_partition_text_from_filename_raises_econding_error(
             [Title("Shopping list:"), ListItem("milk"), ListItem("bread")],
         ),
         (
-            "Requirements:\n- install the latest Python release first\n- pip\n",
-            [
-                Title("Requirements:"),
-                ListItem("install the latest Python release first"),
-                ListItem("pip"),
-            ],
-        ),
-        (
-            "Fruits:\n  - apple\n  - pear\nVegetables:\n  - carrot\n",
+            "Fruits:\n  \u25cf apple\n  \u25cf pear\nVegetables:\n  \u25cf carrot\n",
             [
                 Title("Fruits:"),
                 ListItem("apple"),
@@ -144,58 +136,22 @@ def test_partition_text_from_filename_raises_econding_error(
                 ListItem("carrot"),
             ],
         ),
-        # -- a paragraph with a bullet glyph outside the start of a line is grouped as before --
         (
-            "These rules must be followed\n*without exception* in all deployments.\n",
-            [NarrativeText("These rules must be followed *without exception* in all deployments.")],
-        ),
-        # -- so is a paragraph with a signed line outside the list, which keeps its sign --
-        (
-            "The temperature dropped to\n- 5 degrees overnight.\nObservations:\n"
-            "- Ice formed on the lake\n",
+            "We need a few things for the weekend.\nShopping list:\n• milk\n• bread\n",
             [
-                NarrativeText(
-                    "The temperature dropped to - 5 degrees overnight. Observations: - Ice formed"
-                    " on the lake"
-                )
+                NarrativeText("We need a few things for the weekend. Shopping list:"),
+                ListItem("milk"),
+                ListItem("bread"),
             ],
         ),
+        # -- a paragraph whose structure is ambiguous is grouped as before --
         (
-            "The temperature dropped to\r\n- 5 degrees overnight.\r\nObservations:\r\n"
-            "- Ice formed on the lake\r\n",
+            "Observations:\n• Ice formed on the lake\nThe temperature dropped overnight.\n",
             [
                 NarrativeText(
-                    "The temperature dropped to - 5 degrees overnight. Observations: - Ice formed"
-                    " on the lake"
+                    "Observations: • Ice formed on the lake The temperature dropped overnight."
                 )
             ],
-        ),
-        # -- and a paragraph with a line after an item that is not the next lead-in --
-        (
-            "Observations:\n- Ice formed on the lake\nThe temperature dropped to\n"
-            "- 5 degrees overnight.\n",
-            [
-                NarrativeText(
-                    "Observations: - Ice formed on the lake The temperature dropped to - 5 degrees"
-                    " overnight."
-                )
-            ],
-        ),
-        (
-            "Calculations:\r\n- Multiply the two numbers 3\r\n\u00b7 4 to get twelve\r\n",
-            [NarrativeText("Calculations: - Multiply the two numbers 3 \u00b7 4 to get twelve")],
-        ),
-        (
-            "Calculations:\n- Multiply the two numbers 3\n\u00b7 -4 to get negative twelve\n",
-            [
-                NarrativeText(
-                    "Calculations: - Multiply the two numbers 3 \u00b7 -4 to get negative twelve"
-                )
-            ],
-        ),
-        (
-            "Calculations:\r\n- Multiply the two numbers 3\r\n* 4 to get twelve\r\n",
-            [NarrativeText("Calculations: - Multiply the two numbers 3 * 4 to get twelve")],
         ),
     ],
 )
@@ -208,9 +164,12 @@ def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
-        ("Items:\n- first\f- second\n", [Title("Items:"), ListItem("first"), ListItem("second")]),
         (
-            "Items:\n- first\fNotes after the list\n",
+            "Items:\n• first\f• second\n",
+            [Title("Items:"), ListItem("first"), ListItem("second")],
+        ),
+        (
+            "Items:\n• first\fNotes after the list\n",
             [Title("Items:"), ListItem("first"), Title("Notes after the list")],
         ),
     ],
