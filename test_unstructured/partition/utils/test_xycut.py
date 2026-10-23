@@ -58,6 +58,45 @@ def test_recursive_xy_cut(recursive_func, expected):
     assert res == expected
 
 
+@pytest.mark.parametrize(
+    ("recursive_func", "expected"),
+    [
+        (xycut.recursive_xy_cut, [1, 0, 2]),
+        (xycut.recursive_xy_cut_swapped, [1, 0, 2]),
+    ],
+)
+def test_recursive_xy_cut_rtl(recursive_func, expected):
+    # same fixture as test_recursive_xy_cut: boxes 0 and 1 share a row, box 2 is
+    # its own row below. With rtl=True, box 1 (rightmost in that row) should come
+    # before box 0, while the row order itself (0/1 before 2) is unchanged - RTL
+    # only affects horizontal reading direction, not vertical.
+    boxes = np.array([[0, 0, 20, 20], [200, 0, 230, 30], [0, 40, 50, 50]])
+    indices = np.array([0, 1, 2])
+    res = []
+    recursive_func(boxes, indices, res, rtl=True)
+    assert res == expected
+
+
+@pytest.mark.parametrize(
+    "recursive_func",
+    [xycut.recursive_xy_cut, xycut.recursive_xy_cut_swapped],
+)
+def test_recursive_xy_cut_rtl_reverses_single_row(recursive_func):
+    # three boxes on a single row, left-to-right on the page: A, B, C.
+    # LTR reading order is A, B, C (indices 0, 1, 2).
+    # RTL reading order should be the mirror: C, B, A (indices 2, 1, 0).
+    boxes = np.array([[0, 0, 10, 10], [20, 0, 30, 10], [40, 0, 50, 10]])
+    indices = np.array([0, 1, 2])
+
+    ltr_res: list = []
+    recursive_func(boxes, indices, ltr_res)
+    assert ltr_res == [0, 1, 2]
+
+    rtl_res: list = []
+    recursive_func(boxes, indices, rtl_res, rtl=True)
+    assert rtl_res == [2, 1, 0]
+
+
 def test_points_to_bbox():
     # Test a valid case
     points = [10, 20, 30, 40, 50, 60, 70, 80]
