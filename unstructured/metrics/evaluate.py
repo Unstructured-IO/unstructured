@@ -517,7 +517,7 @@ def get_mean_grouping(
 ) -> None:
     """Aggregates accuracy and missing metrics by column name 'doctype' or 'connector',
     or 'all' for all rows. Export to TSV.
-    If `all`, passing export_name is recommended.
+    If `all`, passing export_filename is recommended.
 
     Args:
         group_by (str): Grouping category ('doctype' or 'connector' or 'all').
@@ -526,10 +526,10 @@ def get_mean_grouping(
         eval_name (str): Evaluated metric ('text_extraction' or 'element_type').
         agg_name (str, optional): String to use with export filename. Default is `cct` for
             group_by `text_extraction` and `element-type` for `element_type`
-        export_name (str, optional): Export filename.
+        export_filename (str, optional): Export filename.
     """
     if group_by not in ("doctype", "connector") and group_by != "all":
-        raise ValueError("Invalid grouping category. Returning a non-group evaluation.")
+        raise ValueError("Invalid grouping category.")
 
     if eval_name == "text_extraction":
         agg_fields = ["cct-accuracy", "cct-%missing"]
@@ -543,7 +543,7 @@ def get_mean_grouping(
     else:
         raise ValueError(
             f"Unknown metric for eval {eval_name}. "
-            f"Expected `text_extraction` or `element_type` or `table_extraction`."
+            f"Expected `text_extraction`, `element_type` or `object_detection`."
         )
 
     if isinstance(data_input, str):
@@ -556,7 +556,7 @@ def get_mean_grouping(
         elif data_input.endswith(".txt"):
             df = pd.read_csv(data_input, sep="\t", header=None)
         else:
-            raise ValueError("Please provide a .csv or .tsv file.")
+            raise ValueError("Please provide a .csv, .tsv or .txt file.")
     else:
         df = data_input
 
@@ -624,7 +624,7 @@ def filter_metrics(
         elif data_input.endswith(".txt"):
             df = pd.read_csv(data_input, sep="\t", header=None)
         else:
-            raise ValueError("Please provide a .csv or .tsv file.")
+            raise ValueError("Please provide a .csv, .tsv or .txt file.")
     else:
         df = data_input
 
@@ -638,7 +638,7 @@ def filter_metrics(
         elif filter_list.endswith(".txt"):
             filter_df = pd.read_csv(filter_list, sep="\t", header=None)
         else:
-            raise ValueError("Please provide a .csv or .tsv file.")
+            raise ValueError("Please provide a .csv, .tsv or .txt file.")
         filter_list = filter_df.iloc[:, 0].astype(str).values.tolist()
     elif not isinstance(filter_list, list):
         raise ValueError("Please provide a List of strings or path to file.")
