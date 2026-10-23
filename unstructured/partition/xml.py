@@ -138,9 +138,10 @@ def _get_leaf_elements(
     # elements through in a memory efficient way, so we bite the bullet and load it all into
     # memory.
     if xml_path is not None:
-        _, element = next(element_iterator)
         compiled_path = etree.XPath(xml_path)
-        element_iterator = (("end", el) for el in compiled_path(element))
+        for _ in element_iterator:
+            pass
+        element_iterator = (("end", el) for el in compiled_path(element_iterator.root))
 
     for event, element in element_iterator:
         if event == "start":
