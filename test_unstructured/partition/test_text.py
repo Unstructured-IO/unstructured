@@ -156,6 +156,17 @@ def test_partition_text_from_filename_raises_econding_error(
             ],
         ),
         (
+            "Required *production* settings:\n- Install the latest Python version first\n",
+            [
+                NarrativeText("Required *production* settings:"),
+                ListItem("Install the latest Python version first"),
+            ],
+        ),
+        (
+            "Fruits:\n- apple\nOnly *fresh* ones\n",
+            [Title("Fruits:"), ListItem("apple"), Title("Only *fresh* ones")],
+        ),
+        (
             "\n- Install\n  SQL Server for the database\n- Verify setup\n",
             [ListItem("Install SQL Server for the database"), ListItem("Verify setup")],
         ),

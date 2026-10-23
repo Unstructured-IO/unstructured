@@ -194,14 +194,14 @@ def _list_items(paragraph: str) -> list[str]:
     An item starts only at a line that `_starts_list_item` accepts, and the lines after it are
     joined to it, so emphasis inside an item, as in "- must be *really* safe", stays text.
     """
-    items: list[str] = []
+    items: list[list[str]] = []
     for line in paragraph.split("\n"):
         text = line.strip()
         if _starts_list_item(line) or not items:
-            items.append(text)
+            items.append([text])
         elif text:
-            items[-1] = f"{items[-1]} {text}"
-    return items
+            items[-1].append(text)
+    return [" ".join(item) for item in items]
 
 
 def group_broken_paragraphs(
@@ -253,7 +253,9 @@ def group_broken_paragraphs(
         #     Apache License
         #     Version 2.0, January 2004
         #     http://www.apache.org/licenses/
-        para_split = line_split.split(paragraph)
+        # A part split off from a list is split only at its line breaks: none of its lines starts
+        # an item, so an inline "*" in it is emphasis.
+        para_split = (paragraph_pattern_re if split_off else line_split).split(paragraph)
         all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
         if all_lines_short:
             clean_paragraphs.extend(line for line in para_split if line.strip())

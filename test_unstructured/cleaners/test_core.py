@@ -307,6 +307,12 @@ the fox met a friendly bear."""
             "Requirements:\n\n- This installation must always be *really* safe for every"
             " deployment\n\n- Next step",
         ),
+        # -- emphasis in a lead-in or in prose after a list stays text --
+        (
+            "Required *production* settings:\n- Install the latest Python version first\n",
+            "Required *production* settings:\n\n- Install the latest Python version first",
+        ),
+        ("Fruits:\n- apple\nOnly *fresh* ones\n", "Fruits:\n\n- apple\n\nOnly *fresh* ones"),
         # -- a list after a leading line break keeps its continuation lines --
         (
             "\n- Install\n  SQL Server for the database\n- Verify setup\n",
@@ -326,6 +332,17 @@ def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(
     text: str, expected: str
 ):
     assert core.group_broken_paragraphs(text) == expected
+
+
+def test_group_broken_paragraphs_joins_a_long_wrapped_list_item():
+    continuation = "\n".join(f"and then wrapped line {i} of the item" for i in range(20000))
+    text = f"Steps:\n- the first item starts here\n{continuation}\n- second"
+
+    assert core.group_broken_paragraphs(text).split("\n\n") == [
+        "Steps:",
+        "- the first item starts here " + continuation.replace("\n", " "),
+        "- second",
+    ]
 
 
 def test_group_bullet_paragraph_with_e_bullets():
