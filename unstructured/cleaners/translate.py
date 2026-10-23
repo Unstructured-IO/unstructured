@@ -30,7 +30,7 @@ def translate_text(text: str, source_lang: Optional[str] = None, target_lang: st
     text: str
         The text to translate
     target_lang: str
-        The two letter language code for the target langague. Defaults to "en".
+        The two letter language code for the target language. Defaults to "en".
     source_lang: Optional[str]
         The two letter language code for the language of the input text. If source_lang is
         not provided, the function will try to detect it.
