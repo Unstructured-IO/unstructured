@@ -1,6 +1,8 @@
 """Literal missing-value tokens survive Excel parsing; blank and error cells do not."""
 
+import base64
 import io
+import zlib
 from datetime import datetime
 from xml.etree import ElementTree
 from zipfile import ZipFile
@@ -136,12 +138,26 @@ def test_reader_uses_cached_formula_results_without_recalculation():
 
 def test_shared_xls_reader_preserves_tokens_and_blank_separator():
     # Serialized with xlwt: text tokens in B2/B3/B5/B6 and a physically blank fourth row.
-    path = "example-docs/xls-na-tokens.xls"
-    with open(path, "rb") as stream, open_excel_workbook(stream.read()) as reader:
+    workbook = zlib.decompress(
+        base64.b64decode(
+            "eJztWE1oE0EU/mazm5/SpmlNhVYooWDVWhDx4qVdI9giaog/oIigqQ0SkiaSJoherNYcBcGT4qXQi5eqF3/Qg948"
+            "CBU9CIKQ6tFTQcFDm/W9t7uYaoTm0PrDfmHezLz5Zt7LzJvZ2X0931GdedCzgJ8wDB9qVgj+Op2iFHIrEVC7ZXHR"
+            "zYOULA//FEJBWki/gadtrwK8hrzeC9BwX39BEvhI6RTOI1HIp2PriL3iQ0qxD0MkFe6QJoxu8apT5FmRG0TeE+Yz"
+            "kXtEc13kEHGr6iTmzcTAbieKT2h90hYGj/tI+rwXzU504SVH8eUbyuYaiBczqdzf2dCrt2IWtG6j6Xy6mMpVEaUF"
+            "nMVXKwZ8cXfq85inX1+9Aum/rdQHGuhvajowBeuMBHiFAnLRxy1+HCtk0/nJJRxEC9U5EXN/KT1B+/NoKVUqT1I9"
+            "mU4ViZ/YESc5kjlHEZyIsz5XnqCMtyxlBzIXMpTly7kcj2Nv+MiKDd8mG6GV5Djapdwh2yFCR/rS3cU3h8aS5mnR"
+            "TMkhbz8KNrP3sHCFe1DnMNzxINwBkdtFXpVRN0m5R2SUgpjy/mSXUxiZFs41ae0nO7sEb80tdeWtVK58Pvy4t/LJ"
+            "3EbludGFS9G5d+YM+ujRNE79+TeNQTWobt9iPDHdXDnHxgeR3b8cIUEt4vhu2Quk2rEscw+aD4Zd49lRDl814Cvh"
+            "aw5fCd/n8LUGfE34usO3Z99w+HoDvi58v8PXhR9w+EYDviH8oMM3hM+P8WGtEw/ZOB2YP9ACDx48ePDgwYMHD/8x"
+            "7Ass5ILKF0u+LPLVki+U/F1nmVLtT3+k8LBmOIIC/Ur0YroPecqLuNhU/GyEodyx1Cr7uN8LGcfJehFZjIkf2aZs"
+            "M+iVTtX/n1V3jDRt6ndo2n6tGT/X2P53eZHVvg=="
+        )
+    )
+    with open_excel_workbook(workbook) as reader:
         frame = reader.parse("Tokens")
     assert frame.iloc[[1, 2, 4, 5], 1].tolist() == ["N/A", "NA", "None", "null"]
     assert frame.iloc[3].isna().all()
-    assert [element.text for element in partition_xlsx(path)] == [
+    assert [element.text for element in partition_xlsx(file=io.BytesIO(workbook))] == [
         "Item Status Pear N/A Fig NA",
         "Plum None Kiwi null",
     ]
