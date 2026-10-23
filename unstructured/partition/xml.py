@@ -155,6 +155,9 @@ def _get_leaf_elements(
 # -- they are emitted as blocks, so a long run of leaf elements, of blank elements nested at any
 # -- depth, or of whitespace, is not kept until the document ends.
 _MAX_PENDING_PIECES = 1000
+# -- Characters of text such a run holds, its inline children's included, so a few long runs of
+# -- whitespace below the piece limit are not kept until the document ends either.
+_MAX_PENDING_CHARS = 1 << 20
 
 
 class _Inline:
@@ -180,7 +183,7 @@ class _Run:
     whose pieces are referenced rather than copied, so nested inline elements are joined once.
     """
 
-    __slots__ = ("pieces", "has_text", "items", "weight")
+    __slots__ = ("pieces", "has_text", "items", "weight", "size")
 
     def __init__(self):
         self.pieces: list[str | _Inline] = []
@@ -190,6 +193,8 @@ class _Run:
         self.items = 0
         # -- the pieces held, counting those of inline children, which `pieces` only references --
         self.weight = 0
+        # -- the characters of text held, counting those of inline children --
+        self.size = 0
 
     @property
     def nonblank(self) -> bool:
@@ -199,6 +204,7 @@ class _Run:
         if text:
             self.pieces.append(text)
             self.weight += 1
+            self.size += len(text)
             self.has_text = self.has_text or not text.isspace()
 
     def add_inline(self, child: _Run) -> None:
@@ -207,12 +213,15 @@ class _Run:
             inner = next(p.inner for p in child.pieces if isinstance(p, _Inline) and p.nonblank)
         self.pieces.append(_Inline(child.pieces, child.nonblank, inner))
         self.weight += child.weight + 1
+        self.size += child.size
         self.items += child.nonblank
 
     @property
     def over_budget(self) -> bool:
         """Whether the run holds too much to wait for text of its own, which would join it."""
-        return not self.has_text and self.weight >= _MAX_PENDING_PIECES
+        return not self.has_text and (
+            self.weight >= _MAX_PENDING_PIECES or self.size >= _MAX_PENDING_CHARS
+        )
 
     def blocks(self) -> Iterator[str]:
         """One text when the run has text of its own, as prose does, else one per inline child."""

@@ -469,6 +469,20 @@ def _comments(count: int) -> bytes:
     return ("<root>" + "<!-- c -->   \n<?pi x?>\n" * count + "</root>").encode()
 
 
+# -- 100 blank elements stay below the piece limit; it is the size of their whitespace that grows --
+def _wide_whitespace_records(width: int) -> bytes:
+    return ("<root>" + ("<record>" + " " * width + "</record>") * 100 + "</root>").encode()
+
+
+def _wide_blank_sections(width: int) -> bytes:
+    section = "<section>" + ("<record>" + " " * width + "</record>") * 10 + "</section>"
+    return ("<root>" + section * 10 + "</root>").encode()
+
+
+def _wide_comment_tails(width: int) -> bytes:
+    return ("<root>" + ("<!-- c -->" + " " * width + "<?pi x?>") * 50 + "</root>").encode()
+
+
 def _peak_memory_while_partitioning(xml: bytes) -> int:
     tracemalloc.start()
     try:
@@ -487,6 +501,9 @@ def _peak_memory_while_partitioning(xml: bytes) -> int:
         (_nested_records, 20, 200),
         (_blank_sections, 20, 200),
         (_comments, 10_000, 100_000),
+        (_wide_whitespace_records, 16_384, 163_840),
+        (_wide_blank_sections, 16_384, 163_840),
+        (_wide_comment_tails, 16_384, 163_840),
     ],
 )
 def test_partition_xml_keeps_pending_text_bounded(
