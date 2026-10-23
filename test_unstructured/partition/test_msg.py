@@ -52,6 +52,7 @@ def test_partition_msg_from_filename():
             sent_from=['"Matthew Robinson" <mrobinson@unstructured.io>'],
             sent_to=["mrobinson@unstructured.io"],
             subject="Test Email",
+            email_message_id="CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com",
             filetype="application/vnd.ms-outlook",
             parent_id=parent_id,
             languages=["eng"],
@@ -477,6 +478,24 @@ class DescribeMsgPartitionerOptions:
         ]
         assert m.subject == "Fake email with cc and bcc recipients"
 
+    def it_reads_the_cc_bcc_and_message_id_headers_whatever_their_case(
+        self, opts_args: dict[str, Any], Message_message_headers_: Mock
+    ):
+        # -- Outlook writes these headers as `CC:`, `BCC:` and `Message-ID:` --
+        Message_message_headers_.return_value = {
+            "To": "john-ctr@unstructured.io",
+            "CC": "steve@unstructured.io",
+            "BCC": "hello@unstructured.io",
+            "Message-ID": "<14DDEF33-2BA7-4CDD-A4D8-E7C5873B37F2@gmail.com>",
+        }
+        opts_args["file_path"] = example_doc_path("fake-email-with-cc-and-bcc.msg")
+        opts = MsgPartitionerOptions(**opts_args)
+
+        m = opts.extra_msg_metadata
+        assert m.cc_recipient == ["steve@unstructured.io"]
+        assert m.bcc_recipient == ["hello@unstructured.io"]
+        assert m.email_message_id == "14DDEF33-2BA7-4CDD-A4D8-E7C5873B37F2@gmail.com"
+
     # -- .is_encrypted ---------------------------
 
     @pytest.mark.parametrize(
@@ -592,6 +611,10 @@ class DescribeMsgPartitionerOptions:
     @pytest.fixture
     def _last_modified_prop_(self, request: FixtureRequest):
         return property_mock(request, MsgPartitionerOptions, "_last_modified")
+
+    @pytest.fixture
+    def Message_message_headers_(self, request: FixtureRequest):
+        return property_mock(request, Message, "message_headers")
 
     @pytest.fixture
     def Message_sent_date_(self, request: FixtureRequest):
