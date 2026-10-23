@@ -298,7 +298,7 @@ class ObjectDetectionEvalProcessor:
         Clips bboxes to image boundaries.
 
         Args:
-            bboxes:         Input bounding boxes in XYXY format of [..., 4] shape
+            boxes:          Input bounding boxes in XYXY format of [..., 4] shape
             img_shape:      Image shape (height, width).
         Returns:
             clipped_boxes:  Clipped bboxes in XYXY format of [..., 4] shape
