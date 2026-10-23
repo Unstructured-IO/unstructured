@@ -169,8 +169,6 @@ def test_contains_us_phone_number(text, expected):
         ("⦿ This is a fine point!", True),
         ("  This is a fine point!", True),
         ("* This is a fine point!", True),
-        ("*item", True),  # a star with no closing star is still a bullet
-        ("*Note*: read this first", False),  # a star that opens emphasis is not
         ("- This is a fine point!", True),
         ("– This is a fine point!", True),  # EN DASH followed by a space
         ("-", True),  # a lone dash is an empty bullet

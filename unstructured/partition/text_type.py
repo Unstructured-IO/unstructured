@@ -11,7 +11,6 @@ from unstructured.logger import trace_logger
 from unstructured.nlp.english_words import ENGLISH_WORDS
 from unstructured.nlp.patterns import (
     EMAIL_ADDRESS_PATTERN_RE,
-    EMPHASIS_START_RE,
     ENDS_IN_PUNCT_RE,
     NUMBERED_LIST_RE,
     UNICODE_BULLETS_RE,
@@ -164,12 +163,8 @@ def is_possible_title(
 
 
 def is_bulleted_text(text: str) -> bool:
-    """Checks to see if the section of text is part of a bulleted list.
-
-    A star that opens emphasis, as in "*Note*: read this first", is not a bullet.
-    """
-    stripped = text.strip()
-    return UNICODE_BULLETS_RE.match(stripped) is not None and not EMPHASIS_START_RE.match(stripped)
+    """Checks to see if the section of text is part of a bulleted list."""
+    return UNICODE_BULLETS_RE.match(text.strip()) is not None
 
 
 def contains_us_phone_number(text: str) -> bool:

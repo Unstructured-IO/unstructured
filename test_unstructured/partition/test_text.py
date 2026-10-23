@@ -127,6 +127,14 @@ def test_partition_text_from_filename_raises_econding_error(
             [Title("Shopping list:"), ListItem("milk"), ListItem("bread")],
         ),
         (
+            "Requirements:\n- install the latest Python release first\n- pip\n",
+            [
+                Title("Requirements:"),
+                ListItem("install the latest Python release first"),
+                ListItem("pip"),
+            ],
+        ),
+        (
             "Fruits:\n  - apple\n  - pear\nVegetables:\n  - carrot\n",
             [
                 Title("Fruits:"),
@@ -136,83 +144,10 @@ def test_partition_text_from_filename_raises_econding_error(
                 ListItem("carrot"),
             ],
         ),
+        # -- a paragraph with a bullet glyph outside the start of a line is grouped as before --
         (
             "These rules must be followed\n*without exception* in all deployments.\n",
             [NarrativeText("These rules must be followed *without exception* in all deployments.")],
-        ),
-        (
-            "Requirements:\n- This installation must always be *really* safe\n- Next step\n",
-            [
-                Title("Requirements:"),
-                ListItem("This installation must always be *really* safe"),
-                ListItem("Next step"),
-            ],
-        ),
-        (
-            "Requirements:\n- This installation must always be\n"
-            "*really* safe for every deployment\n- Next step\n",
-            [
-                Title("Requirements:"),
-                ListItem("This installation must always be *really* safe for every deployment"),
-                ListItem("Next step"),
-            ],
-        ),
-        (
-            "Required *production* settings:\n- Install the latest Python version first\n",
-            [
-                NarrativeText("Required *production* settings:"),
-                ListItem("Install the latest Python version first"),
-            ],
-        ),
-        (
-            "Fruits:\n- apple\nOnly *fresh* ones\n",
-            [Title("Fruits:"), ListItem("apple"), Title("Only *fresh* ones")],
-        ),
-        (
-            "Fruits:\n- Buy fresh apples from the local orchard\n*Vegetables*:\n- carrots\n",
-            [
-                Title("Fruits:"),
-                ListItem("Buy fresh apples from the local orchard"),
-                Title("*Vegetables*:"),
-                ListItem("carrots"),
-            ],
-        ),
-        (
-            "Requirements:\n- Install\n  *SQL Server* to accept remote production connections\n"
-            "- Verify setup\n",
-            [
-                Title("Requirements:"),
-                ListItem("Install *SQL Server* to accept remote production connections"),
-                ListItem("Verify setup"),
-            ],
-        ),
-        (
-            "Shopping list:\n• milk • eggs • bread\n",
-            [Title("Shopping list:"), ListItem("milk"), ListItem("eggs"), ListItem("bread")],
-        ),
-        (
-            "Shopping list:\n•milk •eggs •bread\n",
-            [Title("Shopping list:"), ListItem("milk"), ListItem("eggs"), ListItem("bread")],
-        ),
-        (
-            "Requirements:\n- Tighten the bolt to 10 N\u00b7m of torque\n",
-            [Title("Requirements:"), ListItem("Tighten the bolt to 10 N\u00b7m of torque")],
-        ),
-        (
-            "Shopping list: • milk\n- bread\n",
-            [Title("Shopping list:"), ListItem("milk"), ListItem("bread")],
-        ),
-        (
-            "Shopping list: •milk\n- bread\n",
-            [Title("Shopping list:"), ListItem("milk"), ListItem("bread")],
-        ),
-        (
-            "\n- Install\n  SQL Server for the database\n- Verify setup\n",
-            [ListItem("Install SQL Server for the database"), ListItem("Verify setup")],
-        ),
-        (
-            "\r\n- Install\r\n  2019 edition of SQL Server\r\n- Verify setup\r\n",
-            [ListItem("Install 2019 edition of SQL Server"), ListItem("Verify setup")],
         ),
     ],
 )

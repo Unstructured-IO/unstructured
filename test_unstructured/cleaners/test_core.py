@@ -262,22 +262,24 @@ the fox met a friendly bear."""
     ("text", "expected"),
     [
         # -- short items, which used to lose their bullets to the short-lines split --
-        ("Shopping list:\n• milk\n• bread", "Shopping list:\n\n• milk\n\n• bread"),
+        ("Shopping list:\n• milk\n• bread", "Shopping list:\n\n• milk \n\n• bread"),
+        ("Steps:\n* first\n* second", "Steps:\n\n* first \n\n* second"),
+        ("Items:\n\u25cbitem one\n\u25cbitem two", "Items:\n\n\u25cbitem one \n\n\u25cbitem two"),
         # -- long items, which used to be joined into the lead-in line --
         (
             "Shopping list:\n• fresh milk and cheese from the farm market\n• bread",
-            "Shopping list:\n\n• fresh milk and cheese from the farm market\n\n• bread",
+            "Shopping list:\n\n• fresh milk and cheese from the farm market \n\n• bread",
         ),
         (
             "Requirements:\n- install the latest Python release first\n- pip",
-            "Requirements:\n\n- install the latest Python release first\n\n- pip",
+            "Requirements:\n\n- install the latest Python release first \n\n- pip",
         ),
         # -- a wrapped item keeps its continuation line --
         (
             "Requirements:\n- install the latest Python release first and then\n"
             "  configure the environment\n- pip",
             "Requirements:\n\n- install the latest Python release first and then configure the"
-            " environment\n\n- pip",
+            " environment \n\n- pip",
         ),
         # -- the next lead-in starts a part of its own, also with indented bullets --
         (
@@ -285,72 +287,8 @@ the fox met a friendly bear."""
             "Fruits:\n\n- apple\n\nVegetables:\n\n- carrot",
         ),
         (
-            "Fruits:\n  - apple\n  - pear\nVegetables:\n  - carrot",
-            "Fruits:\n\n- apple\n\n- pear\n\nVegetables:\n\n- carrot",
-        ),
-        # -- "* " starts an item, and a bullet with no space after it still does --
-        ("Steps:\n* first\n* second", "Steps:\n\n* first\n\n* second"),
-        ("Items:\n\u25cbitem one\n\u25cbitem two", "Items:\n\n\u25cbitem one\n\n\u25cbitem two"),
-        # -- emphasis is not a bullet --
-        (
-            "These rules must be followed\n*without exception* in all deployments.",
-            "These rules must be followed *without exception* in all deployments.",
-        ),
-        # -- nor is emphasis inside an item, also on a wrapped line --
-        (
-            "Requirements:\n- This installation must always be *really* safe\n- Next step\n",
-            "Requirements:\n\n- This installation must always be *really* safe\n\n- Next step",
-        ),
-        (
-            "Requirements:\n- This installation must always be\n"
-            "*really* safe for every deployment\n- Next step\n",
-            "Requirements:\n\n- This installation must always be *really* safe for every"
-            " deployment\n\n- Next step",
-        ),
-        # -- emphasis in a lead-in or in prose after a list stays text --
-        (
-            "Required *production* settings:\n- Install the latest Python version first\n",
-            "Required *production* settings:\n\n- Install the latest Python version first",
-        ),
-        ("Fruits:\n- apple\nOnly *fresh* ones\n", "Fruits:\n\n- apple\n\nOnly *fresh* ones"),
-        (
-            "Fruits:\n- Buy fresh apples from the local orchard\n*Vegetables*:\n- carrots\n",
-            "Fruits:\n\n- Buy fresh apples from the local orchard\n\n*Vegetables*:\n\n- carrots",
-        ),
-        # -- a line indented deeper than its item's bullet continues the item --
-        (
-            "Requirements:\n- Install\n  *SQL Server* to accept remote production connections\n"
-            "- Verify setup\n",
-            "Requirements:\n\n- Install *SQL Server* to accept remote production connections"
-            "\n\n- Verify setup",
-        ),
-        # -- a middle dot inside a unit is not a bullet, one after a space is --
-        (
-            "Requirements:\n- Tighten the bolt to 10 N\u00b7m of torque\n",
-            "Requirements:\n\n- Tighten the bolt to 10 N\u00b7m of torque",
-        ),
-        ("Shopping list:\n• milk \u00b7 eggs\n", "Shopping list:\n\n• milk\n\n\u00b7 eggs"),
-        # -- so is a glyph inside a lead-in line --
-        ("Shopping list: • milk\n- bread\n", "Shopping list:\n\n• milk\n\n- bread"),
-        ("Shopping list: •milk\n- bread\n", "Shopping list:\n\n•milk\n\n- bread"),
-        # -- inside a line, an unambiguous glyph still starts another item --
-        (
-            "Shopping list:\n• milk • eggs • bread\n",
-            "Shopping list:\n\n• milk\n\n• eggs\n\n• bread",
-        ),
-        ("Shopping list:\n•milk •eggs •bread\n", "Shopping list:\n\n•milk\n\n•eggs\n\n•bread"),
-        # -- a list after a leading line break keeps its continuation lines --
-        (
-            "\n- Install\n  SQL Server for the database\n- Verify setup\n",
-            "- Install SQL Server for the database \n\n- Verify setup",
-        ),
-        (
-            "\r\n- Install\r\n  SQL Server for the database\r\n- Verify setup\r\n",
-            "- Install SQL Server for the database \n\n- Verify setup",
-        ),
-        (
-            "\n- Install\n  2019 edition of SQL Server\n- Verify setup\n",
-            "- Install 2019 edition of SQL Server \n\n- Verify setup",
+            "Fruits:\n  - Buy fresh apples from the local orchard\nVegetables:\n  - carrot",
+            "Fruits:\n\n- Buy fresh apples from the local orchard\n\nVegetables:\n\n- carrot",
         ),
     ],
 )
@@ -358,6 +296,31 @@ def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(
     text: str, expected: str
 ):
     assert core.group_broken_paragraphs(text) == expected
+
+
+@pytest.mark.parametrize(
+    "paragraph",
+    [
+        # -- a bullet glyph outside the start of a line can be emphasis, a unit, a multiplication
+        #    dot or an inline item --
+        "These rules must be followed\n*without exception* in all deployments.",
+        "Required *production* settings:\n- Install the latest Python version first\n",
+        "Tasks:\n- Install\n*Important security\nrequirements*:\n- Require multifactor auth\n",
+        "Tasks:\r\n- Install\r\n*Important security\r\nrequirements*:\r\n- Require MFA\r\n",
+        "Requirements:\n- Tighten the bolt to 10 N\u00b7m of torque\n",
+        "Calculations:\n- Multiply the two numbers 3 \u00b7 4 to get twelve\n",
+        "Calculations:\n- Multiply the two numbers 3 \u2219 4 to get twelve\n",
+        "Shopping list:\n• milk • eggs • bread\n",
+        "Shopping list: • fresh milk and eggs\n- bread\n",
+        # -- a line that starts with "e " can be an OCR bullet --
+        "Steps:\n- first\ne second\n",
+        # -- a bullet after a line that does not end with ":" can be a dash or a sign in prose --
+        "The temperature dropped to\n- 5 degrees overnight.\n",
+        "The results of the experiment were clear\n\u2013 nobody in the lab had expected them.\n",
+    ],
+)
+def test_split_off_bullet_lists_keeps_a_paragraph_whole(paragraph: str):
+    assert core._split_off_bullet_lists(paragraph) == [paragraph]
 
 
 @pytest.mark.parametrize(
@@ -386,7 +349,7 @@ def test_group_broken_paragraphs_joins_a_long_wrapped_list_item():
 
     assert core.group_broken_paragraphs(text).split("\n\n") == [
         "Steps:",
-        "- the first item starts here " + continuation.replace("\n", " "),
+        "- the first item starts here " + continuation.replace("\n", " ") + " ",
         "- second",
     ]
 

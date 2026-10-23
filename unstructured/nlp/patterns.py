@@ -101,21 +101,7 @@ BULLET_SPLIT_RE_0W = re.compile(
     f"(?:(?={UNAMBIGUOUS_BULLETS_PATTERN})(?<!{UNAMBIGUOUS_BULLETS_PATTERN}))"
     f"|(?:(?:(?<=\\n)|\\A){NON_NEWLINE_WHITESPACE}(?={QUALIFIED_AMBIGUOUS_BULLET}))",
 )
-# A glyph that starts another item inside a line of a list, as in "• milk • eggs". "*" and the
-# ambiguous dashes do not: inside a line, they are emphasis, hyphens and minus signs. The middle
-# dots do only after whitespace, since they also join units, as in "N·m".
-MIDDLE_DOT_BULLETS: Final[List[str]] = ["\u00b7", "\u2219"]
-INLINE_BULLETS_PATTERN = "|".join(
-    b
-    for b in UNICODE_BULLETS
-    if b not in AMBIGUOUS_BULLETS and b not in MIDDLE_DOT_BULLETS and b != r"\*"
-)
-INLINE_BULLET_SPLIT_RE_0W = re.compile(
-    f"(?:(?={INLINE_BULLETS_PATTERN})(?<!{INLINE_BULLETS_PATTERN}))"
-    f"|(?:(?<=\\s)(?=[{''.join(MIDDLE_DOT_BULLETS)}]))",
-)
-# "*" also opens emphasis: a star closed by another one after a non-space, as in "*Note*:".
-EMPHASIS_START_RE = re.compile(r"\*[^\s*](?:[^*\n]*[^\s*])?\*")
+UNAMBIGUOUS_BULLETS_RE = re.compile(UNAMBIGUOUS_BULLETS_PATTERN)
 E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 
 # NOTE(klaijan) - Captures reference of format [1] or [i] or [a] at any point in the line.
