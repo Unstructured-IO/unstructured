@@ -16,7 +16,11 @@ from unstructured.partition.common.common import (
     rewind_if_spooled,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.partition.csv import check_cell_count, read_delimited_text
+from unstructured.partition.csv import (
+    check_cell_count,
+    dataframe_to_html,
+    read_delimited_text,
+)
 from unstructured.telemetry import partition_runtime_telemetry
 
 DETECTION_ORIGIN: str = "tsv"
@@ -72,9 +76,7 @@ def partition_tsv(
             f.seek(start)
             dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
 
-    html_table = HtmlTable.from_html_text(
-        dataframe.to_html(index=False, header=include_header, na_rep="")
-    )
+    html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
 
     metadata = ElementMetadata(
         filename=filename,
