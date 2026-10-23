@@ -8,6 +8,10 @@ on:
   merge_group:
     branches: [ main ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   id-token: write
   contents: read
@@ -16,6 +20,28 @@ env:
   DO_NOT_TRACK: "1"
 
 jobs:
+  check-version:
+    # Pushes have already landed; enforce ordering before merge, including the queue.
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    runs-on: ubuntu-latest
+    steps:
+      # Keep the default PR merge ref: a stale head can contain an old version.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Test version guard
+        run: bash scripts/test-check-new-release-version.sh
+      - name: Check merge-result version
+        env:
+          QUEUE_BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          VERSION_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [[ "$VERSION_EVENT_NAME" == merge_group ]]; then
+            git fetch --no-tags --depth=1 origin "$QUEUE_BASE_SHA"
+            export VERSION_BASE_REF="$QUEUE_BASE_SHA"
+          fi
+          bash scripts/check-new-release-version.sh
+
   setup:
     strategy:
       matrix:
@@ -23,16 +49,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: ./.github/actions/base-cache
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
       with:
+        enable-cache: true
         python-version: ${{ matrix.python-version }}
+        cache-suffix: lint
+    - name: Validate lockfile
+      run: uv lock --check
 
   check-licenses:
     strategy:
       matrix:
         python-version: [ "3.12" ]
     runs-on: ubuntu-latest
-    needs: [setup]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/base-cache
@@ -46,12 +76,16 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     runs-on: ubuntu-latest
-    needs: [setup, changelog]
     steps:
     - uses: actions/checkout@v4
-    - uses: ./.github/actions/base-cache
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
       with:
+        enable-cache: true
         python-version: ${{ matrix.python-version }}
+        cache-suffix: lint
+    - name: Install lint dependencies
+      run: uv sync --locked --only-group lint
     - name: Lint
       run: make check
 
@@ -77,36 +111,18 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     runs-on: opensource-linux-8core
-    needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install system dependencies
+      run: bash scripts/ci/install-system-deps.sh
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
         TESSERACT_VERSION: "5.5.1"
       run: |
-        retry() {
-          local n=1 max=5 delay=15
-          while true; do
-            "$@" && return 0
-            if (( n >= max )); then
-              echo "Command failed after $n attempts: $*" >&2
-              return 1
-            fi
-            echo "Attempt $n/$max failed for: $*. Retrying in ${delay}s..." >&2
-            sleep "$delay"
-            n=$((n+1))
-          done
-        }
-        retry sudo apt-get update
-        retry sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        retry sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        retry sudo apt-get update -o "APT::Update::Error-Mode=any"
-        retry sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
-        tesseract --version
         installed_tesseract_version=$(tesseract --version | grep -oP '(?<=tesseract )\d+\.\d+\.\d+')
         if [ "$installed_tesseract_version" != "${{env.TESSERACT_VERSION}}" ]; then
           echo "Tesseract version ${{env.TESSERACT_VERSION}} is required but found version $installed_tesseract_version"
@@ -114,13 +130,15 @@ jobs:
         fi
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
+    - name: Test language detection with langdetect-rs
+      if: matrix.python-version == '3.12'
+      run: make test-langdetect-rs CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
 
   test_unit_no_extras:
     strategy:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     runs-on: ubuntu-latest
-    needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
     - name: Install uv
@@ -161,7 +179,6 @@ jobs:
           - extra: xlsx
             uv-extras: "--extra xlsx"
     runs-on: opensource-linux-8core
-    needs: [setup, lint, test_unit_no_extras]
     steps:
     - uses: actions/checkout@v4
     - name: Install uv
@@ -175,27 +192,19 @@ jobs:
     - name: Install extra dependencies
       run: |
         uv sync --locked ${{ matrix.uv-extras }} --group test
-    - name: Install system dependencies
+    - name: Install document system dependencies
+      if: matrix.extra != 'pdf-image'
       run: |
-        retry() {
-          local n=1 max=5 delay=15
-          while true; do
-            "$@" && return 0
-            if (( n >= max )); then
-              echo "Command failed after $n attempts: $*" >&2
-              return 1
-            fi
-            echo "Attempt $n/$max failed for: $*. Retrying in ${delay}s..." >&2
-            sleep "$delay"
-            n=$((n+1))
-          done
-        }
-        retry sudo apt-get update
-        retry sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        retry sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        retry sudo apt-get update -o "APT::Update::Error-Mode=any"
-        retry sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
-        tesseract --version
+        packages=(libmagic-dev)
+        case "${{ matrix.extra }}" in
+          # The doc/ppt tests exercise legacy formats through LibreOffice.
+          docx|pptx) packages+=(libreoffice) ;;
+        esac
+        bash scripts/ci/install-system-deps.sh --packages-only "${packages[@]}"
+    - name: Install system dependencies
+      if: matrix.extra == 'pdf-image'
+      run: |
+        bash scripts/ci/install-system-deps.sh
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -208,7 +217,6 @@ jobs:
       matrix:
         python-version: ["3.12"]
     runs-on: opensource-linux-8core
-    needs: [setup, lint]
     steps:
     # actions/checkout MUST come before auth
     - uses: 'actions/checkout@v4'
@@ -219,6 +227,8 @@ jobs:
       uses: docker/setup-docker-action@v4
     - name: Set up Docker Compose
       uses: docker/setup-compose-action@v1
+    - name: Install system dependencies
+      run: bash scripts/ci/install-system-deps.sh diffstat
     - name: Test (end-to-end)
       env:
         AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
@@ -266,27 +276,6 @@ jobs:
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
-        retry() {
-          local n=1 max=5 delay=15
-          while true; do
-            "$@" && return 0
-            if (( n >= max )); then
-              echo "Command failed after $n attempts: $*" >&2
-              return 1
-            fi
-            echo "Attempt $n/$max failed for: $*. Retrying in ${delay}s..." >&2
-            sleep "$delay"
-            n=$((n+1))
-          done
-        }
-        retry sudo apt-get update
-        retry sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        retry sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        retry sudo apt-get update -o "APT::Update::Error-Mode=any"
-        retry sudo apt-get install -y tesseract-ocr
-        retry sudo apt-get install -y tesseract-ocr-kor
-        retry sudo apt-get install -y diffstat
-        tesseract --version
         uv run --no-sync ./test_unstructured_ingest/test-ingest-src.sh
 
   test_json_to_html:
@@ -294,7 +283,6 @@ jobs:
       matrix:
         python-version: ["3.12"]
     runs-on: ubuntu-latest
-    needs: [setup, lint]
     steps:
     - uses: 'actions/checkout@v4'
     - uses: ./.github/actions/base-cache
@@ -312,7 +300,6 @@ jobs:
       matrix:
         python-version: ["3.12"]
     runs-on: ubuntu-latest
-    needs: [setup, lint]
     steps:
     - uses: 'actions/checkout@v4'
     - uses: ./.github/actions/base-cache
@@ -325,27 +312,10 @@ jobs:
         sudo apt-get install diffstat
         uv run --no-sync ./test_unstructured_ingest/check-diff-expected-output-markdown.sh
 
-  changelog:
-    runs-on: ubuntu-latest
-    steps:
-    # need to checkout otherwise paths-filter will fail on merge-queue trigger
-    - uses: actions/checkout@v4
-    - if: github.ref != 'refs/heads/main'
-      uses: dorny/paths-filter@v3
-      id: changes
-      with:
-        filters: |
-          src:
-            - 'unstructured/**'
-
-    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
-      uses: dangoslen/changelog-enforcer@v3
-
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)
   test_dockerfile:
     runs-on: opensource-linux-8core
-    needs: [ setup, lint ]
     steps:
       - uses: actions/checkout@v4
       - name: Test Dockerfile
