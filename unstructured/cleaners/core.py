@@ -355,6 +355,21 @@ def clean_trailing_punctuation(text: str) -> str:
     return text.strip().rstrip(".,:;")
 
 
+def clean_newline(text: str, pattern: str = r"(\w+)-\s+(\w+)") -> str:
+    """Concatenate words broken across a newline by a hyphen and whitespace.
+
+    When text is wrapped, a word that continues on the following line is
+    often written as a character followed by a dash and whitespace. This
+    function removes the hyphen and the whitespace between the two parts so
+    the word is joined again.
+
+    Example
+    -------
+    "docu-\\nment" -> "document"
+    """
+    return re.sub(pattern, r"\1\2", text)
+
+
 def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
     """Replaces MIME encodings with their equivalent characters in the specified encoding.
 
