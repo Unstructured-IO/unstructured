@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import functools
 import json
+import re
 import uuid
 from typing import Optional, Type
 
@@ -193,6 +195,18 @@ def test_partition_text_from_filename_raises_econding_error(
             [Title("Shopping list:"), ListItem("milk"), ListItem("eggs"), ListItem("bread")],
         ),
         (
+            "Requirements:\n- Tighten the bolt to 10 N\u00b7m of torque\n",
+            [Title("Requirements:"), ListItem("Tighten the bolt to 10 N\u00b7m of torque")],
+        ),
+        (
+            "Shopping list: • milk\n- bread\n",
+            [Title("Shopping list:"), ListItem("milk"), ListItem("bread")],
+        ),
+        (
+            "Shopping list: •milk\n- bread\n",
+            [Title("Shopping list:"), ListItem("milk"), ListItem("bread")],
+        ),
+        (
             "\n- Install\n  SQL Server for the database\n- Verify setup\n",
             [ListItem("Install SQL Server for the database"), ListItem("Verify setup")],
         ),
@@ -206,6 +220,29 @@ def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(
     text: str, expected: list
 ):
     assert partition_text(text=text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("Items:\n- first\f- second\n", [Title("Items:"), ListItem("first"), ListItem("second")]),
+        (
+            "Items:\n- first\fNotes after the list\n",
+            [Title("Items:"), ListItem("first"), Title("Notes after the list")],
+        ),
+    ],
+)
+def test_partition_text_keeps_the_line_split_of_a_configured_paragraph_grouper(
+    text: str, expected: list
+):
+    line_split = re.compile(r"\s*[\n\f]\s*")
+
+    elements = partition_text(
+        text=text,
+        paragraph_grouper=functools.partial(group_broken_paragraphs, line_split=line_split),
+    )
+
+    assert elements == expected
 
 
 def test_partition_text_from_file():

@@ -324,6 +324,15 @@ the fox met a friendly bear."""
             "Requirements:\n\n- Install *SQL Server* to accept remote production connections"
             "\n\n- Verify setup",
         ),
+        # -- a middle dot inside a unit is not a bullet, one after a space is --
+        (
+            "Requirements:\n- Tighten the bolt to 10 N\u00b7m of torque\n",
+            "Requirements:\n\n- Tighten the bolt to 10 N\u00b7m of torque",
+        ),
+        ("Shopping list:\n• milk \u00b7 eggs\n", "Shopping list:\n\n• milk\n\n\u00b7 eggs"),
+        # -- so is a glyph inside a lead-in line --
+        ("Shopping list: • milk\n- bread\n", "Shopping list:\n\n• milk\n\n- bread"),
+        ("Shopping list: •milk\n- bread\n", "Shopping list:\n\n•milk\n\n- bread"),
         # -- inside a line, an unambiguous glyph still starts another item --
         (
             "Shopping list:\n• milk • eggs • bread\n",
@@ -359,6 +368,9 @@ def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(
             "Document title\n\nDocument subtitle\n\n- check",
         ),
         ("Document title\fDocument subtitle\n", "Document title\n\nDocument subtitle"),
+        # -- a custom line_split keeps its own split, inside a list too --
+        ("Items:\n- first\f- second\n", "Items:\n\n- first\n\n- second"),
+        ("Items:\n- first\fNotes after the list\n", "Items:\n\n- first\n\nNotes after the list"),
     ],
 )
 def test_group_broken_paragraphs_splits_the_lines_around_a_list_with_a_custom_line_split(

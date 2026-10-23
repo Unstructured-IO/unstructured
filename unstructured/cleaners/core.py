@@ -242,10 +242,15 @@ def group_broken_paragraphs(
         else re.compile(PARAGRAPH_PATTERN)
     )
 
-    # -- each part, and whether its paragraph was split into lists and the lines around them --
+    # -- each part, and whether its paragraph was split into lists and the lines around them; a
+    #    caller that passes its own `line_split` keeps the paragraphs whole --
     paragraphs: list[tuple[str, bool]] = []
     for paragraph in paragraph_split.split(text):
-        parts = _split_off_bullet_lists(paragraph)
+        parts = (
+            _split_off_bullet_lists(paragraph)
+            if line_split is PARAGRAPH_PATTERN_RE
+            else [paragraph]
+        )
         paragraphs.extend((part, len(parts) > 1) for part in parts)
     clean_paragraphs = []
     for paragraph, split_off in paragraphs:
@@ -266,11 +271,17 @@ def group_broken_paragraphs(
         #     Apache License
         #     Version 2.0, January 2004
         #     http://www.apache.org/licenses/
-        # A part split off from a list is split only at its line breaks, unless the caller
-        # passed its own `line_split`: none of its lines starts an item, so an inline "*" in it
-        # is emphasis.
-        default_split = split_off and line_split is PARAGRAPH_PATTERN_RE
-        para_split = (paragraph_pattern_re if default_split else line_split).split(paragraph)
+        # A part split off from a list is split at its line breaks and at the glyphs that start
+        # an item inside a line, but not at "*": none of its lines starts an item, so a "*" in
+        # it is emphasis.
+        if split_off:
+            para_split = [
+                piece.strip()
+                for line in paragraph_pattern_re.split(paragraph)
+                for piece in INLINE_BULLET_SPLIT_RE_0W.split(line)
+            ]
+        else:
+            para_split = line_split.split(paragraph)
         all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
         if all_lines_short:
             clean_paragraphs.extend(line for line in para_split if line.strip())
