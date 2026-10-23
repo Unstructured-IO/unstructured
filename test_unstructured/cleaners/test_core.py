@@ -317,6 +317,11 @@ def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(
         # -- a bullet after a line that does not end with ":" can be a dash or a sign in prose --
         "The temperature dropped to\n- 5 degrees overnight.\n",
         "The results of the experiment were clear\n\u2013 nobody in the lab had expected them.\n",
+        # -- also when a list after a lead-in line comes before or after that bullet --
+        "The temperature dropped to\n- 5 degrees overnight.\nObservations:\n- Ice on the lake\n",
+        "The temperature dropped to\r\n- 5 degrees overnight.\r\nObservations:\r\n- Ice formed\r\n",
+        "Observations:\n- Ice\nThe temperature dropped to\n- 5 degrees overnight.\n",
+        "Observations:\r\n- Ice\r\nThe temperature dropped to\r\n- 5 degrees overnight.\r\n",
     ],
 )
 def test_split_off_bullet_lists_keeps_a_paragraph_whole(paragraph: str):

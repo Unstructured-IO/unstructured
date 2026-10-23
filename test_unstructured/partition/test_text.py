@@ -149,6 +149,27 @@ def test_partition_text_from_filename_raises_econding_error(
             "These rules must be followed\n*without exception* in all deployments.\n",
             [NarrativeText("These rules must be followed *without exception* in all deployments.")],
         ),
+        # -- so is a paragraph with a signed line outside the list, which keeps its sign --
+        (
+            "The temperature dropped to\n- 5 degrees overnight.\nObservations:\n"
+            "- Ice formed on the lake\n",
+            [
+                NarrativeText(
+                    "The temperature dropped to - 5 degrees overnight. Observations: - Ice formed"
+                    " on the lake"
+                )
+            ],
+        ),
+        (
+            "The temperature dropped to\r\n- 5 degrees overnight.\r\nObservations:\r\n"
+            "- Ice formed on the lake\r\n",
+            [
+                NarrativeText(
+                    "The temperature dropped to - 5 degrees overnight. Observations: - Ice formed"
+                    " on the lake"
+                )
+            ],
+        ),
     ],
 )
 def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(

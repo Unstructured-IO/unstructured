@@ -165,7 +165,9 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     Only a paragraph whose bullets all start lines is split. Anywhere else, a bullet glyph can be
     emphasis ("*Note*"), a unit ("N·m"), a multiplication dot ("3 · 4") or an inline item
     ("• milk • eggs"), and a line that starts with "e " can be an OCR bullet, so such a paragraph
-    stays whole, as does a paragraph that starts with a bullet.
+    stays whole, as does a paragraph that starts with a bullet. A paragraph with a bullet line
+    outside such a list also stays whole, because that line can be a dash or a sign in prose, as
+    in "The temperature dropped to\n- 5 degrees overnight."
     """
     stripped = paragraph.strip()
     if UNICODE_BULLETS_RE.match(stripped) or E_BULLET_PATTERN.search(stripped):
@@ -185,7 +187,9 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     for idx, line in enumerate(lines):
         text = line.strip()
         indent = len(line) - len(line.lstrip())
-        if _starts_list_item(line) and (in_list or lines[idx - 1].strip().endswith(":")):
+        if _starts_list_item(line):
+            if not (in_list or lines[idx - 1].strip().endswith(":")):
+                return [paragraph]
             if not in_list:
                 parts.append("\n".join(lines[start:idx]))
                 start, in_list = idx, True
