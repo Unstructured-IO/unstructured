@@ -170,6 +170,21 @@ def test_partition_text_from_filename_raises_econding_error(
                 )
             ],
         ),
+        # -- and a paragraph with a line after an item that is not the next lead-in --
+        (
+            "Observations:\n- Ice formed on the lake\nThe temperature dropped to\n"
+            "- 5 degrees overnight.\n",
+            [
+                NarrativeText(
+                    "Observations: - Ice formed on the lake The temperature dropped to - 5 degrees"
+                    " overnight."
+                )
+            ],
+        ),
+        (
+            "Calculations:\r\n- Multiply the two numbers 3\r\n\u00b7 4 to get twelve\r\n",
+            [NarrativeText("Calculations: - Multiply the two numbers 3 \u00b7 4 to get twelve")],
+        ),
     ],
 )
 def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(

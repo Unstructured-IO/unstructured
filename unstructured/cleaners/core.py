@@ -139,11 +139,15 @@ def _starts_list_item(line: str) -> bool:
     """Whether a line starts with a bullet.
 
     `*` also marks emphasis in prose, as in "*without exception* in all deployments", so it
-    starts an item only when whitespace or the end of the line follows it.
+    starts an item only when whitespace or the end of the line follows it. A middle dot before a
+    digit can be a product wrapped from the line above, as in "the numbers 3\\n· 4", so it does
+    not start an item.
     """
     stripped = line.strip()
     bullet = UNICODE_BULLETS_RE.match(stripped)
     if bullet is None:
+        return False
+    if bullet.group() in ("\u00b7", "\u2219") and stripped[1:].lstrip()[:1].isdigit():
         return False
     return bullet.group() != "*" or len(stripped) == 1 or stripped[1].isspace()
 
@@ -156,18 +160,17 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     their items when the lines were short, and its items were joined into the lead-in line when
     they were long. Each part is now grouped as if a blank line separated it from the next one.
 
-    A list starts at a line with a bullet after a line that ends with ":". A line after an item
-    continues that item when it is indented deeper than the item's bullet, when the line before
-    it is long enough to have wrapped (five words or more, as in the short-lines check below) or
-    when it starts in lowercase, unless it is the lead-in of the next list. Any other line starts
-    the next part, such as "Vegetables:" in "Fruits:\\n- apple\\nVegetables:\\n- carrot".
+    A list starts at a line with a bullet after a line that ends with ":". After an item, only
+    another item or the lead-in of the next list may follow, such as "Vegetables:" in
+    "Fruits:\\n- apple\\nVegetables:\\n- carrot". Any other line could continue the item or the
+    prose around it, so such a paragraph stays whole.
 
     Only a paragraph whose bullets all start lines is split. Anywhere else, a bullet glyph can be
     emphasis ("*Note*"), a unit ("N·m"), a multiplication dot ("3 · 4") or an inline item
     ("• milk • eggs"), and a line that starts with "e " can be an OCR bullet, so such a paragraph
     stays whole, as does a paragraph that starts with a bullet. A paragraph with a bullet line
     outside such a list also stays whole, because that line can be a dash or a sign in prose, as
-    in "The temperature dropped to\n- 5 degrees overnight."
+    in "The temperature dropped to\\n- 5 degrees overnight."
     """
     stripped = paragraph.strip()
     if UNICODE_BULLETS_RE.match(stripped) or E_BULLET_PATTERN.search(stripped):
@@ -183,27 +186,21 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     parts: list[str] = []
     start = 0
     in_list = False
-    item_indent = 0
     for idx, line in enumerate(lines):
         text = line.strip()
-        indent = len(line) - len(line.lstrip())
         if _starts_list_item(line):
             if not (in_list or lines[idx - 1].strip().endswith(":")):
                 return [paragraph]
             if not in_list:
                 parts.append("\n".join(lines[start:idx]))
                 start, in_list = idx, True
-            item_indent = indent
             continue
         if not in_list or not text:
             continue
-        lead_in = text.endswith(":") and idx + 1 < len(lines) and _starts_list_item(lines[idx + 1])
-        wrapped = (
-            indent > item_indent or len(lines[idx - 1].strip().split(" ")) >= 5 or text[0].islower()
-        )
-        if lead_in or not wrapped:
-            parts.append("\n".join(lines[start:idx]))
-            start, in_list = idx, False
+        if not (text.endswith(":") and idx + 1 < len(lines) and _starts_list_item(lines[idx + 1])):
+            return [paragraph]
+        parts.append("\n".join(lines[start:idx]))
+        start, in_list = idx, False
     parts.append("\n".join(lines[start:]))
     return parts
 

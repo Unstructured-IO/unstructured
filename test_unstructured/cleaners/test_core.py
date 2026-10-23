@@ -274,12 +274,10 @@ the fox met a friendly bear."""
             "Requirements:\n- install the latest Python release first\n- pip",
             "Requirements:\n\n- install the latest Python release first \n\n- pip",
         ),
-        # -- a wrapped item keeps its continuation line --
+        # -- also with a middle dot as the bullet --
         (
-            "Requirements:\n- install the latest Python release first and then\n"
-            "  configure the environment\n- pip",
-            "Requirements:\n\n- install the latest Python release first and then configure the"
-            " environment \n\n- pip",
+            "Shopping list:\n\u00b7 milk\n\u00b7 bread",
+            "Shopping list:\n\n\u00b7 milk \n\n\u00b7 bread",
         ),
         # -- the next lead-in starts a part of its own, also with indented bullets --
         (
@@ -322,6 +320,14 @@ def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(
         "The temperature dropped to\r\n- 5 degrees overnight.\r\nObservations:\r\n- Ice formed\r\n",
         "Observations:\n- Ice\nThe temperature dropped to\n- 5 degrees overnight.\n",
         "Observations:\r\n- Ice\r\nThe temperature dropped to\r\n- 5 degrees overnight.\r\n",
+        # -- a line after an item that is not the next lead-in can continue the item or prose --
+        "Observations:\n- Ice formed on the lake\nThe temperature dropped to\n- 5 degrees.\n",
+        "Observations:\r\n- Ice formed on the lake\r\nThe air cooled to\r\n- 5 degrees.\r\n",
+        "Observations:\n- Ice formed on the lake\nand the temperature dropped to\n- 5 degrees.\n",
+        "Requirements:\n- install the latest Python release and then\n  configure it\n- pip\n",
+        # -- a middle dot before a digit can be a product wrapped from the line above --
+        "Calculations:\n- Multiply the two numbers 3\n\u00b7 4 to get twelve\n",
+        "Calculations:\r\n- Multiply the two numbers 3\r\n\u2219 4 to get twelve\r\n",
     ],
 )
 def test_split_off_bullet_lists_keeps_a_paragraph_whole(paragraph: str):
@@ -348,15 +354,11 @@ def test_group_broken_paragraphs_splits_the_lines_around_a_list_with_a_custom_li
     assert core.group_broken_paragraphs(text, line_split=line_split) == expected
 
 
-def test_group_broken_paragraphs_joins_a_long_wrapped_list_item():
+def test_split_off_bullet_lists_keeps_a_long_wrapped_list_item_whole():
     continuation = "\n".join(f"and then wrapped line {i} of the item" for i in range(20000))
     text = f"Steps:\n- the first item starts here\n{continuation}\n- second"
 
-    assert core.group_broken_paragraphs(text).split("\n\n") == [
-        "Steps:",
-        "- the first item starts here " + continuation.replace("\n", " ") + " ",
-        "- second",
-    ]
+    assert core._split_off_bullet_lists(text) == [text]
 
 
 def test_group_bullet_paragraph_with_e_bullets():
