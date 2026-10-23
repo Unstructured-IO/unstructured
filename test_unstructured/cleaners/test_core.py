@@ -264,6 +264,11 @@ the fox met a friendly bear."""
         # -- short items, which used to lose their bullets to the short-lines split --
         ("Shopping list:\n• milk\n• bread", "Shopping list:\n\n• milk \n\n• bread"),
         ("Steps:\n* first\n* second", "Steps:\n\n* first \n\n* second"),
+        # -- a list whose items start with numbers is still a list after its lead-in line --
+        (
+            "Ingredients:\n* 4 eggs\n* 2 cups of flour",
+            "Ingredients:\n\n* 4 eggs \n\n* 2 cups of flour",
+        ),
         ("Items:\n\u25cbitem one\n\u25cbitem two", "Items:\n\n\u25cbitem one \n\n\u25cbitem two"),
         # -- long items, which used to be joined into the lead-in line --
         (
@@ -328,6 +333,12 @@ def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(
         # -- a middle dot before a digit can be a product wrapped from the line above --
         "Calculations:\n- Multiply the two numbers 3\n\u00b7 4 to get twelve\n",
         "Calculations:\r\n- Multiply the two numbers 3\r\n\u2219 4 to get twelve\r\n",
+        # -- so can a product sign before another operand after a line that ends in a number --
+        "Calculations:\n- Multiply the two numbers 3\n\u00b7 -4 to get negative twelve\n",
+        "Calculations:\r\n- Multiply the two numbers 3\r\n\u2219 -4 to get negative twelve\r\n",
+        "Calculations:\n- Multiply the two numbers 3\n\u00b7 .5 to get one and a half\n",
+        "Calculations:\n- Multiply the two numbers 3\n\u00b7 (4 + 5) to get twenty-seven\n",
+        "Calculations:\r\n- Multiply the two numbers 3\r\n* 4 to get twelve\r\n",
     ],
 )
 def test_split_off_bullet_lists_keeps_a_paragraph_whole(paragraph: str):

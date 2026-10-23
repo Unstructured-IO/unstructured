@@ -185,6 +185,18 @@ def test_partition_text_from_filename_raises_econding_error(
             "Calculations:\r\n- Multiply the two numbers 3\r\n\u00b7 4 to get twelve\r\n",
             [NarrativeText("Calculations: - Multiply the two numbers 3 \u00b7 4 to get twelve")],
         ),
+        (
+            "Calculations:\n- Multiply the two numbers 3\n\u00b7 -4 to get negative twelve\n",
+            [
+                NarrativeText(
+                    "Calculations: - Multiply the two numbers 3 \u00b7 -4 to get negative twelve"
+                )
+            ],
+        ),
+        (
+            "Calculations:\r\n- Multiply the two numbers 3\r\n* 4 to get twelve\r\n",
+            [NarrativeText("Calculations: - Multiply the two numbers 3 * 4 to get twelve")],
+        ),
     ],
 )
 def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(

@@ -135,19 +135,37 @@ def group_bullet_paragraph(paragraph: str) -> list:
     return clean_paragraphs
 
 
-def _starts_list_item(line: str) -> bool:
+def _starts_operand(text: str) -> bool:
+    """Whether text starts like a number or a parenthesized term, as in "4", "-4", ".5" or "(4"."""
+    if text[:1] in ("+", "-", "\u2212"):
+        text = text[1:]
+    if text[:1] == ".":
+        text = text[1:]
+    return text[:1].isdigit() or text[:1] in ("(", "[")
+
+
+def _starts_list_item(line: str, previous: str = "") -> bool:
     """Whether a line starts with a bullet.
 
     `*` also marks emphasis in prose, as in "*without exception* in all deployments", so it
     starts an item only when whitespace or the end of the line follows it. A middle dot before a
     digit can be a product wrapped from the line above, as in "the numbers 3\\n· 4", so it does
-    not start an item.
+    not start an item. After a line that ends in a number, `*`, `·` and `∙` before another operand
+    can continue the product too, as in "3\\n· -4", "3\\n· (4 + 5)" or "3\\n* 4".
     """
     stripped = line.strip()
     bullet = UNICODE_BULLETS_RE.match(stripped)
     if bullet is None:
         return False
-    if bullet.group() in ("\u00b7", "\u2219") and stripped[1:].lstrip()[:1].isdigit():
+    rest = stripped[1:].lstrip()
+    if bullet.group() in ("\u00b7", "\u2219") and rest[:1].isdigit():
+        return False
+    last = previous.rstrip()[-1:]
+    if (
+        bullet.group() in ("*", "\u00b7", "\u2219")
+        and (last.isdigit() or last in (")", "]", "%"))
+        and _starts_operand(rest)
+    ):
         return False
     return bullet.group() != "*" or len(stripped) == 1 or stripped[1].isspace()
 
@@ -178,8 +196,10 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
 
     lines = paragraph.split("\n")
     if any(
-        UNAMBIGUOUS_BULLETS_RE.search(line.strip()[1:] if _starts_list_item(line) else line)
-        for line in lines
+        UNAMBIGUOUS_BULLETS_RE.search(
+            line.strip()[1:] if _starts_list_item(line, lines[idx - 1] if idx else "") else line
+        )
+        for idx, line in enumerate(lines)
     ):
         return [paragraph]
 
@@ -188,7 +208,7 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     in_list = False
     for idx, line in enumerate(lines):
         text = line.strip()
-        if _starts_list_item(line):
+        if _starts_list_item(line, lines[idx - 1] if idx else ""):
             if not (in_list or lines[idx - 1].strip().endswith(":")):
                 return [paragraph]
             if not in_list:
@@ -197,7 +217,9 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
             continue
         if not in_list or not text:
             continue
-        if not (text.endswith(":") and idx + 1 < len(lines) and _starts_list_item(lines[idx + 1])):
+        if not (
+            text.endswith(":") and idx + 1 < len(lines) and _starts_list_item(lines[idx + 1], line)
+        ):
             return [paragraph]
         parts.append("\n".join(lines[start:idx]))
         start, in_list = idx, False
