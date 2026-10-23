@@ -167,6 +167,32 @@ def test_partition_text_from_filename_raises_econding_error(
             [Title("Fruits:"), ListItem("apple"), Title("Only *fresh* ones")],
         ),
         (
+            "Fruits:\n- Buy fresh apples from the local orchard\n*Vegetables*:\n- carrots\n",
+            [
+                Title("Fruits:"),
+                ListItem("Buy fresh apples from the local orchard"),
+                Title("*Vegetables*:"),
+                ListItem("carrots"),
+            ],
+        ),
+        (
+            "Requirements:\n- Install\n  *SQL Server* to accept remote production connections\n"
+            "- Verify setup\n",
+            [
+                Title("Requirements:"),
+                ListItem("Install *SQL Server* to accept remote production connections"),
+                ListItem("Verify setup"),
+            ],
+        ),
+        (
+            "Shopping list:\n• milk • eggs • bread\n",
+            [Title("Shopping list:"), ListItem("milk"), ListItem("eggs"), ListItem("bread")],
+        ),
+        (
+            "Shopping list:\n•milk •eggs •bread\n",
+            [Title("Shopping list:"), ListItem("milk"), ListItem("eggs"), ListItem("bread")],
+        ),
+        (
             "\n- Install\n  SQL Server for the database\n- Verify setup\n",
             [ListItem("Install SQL Server for the database"), ListItem("Verify setup")],
         ),

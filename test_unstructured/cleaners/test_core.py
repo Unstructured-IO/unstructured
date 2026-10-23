@@ -313,6 +313,23 @@ the fox met a friendly bear."""
             "Required *production* settings:\n\n- Install the latest Python version first",
         ),
         ("Fruits:\n- apple\nOnly *fresh* ones\n", "Fruits:\n\n- apple\n\nOnly *fresh* ones"),
+        (
+            "Fruits:\n- Buy fresh apples from the local orchard\n*Vegetables*:\n- carrots\n",
+            "Fruits:\n\n- Buy fresh apples from the local orchard\n\n*Vegetables*:\n\n- carrots",
+        ),
+        # -- a line indented deeper than its item's bullet continues the item --
+        (
+            "Requirements:\n- Install\n  *SQL Server* to accept remote production connections\n"
+            "- Verify setup\n",
+            "Requirements:\n\n- Install *SQL Server* to accept remote production connections"
+            "\n\n- Verify setup",
+        ),
+        # -- inside a line, an unambiguous glyph still starts another item --
+        (
+            "Shopping list:\n• milk • eggs • bread\n",
+            "Shopping list:\n\n• milk\n\n• eggs\n\n• bread",
+        ),
+        ("Shopping list:\n•milk •eggs •bread\n", "Shopping list:\n\n•milk\n\n•eggs\n\n•bread"),
         # -- a list after a leading line break keeps its continuation lines --
         (
             "\n- Install\n  SQL Server for the database\n- Verify setup\n",
@@ -332,6 +349,23 @@ def test_group_broken_paragraphs_keeps_a_bulleted_list_after_its_lead_in_line(
     text: str, expected: str
 ):
     assert core.group_broken_paragraphs(text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "Document title\fDocument subtitle\n- check\n",
+            "Document title\n\nDocument subtitle\n\n- check",
+        ),
+        ("Document title\fDocument subtitle\n", "Document title\n\nDocument subtitle"),
+    ],
+)
+def test_group_broken_paragraphs_splits_the_lines_around_a_list_with_a_custom_line_split(
+    text: str, expected: str
+):
+    line_split = re.compile(r"\s*[\n\f]\s*")
+    assert core.group_broken_paragraphs(text, line_split=line_split) == expected
 
 
 def test_group_broken_paragraphs_joins_a_long_wrapped_list_item():

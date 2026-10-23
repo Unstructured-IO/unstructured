@@ -15,6 +15,7 @@ from unstructured.nlp.patterns import (
     BULLET_SPLIT_RE_0W,
     DOUBLE_PARAGRAPH_PATTERN_RE,
     E_BULLET_PATTERN,
+    INLINE_BULLET_SPLIT_RE_0W,
     LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
@@ -155,10 +156,11 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     their items when the lines were short, and its items were joined into the lead-in line when
     they were long.
 
-    A line after an item continues that item when the line before it is long enough to have
-    wrapped (five words or more, as in the short-lines check below) or when it starts in
-    lowercase, unless it ends with ":" and an item follows it. Any other line starts the next
-    part, such as "Vegetables:" in "Fruits:\\n- apple\\nVegetables:\\n- carrot".
+    A line after an item continues that item when it is indented deeper than the item's bullet,
+    when the line before it is long enough to have wrapped (five words or more, as in the
+    short-lines check below) or when it starts in lowercase, unless it ends with ":" and an item
+    follows it. Any other line starts the next part, such as "Vegetables:" in
+    "Fruits:\\n- apple\\nVegetables:\\n- carrot".
     """
     stripped = paragraph.strip()
     if UNICODE_BULLETS_RE.match(stripped) or E_BULLET_PATTERN.match(stripped):
@@ -169,18 +171,23 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     parts: list[str] = []
     start = 0
     in_list = False
+    item_indent = 0
     for idx, line in enumerate(lines):
+        text = line.strip()
+        indent = len(line) - len(line.lstrip())
         if _starts_list_item(line):
             if not in_list:
                 if idx > start:
                     parts.append("\n".join(lines[start:idx]))
                 start, in_list = idx, True
+            item_indent = indent
             continue
-        text = line.strip()
         if not in_list or not text:
             continue
         lead_in = text.endswith(":") and idx + 1 < len(lines) and _starts_list_item(lines[idx + 1])
-        wrapped = len(lines[idx - 1].strip().split(" ")) >= 5 or text[0].islower()
+        wrapped = (
+            indent > item_indent or len(lines[idx - 1].strip().split(" ")) >= 5 or text[0].islower()
+        )
         if lead_in or not wrapped:
             parts.append("\n".join(lines[start:idx]))
             start, in_list = idx, False
@@ -191,8 +198,9 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
 def _list_items(paragraph: str) -> list[str]:
     """Split a list that `_split_off_bullet_lists` split off into its items.
 
-    An item starts only at a line that `_starts_list_item` accepts, and the lines after it are
-    joined to it, so emphasis inside an item, as in "- must be *really* safe", stays text.
+    An item starts at a line that `_starts_list_item` accepts, and the lines after it are joined
+    to it, so emphasis inside an item, as in "- must be *really* safe", stays text. Inside a line,
+    only a glyph that cannot be emphasis or a hyphen starts another item, as in "• milk • eggs".
     """
     items: list[list[str]] = []
     for line in paragraph.split("\n"):
@@ -201,7 +209,12 @@ def _list_items(paragraph: str) -> list[str]:
             items.append([text])
         elif text:
             items[-1].append(text)
-    return [" ".join(item) for item in items]
+    return [
+        piece.strip()
+        for item in items
+        for piece in INLINE_BULLET_SPLIT_RE_0W.split(" ".join(item))
+        if piece.strip()
+    ]
 
 
 def group_broken_paragraphs(
@@ -253,9 +266,11 @@ def group_broken_paragraphs(
         #     Apache License
         #     Version 2.0, January 2004
         #     http://www.apache.org/licenses/
-        # A part split off from a list is split only at its line breaks: none of its lines starts
-        # an item, so an inline "*" in it is emphasis.
-        para_split = (paragraph_pattern_re if split_off else line_split).split(paragraph)
+        # A part split off from a list is split only at its line breaks, unless the caller
+        # passed its own `line_split`: none of its lines starts an item, so an inline "*" in it
+        # is emphasis.
+        default_split = split_off and line_split is PARAGRAPH_PATTERN_RE
+        para_split = (paragraph_pattern_re if default_split else line_split).split(paragraph)
         all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
         if all_lines_short:
             clean_paragraphs.extend(line for line in para_split if line.strip())
