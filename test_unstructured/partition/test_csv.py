@@ -359,6 +359,20 @@ def test_partition_csv_reads_a_file_with_no_usable_delimiter_as_one_column():
     )
 
 
+def test_partition_csv_reads_a_field_a_row_does_not_have_as_an_empty_cell():
+    # -- a row that stops short of the last column. The whole-file sniffer fails on ragged rows, so
+    # -- Pandas reads this file with its Python engine, which hands that field back as `None`; a
+    # -- `None` cell is written as the literal word "None" by `DataFrame.to_html()` before `na_rep`
+    # -- is consulted, so it must not reach the element text or the table HTML --
+    elements = partition_csv(file=io.BytesIO(b"a,b,c\n1,2,3\n4,5\n"))
+
+    assert elements[0].text == "a b c 1 2 3 4 5"
+    assert elements[0].metadata.text_as_html == (
+        "<table><tr><td>a</td><td>b</td><td>c</td></tr><tr><td>1</td><td>2</td><td>3</td></tr>"
+        "<tr><td>4</td><td>5</td><td/></tr></table>"
+    )
+
+
 # ================================================================================================
 # UNIT-TESTS
 # ================================================================================================
