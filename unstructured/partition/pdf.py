@@ -12,7 +12,8 @@ from typing import IO, TYPE_CHECKING, Any, Generator, Iterator, NoReturn, Option
 
 import numpy as np
 import wrapt
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
+from pdfminer.layout import LTContainer, LTImage, LTItem, LTPage, LTTextBox
+from pdfminer.pdfpage import PDFPage
 from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
@@ -68,7 +69,11 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
-from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
+from unstructured.partition.strategies import (
+    determine_pdf_or_image_strategy,
+    pdf_strategy_can_resolve_to_fast,
+    validate_strategy,
+)
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
@@ -327,7 +332,7 @@ def partition_pdf_or_image(
                     "Falling back to hi_res strategy without text extraction."
                 )
 
-            else:
+            elif pdf_strategy_can_resolve_to_fast(strategy):
                 extracted_elements = extractable_elements(
                     filename=filename,
                     file=rewind_if_spooled(file),
@@ -339,9 +344,18 @@ def partition_pdf_or_image(
                     **kwargs,
                 )
                 pdf_text_extractable = any(
-                    isinstance(el, Text) and el.text.strip()
-                    for page_elements in extracted_elements
-                    for el in page_elements
+                    _has_text_element(page_elements) for page_elements in extracted_elements
+                )
+            else:
+                pdf_text_extractable = pdf_has_extractable_text(
+                    filename=filename,
+                    file=rewind_if_spooled(file),
+                    languages=languages,
+                    metadata_last_modified=metadata_last_modified or last_modified,
+                    starting_page_number=starting_page_number,
+                    password=password,
+                    pdfminer_config=pdfminer_config,
+                    **kwargs,
                 )
         except Exception as e:
             logger.debug(e)
@@ -454,6 +468,37 @@ def extractable_elements(
     )
 
 
+def pdf_has_extractable_text(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+    languages: Optional[list[str]] = None,
+    metadata_last_modified: Optional[str] = None,
+    starting_page_number: int = 1,
+    password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
+    **kwargs: Any,
+) -> bool:
+    """True when `extractable_elements()` would return a `Text` element with non-whitespace text.
+
+    Pages are read only up to the first one with text, so the answer costs a single page for most
+    documents with a text layer, while a document without one is read in full.
+    """
+    if isinstance(file, bytes):
+        file = io.BytesIO(file)
+    exactly_one(filename=filename, file=file)
+    with open_filename(filename, "rb") if filename else contextlib.nullcontext(file) as fp:
+        return _pdfminer_pages_have_text(
+            fp=cast(IO[bytes], fp),
+            filename=filename,
+            languages=languages,
+            metadata_last_modified=metadata_last_modified,
+            starting_page_number=starting_page_number,
+            password=password,
+            pdfminer_config=pdfminer_config,
+            **kwargs,
+        )
+
+
 def _partition_pdf_with_pdfminer(
     filename: str,
     file: Optional[IO[bytes]],
@@ -517,101 +562,159 @@ def _process_pdfminer_pages(
 ) -> list[list[Element]]:
     """Uses PDFMiner to split a document into pages and process them."""
 
-    elements = []
+    return [
+        _pdfminer_page_elements(
+            page,
+            page_layout,
+            page_number=page_number,
+            filename=filename,
+            metadata_last_modified=metadata_last_modified,
+            languages=languages,
+            annotation_threshold=annotation_threshold,
+        )
+        for page_number, (page, page_layout) in enumerate(
+            open_pdfminer_pages_generator(fp, password=password, pdfminer_config=pdfminer_config),
+            start=starting_page_number,
+        )
+    ]
+
+
+@requires_dependencies("pdfminer")
+def _pdfminer_pages_have_text(
+    fp: IO[bytes],
+    filename: str,
+    metadata_last_modified: Optional[str],
+    languages: Optional[list[str]] = None,
+    annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
+    starting_page_number: int = 1,
+    password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
+    **kwargs,
+) -> bool:
+    """True when any page has a `Text` element with non-whitespace text.
+
+    Each page is built exactly as `_process_pdfminer_pages()` builds it, and no page after the
+    first one with text is read.
+    """
 
     for page_number, (page, page_layout) in enumerate(
         open_pdfminer_pages_generator(fp, password=password, pdfminer_config=pdfminer_config),
         start=starting_page_number,
     ):
-        width, height = page_layout.width, page_layout.height
-
-        page_elements: list[Element] = []
-        annotation_list = []
-
-        coordinate_system = PixelSpace(
-            width=width,
-            height=height,
+        page_elements = _pdfminer_page_elements(
+            page,
+            page_layout,
+            page_number=page_number,
+            filename=filename,
+            metadata_last_modified=metadata_last_modified,
+            languages=languages,
+            annotation_threshold=annotation_threshold,
         )
-        if page.annots:
-            annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+        if _has_text_element(page_elements):
+            return True
+    return False
 
-        for obj in page_layout:
-            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
-            bbox = (x1, y1, x2, y2)
 
-            urls_metadata: list[dict[str, Any]] = []
+def _has_text_element(elements: list[Element]) -> bool:
+    return any(isinstance(el, Text) and el.text.strip() for el in elements)
 
-            if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
-                annotations_within_element = check_annotations_within_element(
-                    annotation_list,
-                    bbox,
-                    page_number,
-                    annotation_threshold,
+
+def _pdfminer_page_elements(
+    page: PDFPage,
+    page_layout: LTPage,
+    page_number: int,
+    filename: str,
+    metadata_last_modified: Optional[str],
+    languages: Optional[list[str]],
+    annotation_threshold: Optional[float],
+) -> list[Element]:
+    """Builds the elements of one page from its pdfminer page and layout."""
+    width, height = page_layout.width, page_layout.height
+
+    page_elements: list[Element] = []
+    annotation_list = []
+
+    coordinate_system = PixelSpace(
+        width=width,
+        height=height,
+    )
+    if page.annots:
+        annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+
+    for obj in page_layout:
+        x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
+        bbox = (x1, y1, x2, y2)
+
+        urls_metadata: list[dict[str, Any]] = []
+
+        if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
+            annotations_within_element = check_annotations_within_element(
+                annotation_list,
+                bbox,
+                page_number,
+                annotation_threshold,
+            )
+            _, words = get_words_from_obj(obj, height)
+            for annot in annotations_within_element:
+                urls_metadata.append(map_bbox_and_index(words, annot))
+
+        if hasattr(obj, "get_text"):
+            # Use deduplication to handle fake bold text (characters rendered twice)
+            _text_snippets: list[str] = [
+                get_text_with_deduplication(obj, env_config.PDF_CHAR_DUPLICATE_THRESHOLD)
+            ]
+        else:
+            _text = _extract_text(obj)
+            _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+
+        for _text in _text_snippets:
+            _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
+            if _text.strip():
+                points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                element = element_from_text(
+                    _text,
+                    coordinates=points,
+                    coordinate_system=coordinate_system,
                 )
-                _, words = get_words_from_obj(obj, height)
-                for annot in annotations_within_element:
-                    urls_metadata.append(map_bbox_and_index(words, annot))
+                coordinates_metadata = CoordinatesMetadata(
+                    points=points,
+                    system=coordinate_system,
+                )
+                links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
 
-            if hasattr(obj, "get_text"):
-                # Use deduplication to handle fake bold text (characters rendered twice)
-                _text_snippets: list[str] = [
-                    get_text_with_deduplication(obj, env_config.PDF_CHAR_DUPLICATE_THRESHOLD)
-                ]
-            else:
-                _text = _extract_text(obj)
-                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+                element.metadata = ElementMetadata(
+                    filename=filename,
+                    page_number=page_number,
+                    coordinates=coordinates_metadata,
+                    last_modified=metadata_last_modified,
+                    links=links,
+                    languages=languages,
+                )
+                element.metadata.detection_origin = "pdfminer"
+                page_elements.append(element)
 
-            for _text in _text_snippets:
-                _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
-                if _text.strip():
-                    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                    element = element_from_text(
-                        _text,
-                        coordinates=points,
-                        coordinate_system=coordinate_system,
-                    )
-                    coordinates_metadata = CoordinatesMetadata(
-                        points=points,
-                        system=coordinate_system,
-                    )
-                    links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
+    # Filled AcroForm field values live in widget annotations rather than the page
+    # content stream, so pdfminer's layout pass misses them; recover them here.
+    widget_list = get_widget_text_from_annots(page.annots, height) if page.annots else []
+    for widget in widget_list:
+        wx1, wy1, wx2, wy2 = widget["bbox"]
+        points = ((wx1, wy1), (wx1, wy2), (wx2, wy2), (wx2, wy1))
+        element = element_from_text(
+            widget["text"],
+            coordinates=points,
+            coordinate_system=coordinate_system,
+        )
+        element.metadata = ElementMetadata(
+            filename=filename,
+            page_number=page_number,
+            coordinates=CoordinatesMetadata(points=points, system=coordinate_system),
+            last_modified=metadata_last_modified,
+            languages=languages,
+        )
+        element.metadata.detection_origin = "pdfminer"
+        page_elements.append(element)
 
-                    element.metadata = ElementMetadata(
-                        filename=filename,
-                        page_number=page_number,
-                        coordinates=coordinates_metadata,
-                        last_modified=metadata_last_modified,
-                        links=links,
-                        languages=languages,
-                    )
-                    element.metadata.detection_origin = "pdfminer"
-                    page_elements.append(element)
-
-        # Filled AcroForm field values live in widget annotations rather than the page
-        # content stream, so pdfminer's layout pass misses them; recover them here.
-        widget_list = get_widget_text_from_annots(page.annots, height) if page.annots else []
-        for widget in widget_list:
-            wx1, wy1, wx2, wy2 = widget["bbox"]
-            points = ((wx1, wy1), (wx1, wy2), (wx2, wy2), (wx2, wy1))
-            element = element_from_text(
-                widget["text"],
-                coordinates=points,
-                coordinate_system=coordinate_system,
-            )
-            element.metadata = ElementMetadata(
-                filename=filename,
-                page_number=page_number,
-                coordinates=CoordinatesMetadata(points=points, system=coordinate_system),
-                last_modified=metadata_last_modified,
-                languages=languages,
-            )
-            element.metadata.detection_origin = "pdfminer"
-            page_elements.append(element)
-
-        page_elements = _combine_list_elements(page_elements, coordinate_system)
-        elements.append(page_elements)
-
-    return elements
+    return _combine_list_elements(page_elements, coordinate_system)
 
 
 def _get_pdf_page_number(
@@ -1154,6 +1257,22 @@ def _partition_pdf_or_image_local(
         except PdfRenderTooLargeError as exc:
             raise UnprocessableEntityError(str(exc)) from exc
 
+    def _extract_text_layer(processor, inferred_document_layout, pdfminer_config, **source):
+        if not pdf_text_extractable:
+            return [], []
+        try:
+            return processor(
+                **source,
+                dpi=pdf_image_dpi,
+                password=password,
+                pdfminer_config=pdfminer_config,
+                rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
+            )
+        except Exception as e:
+            logger.debug(e)
+            logger.info("PDF text extraction failed, skip text extraction...")
+            return [], []
+
     if file is None:
         inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
         _record_image_layout_document_type(inferred_document_layout, is_image)
@@ -1163,16 +1282,11 @@ def _partition_pdf_or_image_local(
             pdfminer_config,
         )
 
-        extracted_layout, layouts_links = (
-            process_file_with_pdfminer(
-                filename=filename,
-                dpi=pdf_image_dpi,
-                password=password,
-                pdfminer_config=pdfminer_config,
-                rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
-            )
-            if pdf_text_extractable
-            else ([], [])
+        extracted_layout, layouts_links = _extract_text_layer(
+            process_file_with_pdfminer,
+            inferred_document_layout,
+            pdfminer_config,
+            filename=filename,
         )
 
         if analysis:
@@ -1226,16 +1340,11 @@ def _partition_pdf_or_image_local(
             pdfminer_config,
         )
 
-        extracted_layout, layouts_links = (
-            process_data_with_pdfminer(
-                file=file,
-                dpi=pdf_image_dpi,
-                password=password,
-                pdfminer_config=pdfminer_config,
-                rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
-            )
-            if pdf_text_extractable
-            else ([], [])
+        extracted_layout, layouts_links = _extract_text_layer(
+            process_data_with_pdfminer,
+            inferred_document_layout,
+            pdfminer_config,
+            file=file,
         )
 
         if analysis:
