@@ -62,6 +62,11 @@ main() {
     else
       base_ref=${VERSION_BASE_REF:-origin/main}
     fi
+    # CHANGELOG.md is frozen: no change may edit it, whatever the version does.
+    if ! git diff --quiet "$base_ref" HEAD -- CHANGELOG.md; then
+      echo 'FAIL: CHANGELOG.md is frozen. Put release notes in the PR title or its "Release note" section (see CONTRIBUTING.md).' >&2
+      return 1
+    fi
     base=$(read_version "$base_ref")
   elif [[ $# == 2 || $# == 3 ]]; then
     current=$1
