@@ -98,6 +98,24 @@ def partition_via_api(
     base_url = api_url[:-19] if "/general/v0/general" in api_url else api_url
     sdk = UnstructuredClient(api_key_auth=api_key, server_url=base_url)
 
+    # -- `content_type` lives on `PartitionParameters` (a multipart form field) across the
+    # -- advertised SDK range (`>=0.25.9`); `shared.Files` only gains the field in 0.26.0+, so
+    # -- passing it there raises TypeError on the declared minimum SDK. Leave it unset when the
+    # -- caller did not specify one so the SDK keeps inferring the MIME type from the file name.
+    #
+    # -- For a gzip upload the caller may pass `gz_uncompressed_content_type` (routed through
+    # -- `request_kwargs`) to name the decompressed document's MIME. The server decompresses
+    # -- first and then treats a form-level `content_type` hint as truth ahead of that inner
+    # -- MIME; forwarding the outer container MIME (e.g. `application/gzip`, which is not
+    # -- partitionable) would therefore drop the explicit inner type. Suppress the outer hint
+    # -- in that case so the inner MIME governs, matching pre-PR behavior.
+    suppress_outer_content_type = "gz_uncompressed_content_type" in request_kwargs
+    content_type_kwargs = (
+        {}
+        if suppress_outer_content_type or content_type is None
+        else {"content_type": content_type}
+    )
+
     if filename is not None:
         with open(filename, "rb") as f:
             files = shared.Files(
@@ -114,7 +132,11 @@ def partition_via_api(
         files = shared.Files(content=file, file_name=metadata_filename)
 
     req = operations.PartitionRequest(
-        partition_parameters=shared.PartitionParameters(files=files, **request_kwargs)
+        partition_parameters=shared.PartitionParameters(
+            files=files,
+            **content_type_kwargs,
+            **request_kwargs,
+        )
     )
 
     retries_config = get_retries_config(
