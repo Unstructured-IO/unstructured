@@ -625,3 +625,16 @@ def test_partition_csv_reads_each_cell_as_written(tmp_path: Path, include_header
     element = partition_csv(str(file_path), include_header=include_header)[0]
 
     assert element.text == "name qty status code Pen 12 N/A 007 Ink NULL 010 Pad 7 None"
+
+
+def test_partition_csv_reads_a_line_break_in_a_quoted_cell_as_whitespace_not_an_escape():
+    data = b'name,address\r\nAlice,"1 Main St\r\nSpringfield"\r\nBob,"x<y\t& z"\r\n'
+
+    element = partition_csv(file=io.BytesIO(data), include_header=True)[0]
+
+    assert element.text == "name address Alice 1 Main St Springfield Bob x<y & z"
+    assert element.metadata.text_as_html == (
+        "<table><tr><td>name</td><td>address</td></tr>"
+        "<tr><td>Alice</td><td>1 Main St Springfield</td></tr>"
+        "<tr><td>Bob</td><td>x&lt;y &amp; z</td></tr></table>"
+    )
