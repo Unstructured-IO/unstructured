@@ -273,6 +273,11 @@ the fox met a friendly bear."""
             "Shopping list:\n• fresh milk and cheese from the farm market\n• bread",
             "Shopping list:\n\n• fresh milk and cheese from the farm market \n\n• bread",
         ),
+        # -- a spaced sign after the bullet stays part of the item --
+        (
+            "Allowed temperature offsets for this process:\n• - 5 \u00b0C\n• 0 \u00b0C",
+            "Allowed temperature offsets for this process:\n\n• - 5 \u00b0C \n\n• 0 \u00b0C",
+        ),
         # -- the next lead-in starts a part of its own, also with indented bullets --
         (
             "Fruits:\n• apple\nVegetables:\n• carrot",
@@ -352,6 +357,35 @@ def test_split_off_bullet_lists_keeps_an_ambiguous_paragraph_whole(paragraph: st
     ],
 )
 def test_group_broken_paragraphs_keeps_a_lead_in_list_with_an_inline_bullet_glyph_as_before(
+    text: str, expected: str, sep: str
+):
+    text = text.replace("\n", sep)
+
+    assert core._split_off_bullet_lists(text) == [text]
+    assert core.group_broken_paragraphs(text) == expected
+
+
+@pytest.mark.parametrize("sep", ["\n", "\r\n"])
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        # -- the bullet matcher downstream reads no bullet when another glyph follows it --
+        (
+            "Allowed temperature offsets for this process:\n•- 5 \u00b0C\n• 0 \u00b0C\n",
+            "Allowed temperature offsets for this process: •- 5 \u00b0C • 0 \u00b0C ",
+        ),
+        (
+            "Allowed temperature offsets for this process:\n•\u2013 5 \u00b0C\n• 0 \u00b0C\n",
+            "Allowed temperature offsets for this process: •\u2013 5 \u00b0C • 0 \u00b0C ",
+        ),
+        # -- also when an earlier list in the paragraph would have been split off --
+        (
+            "Fruits:\n• apple\nAllowed temperature offsets for this process:\n•- 5 \u00b0C\n",
+            "Fruits: • apple Allowed temperature offsets for this process: •- 5 \u00b0C ",
+        ),
+    ],
+)
+def test_group_broken_paragraphs_keeps_a_lead_in_list_with_a_glyph_after_its_bullet_as_before(
     text: str, expected: str, sep: str
 ):
     text = text.replace("\n", sep)

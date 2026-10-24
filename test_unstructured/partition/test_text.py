@@ -144,7 +144,23 @@ def test_partition_text_from_filename_raises_econding_error(
                 ListItem("bread"),
             ],
         ),
+        (
+            "Allowed temperature offsets for this process:\n• - 5 \u00b0C\n• 0 \u00b0C\n",
+            [
+                NarrativeText("Allowed temperature offsets for this process:"),
+                ListItem("- 5 \u00b0C"),
+                ListItem("0 \u00b0C"),
+            ],
+        ),
         # -- a paragraph whose structure is ambiguous is grouped as before --
+        (
+            "Allowed temperature offsets for this process:\r\n•- 5 \u00b0C\r\n• 0 \u00b0C\r\n",
+            [
+                NarrativeText(
+                    "Allowed temperature offsets for this process: •- 5 \u00b0C • 0 \u00b0C"
+                )
+            ],
+        ),
         (
             "Requirements:\n• Tighten the bolt to 10 N\u00b7m of torque\n",
             [NarrativeText("Requirements: • Tighten the bolt to 10 N\u00b7m of torque")],

@@ -166,7 +166,11 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
         body = text[1:] if is_item else text
         # -- the bullet splitters downstream also cut at a glyph inside a line, such as the "·"
         #    in "10 N·m" or the "*" of "*really*", so such a paragraph is grouped as before --
-        if UNAMBIGUOUS_BULLETS_RE.search(body) or (not is_item and UNICODE_BULLETS_RE.match(text)):
+        if UNAMBIGUOUS_BULLETS_RE.search(body):
+            return [paragraph]
+        # -- a line is an item exactly when the bullet matcher downstream reads one there, which
+        #    it does not for another glyph right after the bullet, as in "•- 5 °C" --
+        if is_item != bool(UNICODE_BULLETS_RE.match(text)):
             return [paragraph]
 
     parts: list[str] = []
