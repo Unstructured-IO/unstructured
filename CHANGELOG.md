@@ -1,8 +1,6 @@
-## 0.27.35-dev0
-
-### Enhancements
-
-- **Stop reading a PDF at its first page with text when choosing a `hi_res` or `ocr_only` strategy.** Before picking a strategy, `partition_pdf()` ran pdfminer over every page and built every element only to learn whether the PDF has any extractable text; `hi_res` and `ocr_only` then discarded those elements, and `hi_res` ran pdfminer again for its own text layer. For those strategies the check now stops at the first page that yields text, so it costs one page for a typical document instead of the whole file. Each page is built exactly as before, so the answer is unchanged for any PDF that pdfminer reads without error. `fast` and `auto`, and any strategy that may fall back to `fast`, still run the full pass, since `fast` returns its elements. If pdfminer fails on a later page while `hi_res` extracts its text layer, `hi_res` now logs the failure and continues without the text layer, as it did when the up-front check failed on that page.
+> This changelog is frozen. From the next release onward, release notes live in
+> [GitHub Releases](https://github.com/Unstructured-IO/unstructured/releases).
+> The history below is preserved; do not add entries or rename version headings.
 
 ## 0.27.34
 
