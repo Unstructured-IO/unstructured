@@ -295,9 +295,9 @@ def is_parent_box(parent_target: Box, child_target: Box, add: float = 0.0) -> bo
     """
     if len(parent_target) != 4:
         return False
-    parent_targets = [0, 0, 0, 0]
-    if add and len(parent_target) == 4:
-        parent_targets = list(parent_target)
+    # Zero tolerance is exact containment. Leave the parent coordinates in place.
+    parent_targets = list(parent_target)
+    if add:
         parent_targets[0] -= add
         parent_targets[1] -= add
         parent_targets[2] += add

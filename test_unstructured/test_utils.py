@@ -116,6 +116,17 @@ def test_only_raises_if_empty(iterator):
         utils.only(iterator)
 
 
+def test_a_box_nested_with_no_tolerance_is_inside_its_parent():
+    parent = (0, 0, 100, 100)
+    child = (10, 10, 20, 20)
+    assert utils.is_parent_box(parent, child) is True
+    assert utils.is_parent_box(parent, child, add=0) is True
+    assert utils.is_parent_box(parent, (15, 15)) is True
+    assert utils.is_parent_box(parent, (200, 200, 210, 210)) is False
+    assert utils.is_parent_box(parent, (-1, -1, 10, 10)) is False
+    assert utils.is_parent_box(parent, (-1, -1, 10, 10), add=1) is True
+
+
 @pytest.mark.parametrize(
     ("coords1", "coords2", "text1", "text2", "nested_error_tolerance_px", "expectation"),
     [
