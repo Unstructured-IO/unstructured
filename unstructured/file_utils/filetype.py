@@ -28,7 +28,6 @@ MIME-types. Additional differentiators are planned, one for `application/x-ole-s
 
 from __future__ import annotations
 
-import codecs
 import contextlib
 import functools
 import importlib.util
@@ -207,15 +206,68 @@ def is_ndjson_processable(
         return False
 
 
+_MAX_ENCODING_UNIT_BYTES = 4
+
+
+def _decode_prefix(content: bytes, encoding: str) -> str | None:
+    """Strictly decode `content` when its tail may be cut inside a character.
+
+    Withholds one to `_MAX_ENCODING_UNIT_BYTES` trailing bytes and retries, so the declared
+    codec keeps deciding BOM handling and byte order exactly as it does for a whole file. An
+    `eof_reached=True` call is never a boundary split and skips this. Returns `None` when the
+    bytes are not a truncated form of `encoding`: a failure further from the end is a wrong
+    encoding, not a split character.
+    """
+    for withheld in range(_MAX_ENCODING_UNIT_BYTES):
+        if withheld >= len(content):
+            # -- nothing left to decode: the bytes are not a truncated form of the encoding --
+            break
+        candidate = content[: len(content) - withheld] if withheld else content
+        try:
+            return candidate.decode(encoding=encoding)
+        except UnicodeDecodeError as error:
+            if error.start < len(candidate) - _MAX_ENCODING_UNIT_BYTES:
+                return None
+        except UnicodeError:
+            return None
+    return None
+
+
+def _read_prefix(file: IO, limit: int) -> str | bytes:
+    """Read up to `limit` objects from `file`, continuing past short reads.
+
+    A `read(n)` on a raw or adapter stream may return fewer than `n` objects while more data
+    remains, so a single short read does not establish EOF. Taking one for EOF declared a prefix
+    that ended inside a multi-byte character complete, and the decode then reported a valid
+    document as malformed.
+    """
+    chunks: list[str | bytes] = []
+    remaining = limit
+    while remaining > 0:
+        chunk = file.read(remaining)
+        if not chunk:
+            # -- nothing at all: hand back the empty read so the caller keeps its text/bytes type
+            if not chunks:
+                return chunk
+            break
+        chunks.append(chunk)
+        remaining -= len(chunk)
+    if chunks and isinstance(chunks[0], bytes):
+        return b"".join(cast(list[bytes], chunks))
+    return "".join(cast(list[str], chunks))
+
+
 def _decode_head_bytes(content: bytes, encoding: str, eof_reached: bool) -> str:
     """Decode the leading bytes of a text file into the text used for classification.
 
     `encoding` is the encoding asserted by the caller, or "utf-8" when the caller asserted none.
     A strict decode that fails only because a multi-byte character was split at the read boundary
-    is retried with an incremental decoder (`final=eof_reached`), which withholds an incomplete
-    trailing sequence when more content follows. When the declared encoding is simply wrong,
-    character-set detection takes over -- the same fallback the file-path branch uses, told whether
-    the bytes are a prefix so a sequence cut at the boundary is not a failure. Decoding
+    is retried with the incomplete trailing bytes withheld, which keeps the declared codec's BOM
+    and byte-order handling in charge: an incremental decoder re-runs BOM detection over a prefix
+    that no longer carries one, so it refuses the BOM-less native-endian UTF-16/32 the plain codec
+    accepts. When the declared encoding is simply wrong, character-set detection takes over --
+    the same fallback the file-path branch uses, told whether the bytes are a prefix so a sequence
+    cut at the boundary is not a failure. Decoding
     with `errors="ignore"` instead silently strips every undecodable character, corrupting the
     text for non-UTF-8 payloads such as S3/GCS objects and API uploads (issue #4434).
 
@@ -225,12 +277,12 @@ def _decode_head_bytes(content: bytes, encoding: str, eof_reached: bool) -> str:
     try:
         return content.decode(encoding=encoding)
     except (UnicodeDecodeError, UnicodeError):
-        decoder = codecs.getincrementaldecoder(encoding)()
-        try:
-            return decoder.decode(content, final=eof_reached)
-        except (UnicodeDecodeError, UnicodeError):
-            _, file_text = detect_file_encoding(file=content, final=eof_reached)
-            return file_text
+        if not eof_reached:
+            prefix_text = _decode_prefix(content, encoding)
+            if prefix_text is not None:
+                return prefix_text
+        _, file_text = detect_file_encoding(file=content, final=eof_reached)
+        return file_text
 
 
 class _FileTypeDetector:
@@ -309,8 +361,9 @@ class _FileTypeDetector:
         """Disambiguate JSON/NDJSON file-type based on file contents.
 
         Reads at most `_JSON_DISAMBIGUATION_MAX_CHARS` (+1, plus one probe past that to
-        distinguish an exact-size payload from a truncated one) and restores a caller-owned
-        file-like object to read position 0. The read is decoded using the declared encoding,
+        distinguish an exact-size payload from a truncated one), continuing past short reads
+        because only an empty read establishes EOF, and restores a caller-owned file-like object
+        to read position 0. The read is decoded using the declared encoding,
         falling back to character-set detection when that cannot decode the content -- the same
         fallback `text_head` uses -- so a non-UTF-8 payload is not silently stripped of
         characters. A ".ndjson" source extension wins over a
@@ -333,7 +386,7 @@ class _FileTypeDetector:
         `NaN`) is never classified as parseable JSON/NDJSON.
         """
         with self._ctx.open() as file:
-            head = file.read(_JSON_DISAMBIGUATION_MAX_CHARS + 1)
+            head = _read_prefix(file, _JSON_DISAMBIGUATION_MAX_CHARS + 1)
             # -- an exact-MAX+1 payload is fully in hand; only a further successful read means
             # -- the payload was actually truncated --
             truncated = len(head) > _JSON_DISAMBIGUATION_MAX_CHARS and bool(file.read(1))

@@ -10,6 +10,7 @@ import json
 import os
 import shutil
 import tempfile
+import warnings
 from pathlib import Path
 
 import pytest
@@ -24,7 +25,9 @@ from test_unstructured.unit_utils import (
     property_mock,
 )
 from unstructured.errors import UnprocessableEntityError
+from unstructured.file_utils.encoding import EncodingDetectionWarning
 from unstructured.file_utils.filetype import (
+    _JSON_DISAMBIGUATION_MAX_CHARS,
     _decode_head_bytes,
     _FileTypeDetectionContext,
     _OleFileDetector,
@@ -767,6 +770,137 @@ def and_it_decodes_a_non_UTF8_head_without_stripping_its_characters():
     text = '{"name": "café münchen"}'
 
     assert _decode_head_bytes(text.encode("cp1252"), encoding="utf-8", eof_reached=True) == text
+
+
+_ABOVE_BOUND_RECORD = '{"x":1}\n'
+
+_BOM_BY_ENCODING = {"utf-16": codecs.BOM_UTF16_LE, "utf-32": codecs.BOM_UTF32_LE}
+
+
+def _above_bound_bom_less_ndjson(encoding: str) -> bytes:
+    """Native-endian NDJSON, no BOM, larger than the disambiguation read bound."""
+
+    record_count = (_JSON_DISAMBIGUATION_MAX_CHARS // len(_ABOVE_BOUND_RECORD)) + 4096
+    payload = (_ABOVE_BOUND_RECORD * record_count).encode(encoding)
+    return payload[len(_BOM_BY_ENCODING[encoding]) :]
+
+
+class _ShortReadStream(io.BytesIO):
+    """A seekable stream whose `read(n)` returns at most `chunk_size` bytes.
+
+    A raw stream or adapter may return fewer bytes than requested while more data remains, so
+    a single short read does not establish EOF. Every read is recorded as
+    `(position, requested size, returned length)`.
+    """
+
+    def __init__(self, payload: bytes, chunk_size: int):
+        super().__init__(payload)
+        self._chunk_size = chunk_size
+        self.reads: list[tuple[int, int, int]] = []
+
+    def read(self, size: int = -1) -> bytes:
+        position = self.tell()
+        chunk = super().read(size) if size < 0 else super().read(min(size, self._chunk_size))
+        self.reads.append((position, size, len(chunk)))
+        return chunk
+
+    def prefix_reads(self) -> list[tuple[int, int, int]]:
+        """The reads spent accumulating the disambiguation prefix, in order."""
+
+        start = next(
+            index
+            for index, (_, size, _) in enumerate(self.reads)
+            if size == _JSON_DISAMBIGUATION_MAX_CHARS + 1
+        )
+        return self.reads[start:]
+
+
+@pytest.mark.parametrize("encoding", ["utf-16", "utf-32"])
+def and_it_decodes_a_BOM_less_prefix_cut_inside_a_code_unit(encoding):
+    # -- `codecs.getincrementaldecoder()` re-runs BOM detection over the prefix and refuses
+    # -- BOM-less native-endian UTF-16/32, so the decode of a prefix that crossed the read bound
+    # -- inside a code unit used to fall through to character-set inference
+    payload = _above_bound_bom_less_ndjson(encoding)
+    cut_prefix = payload[: _JSON_DISAMBIGUATION_MAX_CHARS + 1]
+    complete_prefix = cut_prefix[:_JSON_DISAMBIGUATION_MAX_CHARS]
+
+    with patch("unstructured.file_utils.filetype.detect_file_encoding") as detect_mock:
+        assert _decode_head_bytes(cut_prefix, encoding=encoding, eof_reached=False) == (
+            complete_prefix.decode(encoding)
+        )
+    detect_mock.assert_not_called()
+
+
+def and_it_still_fails_a_prefix_whose_tail_is_missing_at_EOF():
+    # -- a character cut by the end of the document is a real defect, not a boundary split, so
+    # -- withholding trailing bytes applies only while more content follows --
+    payload = (_ABOVE_BOUND_RECORD * 100).encode("utf-16")
+
+    whole_text = payload.decode("utf-16")
+
+    with pytest.raises(UnprocessableEntityError):
+        _decode_head_bytes(payload[:-1], encoding="utf-16", eof_reached=True)
+
+    assert _decode_head_bytes(payload[:-1], encoding="utf-16", eof_reached=False) == whole_text[:-1]
+
+
+@pytest.mark.parametrize("encoding", ["utf-16", "utf-32"])
+def and_it_classifies_above_bound_BOM_less_UTF16_and_UTF32_payloads_as_NDJSON(encoding, tmp_path):
+    # -- the asserted encoding decides the byte order for a payload larger than the read bound,
+    # -- whether it arrives as a file path or as a byte stream, so no inference warning fires --
+    payload = _above_bound_bom_less_ndjson(encoding)
+    json_file = tmp_path / "records.json"
+    json_file.write_bytes(payload)
+
+    with (
+        patch("unstructured.file_utils.filetype.detect_file_encoding") as detect_mock,
+        warnings.catch_warnings(),
+    ):
+        warnings.simplefilter("error", EncodingDetectionWarning)
+        assert (
+            detect_filetype(
+                file=io.BytesIO(payload), encoding=encoding, content_type=FileType.JSON.mime_type
+            )
+            == FileType.NDJSON
+        )
+        assert (
+            detect_filetype(
+                file_path=str(json_file), encoding=encoding, content_type=FileType.JSON.mime_type
+            )
+            == FileType.NDJSON
+        )
+    detect_mock.assert_not_called()
+
+
+def and_it_reads_past_a_short_read_until_the_budget_or_EOF():
+    # -- a short read is not EOF: the prefix has to be accumulated until the budget is spent or
+    # -- an empty read proves the end, or a character cut by the short read is taken for a
+    # -- malformed document --
+    payload = _ABOVE_BOUND_RECORD.encode() * ((_JSON_DISAMBIGUATION_MAX_CHARS // 8) + 4096)
+    stream = _ShortReadStream(payload, 4095)
+
+    assert detect_filetype(file=stream, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+
+    prefix_reads = stream.prefix_reads()
+    returned_lengths = [returned for _, _, returned in prefix_reads]
+    assert prefix_reads[0][0] == 0
+    assert max(returned_lengths[:-1]) == 4095
+    assert sum(returned_lengths[:-1]) == _JSON_DISAMBIGUATION_MAX_CHARS + 1
+    assert prefix_reads[-1] == (_JSON_DISAMBIGUATION_MAX_CHARS + 1, 1, 1)
+    assert all(size <= _JSON_DISAMBIGUATION_MAX_CHARS + 1 for _, size, _ in stream.reads)
+
+    assert stream.tell() == 0
+    assert not stream.closed
+    assert stream.read(4) == payload[:4]
+
+    short_payload = _ABOVE_BOUND_RECORD.encode() * 3
+    short_stream = _ShortReadStream(short_payload, 4)
+
+    assert (
+        detect_filetype(file=short_stream, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+    )
+    short_prefix_reads = short_stream.prefix_reads()
+    assert sum(returned for _, _, returned in short_prefix_reads) == len(short_payload)
 
 
 def it_routes_not_unstructured_payload_json_away_from_ndjson_via_detect_filetype():
