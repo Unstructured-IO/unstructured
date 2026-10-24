@@ -41,7 +41,7 @@ def _validate_markdown_extensions(extensions: Any) -> list[Any]:
         if not isinstance(item, (str, Extension)):
             raise ValueError(
                 "Each entry in 'extensions' must be a str or markdown.extensions.Extension "
-                f"instance, got {type(item).__name__}: {item!r}"
+                f"instance, got {type(extensions).__name__!r}"
             )
     return extensions
 
@@ -70,7 +70,7 @@ def partition_md(
     text
         The string representation of the markdown document.
     url
-        The URL of a webpage to parse. Only for URLs that return a markdown document.
+        A URL of a webpage to parse. Only for URLs that return a markdown document.
     metadata_last_modified
         The last modified date for the document.
     languages
