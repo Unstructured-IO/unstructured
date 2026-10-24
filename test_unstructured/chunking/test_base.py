@@ -14,6 +14,7 @@ import pytest
 from lxml.html import fragment_fromstring
 
 import unstructured.chunking.base as chunking_base
+from test_unstructured.unit_utils import Mock
 from unstructured.chunking.base import (
     ChunkingOptions,
     PreChunk,
@@ -394,6 +395,34 @@ class DescribeTokenCounter:
         # -- now encoder should be cached --
         assert "_encoder" in counter.__dict__
 
+    def it_traverses_the_vocabulary_once_per_encoding(
+        self, _tiktoken_installed: None, monkeypatch: pytest.MonkeyPatch
+    ):
+        """A fresh counter reuses the shared vocabulary bound instead of re-traversing it."""
+        import tiktoken
+
+        chunking_base._max_token_bytes_for_encoding.cache_clear()
+        original_decode = tiktoken.Encoding.decode_single_token_bytes
+        decode_calls = [0]
+
+        def counting_decode_single_token_bytes(self, token: int) -> bytes:
+            decode_calls[0] += 1
+            return original_decode(self, token)
+
+        monkeypatch.setattr(
+            tiktoken.Encoding, "decode_single_token_bytes", counting_decode_single_token_bytes
+        )
+
+        first = TokenCounter("gpt2").max_token_bytes
+        traversal_calls = decode_calls[0]
+        second = TokenCounter("gpt2").max_token_bytes
+
+        assert first > 0
+        assert traversal_calls > 0
+        assert second == first
+        # -- the second counter neither re-traverses nor duplicates the bound -- #
+        assert decode_calls[0] == traversal_calls
+
 
 # ================================================================================================
 # TEXT SPLITTER (TOKEN MODE)
@@ -541,6 +570,292 @@ class DescribeTextSplitterTokenMode:
         fragment2, remainder2 = split(remainder1)
         assert fragment2 == "seven eight nine ten eleven twelve"
         assert remainder2 == ""
+
+    def it_makes_progress_when_prefix_is_wholly_covered_by_overlap(self, _tiktoken_installed: None):
+        """A split prefix wholly covered by overlap must advance instead of looping."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base", overlap=20)
+        split = _TextSplitter(opts)
+
+        # Prefix before space is "a" (1 token), which is <= overlap (20 tokens)
+        text = "a " + "x" * 10_000
+        fragment, remainder = split(text)
+
+        assert fragment
+        assert opts.measure(fragment) <= 100
+        assert len(remainder) < len(text)
+        assert remainder != text
+
+        chunks: list[str] = [fragment]
+        while remainder:
+            fragment, remainder = split(remainder)
+            chunks.append(fragment)
+
+        assert len(chunks) == 16
+        assert chunks[0].startswith("a x")
+        assert all(set(c).issubset({"a", " ", "x"}) for c in chunks)
+
+    def it_bounds_tokenizer_work_on_a_separator_dense_oversized_text(
+        self, _tiktoken_installed: None, monkeypatch: pytest.MonkeyPatch
+    ):
+        """Splitting separator-dense text does bounded tokenizer work instead of scanning it."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base", overlap=0)
+        split = _TextSplitter(opts)
+        original_count = chunking_base.TokenCounter.count
+        work = [0, 0]
+
+        def counting_count(self: chunking_base.TokenCounter, text: str) -> int:
+            work[0] += 1
+            work[1] += len(text)
+            return original_count(self, text)
+
+        monkeypatch.setattr(chunking_base.TokenCounter, "count", counting_count)
+
+        text = "a " * 5_000
+        fragment, remainder = split(text)
+
+        assert fragment
+        assert len(remainder) < len(text)
+        assert work[0] <= 64
+        assert work[1] <= 2 * len(text)
+
+    def it_returns_fitting_text_unchanged_when_a_prefix_overflows(self, _tiktoken_installed: None):
+        """A truncated run can take more tokens than the completed one; a fit stays whole."""
+        opts = ChunkingOptions(max_tokens=242, tokenizer="gpt2")
+        text = "a!" * 120 + "a" + "0" * 16
+
+        fragment, remainder = _TextSplitter(opts)(text)
+
+        assert fragment == text
+        assert remainder == ""
+
+    def it_splits_long_tab_indentation_within_the_token_budget(self, _tiktoken_installed: None):
+        """Leading code indentation is emitted in budget-sized chunks, not one oversized one."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base")
+        split = _TextSplitter(opts)
+        text = "\t" * 100_000 + "print(1)"
+
+        fragments: list[str] = []
+        remainder = text
+        while remainder:
+            prior = remainder
+            fragment, remainder = split(prior)
+            assert fragment
+            assert opts.measure(fragment) <= 100
+            assert len(remainder) < len(prior)
+            fragments.append(fragment)
+
+        assert "".join(fragments) == text
+        assert fragments[-1].endswith("print(1)")
+
+    def it_bounds_tokenizer_work_on_long_tab_indentation(
+        self, _tiktoken_installed: None, monkeypatch: pytest.MonkeyPatch
+    ):
+        """The fallback scan must not re-measure every prefix of a long indentation run."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base", overlap=0)
+        split = _TextSplitter(opts)
+        original_count = chunking_base.TokenCounter.count
+        work = [0, 0]
+
+        def counting_count(self: chunking_base.TokenCounter, text: str) -> int:
+            work[0] += 1
+            work[1] += len(text)
+            return original_count(self, text)
+
+        monkeypatch.setattr(chunking_base.TokenCounter, "count", counting_count)
+
+        text = "\t" * 100_000 + "print(1)"
+        fragment, remainder = split(text)
+
+        assert fragment
+        assert len(remainder) < len(text)
+        assert opts.measure(fragment) <= 100
+        assert work[0] <= 64
+        # -- the old fallback tokenized the whole tab run twice; bounded work stays under one --
+        # -- pass over the text (the fitting window probes plus a short fallback scan) -- #
+        assert work[1] < len(text)
+
+    def it_bounds_candidate_work_for_short_content_before_long_tabs(
+        self, _tiktoken_installed: None, monkeypatch: pytest.MonkeyPatch
+    ):
+        """Every whitespace run is evaluated once, so long tabs after short content stay cheap."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base", overlap=20)
+        split = _TextSplitter(opts)
+        original_trimmed_prefix = chunking_base._TextSplitter._trimmed_prefix
+        candidate_work = [0, 0]
+
+        def counting_trimmed_prefix(s: str, end: int) -> str:
+            candidate_work[0] += 1
+            candidate_work[1] += end
+            return original_trimmed_prefix(s, end)
+
+        monkeypatch.setattr(
+            chunking_base._TextSplitter, "_trimmed_prefix", staticmethod(counting_trimmed_prefix)
+        )
+
+        text = "a" + "\t" * 100_000 + "print(1)"
+        fragment, remainder = split(text)
+
+        assert fragment == "a"
+        # -- the discarded tab run sits on the left of the cut, so the overlap must separate -- #
+        # -- the words it would otherwise fuse -- #
+        assert remainder == "a print(1)"
+        assert opts.measure(fragment) <= 100
+        # -- the old scan sliced a prefix at every tab position (~5e9 characters); each -- #
+        # -- whitespace run now contributes one candidate evaluation -- #
+        assert candidate_work[0] <= 64
+        assert candidate_work[1] <= 64 * len(text)
+
+    @pytest.mark.parametrize(
+        ("run", "separators"),
+        [
+            (" ", None),
+            ("\n", None),
+            (" \n", None),
+            ("\t", ("\t",)),
+        ],
+    )
+    def it_bounds_preferred_separator_work_inside_one_whitespace_run(
+        self,
+        run: str,
+        separators: tuple[str, ...] | None,
+        _tiktoken_installed: None,
+        monkeypatch: pytest.MonkeyPatch,
+    ):
+        """A separator run covered by overlap is one candidate, not one per character."""
+        kwargs = {"max_tokens": 100, "tokenizer": "cl100k_base", "overlap": 20}
+        if separators is not None:
+            kwargs["text_splitting_separators"] = separators
+        opts = ChunkingOptions(**kwargs)
+        split = _TextSplitter(opts)
+        original_trimmed_prefix = chunking_base._TextSplitter._trimmed_prefix
+        candidate_work = [0, 0]
+
+        def counting_trimmed_prefix(s: str, end: int) -> str:
+            candidate_work[0] += 1
+            candidate_work[1] += end
+            return original_trimmed_prefix(s, end)
+
+        monkeypatch.setattr(
+            chunking_base._TextSplitter, "_trimmed_prefix", staticmethod(counting_trimmed_prefix)
+        )
+
+        text = "a" + run * 100_000 + "print(1)"
+        fragment, remainder = split(text)
+
+        assert fragment == "a"
+        assert remainder == "a print(1)"
+        assert candidate_work[0] <= 64
+        assert candidate_work[1] <= 64 * len(text)
+
+    def it_does_not_insert_a_space_into_an_unbroken_word(self, _tiktoken_installed: None):
+        """Overlap keeps concatenation direct when the cut had no whitespace on either side."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="gpt2", overlap=20)
+        text = "a!" * 200
+
+        fragment, remainder = _TextSplitter(opts)(text)
+
+        assert fragment
+        assert " " not in fragment
+        assert " " not in remainder
+        assert fragment in text
+        assert remainder in text
+
+    @pytest.mark.parametrize("text", ["a!" * 128 + "\ud800", "a!" * 128 + "\ud83d\ude00"])
+    def it_splits_text_with_surrogate_code_units(self, text: str, _tiktoken_installed: None):
+        """The conservative bound accepts the text the tokenizer's counter accepts."""
+        opts = ChunkingOptions(max_tokens=100, tokenizer="gpt2")
+        split = _TextSplitter(opts)
+
+        fragments: list[str] = []
+        remainder = text
+        while remainder:
+            prior = remainder
+            fragment, remainder = split(prior)
+            assert fragment
+            assert opts.measure(fragment) <= 100
+            assert len(remainder) < len(prior)
+            fragments.append(fragment)
+
+        assert "".join(fragments) == text
+
+
+# ================================================================================================
+# PUBLIC TOKEN CHUNKING
+# ================================================================================================
+
+
+class DescribePublicTokenChunking:
+    """Regression suite for public basic and by-title chunkers in token mode."""
+
+    @pytest.fixture
+    def _tiktoken_installed(self):
+        """Skip test if tiktoken is not installed."""
+        pytest.importorskip("tiktoken")
+
+    @pytest.mark.parametrize("chunker", [chunk_elements, chunk_by_title])
+    def it_chunks_long_tab_indentation_within_the_token_budget(
+        self, chunker, _tiktoken_installed: None
+    ):
+        import tiktoken
+
+        text = "\t" * 100_000 + "print(1)"
+        chunks = list(chunker([CodeSnippet(text)], max_tokens=100, tokenizer="cl100k_base"))
+
+        encoder = tiktoken.get_encoding("cl100k_base")
+        assert len(chunks) > 1
+        assert all(len(encoder.encode_ordinary(chunk.text)) <= 100 for chunk in chunks)
+        assert "".join(chunk.text for chunk in chunks) == text
+
+    @pytest.mark.parametrize("chunker", [chunk_elements, chunk_by_title])
+    def it_keeps_a_fitting_text_whole_when_a_prefix_overflows(
+        self, chunker, _tiktoken_installed: None
+    ):
+        text = "a!" * 120 + "a" + "0" * 16
+        chunks = list(chunker([Text(text)], max_tokens=242, tokenizer="gpt2"))
+
+        assert [chunk.text for chunk in chunks] == [text]
+
+    @pytest.mark.parametrize("run", [" ", "\n", " \n", "\t"])
+    @pytest.mark.parametrize("chunker", [chunk_elements, chunk_by_title])
+    def it_keeps_short_content_before_long_whitespace_with_overlap(
+        self, chunker, run: str, _tiktoken_installed: None
+    ):
+        import tiktoken
+
+        text = "a" + run * 100_000 + "print(1)"
+        chunks = list(
+            chunker([CodeSnippet(text)], max_tokens=100, tokenizer="cl100k_base", overlap=20)
+        )
+
+        encoder = tiktoken.get_encoding("cl100k_base")
+        assert len(chunks) > 1
+        assert all(len(encoder.encode_ordinary(chunk.text)) <= 100 for chunk in chunks)
+        # -- the payload survives: the short content leads and the following code is not -- #
+        # -- lost to the whitespace run (the overlap tail re-prefixes "a" to the code) -- #
+        assert chunks[0].text == "a"
+        assert chunks[-1].text == "a print(1)"
+        # -- the discarded whitespace is gone, but the words on either side do not fuse -- #
+        assert "aprint" not in "".join(chunk.text for chunk in chunks)
+
+    @pytest.mark.parametrize("chunker", [chunk_elements, chunk_by_title])
+    def it_chunks_a_text_with_a_lone_surrogate(self, chunker, _tiktoken_installed: None):
+        import tiktoken
+
+        text = "a!" * 128 + "\ud800"
+        chunks = list(chunker([Text(text)], max_tokens=100, tokenizer="gpt2"))
+
+        encoder = tiktoken.get_encoding("gpt2")
+        assert "".join(chunk.text for chunk in chunks) == text
+        assert all(len(encoder.encode_ordinary(chunk.text)) <= 100 for chunk in chunks)
+
+    @pytest.mark.parametrize("chunker", [chunk_elements, chunk_by_title])
+    def it_keeps_a_fitting_text_with_a_lone_surrogate_whole(
+        self, chunker, _tiktoken_installed: None
+    ):
+        text = "a!" * 10 + "\ud800"
+        chunks = list(chunker([Text(text)], max_tokens=100, tokenizer="gpt2"))
+
+        assert [chunk.text for chunk in chunks] == [text]
 
 
 # ================================================================================================
@@ -874,6 +1189,50 @@ class DescribePreChunk:
         next_pre_chunk = PreChunk(
             [Text("In rhoncus sum sed lectus.")],  # len == 26
             overlap_prefix="sectetur adipiscing.",  # len == 20 but shouldn't come into computation
+            opts=opts,
+        )
+
+        assert pre_chunk.can_combine(next_pre_chunk) is expected_value
+
+    @pytest.mark.parametrize(
+        ("max_tokens", "combine_text_under_n_chars", "expected_value"),
+        [
+            # Will exactly fit:
+            # - text = 7 tokens < combine_text_under_n_chars
+            # - pre_chunk + separator + next_pre_chunk_text = 7 + 0 + 5 = 12 <= max_tokens
+            (12, 8, True),
+            # -- already exceeds the combine threshold, which is also counted in tokens --
+            (12, 7, False),
+            # -- would exceed the hard-max chunking-window threshold --
+            (11, 8, False),
+        ],
+    )
+    def it_measures_in_tokens_when_it_can_combine_itself_with_another_PreChunk_instance(
+        self,
+        max_tokens: int,
+        combine_text_under_n_chars: int,
+        expected_value: bool,
+        word_token_counter_: Mock,
+    ):
+        """Both thresholds are token counts in token mode, not character counts.
+
+        Measuring the text in characters here made `.can_combine()` answer `False` for every
+        short pre-chunk, because even a handful of tokens is more characters than the token
+        budget. `chunk_by_title()` then emitted one chunk per section.
+        """
+        opts = ChunkingOptions(
+            max_tokens=max_tokens,
+            tokenizer="cl100k_base",
+            combine_text_under_n_chars=combine_text_under_n_chars,
+        )
+        pre_chunk = PreChunk(
+            [Text("Lorem ipsum dolor sit amet consectetur adipiscing.")],  # -- 7 tokens, 50 chars
+            overlap_prefix="",
+            opts=opts,
+        )
+        next_pre_chunk = PreChunk(
+            [Text("In rhoncus sum sed lectus.")],  # -- 5 tokens, 26 chars
+            overlap_prefix="",
             opts=opts,
         )
 

@@ -73,9 +73,7 @@ def partition_csv(
             file, sep=ctx.delimiter, header=ctx.header, encoding=ctx.encoding
         )
 
-    html_table = HtmlTable.from_html_text(
-        dataframe.to_html(index=False, header=include_header, na_rep="")
-    )
+    html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
 
     metadata = ElementMetadata(
         filename=filename,
@@ -85,6 +83,19 @@ def partition_csv(
 
     # -- a CSV file becomes a single `Table` element --
     return [Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
+
+
+def dataframe_to_html(dataframe: pd.DataFrame, *, header: bool) -> str:
+    """HTML table of `dataframe` with the text of each cell as read and empty cells left empty.
+
+    By default `DataFrame.to_html()` writes a line break or tab inside a cell as its escape
+    sequence, so a quoted multi-line CSV field comes out as the literal text `line1\\nline2`.
+    A formatter for each column makes Pandas write the cell text itself, still HTML-escaped.
+    """
+    formatters = {
+        col: (lambda value: "" if pd.isna(value) else str(value)) for col in dataframe.columns
+    }
+    return dataframe.to_html(index=False, header=header, na_rep="", formatters=formatters)  # pyright: ignore
 
 
 def read_delimited_text(
