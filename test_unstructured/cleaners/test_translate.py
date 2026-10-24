@@ -62,3 +62,48 @@ def test_translate_works_with_chinese():
 def translate_works_with_arabic():
     text = "مرحباً بكم في متجرنا"
     translate.translate_text(text) == "Welcome to our store."
+
+
+class FakeMarianTokenizer:
+    """Whitespace tokenizer with an attention window that only fits a single short sentence."""
+
+    model_max_length = 8
+
+    def tokenize(self, text):
+        return text.split()
+
+    def __call__(self, texts, **kwargs):
+        return {"input_ids": texts}
+
+    def decode(self, token_ids, **kwargs):
+        return token_ids
+
+
+class FakeMarianModel:
+    """Records the text it is asked to translate and "translates" it by upper-casing it."""
+
+    def __init__(self):
+        self.inputs = []
+
+    def generate(self, input_ids):
+        self.inputs.extend(input_ids)
+        return [text.upper() for text in input_ids]
+
+
+def test_translate_translates_each_chunk_of_text_longer_than_the_attention_window(monkeypatch):
+    sentences = [
+        "This is the first sentence.",
+        "This is the second sentence.",
+        "This is the third sentence.",
+    ]
+    text = " ".join(sentences)
+    model = FakeMarianModel()
+    monkeypatch.setattr(
+        translate.MarianTokenizer, "from_pretrained", lambda model_name: FakeMarianTokenizer()
+    )
+    monkeypatch.setattr(translate.MarianMTModel, "from_pretrained", lambda model_name: model)
+
+    translated_text = translate.translate_text(text, "en", "de")
+
+    assert model.inputs == sentences
+    assert translated_text == text.upper()
