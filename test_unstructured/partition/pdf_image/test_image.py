@@ -957,7 +957,7 @@ def test_iter_gif_canvas_sizes_matches_the_canvas_pillow_decodes_each_frame_at(
 ):
     data = _gif_with_frames(screen, frames, between)
     with Image.open(io.BytesIO(data)) as image:
-        decoded_sizes = [frame.size for frame in ImageSequence.Iterator(image)]
+        decoded_sizes = [frame.copy().size for frame in ImageSequence.Iterator(image)]
 
     assert list(pdf._iter_gif_canvas_sizes(io.BytesIO(data))) == decoded_sizes
 
@@ -1024,7 +1024,8 @@ def test_gif_extension_consumption_matches_pillow(extension):
     assert list(pdf._iter_gif_canvas_sizes(io.BytesIO(data))) == sizes
 
 
-def test_gif_budget_rejection_closes_scanner_with_retained_traceback(tmp_path, monkeypatch):
+@pytest.mark.parametrize("budget", [50, 150, 250])
+def test_gif_budget_rejection_closes_scanner_with_retained_traceback(tmp_path, monkeypatch, budget):
     path = tmp_path / "frames.gif"
     path.write_bytes(_gif_with_frames((10, 10), [(0, 0, 10, 10)] * 3))
     handles = []
@@ -1036,7 +1037,7 @@ def test_gif_budget_rejection_closes_scanner_with_retained_traceback(tmp_path, m
         return handle
 
     monkeypatch.setattr(pdf, "open", tracked_open, raising=False)
-    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "150")
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(budget))
     with pytest.raises(UnprocessableEntityError) as retained:
         pdf.check_image_max_pixels_exceeded(filename=str(path))
     assert retained.value.__traceback__ is not None
