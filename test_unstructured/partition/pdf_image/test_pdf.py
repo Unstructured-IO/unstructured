@@ -17,6 +17,7 @@ from unittest import mock
 
 import pytest
 from pdf2image.exceptions import PDFPageCountError
+from pdfminer.pdfdocument import PDFPasswordIncorrect
 from PIL import Image
 from pypdf import PdfWriter
 from pypdf.errors import LimitReachedError
@@ -2368,10 +2369,7 @@ def test_pdf_has_extractable_text_on_an_encrypted_pdf(password, expected):
 
 
 def _text_extractable_by_full_pass(filename: str) -> bool:
-    try:
-        elements = pdf.extractable_elements(filename=filename)
-    except Exception:
-        return False
+    elements = pdf.extractable_elements(filename=filename)
     return any(
         isinstance(el, Text) and el.text.strip()
         for page_elements in elements
@@ -2380,13 +2378,23 @@ def _text_extractable_by_full_pass(filename: str) -> bool:
 
 
 def _text_extractable_by_presence_check(filename: str) -> bool:
-    try:
-        return pdf.pdf_has_extractable_text(filename=filename)
-    except Exception:
-        return False
+    return pdf.pdf_has_extractable_text(filename=filename)
 
 
 _LONG_TEXT_PDFS = ("DA-619p.pdf", "pdf2image-memory-error-test-400p.pdf")
+
+
+@pytest.mark.parametrize(
+    ("helper", "extractor"),
+    [
+        (_text_extractable_by_full_pass, "extractable_elements"),
+        (_text_extractable_by_presence_check, "pdf_has_extractable_text"),
+    ],
+)
+def test_text_presence_oracles_propagate_unexpected_errors(helper, extractor):
+    with mock.patch.object(pdf, extractor, side_effect=RuntimeError("unexpected parser failure")):
+        with pytest.raises(RuntimeError, match="unexpected parser failure"):
+            helper("unused.pdf")
 
 
 @pytest.mark.parametrize(
@@ -2399,6 +2407,13 @@ _LONG_TEXT_PDFS = ("DA-619p.pdf", "pdf2image-memory-error-test-400p.pdf")
     ids=lambda filename: Path(filename).name,
 )
 def test_pdf_has_extractable_text_agrees_with_the_full_pdfminer_pass(filename):
+    if Path(filename).name == "password.pdf":
+        # The fixture requires a password; neither path should hide that failure.
+        with pytest.raises(PDFPasswordIncorrect):
+            _text_extractable_by_full_pass(filename)
+        with pytest.raises(PDFPasswordIncorrect):
+            _text_extractable_by_presence_check(filename)
+        return
     assert _text_extractable_by_presence_check(filename) is _text_extractable_by_full_pass(filename)
 
 
@@ -2457,7 +2472,8 @@ def test_partition_pdf_hi_res_matches_a_failed_full_pass_when_a_later_page_fails
 
     with failing_pages:
         assert pdf.pdf_has_extractable_text(filename=filename) is True
-        assert _text_extractable_by_full_pass(filename) is False
+        with pytest.raises(RuntimeError, match="unreadable page"):
+            _text_extractable_by_full_pass(filename)
 
     with mock.patch.object(pdf, "pdf_has_extractable_text", return_value=False):
         expected = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
