@@ -8,7 +8,7 @@ import re
 import struct
 import warnings
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Iterator, NoReturn, Optional, Union, cast
+from typing import IO, TYPE_CHECKING, Any, Generator, Iterator, NoReturn, Optional, Union, cast
 
 import numpy as np
 import wrapt
@@ -675,9 +675,16 @@ def check_image_max_pixels_exceeded(
         )
 
     try:
-        with PILImage.open(file if file is not None else filename) as image:
+        with (
+            PILImage.open(file if file is not None else filename) as image,
+            contextlib.ExitStack() as stack,
+        ):
             source = file if file is not None else filename
-            runs = _iter_frame_runs(image, source) if all_frames else iter([(1, image.size)])
+            runs = (
+                stack.enter_context(contextlib.closing(_iter_frame_runs(image, source)))
+                if all_frames
+                else iter([(1, image.size)])
+            )
             n_seen, total_pixels = 0, 0
             for n_frames, (width, height) in runs:
                 frame_pixels = width * height
@@ -700,7 +707,7 @@ def check_image_max_pixels_exceeded(
 
 def _iter_frame_runs(
     image: PILImage.Image, source: IO[bytes] | str
-) -> Iterator[tuple[int, tuple[int, int]]]:
+) -> Generator[tuple[int, tuple[int, int]], None, None]:
     """Generate `(n_frames, (width, height))` for each run of same-sized frames of `image`.
 
     Sizes are found without decoding any frame. A format's `seek()` can allocate or decode the
@@ -757,10 +764,26 @@ def _iter_gif_canvas_sizes(file: IO[bytes]) -> Iterator[tuple[int, int]]:
     if header[10] & 0x80:  # -- global color table --
         file.seek(3 << ((header[10] & 7) + 1), io.SEEK_CUR)
 
+    n_frames = 0
     while (block := file.read(1)) and block != b";":
-        if block == b"!":  # -- extension: label, then sub-blocks --
-            file.read(1)
-            skip_sub_blocks()
+        if block == b"!":  # -- match Pillow's extension consumption, including empty blocks --
+            label = file.read(1)
+            size = file.read(1)
+            initial = file.read(size[0]) if size else b""
+            if label == b"\xfe":
+                # -- comments end at the first empty block --
+                if initial:
+                    skip_sub_blocks()
+            else:
+                # -- Pillow always reads a further chain for non-comment extensions, even
+                # -- when the initial block is empty. A first-frame NETSCAPE extension also
+                # -- consumes a loop block before that chain. Do not mistake its bytes for
+                # -- frame descriptors or a trailer. Only this <=255-byte block is retained. --
+                if label == b"\xff" and n_frames == 0 and initial.startswith(b"NETSCAPE2.0"):
+                    size = file.read(1)
+                    if size:
+                        file.read(size[0])
+                skip_sub_blocks()
         elif block == b",":  # -- image descriptor: one frame --
             descriptor = file.read(9)
             if len(descriptor) < 9:
@@ -771,6 +794,7 @@ def _iter_gif_canvas_sizes(file: IO[bytes]) -> Iterator[tuple[int, int]]:
                 file.seek(3 << ((descriptor[8] & 7) + 1), io.SEEK_CUR)
             file.read(1)  # -- LZW minimum code size --
             skip_sub_blocks()
+            n_frames += 1
             yield width, height
 
 

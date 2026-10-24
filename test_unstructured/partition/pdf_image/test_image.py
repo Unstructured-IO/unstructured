@@ -962,6 +962,88 @@ def test_iter_gif_canvas_sizes_matches_the_canvas_pillow_decodes_each_frame_at(
     assert list(pdf._iter_gif_canvas_sizes(io.BytesIO(data))) == decoded_sizes
 
 
+@pytest.mark.parametrize("before_first", [False, True])
+@pytest.mark.parametrize("label", [b"\xff", b"\xf9", b"\x01"])
+@pytest.mark.parametrize("source_kind", ["filename", "bytes", "stream"])
+def test_gif_empty_extension_cannot_hide_decoded_frames(
+    tmp_path, monkeypatch, mocker, request, before_first, label, source_kind
+):
+    # Pillow consumes another sub-block chain after an empty non-comment block.
+    extension = b"!" + label + b"\x00;" + b"A" * 59 + b"\x00"
+    data = _gif_with_frames((10, 10), [(0, 0, 10, 10)] * 3, extension if before_first else b"")
+    if not before_first:
+        first = _gif_with_frames((10, 10), [(0, 0, 10, 10)])
+        offset = len(first) - 1
+        data = data[:offset] + extension + data[offset:]
+    with Image.open(io.BytesIO(data)) as decoded:
+        assert [frame.copy().size for frame in ImageSequence.Iterator(decoded)] == [(10, 10)] * 3
+    pixel_allocations = request.getfixturevalue("pixel_allocations")
+    stream = io.BytesIO(data)
+    stream.seek(3)
+    path = tmp_path / "extension.gif"
+    path.write_bytes(data)
+    kwargs = (
+        {"filename": str(path)}
+        if source_kind == "filename"
+        else {"file": data if source_kind == "bytes" else stream}
+    )
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "300")
+    pdf.check_image_max_pixels_exceeded(**kwargs)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "299")
+    with pytest.raises(UnprocessableEntityError, match="first 3 frame.*300 pixels"):
+        pdf.check_image_max_pixels_exceeded(**kwargs)
+    assert not stream.closed
+    assert stream.tell() == 3
+    local_ = mocker.patch.object(pdf, "_partition_pdf_or_image_local")
+    ocr_ = mocker.patch.object(pdf, "_partition_pdf_or_image_with_ocr")
+    with pytest.raises(UnprocessableEntityError, match="first 3 frame.*300 pixels"):
+        image.partition_image(**kwargs, strategy=PartitionStrategy.HI_RES)
+    local_.assert_not_called()
+    ocr_.assert_not_called()
+    assert pixel_allocations == []
+
+
+@pytest.mark.parametrize(
+    "extension",
+    [
+        b"!\xfe\x00",  # -- empty comments stop at their initial block --
+        b"!\xfe\x03abc\x00",  # -- nonempty comments --
+        b"!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00",  # -- ordinary looping GIF --
+        b"!\xff\x0bNETSCAPE2.0\x00;" + b"A" * 59 + b"\x00",
+    ],
+    ids=["empty-comment", "comment", "netscape-loop", "empty-netscape-loop-block"],
+)
+def test_gif_extension_consumption_matches_pillow(extension):
+    data = _gif_with_frames((10, 10), [(0, 0, 10, 10)] * 3)
+    # Insert before the first frame, after the global color table.
+    offset = 13 + (3 << ((data[10] & 7) + 1) if data[10] & 0x80 else 0)
+    data = data[:offset] + extension + data[offset:]
+    with Image.open(io.BytesIO(data)) as decoded:
+        sizes = [frame.copy().size for frame in ImageSequence.Iterator(decoded)]
+    assert sizes == [(10, 10)] * 3
+    assert list(pdf._iter_gif_canvas_sizes(io.BytesIO(data))) == sizes
+
+
+def test_gif_budget_rejection_closes_scanner_with_retained_traceback(tmp_path, monkeypatch):
+    path = tmp_path / "frames.gif"
+    path.write_bytes(_gif_with_frames((10, 10), [(0, 0, 10, 10)] * 3))
+    handles = []
+    real_open = open
+
+    def tracked_open(*args, **kwargs):
+        handle = real_open(*args, **kwargs)
+        handles.append(handle)
+        return handle
+
+    monkeypatch.setattr(pdf, "open", tracked_open, raising=False)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "150")
+    with pytest.raises(UnprocessableEntityError) as retained:
+        pdf.check_image_max_pixels_exceeded(filename=str(path))
+    assert retained.value.__traceback__ is not None
+    assert handles
+    assert all(handle.closed for handle in handles)
+
+
 def test_check_image_max_pixels_exceeded_charges_a_gif_canvas_that_grows(
     monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
 ):
