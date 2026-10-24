@@ -7,7 +7,7 @@ import pytest
 
 from unstructured import utils
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import ElementMetadata, NarrativeText, Title
+from unstructured.documents.elements import ElementMetadata, NarrativeText, Table, Title
 
 
 @pytest.fixture()
@@ -114,6 +114,17 @@ def test_only_raises_when_len_more_than_1(iterator):
 def test_only_raises_if_empty(iterator):
     with pytest.raises(ValueError):
         utils.only(iterator)
+
+
+def test_a_box_nested_with_no_tolerance_is_inside_its_parent():
+    parent = (0, 0, 100, 100)
+    child = (10, 10, 20, 20)
+    assert utils.is_parent_box(parent, child) is True
+    assert utils.is_parent_box(parent, child, add=0) is True
+    assert utils.is_parent_box(parent, (15, 15)) is True
+    assert utils.is_parent_box(parent, (200, 200, 210, 210)) is False
+    assert utils.is_parent_box(parent, (-1, -1, 10, 10)) is False
+    assert utils.is_parent_box(parent, (-1, -1, 10, 10), add=1) is True
 
 
 @pytest.mark.parametrize(
@@ -308,6 +319,93 @@ def test_catch_overlapping_and_nested_bboxes_non_overlapping_case():
         1,
         sm_overlap_threshold=10.0,
     )
+    assert overlapping_flag is False
+    assert overlapping_cases == []
+
+
+@pytest.mark.parametrize("n_filler", [0, 100, 1000])
+def test_catch_overlapping_and_nested_bboxes_keeps_category_past_element_99(n_filler):
+    coordinate_system = PixelSpace(width=1000, height=1000)
+    fillers = [
+        NarrativeText(
+            text=f"filler {i}",
+            coordinates=((0, i), (0, i + 1), (5, i + 1), (5, i)),
+            coordinate_system=coordinate_system,
+            metadata=ElementMetadata(page_number=1),
+        )
+        for i in range(n_filler)
+    ]
+    elements = fillers + [
+        Table(
+            text="cell a cell b",
+            coordinates=((0, 0), (0, 500), (500, 500), (500, 0)),
+            coordinate_system=coordinate_system,
+            metadata=ElementMetadata(page_number=2),
+        ),
+        Title(
+            text="cell a",
+            coordinates=((10, 10), (10, 50), (100, 50), (100, 10)),
+            coordinate_system=coordinate_system,
+            metadata=ElementMetadata(page_number=2),
+        ),
+    ]
+
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(elements)
+
+    assert overlapping_flag is True
+    assert overlapping_cases[0]["overlapping_elements"] == [
+        f"Table(ix={n_filler})",
+        f"Title(ix={n_filler + 1})",
+    ]
+    assert overlapping_cases[0]["overlapping_case"] == "nested Title in Table"
+
+
+def test_catch_overlapping_and_nested_bboxes_returns_no_cases_for_no_elements():
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes([])
+
+    assert overlapping_flag is False
+    assert overlapping_cases == []
+
+
+def test_catch_overlapping_and_nested_bboxes_compares_elements_that_have_no_page_number():
+    # -- elements from a partitioner that assigns no page-number are all on page 1 --
+    elements = [
+        Title(
+            text="a nested title",
+            coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
+            coordinate_system=PixelSpace(width=20, height=20),
+        ),
+        NarrativeText(
+            text="text in the same box",
+            coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
+            coordinate_system=PixelSpace(width=20, height=20),
+        ),
+    ]
+
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(elements)
+
+    assert overlapping_flag is True
+    assert overlapping_cases[0]["overlapping_case"] == "nested NarrativeText in Title"
+
+
+def test_catch_overlapping_and_nested_bboxes_handles_pages_that_are_not_in_ascending_order():
+    elements = [
+        Title(
+            text="title on the second page",
+            coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
+            coordinate_system=PixelSpace(width=20, height=20),
+            metadata=ElementMetadata(page_number=2),
+        ),
+        NarrativeText(
+            text="text on the first page",
+            coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
+            coordinate_system=PixelSpace(width=20, height=20),
+            metadata=ElementMetadata(page_number=1),
+        ),
+    ]
+
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(elements)
+
     assert overlapping_flag is False
     assert overlapping_cases == []
 

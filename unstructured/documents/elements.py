@@ -159,6 +159,8 @@ class ElementMetadata:
     #   to consolidate this new metadata field from each pre-chunk element during chunking.
     # - Add field-name to DEBUG_FIELD_NAMES if it shouldn't appear in dict/JSON or participate in
     #   equality comparison.
+    # - Add field-name to SEPARATELY_SERIALIZED_FIELD_NAMES if `.to_dict()` replaces its value
+    #   with a serialized form, so it is not deep-copied first.
 
     attached_to_filename: Optional[str]
     category_depth: Optional[int]
@@ -213,6 +215,10 @@ class ElementMetadata:
     sent_to: Optional[list[str]]
     subject: Optional[str]
     signature: Optional[str]
+    # -- name of the paragraph-style in the source document, e.g. "Title" or "Heading 1".
+    # -- DOCX only for now, where `category_depth` alone cannot tell a document title from a
+    # -- first-level heading (both are 0). See `partition.docx` and issue #4557. --
+    style_name: Optional[str]
 
     # -- used for Table elements to capture rows/col structure --
     text_as_html: Optional[str]
@@ -234,6 +240,13 @@ class ElementMetadata:
     # -- to dict/JSON, do not participate in equality comparison, and are not included in the
     # -- `.fields` dict used by other parts of the library like chunking and weaviate.
     DEBUG_FIELD_NAMES = frozenset(["detection_origin"])
+
+    #: Fields that `.to_dict()` replaces with their serialized form. Deep-copying them there
+    #: would only build a copy that is thrown away on the next few lines, and `orig_elements` on
+    #: a chunk holds every source element of that chunk.
+    SEPARATELY_SERIALIZED_FIELD_NAMES = frozenset(
+        ["coordinates", "data_source", "orig_elements", "key_value_pairs"]
+    )
 
     def __init__(
         self,
@@ -282,6 +295,7 @@ class ElementMetadata:
         url: Optional[str] = None,
         segment_end_seconds: Optional[float] = None,
         segment_start_seconds: Optional[float] = None,
+        style_name: Optional[str] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
         self.bcc_recipient = bcc_recipient
@@ -336,6 +350,7 @@ class ElementMetadata:
         self.url = url
         self.segment_end_seconds = segment_end_seconds
         self.segment_start_seconds = segment_start_seconds
+        self.style_name = style_name
 
     def __eq__(self, other: object) -> bool:
         """Implments equivalence, like meta == other_meta.
@@ -429,7 +444,14 @@ class ElementMetadata:
         """
         from unstructured.staging.base import elements_to_base64_gzipped_json
 
-        meta_dict = copy.deepcopy(dict(self.fields))
+        # -- copy the fields a caller could mutate to reach back into this metadata, but not the
+        # -- ones replaced by their serialized form below. Those stay in place as placeholders so
+        # -- the reassignments keep their original key position --
+        fields = self.fields
+        copied = copy.deepcopy(
+            {k: v for k, v in fields.items() if k not in self.SEPARATELY_SERIALIZED_FIELD_NAMES}
+        )
+        meta_dict = {k: copied.get(k, v) for k, v in fields.items()}
 
         # -- remove fields that should not be serialized --
         for field_name in self.DEBUG_FIELD_NAMES:
@@ -561,6 +583,7 @@ class ConsolidationStrategy(enum.Enum):
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
+            "style_name": cls.DROP,  # -- DROP like category_depth: a chunk spans mixed styles --
             "subject": cls.FIRST,
             "text_as_html": cls.STRING_CONCATENATE,
             "table_as_cells": cls.FIRST,  # -- only occurs in Table --
@@ -874,7 +897,7 @@ class Text(Element):
         embeddings: Optional[list[float]] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
-        self.text: str = text
+        self.text: str = "" if text is None else text
         self.embeddings: Optional[list[float]] = embeddings
 
         super().__init__(
@@ -898,7 +921,7 @@ class Text(Element):
         )
 
     def __str__(self):
-        return self.text
+        return "" if self.text is None else self.text
 
     def apply(self, *cleaners: Callable[[str], str]):
         """Applies a cleaning brick to the text element.

@@ -295,9 +295,9 @@ def is_parent_box(parent_target: Box, child_target: Box, add: float = 0.0) -> bo
     """
     if len(parent_target) != 4:
         return False
-    parent_targets = [0, 0, 0, 0]
-    if add and len(parent_target) == 4:
-        parent_targets = list(parent_target)
+    # Zero tolerance is exact containment. Leave the parent coordinates in place.
+    parent_targets = list(parent_target)
+    if add:
         parent_targets[0] -= add
         parent_targets[1] -= add
         parent_targets[2] += add
@@ -500,8 +500,9 @@ def identify_overlapping_or_nesting_case(
     type1, type2 = label_pair
     ix_element1 = "".join([ch for ch in type1 if ch.isnumeric()])
     ix_element2 = "".join([ch for ch in type2 if ch.isnumeric()])
-    type1 = type1[3:].strip()
-    type2 = type2[3:].strip()
+    # Labels are "{ix}. {category}", and ix can have any number of digits.
+    type1 = type1.split(". ", 1)[-1]
+    type2 = type2.split(". ", 1)[-1]
     box1_corners = _convert_coordinates_to_box(box1)
     box2_corners = _convert_coordinates_to_box(box2)
     x_bottom_left_1, y_bottom_left_1, x_top_right_1, y_top_right_1 = box1_corners
@@ -592,7 +593,10 @@ def catch_overlapping_and_nested_bboxes(
 ) -> tuple[bool, list[dict[str, Any]]]:
     """Catch overlapping and nested bounding boxes cases across a list of elements."""
 
-    num_pages = elements[-1].metadata.page_number or 0
+    # -- page-numbers are 1-based and an element without one is on page 1, like the per-element
+    # -- default below, so an empty element-list has no pages to compare and every element above
+    # -- page 1 gets its own page-bucket --
+    num_pages = max((element.metadata.page_number or 1 for element in elements), default=0)
     pages_of_bboxes: list[list[Points]] = [[] for _ in range(num_pages)]
 
     text_labels: list[list[str]] = [[] for _ in range(num_pages)]
