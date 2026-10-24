@@ -18,6 +18,7 @@ from unstructured.nlp.patterns import (
     LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
+    UNAMBIGUOUS_BULLETS_RE,
     UNICODE_BULLETS_RE,
 )
 
@@ -151,8 +152,8 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     line after a line that ends with ":", and after an item only another item or the lead-in of
     the next list may follow. Any other shape keeps the paragraph whole: a paragraph that starts
     with a bullet, a line that starts with "e " (an OCR bullet) or with another bullet glyph, a
-    bullet inside a line, a bullet line without a lead-in, or a line after an item, which can
-    continue that item.
+    bullet glyph inside a line ("10 N·m", "*really*", "3 · 4", "• milk • eggs"), a bullet
+    line without a lead-in, or a line after an item, which can continue that item.
     """
     stripped = paragraph.strip()
     if UNICODE_BULLETS_RE.match(stripped) or E_BULLET_PATTERN.search(stripped):
@@ -163,9 +164,9 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
         text = line.strip()
         is_item = text.startswith(_LEAD_IN_LIST_BULLETS)
         body = text[1:] if is_item else text
-        if any(bullet in body for bullet in _LEAD_IN_LIST_BULLETS) or (
-            not is_item and UNICODE_BULLETS_RE.match(text)
-        ):
+        # -- the bullet splitters downstream also cut at a glyph inside a line, such as the "·"
+        #    in "10 N·m" or the "*" of "*really*", so such a paragraph is grouped as before --
+        if UNAMBIGUOUS_BULLETS_RE.search(body) or (not is_item and UNICODE_BULLETS_RE.match(text)):
             return [paragraph]
 
     parts: list[str] = []

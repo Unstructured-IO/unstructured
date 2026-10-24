@@ -315,6 +315,51 @@ def test_split_off_bullet_lists_keeps_an_ambiguous_paragraph_whole(paragraph: st
     assert core._split_off_bullet_lists(paragraph) == [paragraph]
 
 
+@pytest.mark.parametrize("sep", ["\n", "\r\n"])
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        # -- the bullet splitters downstream would cut at a glyph inside an item or a lead-in --
+        (
+            "Requirements:\n• Tighten the bolt to 10 N\u00b7m of torque\n",
+            "Requirements: • Tighten the bolt to 10 N\u00b7m of torque ",
+        ),
+        (
+            "Requirements:\n• This installation must always be *really* safe\n",
+            "Requirements: • This installation must always be *really* safe ",
+        ),
+        (
+            "Required *production* settings:\n• Install the latest Python version first and"
+            " keep it updated\n",
+            "Required *production* settings: • Install the latest Python version first and keep"
+            " it updated ",
+        ),
+        (
+            "Calculations:\n• Multiply the two numbers 3 \u00b7 4 to get twelve\n",
+            "Calculations: • Multiply the two numbers 3 \u00b7 4 to get twelve ",
+        ),
+        (
+            "Calculations:\n• Multiply the two numbers 3 \u2219 4 to get twelve\n",
+            "Calculations: • Multiply the two numbers 3 \u2219 4 to get twelve ",
+        ),
+        # -- also when an earlier list in the paragraph would have been split off --
+        (
+            "Fruits:\n• apple\nVegetables:\n• carrots, about 2 \u00b7 3 kg of them from the"
+            " farm market\n",
+            "Fruits: • apple Vegetables: • carrots, about 2 \u00b7 3 kg of them from the farm"
+            " market ",
+        ),
+    ],
+)
+def test_group_broken_paragraphs_keeps_a_lead_in_list_with_an_inline_bullet_glyph_as_before(
+    text: str, expected: str, sep: str
+):
+    text = text.replace("\n", sep)
+
+    assert core._split_off_bullet_lists(text) == [text]
+    assert core.group_broken_paragraphs(text) == expected
+
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [

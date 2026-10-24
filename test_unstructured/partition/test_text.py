@@ -146,6 +146,24 @@ def test_partition_text_from_filename_raises_econding_error(
         ),
         # -- a paragraph whose structure is ambiguous is grouped as before --
         (
+            "Requirements:\n• Tighten the bolt to 10 N\u00b7m of torque\n",
+            [NarrativeText("Requirements: • Tighten the bolt to 10 N\u00b7m of torque")],
+        ),
+        (
+            "Requirements:\r\n• This installation must always be *really* safe\r\n",
+            [NarrativeText("Requirements: • This installation must always be *really* safe")],
+        ),
+        (
+            "Fruits:\n• apple\nVegetables:\n• carrots, about 2 \u00b7 3 kg of them from the"
+            " farm market\n",
+            [
+                NarrativeText(
+                    "Fruits: • apple Vegetables: • carrots, about 2 \u00b7 3 kg of them from"
+                    " the farm market"
+                )
+            ],
+        ),
+        (
             "Observations:\n• Ice formed on the lake\nThe temperature dropped overnight.\n",
             [
                 NarrativeText(
