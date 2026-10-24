@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import numbers
+import os
+import shutil
 import subprocess
 from enum import Enum
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
 from time import sleep
-from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar, cast
+from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar
 
 import emoji
 import psutil
@@ -368,22 +370,28 @@ def exactly_one(**kwargs: Any) -> None:
 _T = TypeVar("_T")
 
 
-def spooled_to_bytes_io_if_needed(file: _T | SpooledTemporaryFile[bytes]) -> _T | BytesIO:
-    """Convert `file` to `BytesIO` when it is a `SpooledTemporaryFile`.
+def rewind_if_spooled(file: _T) -> _T:
+    """Rewind `file` to read position 0 when it is a `SpooledTemporaryFile`, without copying it.
 
     Note that `file` does not need to be IO[bytes]. It can be `None` or `bytes` and this function
-    will not complain.
-
-    In Python <3.11, `SpooledTemporaryFile` does not implement `.readable()` or `.seekable()` which
-    triggers an exception when the file is loaded by certain packages. In particular, the stdlib
-    `zipfile.Zipfile` raises on opening a `SpooledTemporaryFile` as does `Pandas.read_csv()`.
+    will not complain. A spool is read in place, so a rolled-over upload stays disk-backed.
     """
     if isinstance(file, SpooledTemporaryFile):
         file.seek(0)
-        return BytesIO(cast(bytes, file.read()))
 
     # -- return `file` unchanged otherwise --
     return file
+
+
+def copy_file_to_stream(file: bytes | IO[bytes], destination: IO[bytes]) -> None:
+    """Copy bytes or the remaining stream to a destination with at most 1 MiB per read.
+
+    Streams remain open and their cursors advance; the caller owns rewind and cleanup.
+    """
+    if isinstance(file, bytes):
+        destination.write(file)
+    else:
+        shutil.copyfileobj(file, destination, length=1024 * 1024)
 
 
 def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
@@ -394,18 +402,28 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
     if isinstance(file, bytes):
         return file
 
-    if isinstance(file, SpooledTemporaryFile):
-        file.seek(0)
-        f_bytes = file.read()
-        file.seek(0)
-        return f_bytes
-
     if isinstance(file, BytesIO):
         return file.getvalue()
 
-    if isinstance(file, (TextIOWrapper, BufferedReader)):
+    if isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
+        getattr(file, "name", None), (str, bytes, os.PathLike)
+    ):
         with open(file.name, "rb") as f:
             return f.read()
+
+    if callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
+        # -- a pipe or socket cannot be rewound, so its remaining content is read once --
+        if callable(seekable := getattr(file, "seekable", None)) and not seekable():
+            if isinstance(file, TextIOWrapper):
+                # -- the wrapper may already hold decoded text read ahead from the pipe --
+                return file.read().encode(file.encoding, file.errors)
+            return file.read()
+        # -- a text file is read as bytes through its binary buffer --
+        source = file.buffer if isinstance(file, TextIOWrapper) else file
+        file.seek(0)
+        f_bytes = source.read()
+        file.seek(0)
+        return f_bytes
 
     raise ValueError("Invalid file-like object type")
 

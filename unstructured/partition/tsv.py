@@ -13,7 +13,7 @@ from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import (
     exactly_one,
-    spooled_to_bytes_io_if_needed,
+    rewind_if_spooled,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.csv import check_cell_count, read_delimited_text
@@ -30,6 +30,7 @@ def partition_tsv(
     *,
     file: Optional[IO[bytes]] = None,
     include_header: bool = False,
+    infer_table_structure: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions TSV files into document elements.
@@ -42,6 +43,12 @@ def partition_tsv(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html.
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     """
     exactly_one(filename=filename, file=file)
 
@@ -58,7 +65,7 @@ def partition_tsv(
         assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
-        f = spooled_to_bytes_io_if_needed(file)
+        f = rewind_if_spooled(file)
         with _rereadable(f) as f:
             start = f.tell()
             check_cell_count(f, "\t", None, header=include_header)
@@ -72,7 +79,7 @@ def partition_tsv(
     metadata = ElementMetadata(
         filename=filename,
         last_modified=get_last_modified_date(filename) if filename else None,
-        text_as_html=html_table.html,
+        text_as_html=html_table.html if infer_table_structure else None,
     )
     metadata.detection_origin = DETECTION_ORIGIN
 
