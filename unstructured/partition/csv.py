@@ -73,9 +73,7 @@ def partition_csv(
             file, sep=ctx.delimiter, header=ctx.header, encoding=ctx.encoding
         )
 
-    html_table = HtmlTable.from_html_text(
-        dataframe.to_html(index=False, header=include_header, na_rep="")
-    )
+    html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
 
     metadata = ElementMetadata(
         filename=filename,
@@ -85,6 +83,19 @@ def partition_csv(
 
     # -- a CSV file becomes a single `Table` element --
     return [Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
+
+
+def dataframe_to_html(dataframe: pd.DataFrame, *, header: bool) -> str:
+    """HTML table of `dataframe` with the text of each cell as read and empty cells left empty.
+
+    By default `DataFrame.to_html()` writes a line break or tab inside a cell as its escape
+    sequence, so a quoted multi-line CSV field comes out as the literal text `line1\\nline2`.
+    A formatter for each column makes Pandas write the cell text itself, still HTML-escaped.
+    """
+    formatters = {
+        col: (lambda value: "" if pd.isna(value) else str(value)) for col in dataframe.columns
+    }
+    return dataframe.to_html(index=False, header=header, na_rep="", formatters=formatters)  # pyright: ignore
 
 
 def read_delimited_text(
@@ -104,11 +115,15 @@ def read_delimited_text(
     own.
     """
     reader = _LoneCarriageReturnReader(file, encoding)
+    # -- each cell is read as the text the file holds: by default Pandas empties a cell that says
+    # -- "N/A", "NULL" or "None", turns a column of whole numbers with one empty cell into floats
+    # -- (12 reads "12.0") and drops the leading zeros of a code such as "007" --
+    cells_as_written = {"dtype": str, "keep_default_na": False}
     if sep is None:
         sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
         # -- the C engine does not sniff, so keep the Python engine this path has always used --
-        return pd.read_csv(reader, sep=sep, header=header, engine="python")
-    return pd.read_csv(reader, sep=sep, header=header)
+        return pd.read_csv(reader, sep=sep, header=header, engine="python", **cells_as_written)
+    return pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
 
 
 def check_cell_count(
