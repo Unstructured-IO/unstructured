@@ -89,7 +89,8 @@ def partition(
         to 'hi_res', otherwise partition simply extracts the text from the document
         and processes it.
     skip_infer_table_types
-        The document types that you want to skip table extraction with.
+        The document types that you want to skip table extraction with. When omitted, defaults to
+        `["pdf", "jpg", "png", "heic", "webp"]`.
     languages
         The languages present in the document, for use in partitioning and/or OCR. For partitioning
         image or pdf documents with Tesseract, you'll first need to install the appropriate
@@ -176,10 +177,10 @@ def partition(
 
     set_partition_document_type(file_type)
 
-    # -- `None` is the documented default; set the actual default here so callers
-    # -- can tell an explicit value from the default (https://github.com/Unstructured-IO/unstructured/issues/3063)
+    # -- `None` is the documented default; resolve it here so a caller can tell an
+    # -- explicit value from the default (see issue #3063)
     if skip_infer_table_types is None:
-        skip_infer_table_types = ["pdf", "jpg", "png", "heic"]
+        skip_infer_table_types = ["pdf", "jpg", "png", "heic", "webp"]
 
     if file is not None:
         file.seek(0)
@@ -270,7 +271,10 @@ def partition(
     # -- parameters that apply to other file types.
     if file_type in (FileType.JSON, FileType.NDJSON):
         partitioner = partitioner_loader.get(file_type)
-        elements = partitioner(filename=filename, file=file, **kwargs)
+        # -- `encoding` is bound as a named parameter of `partition()`, so it is not in `kwargs`
+        # -- and has to be forwarded explicitly; otherwise the caller's codec is dropped here and
+        # -- this path behaves differently from calling the partitioner directly.
+        elements = partitioner(filename=filename, file=file, encoding=encoding, **kwargs)
         return augment_metadata(elements)
 
     # -- EMPTY is also a special case because while we can't determine the file type, we can be
