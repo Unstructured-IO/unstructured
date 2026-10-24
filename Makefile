@@ -45,6 +45,20 @@ test-no-extras:
 		test_${PACKAGE_NAME}/partition/html/test_partition.py \
 		test_${PACKAGE_NAME}/partition/test_xml.py
 
+.PHONY: test-langdetect-rs
+test-langdetect-rs:
+	UNSTRUCTURED_USE_LANGDETECT_RS=true uv run --no-sync python -c \
+		'import langdetect_rs as rs; from unstructured.partition.common import lang; assert lang.detect_langs is rs.detect_langs'
+	CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	UNSTRUCTURED_USE_LANGDETECT_RS=true \
+	uv run --no-sync pytest -n auto \
+		test_${PACKAGE_NAME}/partition/common/test_lang.py \
+		test_${PACKAGE_NAME}/partition/test_text.py \
+		test_${PACKAGE_NAME}/partition/test_email.py \
+		test_${PACKAGE_NAME}/partition/html/test_partition.py \
+		test_${PACKAGE_NAME}/partition/test_xml.py
+
 .PHONY: test-extra-csv
 test-extra-csv:
 	CI=$(CI) uv run --no-sync pytest -n auto \
@@ -92,7 +106,7 @@ test-extra-xlsx:
 
 ## check:                   runs all linters and checks
 .PHONY: check
-check: check-ruff check-version
+check: check-ruff
 
 ## check-ruff:              runs ruff linter and formatter check
 .PHONY: check-ruff
@@ -104,13 +118,6 @@ check-ruff:
 check-licenses:
 	@scripts/check-licenses.sh
 
-## check-version:           run check to ensure version in CHANGELOG.md matches version in package
-.PHONY: check-version
-check-version:
-    # Fail if syncing version would produce changes
-	scripts/version-sync.sh -c \
-		-f "unstructured/__version__.py" semver
-
 ## tidy:                    auto-format and fix lint issues
 .PHONY: tidy
 tidy:
@@ -120,12 +127,6 @@ tidy:
 .PHONY: tidy-shell
 tidy-shell:
 	shfmt -i 2 -l -w .
-
-## version-sync:            update __version__.py with most recent version from CHANGELOG.md
-.PHONY: version-sync
-version-sync:
-	scripts/version-sync.sh \
-		-f "unstructured/__version__.py" semver
 
 ## check-coverage:          check test coverage meets threshold
 .PHONY: check-coverage
