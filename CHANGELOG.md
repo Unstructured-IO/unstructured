@@ -1,9 +1,24 @@
-## 0.27.34-dev0
+> This changelog is frozen. From the next release onward, release notes live in
+> [GitHub Releases](https://github.com/Unstructured-IO/unstructured/releases).
+> The history below is preserved; do not add entries or rename version headings.
+
+## 0.27.34
+
+### Enhancements
+
+- **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+- **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
 
 ### Fixes
 
-- **`partition_via_api()` now forwards the accepted `content_type` to the API.** The parameter has long been part of the signature and documented as "a string defining the file content in MIME type", but it was never read: the SDK request was built from `content` and `file_name` only, so the caller's MIME type never reached the server, which fell back to sniffing the file name. The value is now sent as the `content_type` multipart form field on `PartitionParameters`, which exists on the advertised minimum SDK 0.25.9; omitting it leaves the SDK's existing file-name inference unchanged.
-- **Keep the uncompressed MIME hint for gzip uploads.** When `gz_uncompressed_content_type` is supplied, the outer container MIME (e.g. `application/gzip`) is no longer forwarded as a form-level `content_type`: the server decompresses first and treats that hint as truth ahead of the inner MIME, so a non-partitionable outer type would drop the explicit uncompressed type and select the wrong partitioner. The inner `gz_uncompressed_content_type` still reaches the API.
+- **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
+
+- **Read CSV and TSV cells as the file holds them.** `partition_csv()` and `partition_tsv()` left Pandas to interpret every cell, so a cell that says `N/A`, `NULL` or `None` came out empty, a column of whole numbers with one empty cell read as floats (`12` became `12.0`), and a code such as `007` lost its leading zeros. Each cell is now read as text, exactly as written.
+
+- **Drop empty email address-group entries.** An empty group such as `undisclosed-recipients:;` now produces no recipient instead of an empty string. Groups with members retain their addresses.
+
+- **Read a PowerPoint line break as a newline.** python-pptx returns a line break (Shift+Enter, `a:br`) as a vertical tab, so `partition_pptx()` put `\x0b` into the text of titles, text boxes and slide notes (`"Quarterly\x0bresults"`). It now reads `"Quarterly\nresults"`.
+- **`partition_json()` and `partition_ndjson()` now honor `encoding=`.** Both read the source with a hard-coded UTF-8 (`open(filename, encoding="utf8")`, and a bare `.decode()` for a file-like object), while the `encoding` argument callers pass -- directly or through `partition()` -- was swallowed by `**kwargs`. A UTF-16 or otherwise non-UTF-8 document therefore raised `UnicodeDecodeError` even when its encoding was stated explicitly. Both partitioners now accept `encoding`, and `partition()` forwards it to them. An explicit encoding is authoritative; when none is given, valid UTF-8 is preserved and charset detection is used only for bytes that are not valid UTF-8, so a detector's confident guess cannot silently rewrite text that would have decoded correctly. The existing file-like contract is unchanged: the stream is read once from its current position, an already-decoded `str` passes through, and the object is never reopened.
 
 ## 0.27.33
 
