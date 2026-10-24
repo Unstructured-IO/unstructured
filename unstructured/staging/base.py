@@ -782,18 +782,85 @@ def convert_to_csv(elements: Iterable[Element]) -> str:
     """Convert `elements` to CSV format."""
     rows: list[dict[str, Any]] = elements_to_dicts(elements)
     table_fieldnames = _get_table_fieldnames(rows)
-    # NOTE(robinson) - flatten metadata and add it to the table
+
+    # Snapshot the real top-level keys carried by each Element (e.g. `type`, `text`,
+    # `element_id`, plus `embeddings` on Text and `checked` on CheckBox) *before* metadata
+    # flattening. These are genuine element columns. An ad-hoc metadata key that shares a name
+    # with one of them (e.g. `ElementMetadata.from_dict({"embeddings": [...]})`) must not be
+    # allowed to overwrite the real value, and must not register under that name as a batch-wide
+    # header. We collect them across all rows first so the disambiguation is stable
+    # same-row *and* cross-row (#4549). `reserved_top_level` stays a membership set;
+    # `promoted_order` records first-seen order so promoted columns append deterministically
+    # instead of following set iteration (#4549 P2).
+    reserved_top_level: set[str] = set()
+    promoted_order: list[str] = []
+    for row in rows:
+        for key in row:
+            if key == "metadata" or key in reserved_top_level:
+                continue
+            reserved_top_level.add(key)
+            promoted_order.append(key)
+
+    # Promote any real top-level key that is not already part of the fixed table_fieldnames so
+    # its value actually lands in the CSV; DictWriter would otherwise raise on an unexpected row
+    # key (e.g. a Text element carrying `embeddings`). Append in first-seen order so identical
+    # ordered input produces an identical header across processes.
+    for key in promoted_order:
+        if key not in table_fieldnames:
+            table_fieldnames.append(key)
+
+    # NOTE(robinson) - flatten metadata and add it to the table. Nested metadata
+    # (e.g. data_source, enrichment_origins) flattens into sub-keys that are not part
+    # of the fixed table_fieldnames, so we collect them across rows and append them in
+    # order; otherwise the sub-keys were dropped and those columns stayed empty (#4548).
+    #
+    # A metadata key that collides with a real top-level Element attribute (e.g.
+    # `embeddings`) must not overwrite that column; rename it so both survive. Replacement
+    # names are allocated once per distinct flattened field across the *whole* batch and
+    # checked against both reserved top-level names and names already allocated, so two
+    # distinct metadata fields (e.g. `embeddings` and the pre-existing `metadata_embeddings`)
+    # never collapse onto one column and silently lose a value (#4549 P2).
+    occupied_names: set[str] = set(reserved_top_level)
+    allocated_names: dict[str, str] = {}
+    flattened_rows: list[dict[str, Any]] = []
+    seen_keys: list[str] = []
+    key_set: set[str] = set()
     for row in rows:
         metadata = row.pop("metadata")
-        for key, value in flatten_dict(metadata).items():
-            if key in table_fieldnames:
-                row[key] = value
+        flattened = flatten_dict(metadata)
+        flattened_rows.append(flattened)
+        for key in flattened:
+            if key not in key_set:
+                key_set.add(key)
+                seen_keys.append(key)
+
+    # Canonical, insertion-order-independent allocation: escalate a colliding name against
+    # reserved top-level attrs and names already assigned. Processing the batch-wide field
+    # set in sorted order keeps the short disambiguated name on the same field regardless of
+    # metadata insertion order or row order (#4549 P2).
+    for key in sorted(key_set):
+        out_key = key
+        while out_key in occupied_names:
+            out_key = f"metadata_{out_key}"
+        occupied_names.add(out_key)
+        allocated_names[key] = out_key
+
+    extra_fieldnames: list[str] = []
+    for key in seen_keys:
+        out_key = allocated_names[key]
+        if out_key not in table_fieldnames and out_key not in extra_fieldnames:
+            extra_fieldnames.append(out_key)
+
+    for row, flattened in zip(rows, flattened_rows):
+        for key, value in flattened.items():
+            row[allocated_names[key]] = value
 
         if row.get("sent_from"):
             row["sender"] = row.get("sent_from")
             if isinstance(row["sender"], list):
                 row["sender"] = row["sender"][0]
 
+    table_fieldnames = table_fieldnames + extra_fieldnames
     with io.StringIO() as buffer:
         csv_writer = csv.DictWriter(buffer, fieldnames=table_fieldnames)
         csv_writer.writeheader()
