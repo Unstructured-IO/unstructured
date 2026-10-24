@@ -5,9 +5,10 @@ import copy
 import io
 import os
 import re
+import struct
 import warnings
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Iterator, NoReturn, Optional, Union, cast
+from typing import IO, TYPE_CHECKING, Any, Generator, Iterator, NoReturn, Optional, Union, cast
 
 import numpy as np
 import wrapt
@@ -674,8 +675,16 @@ def check_image_max_pixels_exceeded(
         )
 
     try:
-        with PILImage.open(file if file is not None else filename) as image:
-            runs = _iter_frame_runs(image) if all_frames else iter([(1, image.size)])
+        with (
+            PILImage.open(file if file is not None else filename) as image,
+            contextlib.ExitStack() as stack,
+        ):
+            source = file if file is not None else filename
+            runs = (
+                stack.enter_context(contextlib.closing(_iter_frame_runs(image, source)))
+                if all_frames
+                else iter([(1, image.size)])
+            )
             n_seen, total_pixels = 0, 0
             for n_frames, (width, height) in runs:
                 frame_pixels = width * height
@@ -696,7 +705,9 @@ def check_image_max_pixels_exceeded(
             file.seek(start)
 
 
-def _iter_frame_runs(image: PILImage.Image) -> Iterator[tuple[int, tuple[int, int]]]:
+def _iter_frame_runs(
+    image: PILImage.Image, source: IO[bytes] | str
+) -> Generator[tuple[int, tuple[int, int]], None, None]:
     """Generate `(n_frames, (width, height))` for each run of same-sized frames of `image`.
 
     Sizes are found without decoding any frame. A format's `seek()` can allocate or decode the
@@ -706,9 +717,13 @@ def _iter_frame_runs(image: PILImage.Image) -> Iterator[tuple[int, tuple[int, in
     - TIFF and MPO frames can differ in size; their `seek()` only reads the frame's header (IFD or
       MP entry), so each frame is visited and is a run of one;
     - pi-heif reads the size of every image in a HEIF container when it opens it, one run each;
-    - the frames of other formats (e.g. APNG, animated WebP, GIF) are composited onto a canvas the
-      size of the image, so they are one run of `n_frames` frames. `n_frames` can be a count the
-      file merely declares (APNG's `acTL` allows 2^31), so it is never iterated.
+    - a GIF frame is decoded onto a canvas that grows to fit any frame extending past it, which
+      Pillow's frame count does not see, so `_iter_gif_canvas_sizes()` reads each frame's
+      descriptor from `source`. A stream is read from its start, as `Image.open()` reads it from
+      offset 0 whatever its position;
+    - the frames of other formats (e.g. APNG, animated WebP) are composited onto a canvas the size
+      of the image, so they are one run of `n_frames` frames. `n_frames` can be a count the file
+      merely declares (APNG's `acTL` allows 2^31), so it is never iterated.
     """
     if image.format in ("TIFF", "MPO"):
         for frame in ImageSequence.Iterator(image):
@@ -718,7 +733,69 @@ def _iter_frame_runs(image: PILImage.Image) -> Iterator[tuple[int, tuple[int, in
         for heif_image in heif_file:
             yield 1, heif_image.size
         return
+    if image.format == "GIF":
+        if isinstance(source, str):
+            with open(source, "rb") as f:
+                yield from ((1, size) for size in _iter_gif_canvas_sizes(f))
+        else:
+            source.seek(0)
+            yield from ((1, size) for size in _iter_gif_canvas_sizes(source))
+        return
     yield getattr(image, "n_frames", 1), image.size
+
+
+def _iter_gif_canvas_sizes(file: IO[bytes]) -> Iterator[tuple[int, int]]:
+    """Generate the canvas size each frame of the GIF in `file` is decoded at, decoding nothing.
+
+    The canvas starts at the logical-screen size and, as Pillow decodes each frame, grows to fit
+    the frame's descriptor (`left + width`, `top + height`). Color tables and LZW data are skipped
+    by their lengths, and a byte that starts no block is skipped, as Pillow does, so the work is
+    linear in the size of the file.
+    """
+
+    def skip_sub_blocks() -> None:
+        while (size := file.read(1)) and size[0]:
+            file.seek(size[0], io.SEEK_CUR)
+
+    header = file.read(13)  # -- "GIF87a"/"GIF89a" and the logical screen descriptor --
+    if len(header) < 13:
+        return
+    width, height = struct.unpack("<HH", header[6:10])
+    if header[10] & 0x80:  # -- global color table --
+        file.seek(3 << ((header[10] & 7) + 1), io.SEEK_CUR)
+
+    n_frames = 0
+    while (block := file.read(1)) and block != b";":
+        if block == b"!":  # -- match Pillow's extension consumption, including empty blocks --
+            label = file.read(1)
+            size = file.read(1)
+            initial = file.read(size[0]) if size else b""
+            if label == b"\xfe":
+                # -- comments end at the first empty block --
+                if initial:
+                    skip_sub_blocks()
+            else:
+                # -- Pillow always reads a further chain for non-comment extensions, even
+                # -- when the initial block is empty. A first-frame NETSCAPE extension also
+                # -- consumes a loop block before that chain. Do not mistake its bytes for
+                # -- frame descriptors or a trailer. Only this <=255-byte block is retained. --
+                if label == b"\xff" and n_frames == 0 and initial.startswith(b"NETSCAPE2.0"):
+                    size = file.read(1)
+                    if size:
+                        file.read(size[0])
+                skip_sub_blocks()
+        elif block == b",":  # -- image descriptor: one frame --
+            descriptor = file.read(9)
+            if len(descriptor) < 9:
+                return
+            left, top, frame_width, frame_height = struct.unpack("<4H", descriptor[:8])
+            width, height = max(width, left + frame_width), max(height, top + frame_height)
+            if descriptor[8] & 0x80:  # -- local color table --
+                file.seek(3 << ((descriptor[8] & 7) + 1), io.SEEK_CUR)
+            file.read(1)  # -- LZW minimum code size --
+            skip_sub_blocks()
+            n_frames += 1
+            yield width, height
 
 
 def is_pdf_too_complex(
