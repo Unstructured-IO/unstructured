@@ -84,6 +84,23 @@ def determine_pdf_or_image_strategy(
     return strategy
 
 
+def pdf_strategy_can_resolve_to_fast(strategy: str) -> bool:
+    """Whether `determine_pdf_or_image_strategy()` can resolve `strategy` to FAST for a PDF.
+
+    FAST partitions a PDF from the elements of the up-front pdfminer pass, so those elements are
+    needed only when this is True. `hi_res` falls back to FAST only when neither
+    `unstructured_inference` nor `unstructured_pytesseract` is installed, and `ocr_only` only when
+    `unstructured_pytesseract` is not installed.
+    """
+    if strategy == PartitionStrategy.HI_RES:
+        return not dependency_exists("unstructured_inference") and not dependency_exists(
+            "unstructured_pytesseract"
+        )
+    if strategy == PartitionStrategy.OCR_ONLY:
+        return not dependency_exists("unstructured_pytesseract")
+    return True
+
+
 def _determine_image_auto_strategy():
     """If "auto" is passed in as the strategy, determines what strategy to use
     for images."""

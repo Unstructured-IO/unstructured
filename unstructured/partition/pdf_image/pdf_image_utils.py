@@ -3,10 +3,12 @@ from __future__ import annotations
 import base64
 import os
 import re
+import shutil
 import tempfile
 import unicodedata
+from contextlib import contextmanager
 from copy import deepcopy
-from io import BytesIO
+from io import BufferedReader, BytesIO, TextIOWrapper
 from pathlib import Path, PurePath
 from typing import IO, TYPE_CHECKING, BinaryIO, Iterator, List, Optional, Tuple, Union, cast
 
@@ -20,7 +22,7 @@ from unstructured_inference.inference.pdf_image import PdfRenderTooLargeError
 from unstructured.documents.elements import ElementType
 from unstructured.errors import UnprocessableEntityError
 from unstructured.logger import logger
-from unstructured.partition.common.common import convert_to_bytes, exactly_one
+from unstructured.partition.common.common import copy_file_to_stream, exactly_one
 from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:
@@ -150,15 +152,13 @@ def save_elements(
             if file is None:
                 image_paths = [filename]
             else:
-                if isinstance(file, bytes):
-                    file_data = file
-                else:
-                    file.seek(0)
-                    file_data = file.read()
-
                 tmp_file_path = os.path.join(temp_dir, "tmp_file")
                 with open(tmp_file_path, "wb") as tmp_file:
-                    tmp_file.write(file_data)
+                    if isinstance(file, bytes):
+                        tmp_file.write(file)
+                    else:
+                        file.seek(0)
+                        shutil.copyfileobj(file, tmp_file, length=1024 * 1024)
                 image_paths = [tmp_file_path]
         else:
             _image_paths = convert_pdf_to_image(
@@ -206,30 +206,38 @@ def save_elements(
             figure_number += 1
             try:
                 image_path = image_paths[page_index]
+                # The crop owns its pixels; release the decoded page before encoding it.
+                # Image.close() frees the pixel data, which the context manager does not.
                 image = Image.open(image_path)
-                cropped_image = image.crop(padded_bbox)
+                try:
+                    cropped_image = image.crop(padded_bbox)
+                finally:
+                    image.close()
+                try:
+                    # PNG images with transparency need conversion before JPEG encoding.
+                    if cropped_image.mode == "RGBA":
+                        converted_image = cropped_image.convert("RGB")
+                        cropped_image.close()
+                        cropped_image = converted_image
 
-                # PNG images with transparency need to be converted before saving
-                if cropped_image.mode == "RGBA":
-                    cropped_image = cropped_image.convert("RGB")
-
-                if extract_image_block_to_payload:
-                    buffered = BytesIO()
-                    cropped_image.save(buffered, format="JPEG")
-                    img_base64 = base64.b64encode(buffered.getvalue())
-                    img_base64_str = img_base64.decode()
-                    el.metadata.image_base64 = img_base64_str
-                    el.metadata.image_mime_type = "image/jpeg"
-                else:
-                    basename = "table" if el.category == ElementType.TABLE else "figure"
-                    assert output_dir_path
-                    output_f_path = os.path.join(
-                        output_dir_path,
-                        f"{basename}-{metadata_page_number}-{figure_number}.jpg",
-                    )
-                    write_image(cropped_image, output_f_path)
-                    # add image path to element metadata
-                    el.metadata.image_path = output_f_path
+                    if extract_image_block_to_payload:
+                        with BytesIO() as buffered:
+                            cropped_image.save(buffered, format="JPEG")
+                            el.metadata.image_base64 = base64.b64encode(
+                                buffered.getvalue()
+                            ).decode()
+                        el.metadata.image_mime_type = "image/jpeg"
+                    else:
+                        basename = "table" if el.category == ElementType.TABLE else "figure"
+                        assert output_dir_path
+                        output_f_path = os.path.join(
+                            output_dir_path,
+                            f"{basename}-{metadata_page_number}-{figure_number}.jpg",
+                        )
+                        write_image(cropped_image, output_f_path)
+                        el.metadata.image_path = output_f_path
+                finally:
+                    cropped_image.close()
             except (ValueError, IOError):
                 logger.warning("Image Extraction Error: Skipping the failed image", exc_info=True)
 
@@ -406,34 +414,57 @@ def convert_pdf_to_images(
     chunk_size: int = 10,
     password: Optional[str] = None,
 ) -> Iterator[Image.Image]:
-    # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
+    """Yield owned page images without retaining the upload or a batch of decoded pages."""
     exactly_one(filename=filename, file=file)
-    if file is not None:
-        f_bytes = convert_to_bytes(file)
-        info = pdf2image.pdfinfo_from_bytes(f_bytes, userpw=password)
-    else:
-        f_bytes = None
-        info = pdf2image.pdfinfo_from_path(filename, userpw=password)
+    with _pdf_source_path(filename, file) as source_path:
+        total_pages = pdf2image.pdfinfo_from_path(source_path, userpw=password)["Pages"]
+        for page_number in range(1, total_pages + 1):
+            try:
+                images = render_pdf_to_image(
+                    filename=source_path,
+                    dpi=env_config.PDF_RENDER_DPI,
+                    first_page=page_number,
+                    last_page=page_number,
+                    password=password,
+                    pdf_render_max_pixels_per_page=env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE,
+                )
+            except PdfRenderTooLargeError as exc:
+                raise UnprocessableEntityError(str(exc)) from exc
+            # The caller owns the yielded image and may retain it after iteration.
+            yield from cast(List[Image.Image], images)
+            del images
 
-    total_pages = info["Pages"]
-    for start_page in range(1, total_pages + 1, chunk_size):
-        end_page = min(start_page + chunk_size - 1, total_pages)
-        try:
-            chunk_images = render_pdf_to_image(
-                filename=filename if f_bytes is None else None,
-                file=f_bytes,
-                dpi=env_config.PDF_RENDER_DPI,
-                first_page=start_page,
-                last_page=end_page,
-                password=password,
-                pdf_render_max_pixels_per_page=env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE,
-            )
-        except PdfRenderTooLargeError as exc:
-            raise UnprocessableEntityError(str(exc)) from exc
-        chunk_images = cast(List[Image.Image], chunk_images)
 
-        for image in chunk_images:
-            yield image
+@contextmanager
+def _pdf_source_path(filename: str, file: Optional[bytes | IO[bytes]]) -> Iterator[str]:
+    """Yield a filesystem path for `filename` or a temporary on-disk copy of `file`.
+
+    Any readable, seekable `file` is accepted. A `BytesIO` cursor is restored after the copy and
+    other streams are left rewound; buffered files with a path name are re-read from that path.
+    """
+    if file is None:
+        yield filename
+        return
+    with tempfile.TemporaryDirectory() as directory:
+        path = os.path.join(directory, "upload.pdf")
+        with open(path, "wb") as destination:
+            if isinstance(file, bytes):
+                copy_file_to_stream(file, destination)
+            elif isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
+                getattr(file, "name", None), (str, bytes, os.PathLike)
+            ):
+                with open(file.name, "rb") as source:
+                    copy_file_to_stream(source, destination)
+            elif callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
+                position = file.tell() if isinstance(file, BytesIO) else 0
+                try:
+                    file.seek(0)
+                    copy_file_to_stream(file, destination)
+                finally:
+                    file.seek(position)
+            else:
+                raise ValueError("Invalid file-like object type")
+        yield path
 
 
 def remove_control_characters(text: str) -> str:

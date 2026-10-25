@@ -4,9 +4,13 @@
 
 from __future__ import annotations
 
+import codecs
 import io
 import json
 import os
+import shutil
+import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -19,6 +23,7 @@ from test_unstructured.unit_utils import (
     patch,
     property_mock,
 )
+from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.filetype import (
     _FileTypeDetectionContext,
     _OleFileDetector,
@@ -91,6 +96,7 @@ def test_it_detects_correct_file_type_for_CFB_and_ZIP_subtypes_detected_by_direc
         (FileType.TSV, "stanley-cups.tsv", "text/tsv"),
         (FileType.TXT, "norwich-city.txt", "text/plain"),
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
+        (FileType.WEBP, "img/DA-1p.webp", "image/webp"),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.ZIP, "simple.zip", "application/zip"),
         (FileType.NDJSON, "spring-weather.html.ndjson", "application/x-ndjson"),
@@ -129,6 +135,7 @@ def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_conte
         (FileType.TSV, "stanley-cups.tsv", "text/tsv"),
         (FileType.TXT, "norwich-city.txt", "text/plain"),
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
+        (FileType.WEBP, "img/DA-1p.webp", "image/webp"),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.ZIP, "simple.zip", "application/zip"),
     ],
@@ -194,6 +201,7 @@ def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_ty
         (FileType.TXT, "norwich-city.txt", "text/plain"),
         (FileType.TXT, "simple.yaml", "text/yaml"),
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
+        (FileType.WEBP, "img/DA-1p.webp", "image/webp"),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.XML, "factbook.xml", "text/xml"),
     ],
@@ -231,6 +239,7 @@ def test_it_detects_correct_file_type_by_guessed_MIME_when_libmagic_guesses_reco
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.WEBP, "img/DA-1p.webp"),
         (FileType.XML, "factbook.xml"),
         (FileType.ZIP, "simple.zip"),
     ],
@@ -256,12 +265,21 @@ def test_it_detects_most_file_types_using_mime_guessing_when_libmagic_guesses_mi
     assert detect_filetype(file=file) is expected_value
 
 
+def test_it_detects_WEBP_from_its_content_when_its_extension_is_png(tmp_path):
+    # -- the `.png` extension decides only when MIME-type guessing fails --
+    file_path = str(tmp_path / "renamed.png")
+    shutil.copyfile(example_doc_path("img/DA-1p.webp"), file_path)
+
+    assert detect_filetype(file_path=file_path) is FileType.WEBP
+
+
 @pytest.mark.parametrize(
     ("file_name", "fallback_mime_type", "expected_value"),
     [
         ("img/bmp_24.bmp", "image/bmp", FileType.BMP),
         ("img/DA-1p.heic", "image/heic", FileType.HEIC),
         ("CantinaBand3.wav", "audio/wav", FileType.WAV),
+        ("img/DA-1p.webp", "image/webp", FileType.WEBP),
     ],
 )
 def test_it_falls_back_to_filetype_mime_guessing_when_libmagic_returns_unrecognized_mime_type(
@@ -291,6 +309,7 @@ def test_it_falls_back_to_filetype_mime_guessing_when_libmagic_returns_unrecogni
         (FileType.RTF, "fake-doc.rtf"),
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
         (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.WEBP, "img/DA-1p.webp"),
         (FileType.ZIP, "simple.zip"),
         # -- but it doesn't recognize textual file-types at all --
         (FileType.UNK, "stanley-cups.csv"),
@@ -359,6 +378,7 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
         (FileType.TSV, "stanley-cups.tsv"),
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.WEBP, "img/DA-1p.webp"),
         (FileType.XML, "factbook.xml"),
         (FileType.NDJSON, "simple.ndjson"),
     ],
@@ -383,6 +403,7 @@ def test_it_detects_correct_file_type_from_extension_when_that_maps_to_a_file_ty
     [
         (FileType.BMP, "img/bmp_24.bmp", "application/octet-stream"),
         (FileType.HEIC, "img/DA-1p.heic", "application/octet-stream"),
+        (FileType.WEBP, "img/DA-1p.webp", "application/octet-stream"),
     ],
 )
 def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
@@ -487,6 +508,54 @@ def test_it_detects_EMPTY_from_file_path_to_empty_file():
 def test_it_detects_EMPTY_from_empty_file_like_object():
     with open(example_doc_path("empty.txt"), "rb") as f:
         assert detect_filetype(file=f) == FileType.EMPTY
+
+
+@pytest.mark.parametrize("max_size", [0, 1])
+def test_it_detects_a_SpooledTemporaryFile_in_place_and_rewinds_it(max_size: int):
+    with open(example_doc_path("simple.docx"), "rb") as f:
+        content = f.read()
+
+    with tempfile.SpooledTemporaryFile(max_size=max_size) as spooled_file:
+        spooled_file.write(content)
+        spooled_file.seek(0)
+
+        with patch.object(
+            _FileTypeDetectionContext, "new", wraps=_FileTypeDetectionContext.new
+        ) as new_:
+            file_type = detect_filetype(file=spooled_file)
+
+        assert file_type == FileType.DOCX
+        assert new_.call_args.kwargs["file"] is spooled_file
+        assert spooled_file.tell() == 0
+
+
+def test_it_uses_metadata_file_path_extension_for_a_rolled_over_SpooledTemporaryFile():
+    with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
+        spooled_file.write(b"# Heading\n\nSome *markdown* text.\n")
+        assert spooled_file._rolled
+
+        assert detect_filetype(file=spooled_file, metadata_file_path="notes.md") == FileType.MD
+
+
+def test_it_ignores_the_temporary_file_name_of_a_rolled_over_SpooledTemporaryFile():
+    # -- on Windows a rolled-over spool is named by its temporary file, never the upload --
+    with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
+        spooled_file.write(b"# Heading\n\nSome *markdown* text.\n")
+        spooled_file.seek(0)
+        named = tempfile.NamedTemporaryFile(suffix=".tmp")  # noqa: SIM115 - closed by the spool
+        named.write(spooled_file.read())
+        spooled_file._file.close()  # pyright: ignore[reportPrivateUsage]
+        spooled_file._file = named  # pyright: ignore[reportPrivateUsage]
+        assert spooled_file.name.endswith(".tmp")
+
+        assert detect_filetype(file=spooled_file, metadata_file_path="notes.md") == FileType.MD
+
+
+def test_it_preserves_a_path_like_stream_name_extension():
+    file = io.BytesIO(b"# Heading\n\nSome *markdown* text.\n")
+    file.name = Path("notes.md")
+
+    assert detect_filetype(file=file) == FileType.MD
 
 
 def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
@@ -982,6 +1051,14 @@ class Describe_FileTypeDetectionContext:
 
         assert _FileTypeDetectionContext(file=file).extension == ""
 
+    def and_it_ignores_a_file_name_that_is_not_a_string(self):
+        with tempfile.SpooledTemporaryFile(max_size=1) as spooled_file:
+            spooled_file.write(b"<html></html>")
+
+            ctx = _FileTypeDetectionContext(file=spooled_file, metadata_file_path="a/b/c.html")
+
+            assert ctx.extension == ".html"
+
     # -- .file_head ---------------------------------------------
 
     def it_grabs_the_first_8k_bytes_of_the_file_for_use_by_magic(self):
@@ -1159,6 +1236,36 @@ class Describe_FileTypeDetectionContext:
         text_head = ctx.text_head
 
         assert text_head == "a" * 4095
+
+    @pytest.mark.parametrize(
+        ("bom", "encoding"),
+        [(codecs.BOM_UTF16_LE, "utf-16-le"), (codecs.BOM_UTF16_BE, "utf-16-be")],
+    )
+    def and_it_does_not_mistake_a_boundary_split_surrogate_pair_for_a_decode_error(
+        self, bom: bytes, encoding: str
+    ):
+        """After a UTF-16 BOM, a surrogate pair split by the 4096-byte read is not an error."""
+        # -- BOM + 2046 two-byte chars leaves the emoji's high surrogate as the last 2 bytes --
+        file = io.BytesIO(bom + ("a" * 2046 + "\U0001f600\n").encode(encoding))
+        ctx = _FileTypeDetectionContext(file=file)
+
+        text_head = ctx.text_head
+
+        assert text_head == "a" * 2046
+        assert file.tell() == 0
+
+    @pytest.mark.parametrize(
+        ("bom", "encoding"),
+        [(codecs.BOM_UTF16_LE, "utf-16-le"), (codecs.BOM_UTF16_BE, "utf-16-be")],
+    )
+    def but_it_rejects_a_utf16_stream_that_ends_inside_a_surrogate_pair(
+        self, bom: bytes, encoding: str
+    ):
+        file = io.BytesIO(bom + ("a" * 10 + "\U0001f600").encode(encoding)[:-2])
+        ctx = _FileTypeDetectionContext(file=file)
+
+        with pytest.raises(UnprocessableEntityError, match="decode failed"):
+            ctx.text_head
 
     def and_it_grabs_the_first_4k_chars_from_text_file_for_textual_type_differentiation(self):
         """Not a documented behavior to accept IO[str], but support is implemented."""
@@ -1378,3 +1485,10 @@ def test_office_files_when_document_archive_has_non_standard_prefix():
         file_path=input_path("file_type/test_document_from_office365.docx")
     )
     assert predicted_type == FileType.DOCX
+
+
+@pytest.mark.parametrize("name", ["temporary-upload", Path("temporary-upload"), 42, None])
+def test_extensionless_stream_names_fall_back_to_metadata_file_path(name):
+    file = io.BytesIO(b"# Heading\n\nSome *markdown* text.\n")
+    file.name = name
+    assert detect_filetype(file=file, metadata_file_path="notes.md") == FileType.MD

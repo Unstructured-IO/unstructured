@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import functools
 import json
+import re
 import uuid
 from typing import Optional, Type
 
@@ -12,7 +14,13 @@ from pytest_mock import MockerFixture
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
-from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
+from unstructured.documents.elements import (
+    Address,
+    EmailAddress,
+    ListItem,
+    NarrativeText,
+    Title,
+)
 from unstructured.file_utils.model import FileType
 from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
@@ -109,6 +117,108 @@ def test_partition_text_from_filename_raises_econding_error(
     with pytest.raises(error):
         filename = example_doc_path(filename)
         partition_text(filename=filename, encoding=encoding)
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "Shopping list:\n• milk\n• bread\n",
+            [Title("Shopping list:"), ListItem("milk"), ListItem("bread")],
+        ),
+        (
+            "Fruits:\n  \u25cf apple\n  \u25cf pear\nVegetables:\n  \u25cf carrot\n",
+            [
+                Title("Fruits:"),
+                ListItem("apple"),
+                ListItem("pear"),
+                Title("Vegetables:"),
+                ListItem("carrot"),
+            ],
+        ),
+        (
+            "We need a few things for the weekend.\nShopping list:\n• milk\n• bread\n",
+            [
+                NarrativeText("We need a few things for the weekend. Shopping list:"),
+                ListItem("milk"),
+                ListItem("bread"),
+            ],
+        ),
+        (
+            "Allowed temperature offsets for this process:\n• - 5 \u00b0C\n• 0 \u00b0C\n",
+            [
+                NarrativeText("Allowed temperature offsets for this process:"),
+                ListItem("- 5 \u00b0C"),
+                ListItem("0 \u00b0C"),
+            ],
+        ),
+        # -- a paragraph whose structure is ambiguous is grouped as before --
+        (
+            "Allowed temperature offsets for this process:\r\n•- 5 \u00b0C\r\n• 0 \u00b0C\r\n",
+            [
+                NarrativeText(
+                    "Allowed temperature offsets for this process: •- 5 \u00b0C • 0 \u00b0C"
+                )
+            ],
+        ),
+        (
+            "Requirements:\n• Tighten the bolt to 10 N\u00b7m of torque\n",
+            [NarrativeText("Requirements: • Tighten the bolt to 10 N\u00b7m of torque")],
+        ),
+        (
+            "Requirements:\r\n• This installation must always be *really* safe\r\n",
+            [NarrativeText("Requirements: • This installation must always be *really* safe")],
+        ),
+        (
+            "Fruits:\n• apple\nVegetables:\n• carrots, about 2 \u00b7 3 kg of them from the"
+            " farm market\n",
+            [
+                NarrativeText(
+                    "Fruits: • apple Vegetables: • carrots, about 2 \u00b7 3 kg of them from"
+                    " the farm market"
+                )
+            ],
+        ),
+        (
+            "Observations:\n• Ice formed on the lake\nThe temperature dropped overnight.\n",
+            [
+                NarrativeText(
+                    "Observations: • Ice formed on the lake The temperature dropped overnight."
+                )
+            ],
+        ),
+    ],
+)
+def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(
+    text: str, expected: list
+):
+    assert partition_text(text=text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "Items:\n• first\f• second\n",
+            [Title("Items:"), ListItem("first"), ListItem("second")],
+        ),
+        (
+            "Items:\n• first\fNotes after the list\n",
+            [Title("Items:"), ListItem("first"), Title("Notes after the list")],
+        ),
+    ],
+)
+def test_partition_text_keeps_the_line_split_of_a_configured_paragraph_grouper(
+    text: str, expected: list
+):
+    line_split = re.compile(r"\s*[\n\f]\s*")
+
+    elements = partition_text(
+        text=text,
+        paragraph_grouper=functools.partial(group_broken_paragraphs, line_split=line_split),
+    )
+
+    assert elements == expected
 
 
 def test_partition_text_from_file():
@@ -217,6 +327,23 @@ def test_partition_text_captures_everything_even_with_linebreaks():
     ]
     for element in elements:
         assert element.metadata.filename is None
+
+
+def test_partition_text_keeps_a_sentence_that_starts_with_an_email_address_narrative():
+    text = (
+        "billing@example.com\n"
+        "\n"
+        "billing@example.com is the address for every invoice question you have."
+    )
+
+    elements = partition_text(text=text)
+
+    assert elements == [
+        EmailAddress(text="billing@example.com"),
+        NarrativeText(
+            text="billing@example.com is the address for every invoice question you have."
+        ),
+    ]
 
 
 def test_partition_text_groups_broken_paragraphs():

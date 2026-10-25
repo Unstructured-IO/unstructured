@@ -5,12 +5,14 @@ Suitable for use with `.eml` files, which can be exported from many email client
 
 from __future__ import annotations
 
+import copy
 import datetime as dt
 import email
 import email.policy
 import email.utils
 import io
 import os
+import re
 from email.message import EmailMessage, MIMEPart
 from functools import cached_property
 from typing import IO, Any, Final, Iterator, cast
@@ -30,6 +32,37 @@ from unstructured.partition.text import partition_text
 from unstructured.telemetry import partition_runtime_telemetry
 
 VALID_CONTENT_SOURCES: Final[tuple[str, ...]] = ("text/html", "text/plain")
+
+# -- the characters for which `email.utils.formataddr()` quotes a display name, and those it then
+# -- escapes with a backslash --
+_SPECIALS_RE: Final[re.Pattern[str]] = re.compile(r'[][\\()<>@,:;".]')
+_ESCAPES_RE: Final[re.Pattern[str]] = re.compile(r'[\\"]')
+
+
+def _format_address(name: str, address: str) -> str:
+    """Format `name` and `address` like `email.utils.formataddr()`, leaving non-ASCII text as is.
+
+    `formataddr()` writes a non-ASCII display name as an RFC 2047 encoded-word, e.g.
+    "=?utf-8?b?5byg5Lyf?=" for "张伟", and raises `UnicodeEncodeError` on a non-ASCII address,
+    which RFC 6532 allows. ASCII names and addresses get the same result as `formataddr()`.
+    """
+    if not name:
+        return address
+    quotes = '"' if _SPECIALS_RE.search(name) else ""
+    name = _ESCAPES_RE.sub(r"\\\g<0>", name)
+    return f"{quotes}{name}{quotes} <{address}>"
+
+
+def _format_addresses(headers: list[str]) -> list[str] | None:
+    """The addresses in `headers`, formatted, or None when there are none.
+
+    An empty group such as "undisclosed-recipients:;" holds no address, and `getaddresses()`
+    reports it as `("", "")`, so entries without an address are dropped.
+    """
+    addrs = [
+        _format_address(name, addr) for name, addr in email.utils.getaddresses(headers) if addr
+    ]
+    return addrs or None
 
 
 @partition_runtime_telemetry("eml")
@@ -130,8 +163,7 @@ class EmailPartitioningContext:
         bccs = self.msg.get_all("Bcc")
         if not bccs:
             return None
-        addrs = email.utils.getaddresses(bccs)
-        return [email.utils.formataddr(addr) for addr in addrs]
+        return _format_addresses(bccs)
 
     @cached_property
     def body_part(self) -> MIMEPart | None:
@@ -148,8 +180,7 @@ class EmailPartitioningContext:
         ccs = self.msg.get_all("Cc")
         if not ccs:
             return None
-        addrs = email.utils.getaddresses(ccs)
-        return [email.utils.formataddr(addr) for addr in addrs]
+        return _format_addresses(ccs)
 
     @cached_property
     def content_type_preference(self) -> tuple[str, ...]:
@@ -183,9 +214,8 @@ class EmailPartitioningContext:
         if not froms:
             # -- this should never occur because the From: header is mandatory per RFC 5322 --
             return None
-        addrs = email.utils.getaddresses(froms)
-        formatted_addrs = [email.utils.formataddr(addr) for addr in addrs]
-        return formatted_addrs[0]
+        formatted_addrs = _format_addresses(froms)
+        return formatted_addrs[0] if formatted_addrs else None
 
     @cached_property
     def message_id(self) -> str | None:
@@ -273,8 +303,7 @@ class EmailPartitioningContext:
         tos = self.msg.get_all("To")
         if not tos:
             return None
-        addrs = email.utils.getaddresses(tos)
-        return [email.utils.formataddr(addr) for addr in addrs]
+        return _format_addresses(tos)
 
     @cached_property
     def _filesystem_last_modified(self) -> str | None:
@@ -438,6 +467,16 @@ class _AttachmentPartitioner:
     @cached_property
     def _file_bytes(self) -> bytes:
         """The bytes of the attached file."""
+        # -- `email.contentmanager` has no `get_content()` handler registered for any
+        # -- `multipart/*` content-type (handlers exist for text/*, application/*, image/*,
+        # -- message/rfc822, etc., but multipart sub-parts are normally consumed via
+        # -- `.iter_parts()`, not `.get_content()`). A multipart sub-part can still appear as an
+        # -- "attachment" though, e.g. a PGP/MIME-signed forwarded message (`multipart/signed`)
+        # -- nested inside a `multipart/mixed` envelope. Fall back to the part's raw serialized
+        # -- bytes in that case rather than letting `get_content()` raise `KeyError`.
+        if self._attachment.get_content_type().startswith("multipart/"):
+            return self._serialized_multipart_bytes
+
         content = self._attachment.get_content()
 
         if isinstance(content, str):
@@ -445,3 +484,19 @@ class _AttachmentPartitioner:
 
         assert isinstance(content, bytes)
         return content
+
+    @cached_property
+    def _serialized_multipart_bytes(self) -> bytes:
+        """Raw serialized bytes of a `multipart/*` attachment, re-parseable as a document.
+
+        `EmailMessage.get_body()` skips any candidate part -- including a `multipart/*` root
+        message -- whose own `Content-Disposition` is "attachment". This MIME part carries
+        exactly that header (that's how it surfaced as an attachment via `iter_attachments()`
+        in the first place), so serializing it verbatim and re-parsing it as the root of a new
+        message would make `partition_email()` find no body at all. Strip that header on a
+        *copy* before serializing -- `self._attachment` itself is left untouched since
+        `_attachment_file_name` still needs its original `Content-Disposition` filename param.
+        """
+        part = copy.deepcopy(self._attachment)
+        del part["Content-Disposition"]
+        return part.as_bytes()
