@@ -1,10 +1,62 @@
+> This changelog is frozen. From the next release onward, release notes live in
+> [GitHub Releases](https://github.com/Unstructured-IO/unstructured/releases).
+> The history below is preserved; do not add entries or rename version headings.
+
+## 0.27.34
+
+### Enhancements
+
+- **Release consumed decode buffers before reconstructing original elements, preserving the 200 MiB decompressed-byte limit and existing malformed and trailing-data behavior.**
+- **Release decoded pages, crops and JPEG buffers promptly during figure extraction, and copy uploads with bounded reads. Preserve coordinate-derived crop geometry and starting-page numbering.**
+
+### Fixes
+
+- **Classify text as `EmailAddress` only when the whole text is an email address.** `is_email_address()` matched the pattern at the start of the text, so a sentence that began with an address, such as `billing@example.com is the address for invoices`, became an `EmailAddress` element in `partition_text`, `partition_html`, `partition_docx` and `partition_pptx`. It now has to match the whole stripped text, and such a sentence is classified like any other text.
+
+- **Read CSV and TSV cells as the file holds them.** `partition_csv()` and `partition_tsv()` left Pandas to interpret every cell, so a cell that says `N/A`, `NULL` or `None` came out empty, a column of whole numbers with one empty cell read as floats (`12` became `12.0`), and a code such as `007` lost its leading zeros. Each cell is now read as text, exactly as written.
+
+- **Drop empty email address-group entries.** An empty group such as `undisclosed-recipients:;` now produces no recipient instead of an empty string. Groups with members retain their addresses.
+
+- **Read a PowerPoint line break as a newline.** python-pptx returns a line break (Shift+Enter, `a:br`) as a vertical tab, so `partition_pptx()` put `\x0b` into the text of titles, text boxes and slide notes (`"Quarterly\x0bresults"`). It now reads `"Quarterly\nresults"`.
+- **`partition_json()` and `partition_ndjson()` now honor `encoding=`.** Both read the source with a hard-coded UTF-8 (`open(filename, encoding="utf8")`, and a bare `.decode()` for a file-like object), while the `encoding` argument callers pass -- directly or through `partition()` -- was swallowed by `**kwargs`. A UTF-16 or otherwise non-UTF-8 document therefore raised `UnicodeDecodeError` even when its encoding was stated explicitly. Both partitioners now accept `encoding`, and `partition()` forwards it to them. An explicit encoding is authoritative; when none is given, valid UTF-8 is preserved and charset detection is used only for bytes that are not valid UTF-8, so a detector's confident guess cannot silently rewrite text that would have decoded correctly. The existing file-like contract is unchanged: the stream is read once from its current position, an already-decoded `str` passes through, and the object is never reopened.
+
+## 0.27.33
+
+### Fixes
+
+- **Don't copy a very large split element into every chunk.** When one element over 1,000,000 characters (text, HTML and image data) is split into several chunks, those chunks no longer get `.metadata.orig_elements`, and a warning is logged. Before, each chunk serialized its own copy: the 7 MB spreadsheet from #3872 split into 12,555 chunks and produced about 54 GB of JSON. Smaller elements and elements that aren't split are unchanged.
+- **Bump locked `certifi` to 2026.10.19.** The release removes the emSign ECC Root CA - G3 root after eight eMudhra intermediate CA private keys were compromised. `requests` and `httpx` trust certifi's bundle and do not check revocation, so with the older bundle they accepted certificates chaining to that root. Docker images built from the lockfile pick it up; `certifi` is now also required at `>=2026.10.19`, so pip installs pick up the new bundle too.
+
+## 0.27.32
+
+### Enhancements
+
+- **Read spooled uploads in place during file detection and partitioning, leaving spooled files at position 0. Generic file-like streams handled by `convert_to_bytes()` are rewound before and after reading; existing BytesIO and path-named buffered-reader cursor behavior is unchanged.**
+- **Bound memory in the OCR-only PDF renderer.** Stage renderer uploads with 1 MiB reads and render one page at a time. Release internally consumed page images promptly while preserving ownership of images yielded by the public generator.
+- **Stream original-element JSON compression through a spool that spills above 1 MiB, and avoid retaining image payloads when chunking without original elements. Preserve serialization bytes, metadata ordering and precision.** This removes collection-wide graph/JSON/compressed-buffer overlap and fragments individual large strings; individual elements, containers of short strings, sorted items and the final Base64 join still scale with their contents, so there is no hard per-fragment or process-memory bound. Large incompressible output requires writable temporary storage and can raise an I/O error if that storage is unavailable.
+- Expose `open_excel_workbook()` for integrations that read one worksheet at a time while
+  retaining the worksheet cell limit and optional empty-row compaction.
+- Reduce XLSX subtable-detection memory with populated-cell traversal and render table HTML one row at a time while preserving Pandas formatting and element output.
+
+## 0.27.31
+
+### Fixes
+
+- **Label numbered headings and keep them out of list items; stop numbering section-break paragraphs.** A numbered paragraph of any element type now carries its label in the text, a numbered heading is no longer classified as a `ListItem` whether its number comes from its style or its own formatting, and an empty paragraph that only holds a section break no longer consumes a list number. A numbered paragraph with a heading outline level (0 to 8) counts as a heading even when it is body text, such as a numbered clause, so it is no longer a `ListItem`.
+
+## 0.27.30
+
+### Fixes
+
+- **Keep non-ASCII email names and addresses readable.** `partition_email()` formatted the `sent_from`, `sent_to`, `cc_recipient` and `bcc_recipient` metadata with `email.utils.formataddr()`, which wrote a non-ASCII display name as an RFC 2047 encoded-word (`=?utf-8?b?5byg5Lyf?= <zhang@example.cn>` for 张伟) and raised `UnicodeEncodeError` on a non-ASCII address (RFC 6532), failing the whole message. Names and addresses are now kept as written; ASCII ones are formatted as before.
+
 ## 0.27.29
 
 ### Fixes
 
-- **Extract HTML figures and preserve their heading hierarchy.** `partition_html()` now keeps images, code listings, tables, and captions inside `<figure>` instead of dropping them. Images and code snippets remain children of the preceding title or header, and page numbers survive inline wrappers. Page-grouped HTML export treats children of a heading on another page as roots within their own page, preserving their content and source metadata. Resolves #3606.
+- **Read XLS files whose Workbook stream ends in padding.** `partition_xlsx()` raised `struct.error` for many `.xls` files written by `xlwt`: the msoffcrypto encryption check reads the Workbook stream as 4-byte record headers and fails on the few bytes of padding at its end (nolze/msoffcrypto-tool#83). Such a file is now read as not encrypted; password-protected `.xls` files are still rejected.
 
-## 0.27.28-dev3
+## 0.27.28
 
 ### Enhancements
 
@@ -13,6 +65,8 @@
 - **Speed up `partition_docx()` on long documents.** python-docx resolves a paragraph's style by searching the document's style definitions, scanning all of them for the many paragraphs that use the default style, and `partition_docx()` did this up to six times per paragraph. Each style is now resolved once per document. On a 3,000-paragraph document built on python-docx's default template (164 styles), partitioning time outside spaCy drops from 5.3 s to 1.0 s and total time from 12.5 s to 8.5 s. Output is unchanged.
 
 ### Fixes
+
+- **Include the underlying error when an OCR agent fails to load.** The `RuntimeError` now includes the original error message and chains the original exception to help diagnose import and loading failures. Resolves #3276.
 
 - **Partition spreadsheets whose only far-away cells are below the data instead of rejecting them.** A worksheet with a small table and one value near row 1,048,576 spans over a million rows, so it was rejected by `XLSX_MAX_CELLS` (or, without the limit, read as a dense data-frame of empty rows). For subtable detection (the default), XLSX worksheets are now read with each run of empty rows collapsed to a single empty row (two before the first value, so a header row still leaves an empty data row), and the cell limit measures that compacted span. Partitioner output is unchanged: one empty row still separates the same tables, and subtables never contain an all-empty row. With `find_subtable=False` the whole worksheet is rendered with all its empty rows, so it is read and limited as before. A 2 MB customer workbook with 61 values and one at row 1,048,552 now partitions in under a second using ~100 MB.
 
@@ -176,6 +230,7 @@
 - **Recognize HTML and Markdown loose-list items.** A list item containing a single ordinary text block (such as `<li><p>text</p></li>`) now produces a `ListItem`, preserving inline annotations and list depth. Multi-paragraph items and specialized blocks retain their existing behavior. Resolves #3499.
 
 - **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
+
 
 - **A stray processing instruction no longer crashes HTML partitioning.** `partition_html` (and formats that route through it, such as `.md`) raised `AttributeError: 'lxml.etree._ProcessingInstruction' object has no attribute 'is_phrasing'` when the HTML contained a processing-instruction node like a `<?xml ...?>` declaration. The parser now drops processing instructions at parse time, the same way it already drops comments.
 

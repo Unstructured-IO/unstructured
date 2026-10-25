@@ -447,6 +447,41 @@ def test_auto_partition_json_from_file_preserves_original_elements():
     assert elements_to_dicts(partitioned_elements) == elements_to_dicts(original_elements)
 
 
+def test_auto_partition_forwards_encoding_to_the_json_partitioner(tmp_path: pathlib.Path):
+    # -- `encoding` is a named parameter of `partition()`, so it is absent from `**kwargs`; the
+    # -- JSON/NDJSON special case has to forward it explicitly or the caller's codec is dropped.
+    # -- Detection is patched to fail: the shared detector can recognize BOM-less UTF-16, so
+    # -- only a forwarded explicit codec proves the argument reaches the partitioner; a dropped
+    # -- argument would fall back to detection and raise here. --
+    text = "R\u200bAG \u4e2d\u6587"
+    payload = json.dumps([{"type": "NarrativeText", "element_id": "x", "text": text}])
+    path = tmp_path / "utf16le.json"
+    path.write_bytes(payload.encode("utf-16-le"))
+
+    with patch(
+        "unstructured.partition.common.json_partitioning.detect_file_encoding",
+        side_effect=AssertionError("explicit encoding must bypass detection"),
+    ):
+        elements = partition(filename=str(path), encoding="utf-16-le")
+
+    assert elements[0].text == text
+
+
+def test_auto_partition_forwards_encoding_to_the_ndjson_partitioner(tmp_path: pathlib.Path):
+    text = "R\u200bAG \u4e2d\u6587"
+    payload = json.dumps({"type": "NarrativeText", "element_id": "x", "text": text})
+    path = tmp_path / "utf16le.ndjson"
+    path.write_bytes(payload.encode("utf-16-le"))
+
+    with patch(
+        "unstructured.partition.common.json_partitioning.detect_file_encoding",
+        side_effect=AssertionError("explicit encoding must bypass detection"),
+    ):
+        elements = partition(filename=str(path), encoding="utf-16-le")
+
+    assert elements[0].text == text
+
+
 def test_auto_partition_routes_single_line_json_object_to_json_not_ndjson(tmp_path: pathlib.Path):
     # -- a compact single-line object is one JSON value, so it routes to JSON even though it is
     # -- also valid one-record NDJSON. It is not an array of element-dicts, so it partitions as
@@ -1493,15 +1528,15 @@ def test_auto_partition_preserves_attachment_filetype_when_container_filename_is
     assert all(e.metadata.filetype == FileType.TXT.mime_type for e in attachment_elements)
 
 
-def test_detect_filetype_maps_file_to_bytes_io_when_spooled_temp_file_used(mocker):
+def test_detect_filetype_reads_a_spooled_temp_file_in_place(mocker):
     detect_filetype_mock = MagicMock(return_value=FileType.JSON)
     mocker.patch("unstructured.file_utils.filetype._FileTypeDetector", detect_filetype_mock)
     with tempfile.SpooledTemporaryFile() as f:
         f.write(b'{"text": Hello, world!}')
         f.seek(0)
         detect_filetype(file=f)
-    file_detection_context = detect_filetype_mock.file_type.call_args[0][0]
-    assert file_detection_context.text_head == '{"text": Hello, world!}'
+        file_detection_context = detect_filetype_mock.file_type.call_args[0][0]
+        assert file_detection_context.text_head == '{"text": Hello, world!}'
 
 
 # -- .languages -----------------------------------------------------------
