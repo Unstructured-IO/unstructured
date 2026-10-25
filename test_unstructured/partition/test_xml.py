@@ -339,3 +339,29 @@ def test_partition_xml_respects_detect_language_per_element():
     )
     langs = [element.metadata.languages for element in elements]
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+@pytest.mark.parametrize("source", ["text", "file", "filename"])
+def test_partition_xml_xpath_reads_records_beyond_first_parser_chunk(tmp_path: Path, source: str):
+    texts = [f"Record {i} " + "x" * 200 for i in range(300)]
+    xml = "<root>" + "".join(f"<item>{text}</item>" for text in texts) + "</root>"
+    if source == "text":
+        kwargs = {"text": xml}
+    elif source == "file":
+        kwargs = {"file": BytesIO(xml.encode())}
+    else:
+        path = tmp_path / "large.xml"
+        path.write_text(xml, encoding="utf-8")
+        kwargs = {"filename": str(path)}
+
+    elements = partition_xml(**kwargs, xml_path="//item", languages=["eng"])
+
+    assert [element.text for element in elements] == texts
+
+
+def test_partition_xml_xpath_checks_predicates_against_complete_document():
+    xml = "<root><item>First</item>" + " " * 65536 + "<item>Last</item></root>"
+
+    elements = partition_xml(text=xml, xml_path="//item[last()]", languages=["eng"])
+
+    assert [element.text for element in elements] == ["Last"]
