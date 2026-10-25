@@ -490,6 +490,49 @@ def test_partition_email_does_not_raise_on_multipart_attachment():
     assert elements[1].metadata.attached_to_filename == "mime-attach-multipart-signed.eml"
 
 
+def test_partition_email_partitions_the_messages_of_a_multipart_digest():
+    """Each part of a `multipart/digest` is a `message/rfc822` part, i.e. an email in its own right.
+
+    `get_content()` returns an `EmailMessage` for such a part, not `str` or `bytes`.
+    """
+    elements = partition_email(
+        example_doc_path("eml/mime-multipart-digest.eml"), process_attachments=True
+    )
+
+    assert elements == [
+        NarrativeText("This is the first message in the digest."),
+        NarrativeText("This is the second message in the digest."),
+        NarrativeText("This is the third message in the digest."),
+    ]
+    assert [e.metadata.subject for e in elements] == [
+        "First Message",
+        "Second Message",
+        "Third Message",
+    ]
+    assert all(e.metadata.attached_to_filename == "mime-multipart-digest.eml" for e in elements)
+
+
+def test_partition_email_partitions_a_message_forwarded_as_an_attachment():
+    forwarded = EmailMessage()
+    forwarded.set_content("Are we still on for lunch tomorrow at noon?")
+    # -- these headers follow "Content-Type:", so libmagic alone would take this for plain text --
+    forwarded["From"] = "alice@example.com"
+    forwarded["To"] = "bob@example.com"
+    forwarded["Subject"] = "Lunch"
+    msg = EmailMessage()
+    msg.set_content("See the message below.")
+    msg.add_attachment(forwarded)
+
+    elements = partition_email(file=io.BytesIO(msg.as_bytes()), process_attachments=True)
+
+    assert elements == [
+        NarrativeText("See the message below."),
+        NarrativeText("Are we still on for lunch tomorrow at noon?"),
+    ]
+    assert elements[1].metadata.subject == "Lunch"
+    assert elements[1].metadata.sent_from == ["alice@example.com"]
+
+
 def test_partition_email_skips_a_WEBP_attachment_when_image_dependencies_are_not_installed(
     request: FixtureRequest, caplog: LogCaptureFixture, webp_attachment_email: io.BytesIO
 ):

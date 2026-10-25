@@ -13,7 +13,7 @@ import email.utils
 import io
 import os
 import re
-from email.message import EmailMessage, MIMEPart
+from email.message import EmailMessage, Message, MIMEPart
 from functools import cached_property
 from typing import IO, Any, Final, Iterator, cast
 
@@ -428,13 +428,19 @@ class _AttachmentPartitioner:
 
         file = io.BytesIO(self._file_bytes)
 
+        partitioning_kwargs = self._ctx.partitioning_kwargs
+        # -- a `message/rfc822` part is an email whatever its first header is; libmagic reports
+        # -- e.g. a message starting with "MIME-Version:" as "text/plain" --
+        if self._attachment.get_content_type() == "message/rfc822":
+            partitioning_kwargs = {**partitioning_kwargs, "content_type": "message/rfc822"}
+
         # -- partition the attachment --
         try:
             elements = partition(
                 file=file,
                 metadata_filename=self._attachment_file_name,
                 metadata_last_modified=self._ctx.metadata_last_modified,
-                **self._ctx.partitioning_kwargs,
+                **partitioning_kwargs,
             )
         except BaseException as e:
             if not isinstance(e, EXPECTED_ATTACHMENT_ERRORS):
@@ -481,6 +487,11 @@ class _AttachmentPartitioner:
 
         if isinstance(content, str):
             return content.encode("utf-8")
+
+        # -- a `message/rfc822` part (a message forwarded as an attachment, a returned message in a
+        # -- bounce, each part of a `multipart/digest`) gets the enclosed message, not bytes --
+        if isinstance(content, Message):
+            return content.as_bytes()
 
         assert isinstance(content, bytes)
         return content
