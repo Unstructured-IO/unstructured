@@ -460,7 +460,8 @@ def detect_languages(
 
     # If text contains special characters (like ñ, å, or Korean/Mandarin/etc.) it will NOT default
     # to English. It will default to English if text is only ascii characters and is short.
-    if _ASCII_RE.match(text) and len(text.split()) < 5:
+    # Only detection is unreliable on short text, so languages the user provided still apply.
+    if "auto" in languages and _ASCII_RE.match(text) and len(text.split()) < 5:
         if language_fallback is not None:
             return _validate_fallback_languages(language_fallback(text))
         logger.debug(f'short text: "{text}". Defaulting to English.')

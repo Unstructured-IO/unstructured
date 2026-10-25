@@ -141,6 +141,25 @@ def test_detect_languages_gets_multiple_languages():
     assert detect_languages(text) == ["ces", "pol", "slk"]
 
 
+@pytest.mark.parametrize(
+    ("text", "languages", "expected"),
+    [
+        ("Bonjour le monde", ["fra"], ["fra"]),
+        ("Hallo Welt", ["de"], ["deu"]),
+        ("Hi there.", ["spa", "eng"], ["spa", "eng"]),
+    ],
+)
+def test_detect_languages_short_ascii_text_keeps_provided_languages(
+    text: str, languages: list[str], expected: list[str]
+):
+    assert detect_languages(text, languages) == expected
+
+
+def test_detect_languages_short_ascii_text_ignores_fallback_when_languages_provided():
+    result = detect_languages("Hi there.", ["fra"], language_fallback=lambda t: None)
+    assert result == ["fra"]
+
+
 def test_detect_languages_warns_for_auto_and_other_input(caplog: LogCaptureFixture):
     text = "This is another short sentence."
     languages = ["en", "auto", "rus"]
@@ -221,6 +240,21 @@ def test_detect_languages_short_text_default_eng_without_fallback():
     """Short ASCII text without fallback still defaults to English (backward compat)."""
     result = detect_languages(text="Hi there.")
     assert result == ["eng"]
+
+
+def test_apply_lang_metadata_keeps_provided_languages_on_short_elements():
+    elements = [
+        NarrativeText("Le rapport annuel de la société est maintenant disponible pour tous."),
+        NarrativeText("Merci beaucoup"),
+    ]
+    result = list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=["fra"],
+            detect_language_per_element=True,
+        ),
+    )
+    assert [e.metadata.languages for e in result] == [["fra"], ["fra"]]
 
 
 def test_apply_lang_metadata_with_language_fallback():
