@@ -3193,6 +3193,10 @@ class _TextSplitter:
         # -- in multi-space situation, fragment may have trailing whitespace because match is from
         # -- right to left
         fragment = s[:match_start].rstrip()
+        # -- whitespace before the match can trim the fragment back to the overlap length, e.g. the
+        # -- blank line after an `overlap_all` prefix; such a split only repeats the overlap --
+        if len(fragment) <= overlap:
+            return "", s
         # -- remainder can have leading space when match is on "\n" followed by spaces --
         raw_remainder = s[match_end:].lstrip()
 
