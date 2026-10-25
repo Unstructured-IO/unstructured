@@ -558,6 +558,18 @@ def test_it_preserves_a_path_like_stream_name_extension():
     assert detect_filetype(file=file) == FileType.MD
 
 
+@pytest.mark.parametrize("mime_type", ["text/plain", None])
+def test_it_detects_MD_from_a_dot_markdown_extension(
+    mime_type: str | None, tmp_path: Path, ctx_mime_type_: Mock
+):
+    # -- libmagic usually guesses "text/plain" for Markdown, `None` is the no-libmagic case --
+    ctx_mime_type_.return_value = mime_type
+    file_path = tmp_path / "notes.markdown"
+    file_path.write_text("# Release notes\n\nThis release fixes several bugs.\n")
+
+    assert detect_filetype(file_path=str(file_path)) is FileType.MD
+
+
 def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
     file_path = example_doc_path("csv-with-escaped-commas.csv")
 
