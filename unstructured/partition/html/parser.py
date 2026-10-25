@@ -101,7 +101,10 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.common.metadata import category_depth_from_html_tag
+from unstructured.partition.common.metadata import (
+    category_depth_from_html_tag,
+    set_element_hierarchy,
+)
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -267,6 +270,8 @@ class _ElementAccumulator:
             return
 
         # -- if we don't have a more specific element-class, choose one based on the text --
+        if ElementCls is None and self._element._is_in_figcaption:
+            ElementCls = FigureCaption
         if ElementCls is None:
             ElementCls = derive_element_type_from_text(normalized_text)
             # -- normalized text that contains only a single character is skipped unless it
@@ -379,6 +384,16 @@ class Flow(etree.ElementBase):
                 continue
         return None
 
+    @cached_property
+    def _is_in_figcaption(self) -> bool:
+        """True when this element is a `<figcaption>` or inside one, but not in a nested figure."""
+        for element in itertools.chain((self,), self.iterancestors()):
+            if isinstance(element, FigureCaptionBlock):
+                return True
+            if isinstance(element, Figure):
+                return False
+        return False
+
     def iter_elements(self) -> Iterator[Element]:
         """Generate paragraph string for each block item within."""
         # -- place child elements in a queue --
@@ -482,29 +497,39 @@ class Figure(Flow):
     though it were a plain paragraph.
     """
 
+    def iter_elements(self) -> Iterator[Element]:
+        """Parent the figure's content to the list item it is in, when there is one.
+
+        `set_element_hierarchy()` has no rule for an image or caption under a list item, so it
+        would end the item there and a nested list after the figure would lose its parent. Content
+        with a `parent_id` is skipped by that pass and leaves the item in place.
+        """
+        parent_id = None
+        for ancestor in self.iterancestors():
+            if isinstance(ancestor, Figure):
+                break
+            if isinstance(ancestor, ListItemBlock) and ancestor._figure_parent_id:
+                parent_id = ancestor._figure_parent_id
+                break
+
+        if parent_id is None:
+            yield from super().iter_elements()
+            return
+
+        for element in set_element_hierarchy(list(super().iter_elements())):
+            if element.metadata.parent_id is None:
+                element.metadata.parent_id = parent_id
+            yield element
+
 
 class FigureCaptionBlock(Flow):
-    """A `<figcaption>` element, which generates a `FigureCaption` element."""
+    """A `<figcaption>` element.
+
+    Its text, including text in nested blocks without an element class of their own, generates
+    `FigureCaption` elements.
+    """
 
     _ElementCls = FigureCaption
-
-    def iter_elements(self) -> Iterator[Element]:
-        """Adopt a sole text block, such as a caption wrapped in a `<p>`."""
-        if len(self) == 1 and not (self.text or "").strip():
-            child = self[0]
-            if (
-                type(child) in (Flow, BlockItem)
-                and not (child.tail or "").strip()
-                and all(node.is_phrasing for node in child.iterdescendants())
-            ):
-                for element in self._element_from_text_or_tail(
-                    child.text or "", deque(child), FigureCaption
-                ):
-                    element.metadata.page_number = child._page_number
-                    yield element
-                return
-
-        yield from super().iter_elements()
 
 
 class ListBlock(Flow):
@@ -529,8 +554,13 @@ class ListItemBlock(Flow):
 
     _ElementCls = ListItem
 
+    # -- what a figure in this item is parented to: the item's own `ListItem`, or a later `Title`
+    # -- that ends the item for `set_element_hierarchy()`. Set while this item is traversed. --
+    _figure_parent_id: str | None = None
+
     def iter_elements(self) -> Iterator[Element]:
         """Adopt a sole text block, as produced by Markdown loose lists."""
+        self._figure_parent_id = None
         if len(self) == 1 and not (self.text or "").strip():
             child = self[0]
             # Only unwrap ordinary text blocks, not tables, images, headings, or code.
@@ -549,7 +579,18 @@ class ListItemBlock(Flow):
                     yield element
                 return
 
-        yield from super().iter_elements()
+        depth = self._element_accum._category_depth(ListItem)
+        for element in super().iter_elements():
+            if element.metadata.parent_id is None and (
+                isinstance(element, Title)
+                or (
+                    self._figure_parent_id is None
+                    and isinstance(element, ListItem)
+                    and element.metadata.category_depth == depth
+                )
+            ):
+                self._figure_parent_id = element.id
+            yield element
 
 
 class Pre(BlockItem):
