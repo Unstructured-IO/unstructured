@@ -14,7 +14,6 @@ from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import PixelSpace, PointSpace
 from unstructured.documents.elements import CoordinatesMetadata, ElementType
-from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
     _is_duplicate_char,
@@ -777,6 +776,8 @@ def merge_inferred_with_extracted_layout(
     """Merge an inferred layout with an extracted layout"""
 
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
+
+    from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 
     inferred_pages = inferred_document_layout.pages
     for i, (inferred_page, extracted_page_layout) in enumerate(
