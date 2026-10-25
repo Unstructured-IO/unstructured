@@ -66,6 +66,8 @@
 
 ### Fixes
 
+- **Translate sequential chunks instead of repeating the first chunk in `translate_text()`.** When translating text that spans multiple model attention windows, `translate_text()` chunked the input text with `chunk_by_attention_window()` but passed the full original string to `_translate_text()` on each loop iteration, repeatedly translating the first window instead of sequential segments. It now translates each chunk. Resolves #4558.
+
 - **Include the underlying error when an OCR agent fails to load.** The `RuntimeError` now includes the original error message and chains the original exception to help diagnose import and loading failures. Resolves #3276.
 
 - **Partition spreadsheets whose only far-away cells are below the data instead of rejecting them.** A worksheet with a small table and one value near row 1,048,576 spans over a million rows, so it was rejected by `XLSX_MAX_CELLS` (or, without the limit, read as a dense data-frame of empty rows). For subtable detection (the default), XLSX worksheets are now read with each run of empty rows collapsed to a single empty row (two before the first value, so a header row still leaves an empty data row), and the cell limit measures that compacted span. Partitioner output is unchanged: one empty row still separates the same tables, and subtables never contain an all-empty row. With `find_subtable=False` the whole worksheet is rendered with all its empty rows, so it is read and limited as before. A 2 MB customer workbook with 61 values and one at row 1,048,552 now partitions in under a second using ~100 MB.
