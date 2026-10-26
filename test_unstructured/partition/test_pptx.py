@@ -268,6 +268,27 @@ def test_partition_pptx_ignores_off_slide_shapes_whose_position_has_a_zero_coord
     assert [e.text for e in elements] == ["This is on the slide."]
 
 
+def test_partition_pptx_excludes_a_partly_visible_shape_with_a_negative_origin(
+    tmp_path: pathlib.Path,
+):
+    """A negative origin excludes a shape even when most of its box overlaps the slide."""
+    filename = str(tmp_path / "test-off-slide-partly-visible.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    txBox = slide.shapes.add_textbox(Inches(-0.1), Inches(0), Inches(2), Inches(1))
+    txBox.text_frame.text = "This box mostly overlaps the slide."
+
+    txBox = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(2), Inches(1))
+    txBox.text_frame.text = "This is on the slide."
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == ["This is on the slide."]
+
+
 def test_partition_pptx_grabs_tables():
     elements = partition_pptx(example_doc_path("fake-power-point-table.pptx"))
 
