@@ -54,6 +54,10 @@ def test_partition_md_from_text():
     assert all(e.metadata.filename is None for e in elements)
 
 
+def test_partition_md_from_text_works_with_empty_string():
+    assert partition_md(text="") == []
+
+
 class MockResponse:
     def __init__(self, text: str, status_code: int, headers: dict[str, Any] = {}):
         self.text = text
