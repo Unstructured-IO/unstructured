@@ -1497,6 +1497,8 @@ def _partition_pdf_or_image_local(
             draw_caption=env_config.ANALYSIS_BBOX_DRAW_CAPTION,
             resize=env_config.ANALYSIS_BBOX_RESIZE,
             format=env_config.ANALYSIS_BBOX_FORMAT,
+            pdf_image_dpi=pdf_image_dpi,
+            password=password,
         )
 
     return out_elements

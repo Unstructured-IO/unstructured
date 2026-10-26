@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import io
+import json
 import logging
 import math
 import os
@@ -1667,6 +1668,31 @@ def test_analysis_artifacts_saved(is_path: bool, example_doc: str, doc_pages: in
                 assert bboxes_dir / f"page{page}_layout_{el}.png" in bboxes_files
         if file:
             file.close()
+
+
+def test_analysis_bboxes_are_drawn_on_pages_rendered_at_pdf_image_dpi(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+):
+    # the caption is a strip added above the page, which would change the image height
+    monkeypatch.setenv("ANALYSIS_BBOX_DRAW_CAPTION", "false")
+
+    pdf.partition_pdf(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        strategy=PartitionStrategy.HI_RES,
+        analysis=True,
+        analyzed_image_output_dir_path=str(tmp_path),
+        pdf_image_dpi=100,
+    )
+
+    file_analysis_root = tmp_path / "analysis" / "layout-parser-paper-fast"
+    od_layout_dump = json.loads(
+        (file_analysis_root / "layout_dump" / "object_detection.json").read_text()
+    )
+    for page in od_layout_dump["pages"]:
+        layout_page_size = (page["size"]["width"], page["size"]["height"])
+        page_render = file_analysis_root / "bboxes" / f"page{page['number']}_layout_od_model.png"
+        with Image.open(page_render) as image:
+            assert image.size == layout_page_size == (850, 1100)
 
 
 @pytest.mark.parametrize(
