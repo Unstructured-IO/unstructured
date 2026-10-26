@@ -16,14 +16,21 @@ bump() { printf 'action=bump\nreleased=%s\nnext=%s' "$1" "$2"; }
 check 0 "$(bump 0.27.35 0.27.36-dev)" 0.27.35 0.27.35
 check 0 "$(bump 0.27.35 0.27.36-dev)" v0.27.35 0.27.35
 check 0 "$(bump 0.27.35 0.27.36-dev)" unstructured_0.27.35 0.27.35
+check 0 "$(bump 0.27.35 0.27.36-dev)" unstructured_v0.27.35 0.27.35
 check 0 "$(bump 1.2.99 1.2.100-dev)" 1.2.99 1.2.99
 check 0 "$(bump 1.2.999999999999999999999 1.2.1000000000000000000000-dev)" 1.2.999999999999999999999 1.2.999999999999999999999
-for tag in opencv-4.12.0.88 0.8.1-docs-rebuild 1.2.3-dev 1.2.3.dev1 1.2.3rc1 bad '1.2.3;exit' 01.2.3; do
+for tag in opencv-4.12.0.88 0.8.1-docs-rebuild 1.2.3-dev 1.2.3.dev1 1.2.3rc1 bad '1.2.3;exit' 01.2.3 V0.27.35 UNSTRUCTURED_0.27.35 unstructured_V0.27.35; do
   check 0 'action=skip' "$tag" 0.27.35
 done
 check 0 'action=noop' 0.27.35 0.27.36-dev
 check 0 'action=noop' 0.27.35 0.27.36-dev2
 check 0 'action=noop' 0.27.35 0.28.0-dev
+for current in 0.27.36.dev 0.27.36.dev0 0.27.36.dev2 0.28.0.dev1; do
+  check 0 'action=noop' 0.27.35 "$current"
+done
+for current in 0.27.35.dev9 0.27.36.dev2junk 0.27.36-rc1; do
+  check 1 'Unexpected main version' 0.27.35 "$current"
+done
 check 1 'Unexpected main version' 0.27.35 0.27.36
 check 1 'Unexpected main version' 0.27.35 0.27.34
 check 1 'Unexpected main version' 0.27.35 0.27.35-dev9
@@ -61,10 +68,5 @@ check 0 '' --verify-release 0.27.35
 MOCK_PUBLISHED=false check 1 'published final GitHub Release' --verify-release 0.27.35
 MOCK_STATUS=1 check 1 'published final GitHub Release' --verify-release 0.27.35
 
-# Runs for different tags must not share one concurrency group: GitHub keeps a
-# single pending run per group, so an old retry could replace a real release.
-workflow="$script_dir/../.github/workflows/post-release-dev-bump.yml"
-# The pattern is a literal GitHub expression, not shell expansion.
-# shellcheck disable=SC2016
-grep -Fqx '  group: post-release-dev-bump-${{ inputs.tag || github.event.release.tag_name }}' "$workflow"
-echo 'ok - concurrency group is per release tag'
+# Check the queue contract and its arrival scenarios separately from planning.
+bash "$script_dir/test-post-release-dev-bump-queue.sh"

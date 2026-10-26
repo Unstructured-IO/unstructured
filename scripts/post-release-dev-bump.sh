@@ -8,6 +8,7 @@ source "$script_dir/check-new-release-version.sh"
 
 plan_bump() {
   local tag=${1#unstructured_} current=$2 patch next digit carry=1 result='' i
+  local -a PARTS
   tag=${tag#v}
   if [[ ! $tag =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
     echo "Skip non-package release: $1" >&2
@@ -25,7 +26,7 @@ plan_bump() {
   next="${tag%.*}.$result-dev"
   if [[ $current == "$tag" ]]; then
     printf 'action=bump\nreleased=%s\nnext=%s\n' "$tag" "$next"
-  elif [[ $current =~ ^[0-9]+\.[0-9]+\.[0-9]+-dev[0-9]*$ ]] && ! version_less "$current" "$next"; then
+  elif parse_version "$current" && [[ ${PARTS[3]} == 0 ]] && ! version_less "$current" "$next"; then
     echo "No-op: main already holds $current (at least $next)." >&2
     echo 'action=noop'
   else

@@ -99,6 +99,11 @@ The version format stays the same: several commits on `main` can share a
    until the bump lands. If the workflow fails (for example, the token expires),
    open and merge the bump PR by hand. The workflow depends on that existing
    secret; maintainers can retry it with `workflow_dispatch` and the release tag.
+   Runs share one queue and read `main` after they leave the queue. Tag aliases
+   therefore use the same bump branch without concurrent writers. GitHub keeps
+   up to 100 pending runs; further arrivals are canceled without replacing queued
+   work. If a release run is canceled at that limit, retry it after the queue
+   drains. A completed development bump makes a retry a successful no-op.
 
 Ordinary PRs never need to think about the version. The guard checks the merge
 result, so a stale PR that does not edit the version file passes after `main`

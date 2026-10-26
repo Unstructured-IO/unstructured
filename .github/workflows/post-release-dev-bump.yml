@@ -13,11 +13,13 @@ on:
 permissions:
   contents: read
 
-# One group per tag: a run for another tag (an old retry, an ignored tag) can
-# never replace this release's pending run. Only the tag main currently holds
-# can act, so runs for different tags never race; same-tag runs serialize.
+# One writer across all tag aliases. Preserve accepted pending work instead of
+# replacing it with a retry. GitHub queues at most 100 pending runs; a full queue
+# rejects new arrivals. Checkout and planning happen only after acquiring this
+# workflow-level lock, so each run reads main afresh.
 concurrency:
-  group: post-release-dev-bump-${{ inputs.tag || github.event.release.tag_name }}
+  group: post-release-dev-bump
+  queue: max
   cancel-in-progress: false
 
 jobs:
