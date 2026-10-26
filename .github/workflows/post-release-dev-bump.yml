@@ -13,8 +13,11 @@ on:
 permissions:
   contents: read
 
+# One group per tag: a run for another tag (an old retry, an ignored tag) can
+# never replace this release's pending run. Only the tag main currently holds
+# can act, so runs for different tags never race; same-tag runs serialize.
 concurrency:
-  group: post-release-dev-bump
+  group: post-release-dev-bump-${{ inputs.tag || github.event.release.tag_name }}
   cancel-in-progress: false
 
 jobs:

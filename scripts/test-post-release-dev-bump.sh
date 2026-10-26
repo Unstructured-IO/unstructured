@@ -11,10 +11,13 @@ check() {
   fi
   echo "ok - $*"
 }
-check 0 'next=0.27.36-dev' 0.27.35 0.27.35
-check 0 'next=0.27.36-dev' v0.27.35 0.27.35
-check 0 'next=1.2.100-dev' 1.2.99 1.2.99
-check 0 'next=1.2.1000000000000000000000-dev' 1.2.999999999999999999999 1.2.999999999999999999999
+# Successful plans must emit the complete bump decision, not just a version.
+bump() { printf 'action=bump\nreleased=%s\nnext=%s' "$1" "$2"; }
+check 0 "$(bump 0.27.35 0.27.36-dev)" 0.27.35 0.27.35
+check 0 "$(bump 0.27.35 0.27.36-dev)" v0.27.35 0.27.35
+check 0 "$(bump 0.27.35 0.27.36-dev)" unstructured_0.27.35 0.27.35
+check 0 "$(bump 1.2.99 1.2.100-dev)" 1.2.99 1.2.99
+check 0 "$(bump 1.2.999999999999999999999 1.2.1000000000000000000000-dev)" 1.2.999999999999999999999 1.2.999999999999999999999
 for tag in opencv-4.12.0.88 0.8.1-docs-rebuild 1.2.3-dev 1.2.3.dev1 1.2.3rc1 bad '1.2.3;exit' 01.2.3; do
   check 0 'action=skip' "$tag" 0.27.35
 done
@@ -28,6 +31,7 @@ check 1 'Unexpected main version' 0.27.35 broken
 
 # Exercise main's version-file format, including its coverage comment.
 tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
 export GIT_CONFIG_GLOBAL=/dev/null
 export GIT_CONFIG_NOSYSTEM=1
 mkdir "$tmp/repo"
@@ -39,7 +43,7 @@ mkdir unstructured
 printf '__version__ = "0.27.35"  # pragma: no cover\n' >unstructured/__version__.py
 git add .
 git commit -qm release
-check 0 'next=0.27.36-dev' 0.27.35
+check 0 "$(bump 0.27.35 0.27.36-dev)" 0.27.35
 NEXT_VERSION=0.27.36-dev
 sed "s/^\(__version__ = \"\)[^\"]*\(\"\)/\1$NEXT_VERSION\2/" unstructured/__version__.py >"$tmp/updated"
 [[ $(cat "$tmp/updated") == '__version__ = "0.27.36-dev"  # pragma: no cover' ]]
@@ -56,3 +60,11 @@ export MOCK_PUBLISHED=true MOCK_STATUS=0
 check 0 '' --verify-release 0.27.35
 MOCK_PUBLISHED=false check 1 'published final GitHub Release' --verify-release 0.27.35
 MOCK_STATUS=1 check 1 'published final GitHub Release' --verify-release 0.27.35
+
+# Runs for different tags must not share one concurrency group: GitHub keeps a
+# single pending run per group, so an old retry could replace a real release.
+workflow="$script_dir/../.github/workflows/post-release-dev-bump.yml"
+# The pattern is a literal GitHub expression, not shell expansion.
+# shellcheck disable=SC2016
+grep -Fqx '  group: post-release-dev-bump-${{ inputs.tag || github.event.release.tag_name }}' "$workflow"
+echo 'ok - concurrency group is per release tag'

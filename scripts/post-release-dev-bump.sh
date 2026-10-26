@@ -7,7 +7,8 @@ script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$script_dir/check-new-release-version.sh"
 
 plan_bump() {
-  local tag=${1#v} current=$2 patch next digit carry=1 result='' i
+  local tag=${1#unstructured_} current=$2 patch next digit carry=1 result='' i
+  tag=${tag#v}
   if [[ ! $tag =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
     echo "Skip non-package release: $1" >&2
     echo 'action=skip'
