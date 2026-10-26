@@ -7,7 +7,7 @@ unlike the `.ppt` format which was binary and proprietary.
 from __future__ import annotations
 
 from functools import cached_property
-from typing import IO, Any, Iterator, Protocol, Sequence
+from typing import IO, Any, Iterator, Protocol, Sequence, cast
 
 import pptx
 from pptx.presentation import Presentation
@@ -336,8 +336,13 @@ class _PptxPartitioner:
 
     def _shape_is_off_slide(self, shape: Shape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
-        # NOTE - skip check if no top or left position (shape displayed top left)
-        return bool((shape.top and shape.left) and (shape.top < 0 or shape.left < 0))
+        # -- python-pptx reports a missing position as `None` even though its type says `Length` --
+        top = cast("int | None", shape.top)
+        left = cast("int | None", shape.left)
+        # -- a shape with no position is placed at the top-left of the slide, so it is on-slide --
+        if top is None or left is None:
+            return False
+        return top < 0 or left < 0
 
 
 class PptxPartitionerOptions:

@@ -244,6 +244,30 @@ def test_partition_pptx_orders_elements(tmp_path: pathlib.Path):
         assert element.metadata.filename == "test-ordering.pptx"
 
 
+def test_partition_pptx_ignores_off_slide_shapes_whose_position_has_a_zero_coordinate(
+    tmp_path: pathlib.Path,
+):
+    """A shape at `top=0` or `left=0` is still off-slide when its other coordinate is negative."""
+    filename = str(tmp_path / "test-off-slide-zero-coordinate.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    txBox = slide.shapes.add_textbox(Inches(-2), Inches(0), Inches(1), Inches(1))
+    txBox.text_frame.text = "This is off the left of the slide."
+
+    txBox = slide.shapes.add_textbox(Inches(0), Inches(-2), Inches(1), Inches(1))
+    txBox.text_frame.text = "This is above the slide."
+
+    txBox = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(2), Inches(1))
+    txBox.text_frame.text = "This is on the slide."
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == ["This is on the slide."]
+
+
 def test_partition_pptx_grabs_tables():
     elements = partition_pptx(example_doc_path("fake-power-point-table.pptx"))
 
