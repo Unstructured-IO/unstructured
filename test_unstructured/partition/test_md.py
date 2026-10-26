@@ -58,6 +58,11 @@ def test_partition_md_from_text_works_with_empty_string():
     assert partition_md(text="") == []
 
 
+def test_partition_md_with_whitespace_text_still_validates_extensions():
+    with pytest.raises(ValueError, match="Each entry in 'extensions'"):
+        partition_md(text=" \n\t", extensions=[42])
+
+
 class MockResponse:
     def __init__(self, text: str, status_code: int, headers: dict[str, Any] = {}):
         self.text = text

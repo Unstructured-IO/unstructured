@@ -88,7 +88,7 @@ def partition_md(
     behavior where ``#`` inside unfenced content is parsed as a heading (see #4006).
     """
     # -- an empty document yields no elements, like the other text-based partitioners --
-    if text is not None and text.strip() == "" and not file and not filename and not url:
+    if text == "" and file is None and filename is None and url is None:
         return []
 
     if text is None:
