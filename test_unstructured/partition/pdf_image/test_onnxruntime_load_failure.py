@@ -85,6 +85,7 @@ ort_spec = importlib.util.find_spec("onnxruntime")
 result = {
     "ort_find_spec_ok": ort_spec is not None and ort_spec.origin is not None,
     "ort_loader_wrapped": isinstance(getattr(ort_spec, "loader", None), _FaultyLoader),
+    "ort_origin": getattr(ort_spec, "origin", None),
     "stage": "import",
     "outputs": None,
 }
@@ -96,6 +97,14 @@ try:
     import unstructured
 
     result["unstructured_origin"] = unstructured.__file__
+    if spec_in["access_alias"]:
+        from unstructured.partition.pdf_image import pdfminer_processing
+
+        result["stage"] = "alias_lookup"
+        alias = pdfminer_processing.remove_control_characters
+        result["fault_exec_count_before_alias_call"] = state["fault_exec_count"]
+        result["stage"] = "alias_call"
+        result["alias_result"] = alias("a\tb\x07")
     result["stage"] = "call"
     outputs, input_sha256, text_sha256 = {}, {}, {}
     for path in spec_in["paths"]:
@@ -137,6 +146,7 @@ def _run_child(
     partition_kwargs: dict[str, Any],
     entry: str = "pdf",
     check_dependency_exists: bool = False,
+    access_alias: bool = False,
 ) -> dict[str, Any]:
     """Run one case in a fresh `sys.executable` child and return its JSON report."""
     spec = {
@@ -146,6 +156,7 @@ def _run_child(
         "paths": paths,
         "kwargs": partition_kwargs,
         "check_dependency_exists": check_dependency_exists,
+        "access_alias": access_alias,
     }
     report_path = tmp_path / f"{label}.json"
     proc = subprocess.run(
@@ -167,13 +178,22 @@ def _context(report: dict[str, Any]) -> dict[str, Any]:
     return {k: v for k, v in report.items() if k not in ("outputs", "log_messages")}
 
 
+def _assert_child_provenance(report: dict[str, Any]) -> None:
+    """Assert the child used this checkout's package and the installed onnxruntime spec."""
+    installed_ort = importlib.util.find_spec("onnxruntime")
+    assert installed_ort is not None
+    assert installed_ort.origin is not None
+    assert os.path.realpath(report["ort_origin"]) == os.path.realpath(installed_ort.origin)
+    assert os.path.realpath(report["unstructured_origin"]) == _UNSTRUCTURED_ORIGIN
+
+
 def _assert_onnxruntime_never_loaded(fault: dict[str, Any]) -> None:
     assert fault["ort_find_spec_ok"] is True
     assert fault["ort_loader_wrapped"] is True
     assert fault["stage"] == "returned", _context(fault)
     assert fault["fault_exec_count"] == 0
     assert fault["onnxruntime_module_count"] == 0
-    assert os.path.realpath(fault["unstructured_origin"]) == _UNSTRUCTURED_ORIGIN
+    _assert_child_provenance(fault)
 
 
 def _assert_fault_matches_healthy(
@@ -193,6 +213,7 @@ def _assert_fault_matches_healthy(
 
     assert healthy["stage"] == "returned", _context(healthy)
     assert healthy["ort_loader_wrapped"] is False
+    _assert_child_provenance(healthy)
     assert all(healthy["outputs"][path] for path in paths), "healthy twin returned no elements"
     _assert_onnxruntime_never_loaded(fault)
     assert fault["input_sha256"] == healthy["input_sha256"]
@@ -296,6 +317,8 @@ def test_inference_strategies_still_raise_the_raw_load_error(
     assert fault["ort_find_spec_ok"] is True
     assert fault["ort_loader_wrapped"] is True
     assert fault["outputs"] is None, _context(fault)
+    assert fault["stage"] == "call", _context(fault)
+    _assert_child_provenance(fault)
     assert fault["exc_type"] == "builtins.ImportError"
     assert fault["exc_message"] == _FAULT_MESSAGE
     assert fault["exc_is_injected"] is True
@@ -304,3 +327,72 @@ def test_inference_strategies_still_raise_the_raw_load_error(
     for marker in ("Following dependencies are missing", "PDF text extraction failed"):
         assert not any(marker in message for message in fault["log_messages"])
         assert marker not in fault["stderr"]
+
+
+def test_remove_control_characters_alias_loads_inference_only_when_called(tmp_path):
+    healthy = _run_child(
+        tmp_path, "alias-healthy", fault=False, paths=[], partition_kwargs={}, access_alias=True
+    )
+    fault = _run_child(
+        tmp_path, "alias-fault", fault=True, paths=[], partition_kwargs={}, access_alias=True
+    )
+
+    assert healthy["stage"] == "returned", _context(healthy)
+    assert healthy["alias_result"] == "a b"
+    _assert_child_provenance(healthy)
+    assert fault["stage"] == "alias_call", _context(fault)
+    assert fault["fault_exec_count_before_alias_call"] == 0
+    assert fault["exc_type"] == "builtins.ImportError"
+    assert fault["exc_message"] == _FAULT_MESSAGE
+    assert fault["exc_is_injected"] is True
+    _assert_child_provenance(fault)
+
+
+def test_merge_text_cleaning_honors_remove_control_characters_patches(monkeypatch):
+    from types import SimpleNamespace
+
+    import numpy as np
+    from unstructured_inference.constants import IsExtracted
+    from unstructured_inference.inference.layoutelement import LayoutElements
+
+    from unstructured.documents.elements import ElementType
+    from unstructured.partition.pdf_image import pdf_image_utils, pdfminer_processing
+    from unstructured.partition.utils.constants import Source
+
+    def layout(text, is_extracted):
+        return LayoutElements(
+            element_coords=np.array([[10.0, 10.0, 200.0, 40.0]]),
+            texts=np.array([text], dtype=object),
+            element_class_ids=np.array([0]),
+            element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT},
+            sources=np.array([Source.PDFMINER]),
+            is_extracted_array=np.array([is_extracted], dtype=object),
+        )
+
+    def merged_texts():
+        page = SimpleNamespace(
+            image_metadata={"width": 300, "height": 300},
+            detection_model=None,
+            elements_array=layout(None, None),
+        )
+        extracted = [layout("a\tb\x07", IsExtracted.TRUE)]
+        pdfminer_processing.merge_inferred_with_extracted_layout(
+            SimpleNamespace(pages=[page]), extracted, "yolox"
+        )
+        return page.elements_array.texts.tolist()
+
+    assert merged_texts() == ["a b"]
+    with monkeypatch.context() as m:
+        m.setattr(pdfminer_processing, "remove_control_characters", lambda text: f"alias:{text}")
+        assert merged_texts() == ["alias:a\tb\x07"]
+    with monkeypatch.context() as m:
+        m.setattr(pdf_image_utils, "remove_control_characters", lambda text: f"impl:{text}")
+        assert merged_texts() == ["impl:a\tb\x07"]
+
+
+def test_remove_control_characters_alias_is_importable():
+    from unstructured.partition.pdf_image import pdfminer_processing
+    from unstructured.partition.pdf_image.pdfminer_processing import remove_control_characters
+
+    assert remove_control_characters("a\tb\x07") == "a b"
+    assert pdfminer_processing.remove_control_characters("plain text") == "plain text"

@@ -39,6 +39,17 @@ EPSILON_AREA = 0.01
 DEFAULT_ROUND = 15
 
 
+def remove_control_characters(text: str) -> str:
+    """Remove control characters from text; delegates to `pdf_image_utils`.
+
+    Kept as this module's historical attribute. `pdf_image_utils` loads the inference model
+    stack, so it is imported on call instead of before a partitioning strategy is selected.
+    """
+    from unstructured.partition.pdf_image import pdf_image_utils
+
+    return pdf_image_utils.remove_control_characters(text)
+
+
 def process_file_with_pdfminer(
     filename: str = "",
     dpi: int = env_config.PDF_RENDER_DPI,
@@ -776,8 +787,6 @@ def merge_inferred_with_extracted_layout(
     """Merge an inferred layout with an extracted layout"""
 
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
-
-    from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 
     inferred_pages = inferred_document_layout.pages
     for i, (inferred_page, extracted_page_layout) in enumerate(
