@@ -19,6 +19,7 @@ from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
     CoordinatesMetadata,
+    ElementMetadata,
     ElementType,
     FigureCaption,
     Header,
@@ -556,6 +557,28 @@ def test_get_page_image_metadata_and_coordinate_system():
     doc = MockDocumentLayout()
     metadata = common.get_page_image_metadata(doc.pages[0])
     assert isinstance(metadata, dict)
+
+
+def test_ocr_data_to_elements_expands_an_inferred_list_element_into_one_element_per_item():
+    """An inferred ``List`` yields one ``ListItem`` per item, each carrying the common metadata."""
+    box = ((0, 0), (30, 0), (30, 12), (0, 12))
+    ocr_data = [
+        {"type": "List", "text": "1. foo\n2. bar", "coordinates": box},
+        {"type": "Title", "text": "a title", "coordinates": box},
+    ]
+
+    elements = common.ocr_data_to_elements(
+        ocr_data=ocr_data,
+        image_size=(100, 100),
+        common_metadata=ElementMetadata(filetype="png"),
+    )
+
+    assert [(element.category, element.text) for element in elements] == [
+        (ElementType.LIST_ITEM, "foo"),
+        (ElementType.LIST_ITEM, "bar"),
+        (ElementType.TITLE, "a title"),
+    ]
+    assert all(element.metadata.filetype == "png" for element in elements)
 
 
 def test_ocr_data_to_elements():
