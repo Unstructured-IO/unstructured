@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import tempfile
 
 import pytest
 
@@ -481,3 +482,28 @@ class DescribeGroupElementsByParentId:
         assert list(result.keys()) == [None, "parent_A"]
         assert [e.text for e in result[None]] == ["First orphan"]
         assert [e.text for e in result["parent_A"]] == ["Title 1", "Orphan 2"]
+
+
+def _stub_temp_dir(monkeypatch: pytest.MonkeyPatch, tmp_path) -> str:
+    """Point the process temp dir at ``tmp_path`` and return it as a string."""
+    temp_dir = tmp_path / "tmp"
+    temp_dir.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(temp_dir))
+    return str(temp_dir)
+
+
+def test_is_temp_file_path_detects_a_file_inside_the_temp_dir(monkeypatch, tmp_path):
+    temp_dir = _stub_temp_dir(monkeypatch, tmp_path)
+    file_path = os.path.join(temp_dir, "page.csv")
+
+    assert utils.is_temp_file_path(file_path) is True
+
+
+def test_is_temp_file_path_is_not_a_name_prefix_test(monkeypatch, tmp_path):
+    """A sibling directory that merely starts with the temp-dir name is not temporary."""
+    temp_dir = _stub_temp_dir(monkeypatch, tmp_path)
+    sibling = temp_dir + "-exports"
+    os.mkdir(sibling)
+    file_path = os.path.join(sibling, "page.csv")
+
+    assert utils.is_temp_file_path(file_path) is False
