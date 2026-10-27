@@ -40,8 +40,9 @@ def normalize_html_cell_text(cell: HtmlElement) -> str:
 def _format_td(cell_text: str, colspan: int = 1, rowspan: int = 1) -> str:
     """Format a single `<td>` element, escaping and normalizing `cell_text`.
 
-    `colspan`/`rowspan` attributes are only emitted when greater than 1 (the implicit default),
-    to minimize character overhead in the common no-span case.
+    `colspan`/`rowspan` attributes are only omitted when they have their implicit default of 1, to
+    minimize character overhead in the common no-span case. A `rowspan` of 0 is emitted since
+    `rowspan="0"` is HTML's spelling for "span every remaining row".
     """
     # -- take care of things like '<' and '>' in the text --
     s = html.escape(cell_text)
@@ -53,7 +54,7 @@ def _format_td(cell_text: str, colspan: int = 1, rowspan: int = 1) -> str:
     attrs = ""
     if colspan > 1:
         attrs += f' colspan="{colspan}"'
-    if rowspan > 1:
+    if rowspan != 1:
         attrs += f' rowspan="{rowspan}"'
 
     # -- emit void `<td/>` when cell text is empty string --
@@ -397,7 +398,9 @@ class HtmlCell:
         """Like  "<td>foo bar baz</td>"."""
         if self.text:
             return etree.tostring(self._td, encoding=str)
-        return _format_td("", self.colspan, self.rowspan or 1)
+        # -- `rowspan` is `None` for `rowspan="0"` (span every remaining row), and
+        # -- `_format_td()` emits it as `rowspan="0"`; `or 1` would downgrade to one row.
+        return _format_td("", self.colspan, 0 if self.rowspan is None else self.rowspan)
 
     @cached_property
     def text(self) -> str:
