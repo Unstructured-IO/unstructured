@@ -7,7 +7,7 @@ unlike the `.ppt` format which was binary and proprietary.
 from __future__ import annotations
 
 from functools import cached_property
-from typing import IO, Any, Iterator, Protocol, Sequence
+from typing import IO, Any, Iterator, Protocol, Sequence, cast
 
 import pptx
 from pptx.presentation import Presentation
@@ -96,6 +96,7 @@ def partition_pptx(
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
     include_slide_notes: bool | None = None,
+    include_off_slide_shapes: bool = False,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
     strategy: str = PartitionStrategy.FAST,
@@ -113,6 +114,8 @@ def partition_pptx(
         If True, includes a PageBreak element between slides
     include_slide_notes
         If True, includes the slide notes as element
+    include_off_slide_shapes
+        If True, also include text from shapes that are mostly outside the slide.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -129,6 +132,7 @@ def partition_pptx(
         file_path=filename,
         include_page_breaks=include_page_breaks,
         include_slide_notes=include_slide_notes,
+        include_off_slide_shapes=include_off_slide_shapes,
         infer_table_structure=infer_table_structure,
         strategy=strategy,
         starting_page_number=starting_page_number,
@@ -336,8 +340,26 @@ class _PptxPartitioner:
 
     def _shape_is_off_slide(self, shape: Shape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
-        # NOTE - skip check if no top or left position (shape displayed top left)
-        return bool((shape.top and shape.left) and (shape.top < 0 or shape.left < 0))
+        if self._opts.include_off_slide_shapes:
+            return False
+        # -- python-pptx reports a missing position as `None` even though its type says `Length` --
+        left = cast("int | None", shape.left)
+        top = cast("int | None", shape.top)
+        width = cast("int | None", shape.width)
+        height = cast("int | None", shape.height)
+        # -- a shape with no position is placed at the top-left of the slide, so it is on-slide --
+        if left is None or top is None:
+            return False
+        slide_width = self._presentation.slide_width
+        slide_height = self._presentation.slide_height
+        if slide_width is None or slide_height is None:
+            return left < 0 or top < 0
+        # -- a zero-area shape is on-slide when its origin is --
+        if not width or not height:
+            return not (0 <= left <= slide_width and 0 <= top <= slide_height)
+        visible_width = max(0, min(left + width, slide_width) - max(left, 0))
+        visible_height = max(0, min(top + height, slide_height) - max(top, 0))
+        return visible_width * visible_height < 0.5 * width * height
 
 
 class PptxPartitionerOptions:
@@ -360,6 +382,7 @@ class PptxPartitionerOptions:
         file_path: str | None,
         include_page_breaks: bool,
         include_slide_notes: bool | None,
+        include_off_slide_shapes: bool = False,
         infer_table_structure: bool,
         strategy: str,
         starting_page_number: int = 1,
@@ -368,6 +391,7 @@ class PptxPartitionerOptions:
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._include_slide_notes = include_slide_notes
+        self._include_off_slide_shapes = include_off_slide_shapes
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
         # -- options object maintains page-number state --
@@ -393,6 +417,11 @@ class PptxPartitionerOptions:
     def include_slide_notes(self) -> bool:
         """When True, also partition any text found in slide notes as part of each slide."""
         return False if self._include_slide_notes is None else self._include_slide_notes
+
+    @cached_property
+    def include_off_slide_shapes(self) -> bool:
+        """When True, include text from shapes that are mostly outside the slide."""
+        return self._include_off_slide_shapes
 
     def increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
