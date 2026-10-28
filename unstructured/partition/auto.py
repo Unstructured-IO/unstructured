@@ -37,7 +37,7 @@ def partition(
     ssl_verify: bool = True,
     request_timeout: Optional[int] = None,
     strategy: str = PartitionStrategy.AUTO,
-    skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic", "webp"],
+    skip_infer_table_types: Optional[list[str]] = None,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
@@ -89,7 +89,8 @@ def partition(
         to 'hi_res', otherwise partition simply extracts the text from the document
         and processes it.
     skip_infer_table_types
-        The document types that you want to skip table extraction with.
+        The document types that you want to skip table extraction with. When omitted, defaults to
+        `["pdf", "jpg", "png", "heic", "webp"]`.
     languages
         The languages present in the document, for use in partitioning and/or OCR. For partitioning
         image or pdf documents with Tesseract, you'll first need to install the appropriate
@@ -175,6 +176,11 @@ def partition(
         )
 
     set_partition_document_type(file_type)
+
+    # `None` is the documented default; resolve it here rather than in the signature so that a
+    # mutable list is not shared between calls (issue #3063).
+    if skip_infer_table_types is None:
+        skip_infer_table_types = ["pdf", "jpg", "png", "heic", "webp"]
 
     if file is not None:
         file.seek(0)
