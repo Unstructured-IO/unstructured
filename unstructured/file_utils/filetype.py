@@ -276,7 +276,11 @@ class _FileTypeDetector:
             return None
 
         # -- otherwise we trust the passed `content_type` as long as `FileType` recognizes it --
-        return FileType.from_mime_type(self._ctx.content_type)
+        file_type = FileType.from_mime_type(self._ctx.content_type)
+
+        # -- except "application/octet-stream", which maps to `FileType.UNK`. Servers commonly send
+        # -- it for any binary download, so it says nothing about the file-type --
+        return None if file_type is FileType.UNK else file_type
 
     @property
     def _disambiguate_json_file_type(self) -> FileType:
