@@ -690,6 +690,11 @@ def test_partition_text_element_metadata_raises_TypeError():
         partition_text(example_doc_path("norwich-city.txt"), languages="eng")
 
 
+def test_partition_text_keeps_languages_arg_on_short_ascii_text():
+    elements = partition_text(text="Bonjour le monde", languages=["fra"])
+    assert [e.metadata.languages for e in elements] == [["fra"]]
+
+
 def test_partition_text_detects_more_than_3_languages():
     elements = partition_text(
         example_doc_path("language-docs/UDHR_first_article_all.txt"),

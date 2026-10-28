@@ -442,6 +442,10 @@ def detect_languages(
     responsible for returning valid ISO 639-3 codes (e.g. "eng", "fra"); invalid
     entries are filtered out and a warning is logged; if none remain, this function
     returns None.
+
+    The short-text rule applies only when ``languages`` contains "auto". When the
+    caller passes explicit languages, those are returned for short text too, and
+    ``language_fallback`` is not called.
     """
     if languages is None:
         languages = ["auto"]

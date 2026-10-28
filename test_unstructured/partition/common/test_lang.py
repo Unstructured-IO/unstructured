@@ -160,6 +160,13 @@ def test_detect_languages_short_ascii_text_ignores_fallback_when_languages_provi
     assert result == ["fra"]
 
 
+def test_detect_languages_does_not_call_fallback_when_languages_provided():
+    def fallback(text: str) -> list[str]:
+        raise AssertionError("language_fallback must not be called for explicit languages")
+
+    assert detect_languages("Hi there.", ["fra"], language_fallback=fallback) == ["fra"]
+
+
 def test_detect_languages_warns_for_auto_and_other_input(caplog: LogCaptureFixture):
     text = "This is another short sentence."
     languages = ["en", "auto", "rus"]
