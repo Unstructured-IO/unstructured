@@ -1,0 +1,46 @@
+unstructured/partition/odt.py
+  s_95df06567bff8f::t_d2c9db51f07665 8
+  s_95df06567bff8f::t_ff2f0c1f628a4a 119,130,134-152
+  s_95df06567bff8f::t_2d6e791cc2d350 122-128
+unstructured/partition/docx.py
+  s_95df06567bff8f::t_9cbf9f04b4beb9 51
+  s_95df06567bff8f::t_397627a1a96c29 249-254
+  s_95df06567bff8f::t_5af9c8e7394348 678-685
+  s_95df06567bff8f::t_5c158d825466b9 378,381
+test_unstructured/partition/test_odt.py
+  s_95df06567bff8f::t_eb4598a9e3f48b 209-226
+  s_95df06567bff8f::t_cc91354550441f 243-258
+  s_95df06567bff8f::t_394e1dfb9343e4 227-242
+  s_95df06567bff8f::t_8c3e3793e67745 7-8,30
+unstructured/partition/csv.py
+  s_95df06567bff8f::t_8d5837baacf1e6 344-348
+  s_95df06567bff8f::t_21031721cfdedd 612-619
+test_unstructured/partition/test_docx.py
+  s_95df06567bff8f::t_1cda2d8b1d4e66 53
+  s_95df06567bff8f::t_e084109f0737f6 68-95
+  s_95df06567bff8f::t_9d1da341e2fb37 2804-2820
+  s_95df06567bff8f::t_175a79664eeb16 12
+  s_95df06567bff8f::t_38dcd1f0a43ae6 2407,2415-2417
+  s_95df06567bff8f::t_4933e5e48cb95f 2821
+  s_95df06567bff8f::t_6f4480c65fb8e2 2822
+test_unstructured/partition/test_csv.py
+  s_95df06567bff8f::t_1fcd0aa0a3f1f8 38
+  s_95df06567bff8f::t_dc373268605b4e 363-370,372
+  s_95df06567bff8f::t_d3399295643bb2 371,373-376
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "811438aec7799e36bc17bd5868c8aea0100f7995",
+  "prompts": {},
+  "sessions": {
+    "s_95df06567bff8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fc8a1447-11a2-4783-bb04-a9762641763d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "aballman <35912177+aballman@users.noreply.github.com>"
+    }
+  }
+}
