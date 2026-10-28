@@ -440,6 +440,20 @@ def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
     return quopri.decodestring(text.encode(formatted_encoding)).decode(formatted_encoding)
 
 
+# Leading global inline flags such as `(?i)` must stay at the start of the expression, so they are
+# kept outside the group that anchors the rest of the pattern.
+_LEADING_GLOBAL_FLAGS = re.compile(r"(?:\(\?[aiLmsux]+\))+")
+
+
+def _split_leading_flags(pattern: str) -> Tuple[str, str]:
+    match = _LEADING_GLOBAL_FLAGS.match(pattern)
+    if match is None:
+        return "", pattern
+    flags, body = match.group(), pattern[match.end() :]
+    # In verbose mode a trailing `# comment` would swallow the closing parenthesis of the group.
+    return flags, f"{body}\n" if "x" in flags else body
+
+
 def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
     """Removes prefixes from a string according to the specified pattern. Strips leading
     whitespace if the strip parameter is set to True.
@@ -452,7 +466,8 @@ def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool
     strip: If True, removes leading whitespace from the cleaned string.
     """
     flags = re.IGNORECASE if ignore_case else 0
-    clean_text = re.sub(rf"^(?:{pattern})", "", text, flags=flags)
+    leading_flags, body = _split_leading_flags(pattern)
+    clean_text = re.sub(rf"{leading_flags}^(?:{body})", "", text, flags=flags)
     clean_text = clean_text.lstrip() if strip else clean_text
     return clean_text
 
@@ -469,7 +484,8 @@ def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: boo
     strip: If True, removes trailing whitespace from the cleaned string.
     """
     flags = re.IGNORECASE if ignore_case else 0
-    clean_text = re.sub(rf"(?:{pattern})$", "", text, flags=flags)
+    leading_flags, body = _split_leading_flags(pattern)
+    clean_text = re.sub(rf"{leading_flags}(?:{body})$", "", text, flags=flags)
     clean_text = clean_text.rstrip() if strip else clean_text
     return clean_text
 
