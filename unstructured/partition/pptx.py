@@ -6,6 +6,7 @@ unlike the `.ppt` format which was binary and proprietary.
 
 from __future__ import annotations
 
+import math
 from functools import cached_property
 from typing import IO, Any, Iterator, Protocol, Sequence, cast
 
@@ -64,11 +65,17 @@ def _group_transform(group: Any) -> tuple[int, int, int, int, int, int, int, int
 
     A group shape's `a:off`/`a:ext` position it on the slide while its `a:chOff`/`a:chExt` define
     the coordinate system of the shapes it contains. Returns `None` when any of those values is
-    missing or the child coordinate system has no area.
+    missing, the child coordinate system has no area, or the group carries a rotation or flip.
+    Those are not part of the translation and scaling this mapping applies, so the caller uses the
+    shape's own coordinates for the whole group instead of a partial box.
     """
     grpSpPr = group.find(qn("p:grpSpPr"))
     xfrm = grpSpPr.find(qn("a:xfrm")) if grpSpPr is not None else None
     if xfrm is None:
+        return None
+    if xfrm.get("rot") not in (None, "0"):
+        return None
+    if xfrm.get("flipH") in ("1", "true") or xfrm.get("flipV") in ("1", "true"):
         return None
     off = xfrm.find(qn("a:off"))
     ext = xfrm.find(qn("a:ext"))
@@ -395,9 +402,10 @@ class _PptxPartitioner:
 
         A shape inside a group shape is positioned in the group's child coordinate system
         (`a:chOff`/`a:chExt`), which the group's own `a:off`/`a:ext` translate and scale onto the
-        slide. Walks up the group hierarchy and maps the box through each group. Falls back to the
-        shape's own coordinates when a group does not provide a usable transform, preserving the
-        previous behavior for those groups.
+        slide. Walks up the group hierarchy and maps the box through each group. A rotated leaf
+        maps to the bounding box of its rotated corners. Falls back to the shape's own coordinates
+        when a group does not provide a usable transform (including a rotated or flipped group),
+        preserving the previous behavior for those groups.
         """
         shape_left = cast("int | None", shape.left)
         shape_top = cast("int | None", shape.top)
@@ -406,22 +414,52 @@ class _PptxPartitioner:
         if shape_left is None or shape_top is None:
             return shape_left, shape_top, shape_width, shape_height
 
-        left, top = shape_left, shape_top
-        width, height = shape_width, shape_height
+        scale_x, scale_y = 1.0, 1.0
+        offset_x, offset_y = 0.0, 0.0
         element = shape._element
+        grouped = False
         while (parent := element.getparent()) is not None and parent.tag == qn("p:grpSp"):
             transform = _group_transform(parent)
             if transform is None:
                 return shape_left, shape_top, shape_width, shape_height
             off_x, off_y, ext_cx, ext_cy, ch_off_x, ch_off_y, ch_ext_cx, ch_ext_cy = transform
-            left = off_x + (left - ch_off_x) * ext_cx / ch_ext_cx
-            top = off_y + (top - ch_off_y) * ext_cy / ch_ext_cy
-            if width is not None:
-                width = width * ext_cx / ch_ext_cx
-            if height is not None:
-                height = height * ext_cy / ch_ext_cy
+            group_scale_x = ext_cx / ch_ext_cx
+            group_scale_y = ext_cy / ch_ext_cy
+            offset_x = off_x + (offset_x - ch_off_x) * group_scale_x
+            offset_y = off_y + (offset_y - ch_off_y) * group_scale_y
+            scale_x *= group_scale_x
+            scale_y *= group_scale_y
+            grouped = True
             element = parent
-        return left, top, width, height
+
+        if not grouped:
+            return shape_left, shape_top, shape_width, shape_height
+        left = offset_x + shape_left * scale_x
+        top = offset_y + shape_top * scale_y
+        if shape_width is None or shape_height is None:
+            return left, top, shape_width, shape_height
+        rotation = shape.rotation
+        if not rotation:
+            return left, top, shape_width * scale_x, shape_height * scale_y
+        # -- rotation is about the shape's center, so the mapped box is the bounding box of the
+        # -- rotated corners, mapped in turn through the group transforms --
+        radians = math.radians(rotation)
+        cos, sin = math.cos(radians), math.sin(radians)
+        center_x = shape_left + shape_width / 2
+        center_y = shape_top + shape_height / 2
+        half_width, half_height = shape_width / 2, shape_height / 2
+        corners = [
+            (
+                center_x + sign_x * half_width * cos - sign_y * half_height * sin,
+                center_y + sign_x * half_width * sin + sign_y * half_height * cos,
+            )
+            for sign_x in (-1, 1)
+            for sign_y in (-1, 1)
+        ]
+        mapped_xs = [offset_x + corner_x * scale_x for corner_x, _ in corners]
+        mapped_ys = [offset_y + corner_y * scale_y for _, corner_y in corners]
+        left, top = min(mapped_xs), min(mapped_ys)
+        return left, top, max(mapped_xs) - left, max(mapped_ys) - top
 
 
 class PptxPartitionerOptions:

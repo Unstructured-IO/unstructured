@@ -350,20 +350,28 @@ def _add_group(
     child_offset: tuple[int, int],
     child_extent: tuple[int, int],
     shape_id: int,
+    rotation: int | None = None,
+    flip_h: bool = False,
 ) -> Any:
     """Move the `children` XML elements into a new `p:grpSp` element appended to `parent`.
 
     `python-pptx` has no public API for creating a group shape, so the group is built from XML. The
     `a:off`/`a:ext` of the group place it on the slide, while `a:chOff`/`a:chExt` define the
-    coordinate system its children are positioned in.
+    coordinate system its children are positioned in. `rotation` (in degrees) and `flip_h` add the
+    group-level `rot`/`flipH` attributes the partitioner does not map.
     """
+    xfrm_attributes = ""
+    if rotation:
+        xfrm_attributes += ' rot="%d"' % (rotation * 60000)
+    if flip_h:
+        xfrm_attributes += ' flipH="1"'
     group = parse_xml(
         "<p:grpSp %s>"
         "<p:nvGrpSpPr>"
         '<p:cNvPr id="%d" name="Group %d"/>'
         "<p:cNvGrpSpPr/><p:nvPr/>"
         "</p:nvGrpSpPr>"
-        "<p:grpSpPr><a:xfrm>"
+        "<p:grpSpPr><a:xfrm%s>"
         '<a:off x="%d" y="%d"/>'
         '<a:ext cx="%d" cy="%d"/>'
         '<a:chOff x="%d" y="%d"/>'
@@ -374,6 +382,7 @@ def _add_group(
             nsdecls("p", "a"),
             shape_id,
             shape_id,
+            xfrm_attributes,
             offset[0],
             offset[1],
             extent[0],
@@ -459,6 +468,137 @@ def test_partition_pptx_excludes_group_children_that_map_off_the_slide(
     assert [e.text for e in elements] == ["On the slide."]
 
 
+def test_partition_pptx_keeps_group_child_when_the_group_is_flipped(
+    tmp_path: pathlib.Path,
+):
+    """A flipped group cannot be mapped by translation and scaling, so the child keeps its own box.
+
+    Translating the child without applying the flip would put it off the slide and drop it, while
+    the unflipped coordinates are on the slide, as they were before group coordinates were mapped.
+    """
+    filename = str(tmp_path / "test-group-flipped.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    txBox = slide.shapes.add_textbox(Inches(3), Inches(0), Inches(1), Inches(1))
+    txBox.text_frame.text = "Kept because the group flip is not mapped."
+
+    _add_group(
+        slide.shapes._spTree,
+        [txBox._element],
+        offset=(Inches(8), Inches(1)),
+        extent=(Inches(4), Inches(2)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(4), Inches(2)),
+        shape_id=100,
+        flip_h=True,
+    )
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == ["Kept because the group flip is not mapped."]
+
+
+def test_partition_pptx_keeps_group_child_when_the_group_is_rotated(
+    tmp_path: pathlib.Path,
+):
+    """A rotated group cannot be mapped by translation and scaling.
+
+    The child keeps its own box, as it did before group coordinates were mapped.
+    """
+    filename = str(tmp_path / "test-group-rotated.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    txBox = slide.shapes.add_textbox(Inches(3), Inches(0), Inches(1), Inches(1))
+    txBox.text_frame.text = "Kept because the group rotation is not mapped."
+
+    _add_group(
+        slide.shapes._spTree,
+        [txBox._element],
+        offset=(Inches(8), Inches(1)),
+        extent=(Inches(4), Inches(2)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(4), Inches(2)),
+        shape_id=100,
+        rotation=180,
+    )
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == ["Kept because the group rotation is not mapped."]
+
+
+def test_partition_pptx_keeps_group_child_when_an_outer_group_is_unsupported(
+    tmp_path: pathlib.Path,
+):
+    """An inner transform is not left partly applied when an outer group cannot be mapped."""
+    filename = str(tmp_path / "test-nested-group-unsupported-outer.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    txBox = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(1), Inches(0.5))
+    txBox.text_frame.text = "Kept because the outer group flip is not mapped."
+
+    inner_group = _add_group(
+        slide.shapes._spTree,
+        [txBox._element],
+        offset=(Inches(20), Inches(0)),
+        extent=(Inches(2), Inches(2)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(2), Inches(2)),
+        shape_id=101,
+    )
+    _add_group(
+        slide.shapes._spTree,
+        [inner_group],
+        offset=(Inches(0), Inches(0)),
+        extent=(Inches(2), Inches(2)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(2), Inches(2)),
+        shape_id=100,
+        flip_h=True,
+    )
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == ["Kept because the outer group flip is not mapped."]
+
+
+def test_partition_pptx_include_off_slide_shapes_keeps_an_off_slide_group_child(
+    tmp_path: pathlib.Path,
+):
+    """`include_off_slide_shapes=True` skips the visibility check for group children as well."""
+    filename = str(tmp_path / "test-group-translated-off-slide-included.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    txBox = slide.shapes.add_textbox(Inches(0.5), Inches(0.25), Inches(1), Inches(0.5))
+    txBox.text_frame.text = "Kept by include_off_slide_shapes."
+
+    _add_group(
+        slide.shapes._spTree,
+        [txBox._element],
+        offset=(Inches(20), Inches(1)),
+        extent=(Inches(2), Inches(1)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(2), Inches(1)),
+        shape_id=100,
+    )
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename, include_off_slide_shapes=True)
+
+    assert [e.text for e in elements] == ["Kept by include_off_slide_shapes."]
+
+
 def test_partition_pptx_maps_scaled_group_child_coordinates_onto_the_slide(
     tmp_path: pathlib.Path,
 ):
@@ -498,6 +638,39 @@ def test_partition_pptx_maps_scaled_group_child_coordinates_onto_the_slide(
     elements = partition_pptx(filename=filename)
 
     assert [e.text for e in elements] == ["Visible after the group scale."]
+
+
+def test_partition_pptx_uses_the_rotated_bounds_of_a_grouped_leaf(
+    tmp_path: pathlib.Path,
+):
+    """A grouped leaf rotates about its center, so the mapped box is the rotated bounds.
+
+    The translated unrotated box hangs off the bottom of the slide by more than half its area, but
+    the leaf is turned upright, and the rotated bounds are visible.
+    """
+    filename = str(tmp_path / "test-group-rotated-leaf.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    txBox = slide.shapes.add_textbox(Inches(3), Inches(0), Inches(4), Inches(1))
+    txBox.text_frame.text = "Visible as a rotated box."
+    txBox.rotation = 90
+
+    _add_group(
+        slide.shapes._spTree,
+        [txBox._element],
+        offset=(Inches(4), Inches(6.9)),
+        extent=(Inches(4), Inches(1)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(4), Inches(1)),
+        shape_id=100,
+    )
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == ["Visible as a rotated box."]
 
 
 def test_partition_pptx_group_with_zero_area_child_coordinates_keeps_previous_behavior(
