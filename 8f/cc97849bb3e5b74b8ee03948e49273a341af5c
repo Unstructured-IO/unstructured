@@ -1,0 +1,26 @@
+test_unstructured/partition/test_docx.py
+  s_95df06567bff8f::t_a71cfed5e6ba4c 9
+  s_95df06567bff8f::t_4afc22ab3c1ace 2773-2779,2792-2793,2796
+  s_95df06567bff8f::t_4933e5e48cb95f 2797
+  s_95df06567bff8f::t_9d1da341e2fb37 2780-2791,2794-2795
+  s_95df06567bff8f::t_6f4480c65fb8e2 2798
+unstructured/partition/docx.py
+  s_95df06567bff8f::t_882d9ee7de7929 674-675,678-681
+  s_95df06567bff8f::t_5af9c8e7394348 672-673,676-677,682-683
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8fcc97849bb3e5b74b8ee03948e49273a341af5c",
+  "prompts": {},
+  "sessions": {
+    "s_95df06567bff8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fc8a1447-11a2-4783-bb04-a9762641763d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
