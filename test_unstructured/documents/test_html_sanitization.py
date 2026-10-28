@@ -1,9 +1,12 @@
 """Unit tests for the shared HTML output-sanitization policy (GHSA-v5mq-3xhg-98m9)."""
 
+from html.parser import HTMLParser
+
 import pytest
 
 from unstructured.documents.html_sanitization import (
     ALLOWED_URL_SCHEMES,
+    _add_rel_to_blank_target_links,
     is_event_handler_attribute,
     is_safe_tag,
     is_safe_url,
@@ -11,6 +14,29 @@ from unstructured.documents.html_sanitization import (
     sanitize_html_fragment,
     sanitize_style_attribute,
 )
+
+
+class _AttributeCollector(HTMLParser):
+    """Collect the attributes of every start tag, so tests assert on names, not text."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.attributes: list[dict[str, str | None]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.attributes.append(dict(attrs))
+
+
+def _all_attributes(html_fragment: str) -> list[dict[str, str | None]]:
+    """Return the attributes of every start tag in ``html_fragment``."""
+    collector = _AttributeCollector()
+    collector.feed(html_fragment)
+    return collector.attributes
+
+
+def _anchor_attributes(html_fragment: str) -> dict[str, str | None]:
+    """Return the attributes of the first start tag in ``html_fragment``."""
+    return _all_attributes(html_fragment)[0]
 
 
 class DescribeIsSafeUrl:
@@ -158,7 +184,12 @@ class DescribeSanitizeAttributes:
             {"colspan": "2", "rowspan": "3", "headers": "h1", "scope": "col"},
             tag_name="td",
         )
-        assert result == {"colspan": "2", "rowspan": "3", "headers": "h1", "scope": "col"}
+        assert result == {
+            "colspan": "2",
+            "rowspan": "3",
+            "headers": "h1",
+            "scope": "col",
+        }
 
     def it_filters_inline_style_values(self):
         result = sanitize_attributes(
@@ -268,6 +299,165 @@ class DescribeSanitizeHtmlFragment:
             '<a href="https://example.com" target="_blank" rel="noopener noreferrer">x</a>'
         )
         assert cleaned.count("rel=") == 1
+
+    def it_completes_a_partial_rel_on_blank_target_links(self):
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank" rel="nofollow">x</a>'
+        )
+        assert 'rel="nofollow noopener noreferrer"' in cleaned
+
+    def it_keeps_a_rel_lookalike_inside_another_attribute_value(self):
+        cleaned = sanitize_html_fragment(
+            '<a title="rel=\'x onmouseover=alert(1)\'" href="https://example.com"'
+            ' rel="noopener noreferrer" target="_blank">x</a>'
+        )
+        attributes = _anchor_attributes(cleaned)
+        assert "onmouseover" not in attributes
+        # -- the label keeps its inert text and the real `rel` is left complete --
+        assert attributes["title"] == "rel='x onmouseover=alert(1)'"
+        assert attributes["rel"] == "noopener noreferrer"
+
+    def it_keeps_an_entity_encoded_rel_lookalike_inside_another_attribute_value(self):
+        cleaned = sanitize_html_fragment(
+            '<a title="rel=&#39;x onmouseover=alert(1)&#39;" href="https://example.com"'
+            ' rel="nofollow" target="_blank">x</a>'
+        )
+        attributes = _anchor_attributes(cleaned)
+        assert "onmouseover" not in attributes
+        assert attributes["rel"] == "nofollow noopener noreferrer"
+
+    def it_ignores_unrelated_attributes_before_the_real_rel(self):
+        cleaned = sanitize_html_fragment(
+            '<a data-target="_blank" title="rel=\'x onmouseover=alert(1)\'"'
+            ' href="https://example.com" target="_blank" rel="nofollow">x</a>'
+        )
+        attributes = _anchor_attributes(cleaned)
+        assert "onmouseover" not in attributes
+        assert attributes["data-target"] == "_blank"
+        assert attributes["rel"] == "nofollow noopener noreferrer"
+
+    def it_does_not_treat_suffixed_attribute_names_as_target_or_rel(self):
+        # -- `data-target`/`aria-rel` are not the real attributes; nothing to do --
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" data-target="_blank" aria-rel="noopener">x</a>'
+        )
+        attributes = _anchor_attributes(cleaned)
+        assert "rel" not in attributes
+        assert "target" not in attributes
+
+    def it_completes_rel_tokens_without_duplicating_present_ones(self):
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_BLANK" rel="NOOPENER nofollow">x</a>'
+        )
+        attributes = _anchor_attributes(cleaned)
+        # -- present tokens are kept as written, only the missing one is added --
+        assert attributes["rel"] == "NOOPENER nofollow noreferrer"
+
+    def it_keeps_an_inert_rel_lookalike_when_serializing_elements(self):
+        from unstructured.documents.elements import ElementMetadata, Text
+        from unstructured.partition.html.convert import elements_to_html
+
+        element = Text(
+            text="x",
+            metadata=ElementMetadata(
+                text_as_html=(
+                    "<a title=\"rel='x onmouseover=alert(1)'\""
+                    ' href="https://example.com" target="_blank">x</a>'
+                ),
+                page_number=1,
+            ),
+        )
+        cleaned = elements_to_html([element])
+        anchors = [a for a in _all_attributes(cleaned) if a.get("href") == "https://example.com"]
+        assert len(anchors) == 1
+        assert "onmouseover" not in anchors[0]
+        assert anchors[0]["rel"] == "noopener noreferrer"
+
+    def it_adds_a_missing_rel_without_touching_the_link_text(self):
+        cleaned = sanitize_html_fragment('<a href="https://example.com" target="_blank">x</a>')
+        attributes = _anchor_attributes(cleaned)
+        assert attributes["rel"] == "noopener noreferrer"
+        # -- the closing delimiter must be emitted once: the text stays `x`, not `>x` --
+        assert ">>" not in cleaned
+        assert cleaned.endswith(">x</a>")
+
+    def it_completes_an_empty_rel_value(self):
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank" rel="">x</a>'
+        )
+        attributes = _anchor_attributes(cleaned)
+        assert attributes["rel"] == "noopener noreferrer"
+
+    def it_does_not_treat_a_suffixed_target_value_as_blank(self):
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank-report">x</a>'
+        )
+        attributes = _anchor_attributes(cleaned)
+        assert "rel" not in attributes
+
+    def it_completes_a_blank_link_whose_attribute_name_holds_a_quote(self):
+        # -- the quote belongs to the attribute name `data-x"`; the anchor itself is real, so
+        # -- the required tokens must still be applied instead of skipping the link --
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank" data-x"="plain">x</a>'
+        )
+        attributes = _anchor_attributes(cleaned)
+        assert attributes["rel"] == "noopener noreferrer"
+        assert not any(name.lower().startswith("on") for name in attributes)
+
+    def it_does_not_rewrite_a_fake_anchor_inside_another_attribute_value(self):
+        # -- unit level: the outer boundary is the part a scanner cannot establish, so this
+        # -- checks the rewriting step itself against a fragment whose quoted value carries an
+        # -- anchor-looking substring --
+        fragment = "<p title=\"<a target='_blank' rel=foo onmouseover=alert(1) x>\">x</p>"
+        assert _add_rel_to_blank_target_links(fragment) == fragment
+
+    def it_keeps_a_fake_anchor_inside_another_attribute_value_inert(self):
+        # -- a serializer may leave `<` and `>` literal inside a quoted value, so an
+        # -- anchor-looking substring there is text, not an element: rewriting its `rel`
+        # -- would close the surrounding value and expose the rest as real attributes --
+        cleaned = sanitize_html_fragment(
+            "<p title=\"<a target='_blank' rel=foo onmouseover=alert(1) x>\">x</p>"
+        )
+        assert "rel=foo" in cleaned
+        assert not any(
+            name.lower().startswith("on") for attrs in _all_attributes(cleaned) for name in attrs
+        )
+        assert "noopener" not in cleaned
+
+    def it_does_not_treat_a_padded_target_value_as_blank(self):
+        # -- `target=" _blank"` names a browsing context; only the bare keyword is reserved --
+        for target in (" _blank", "_blank ", "_blank\t"):
+            cleaned = sanitize_html_fragment(
+                f'<a href="https://example.com" target="{target}">x</a>'
+            )
+            attributes = _anchor_attributes(cleaned)
+            assert "rel" not in attributes, target
+
+    def it_completes_rel_with_single_quoted_attributes(self):
+        cleaned = sanitize_html_fragment(
+            "<a href='https://example.com' target='_blank' rel='nofollow'>x</a>"
+        )
+        attributes = _anchor_attributes(cleaned)
+        assert attributes["rel"] == "nofollow noopener noreferrer"
+
+    def it_keeps_the_link_text_when_serializing_elements(self):
+        from unstructured.documents.elements import ElementMetadata, Text
+        from unstructured.partition.html.convert import elements_to_html
+
+        element = Text(
+            text="x",
+            metadata=ElementMetadata(
+                text_as_html='<a href="https://example.com" target="_blank">x</a>',
+                page_number=1,
+            ),
+        )
+        cleaned = elements_to_html([element])
+        anchors = [a for a in _all_attributes(cleaned) if a.get("href") == "https://example.com"]
+        assert len(anchors) == 1
+        assert anchors[0]["rel"] == "noopener noreferrer"
+        # -- the extra delimiter would show up as escaped text in front of the label --
+        assert "&gt;" not in cleaned
 
     def it_filters_inline_styles(self):
         cleaned = sanitize_html_fragment(

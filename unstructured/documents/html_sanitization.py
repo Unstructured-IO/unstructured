@@ -30,6 +30,8 @@ additionally runs the assembled document through :func:`sanitize_html_fragment`
 from __future__ import annotations
 
 import re
+from html import escape
+from html.parser import HTMLParser
 
 import nh3
 
@@ -200,15 +202,13 @@ _ATTRIBUTE_NAME_RE = re.compile(r"^[a-zA-Z_:][-a-zA-Z0-9_:.]*$")
 _SCHEME_RE = re.compile(r"^([a-zA-Z][a-zA-Z0-9+.\-]*):")
 
 _REQUIRED_BLANK_TARGET_REL_VALUES: frozenset[str] = frozenset({"noopener", "noreferrer"})
+# -- The reserved keyword for a new browsing context; a named context such as "report" is not it.
+_BLANK_TARGET_VALUE = "_blank"
 
 # -- Match an anchor start tag and detect `target="_blank"` / an existing `rel`
 # -- so we can add reverse-tabnabbing protection to new-tab links only. nh3's
 # -- output is well-formed (attribute values are escaped, so `>` never appears
 # -- inside one), which makes matching whole start tags with a regex safe. --
-_ANCHOR_START_TAG_RE = re.compile(r"<a\b[^>]*>", flags=re.IGNORECASE)
-_BLANK_TARGET_RE = re.compile(r"""\btarget\s*=\s*["']?_blank\b""", flags=re.IGNORECASE)
-_REL_ATTRIBUTE_RE = re.compile(r"""\brel\s*=""", flags=re.IGNORECASE)
-
 _CSS_COMMENT_RE = re.compile(r"/\*.*?\*/", flags=re.DOTALL)
 _CSS_UNSAFE_VALUE_RE = re.compile(
     r"(@import|expression\s*\(|url\s*\(|javascript:|vbscript:|data:|-moz-binding|behavior\s*:)",
@@ -382,6 +382,94 @@ def _nh3_attribute_filter(tag: str, attribute: str, value: str) -> str | None:
     return value
 
 
+class _RelCompletingParser(HTMLParser):
+    """Copy an HTML fragment, completing ``rel`` on ``target="_blank"`` anchors.
+
+    The fragment is tokenized instead of scanned with a regular expression, because an
+    anchor-looking substring inside another attribute's quoted value is not an element. A
+    regex cannot tell the two apart, and rewriting there would close the surrounding value and
+    expose whatever the value happens to contain.
+    """
+
+    def __init__(self) -> None:
+        """Start a parser that appends its tokens to :attr:`output`."""
+        super().__init__(convert_charrefs=False)
+        self.output: list[str] = []
+
+    def _rewrite_anchor(
+        self, tag: str, attrs: list[tuple[str, str | None]], self_closing: bool
+    ) -> str:
+        """Return ``tag`` with completed ``rel`` tokens, or the source text unchanged."""
+        if tag != "a":
+            return self.get_starttag_text()
+
+        opens_new_context = False
+        for name, value in attrs:
+            if name.lower() == "target" and (value or "").lower() == _BLANK_TARGET_VALUE:
+                opens_new_context = True
+                break
+        if not opens_new_context:
+            return self.get_starttag_text()
+
+        required = " ".join(sorted(_REQUIRED_BLANK_TARGET_REL_VALUES))
+        rebuilt: list[str] = ["<a"]
+        has_rel = False
+        for name, value in attrs:
+            if name.lower() == "rel":
+                has_rel = True
+                merged = _link_rel_with_required_values(value)
+                rebuilt.append(f' rel="{merged}"')
+                continue
+            if value is None:
+                rebuilt.append(f" {name}")
+            else:
+                rebuilt.append(f' {name}="{escape(value, quote=True)}"')
+        if not has_rel:
+            rebuilt.append(f' rel="{required}"')
+        rebuilt.append(" />" if self_closing else ">")
+        return "".join(rebuilt)
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        """Rewrite anchor start tags and copy every other start tag verbatim."""
+        self.output.append(self._rewrite_anchor(tag, attrs, self_closing=False))
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        """Rewrite self-closing anchor tags and copy every other one verbatim."""
+        self.output.append(self._rewrite_anchor(tag, attrs, self_closing=True))
+
+    def handle_endtag(self, tag: str) -> None:
+        """Copy an end tag."""
+        self.output.append(f"</{tag}>")
+
+    def handle_data(self, data: str) -> None:
+        """Copy text."""
+        self.output.append(data)
+
+    def handle_entityref(self, name: str) -> None:
+        """Copy a named character reference."""
+        self.output.append(f"&{name};")
+
+    def handle_charref(self, name: str) -> None:
+        """Copy a numeric character reference."""
+        self.output.append(f"&#{name};")
+
+    def handle_comment(self, data: str) -> None:
+        """Copy a comment."""
+        self.output.append(f"<!--{data}-->")
+
+    def handle_decl(self, decl: str) -> None:
+        """Copy a declaration."""
+        self.output.append(f"<!{decl}>")
+
+    def handle_pi(self, data: str) -> None:
+        """Copy a processing instruction."""
+        self.output.append(f"<?{data}>")
+
+    def unknown_decl(self, data: str) -> None:
+        """Copy a declaration the parser does not recognise."""
+        self.output.append(f"<![{data}]>")
+
+
 def _add_rel_to_blank_target_links(html_fragment: str) -> str:
     """Add reverse-tabnabbing ``rel`` tokens to ``target="_blank"`` anchors only.
 
@@ -390,15 +478,10 @@ def _add_rel_to_blank_target_links(html_fragment: str) -> str:
     only a concern for new-tab links, so we scope the tokens to anchors that
     actually open a new browsing context and leave same-tab links untouched.
     """
-
-    def add_rel(match: re.Match[str]) -> str:
-        tag = match.group(0)
-        if not _BLANK_TARGET_RE.search(tag) or _REL_ATTRIBUTE_RE.search(tag):
-            return tag
-        rel = " ".join(sorted(_REQUIRED_BLANK_TARGET_REL_VALUES))
-        return f'{tag[:-1].rstrip()} rel="{rel}">'
-
-    return _ANCHOR_START_TAG_RE.sub(add_rel, html_fragment)
+    parser = _RelCompletingParser()
+    parser.feed(html_fragment)
+    parser.close()
+    return "".join(parser.output)
 
 
 def sanitize_html_fragment(html_fragment: str) -> str:
