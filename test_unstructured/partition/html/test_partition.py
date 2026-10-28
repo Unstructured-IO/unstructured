@@ -11,6 +11,7 @@ import tempfile
 from typing import Any, Optional
 
 import pytest
+from bs4 import BeautifulSoup
 from lxml import etree
 
 from test_unstructured.unit_utils import (
@@ -28,7 +29,10 @@ from unstructured.documents.elements import (
     Address,
     CodeSnippet,
     CompositeElement,
+    Element,
     ElementType,
+    FigureCaption,
+    Image,
     ListItem,
     NarrativeText,
     Table,
@@ -2414,3 +2418,254 @@ def test_partition_html_extracts_a_sphinx_style_api_reference():
         "Returns",
         "An open connection object.",
     ]
+
+
+# -- figures (`<figure>`) -------------------------------------------------------------------------
+
+
+def test_partition_html_extracts_a_figure_image_and_its_caption():
+    """`<figure>` was `RemovedBlock`, so the image and its `<figcaption>` were both dropped.
+
+    Wikipedia wraps every thumbnail this way (#3606).
+    """
+    html_text = (
+        "<html><body><p>Intro.</p>"
+        '<figure typeof="mw:File/Thumb"><a href="/wiki/File:Tonnetz.svg">'
+        '<img src="//upload.wikimedia.org/tonnetz.svg" alt="Tonnetz diagram"></a>'
+        '<figcaption>The <a href="/wiki/Tonnetz">Tonnetz</a>, minor as upside-down major'
+        "</figcaption></figure></body></html>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [(type(e).__name__, e.text) for e in elements] == [
+        ("Text", "Intro."),
+        ("Image", "Tonnetz diagram"),
+        ("FigureCaption", "The Tonnetz, minor as upside-down major"),
+    ]
+    assert elements[1].metadata.image_url == "//upload.wikimedia.org/tonnetz.svg"
+    assert elements[2].metadata.link_texts == ["Tonnetz"]
+    assert elements[2].metadata.link_urls == ["/wiki/Tonnetz"]
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        ("<pre>x = 1</pre>", ("CodeSnippet", "x = 1")),
+        ("<table><tr><td>Q1</td><td>10</td></tr></table>", ("Table", "Q1 10")),
+    ],
+)
+def test_partition_html_keeps_non_image_figure_content_and_caption(
+    content: str, expected: tuple[str, str]
+):
+    html_text = (
+        f"<html><body><figure>{content}<figcaption>Caption text.</figcaption></figure>"
+        "</body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        expected,
+        ("FigureCaption", "Caption text."),
+    ]
+
+
+def test_partition_html_keeps_a_block_wrapped_figcaption_a_figure_caption():
+    html_text = (
+        '<html><body><figure><img src="/c.png" alt="C">'
+        "<figcaption><p>Wrapped caption text.</p></figcaption></figure></body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        ("Image", "C"),
+        ("FigureCaption", "Wrapped caption text."),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("figure_content", "ElementCls"),
+    [('<img src="/diagram.png" alt="Pipeline diagram">', Image), ("<pre>x = 1</pre>", CodeSnippet)],
+)
+def test_partition_html_keeps_the_heading_as_parent_across_a_figure(
+    figure_content: str, ElementCls: type[Element]
+):
+    html_text = (
+        f"<html><body><h1>Section</h1><figure>{figure_content}"
+        "<figcaption>Figure 1. The pipeline.</figcaption></figure>"
+        "<p>The pipeline has three stages.</p>"
+        "<h2>Subsection</h2><p>Each stage is described below.</p></body></html>"
+    )
+
+    section, content, caption, after, subsection, subsection_text = partition_html(text=html_text)
+
+    assert isinstance(content, ElementCls)
+    assert content.metadata.parent_id == section.id
+    assert caption.metadata.parent_id == section.id
+    assert after.metadata.parent_id == section.id
+    assert subsection.metadata.parent_id == section.id
+    assert subsection_text.metadata.parent_id == subsection.id
+
+
+def test_partition_html_gives_figure_elements_their_own_page_number():
+    html_text = (
+        '<html><body><div data-page-number="7"><figure>'
+        '<a href="/full.png"><img src="/thumb.png" alt="Thumbnail"></a>'
+        '<figcaption><p data-page-number="8">A caption that sits on the next page.</p>'
+        "</figcaption></figure></div></body></html>"
+    )
+
+    image, caption = partition_html(text=html_text)
+
+    assert isinstance(image, Image)
+    assert image.metadata.page_number == 7
+    assert isinstance(caption, FigureCaption)
+    assert caption.metadata.page_number == 8
+
+
+def _parent_texts(elements: list[Element]) -> dict[str, str | None]:
+    by_id = {e.id: e for e in elements}
+    return {
+        e.text: by_id[e.metadata.parent_id].text if e.metadata.parent_id else None for e in elements
+    }
+
+
+@pytest.mark.parametrize("unique_element_ids", [False, True])
+@pytest.mark.parametrize("heading", ["", "<h1>Guide</h1>"])
+def test_partition_html_keeps_a_figure_and_the_list_after_it_inside_their_list_item(
+    heading: str, unique_element_ids: bool
+):
+    """An image or caption ended the enclosing list item, so a nested list lost its parent."""
+    html_text = (
+        f"<html><body>{heading}<ul><li>Outer step"
+        '<figure><img src="/diagram.png" alt="Diagram"><pre>x = 1</pre>'
+        "<table><tr><td>Metric</td><td>10</td></tr></table>"
+        "<figcaption>Caption.</figcaption></figure>"
+        "<ul><li>Inner step</li></ul></li><li>Outer sibling</li></ul>"
+        "<p>Text after the list.</p></body></html>"
+    )
+
+    elements = partition_html(text=html_text, unique_element_ids=unique_element_ids)
+
+    root = "Guide" if heading else None
+    assert _parent_texts(elements) == {
+        **({"Guide": None} if heading else {}),
+        "Outer step": root,
+        "Diagram": "Outer step",
+        "x = 1": "Outer step",
+        "Metric 10": "Outer step",
+        "Caption.": "Outer step",
+        "Inner step": "Outer step",
+        "Outer sibling": root,
+        "Text after the list.": root,
+    }
+    assert len(elements) == (9 if heading else 8)
+
+    soup = BeautifulSoup(elements_to_html(elements, no_group_by_page=True), "html.parser")
+    tags = {e.text: soup.find(id=e.id) for e in elements}
+    for text in ("Diagram", "x = 1", "Metric 10", "Caption.", "Inner step"):
+        assert tags[text].find_parent("li") is tags["Outer step"]
+    assert tags["Outer sibling"].find_parent("li") is None
+    assert tags["Text after the list."].find_parent("li") is None
+
+
+@pytest.mark.parametrize(
+    ("list_html", "figure_parent"),
+    [
+        # -- the figure belongs to the list item it is in --
+        (
+            "<ul><li>Outer step<ul><li>Inner step{figure}<ul><li>Deepest step</li></ul></li>"
+            "<li>Inner sibling</li></ul></li><li>Outer sibling</li></ul>",
+            "Inner step",
+        ),
+        # -- or to the nearest enclosing one when its own item has no text --
+        (
+            "<ul><li>Outer step<ul><li>{figure}</li><li>Inner sibling</li></ul></li></ul>",
+            "Outer step",
+        ),
+        # -- a heading inside the list item takes over, as it does for the nested list --
+        (
+            "<ul><li>Outer step<h2>Subheading</h2>{figure}<ul><li>Inner step</li></ul></li></ul>",
+            "Subheading",
+        ),
+    ],
+)
+def test_partition_html_a_figure_in_a_list_leaves_the_other_parents_unchanged(
+    list_html: str, figure_parent: str
+):
+    figure = '<figure><img src="/d.png" alt="Diagram"><figcaption>Caption.</figcaption></figure>'
+    html_text = "<html><body><h1>Guide</h1>{}<p>Text after the list.</p></body></html>"
+
+    with_figure, without_figure = (
+        _parent_texts(partition_html(text=html_text.format(list_html.format(figure=f))))
+        for f in (figure, "")
+    )
+
+    assert with_figure.pop("Diagram") == figure_parent
+    assert with_figure.pop("Caption.") == figure_parent
+    assert with_figure == without_figure
+
+
+@pytest.mark.parametrize(
+    ("caption", "expected"),
+    [
+        # -- text after a leading icon --
+        (
+            '<img src="/icon.png" alt="Icon">Diagram legend',
+            [("Image", "Icon", 2), ("FigureCaption", "Diagram legend", 2)],
+        ),
+        # -- several paragraphs, one with its own page number --
+        (
+            '<p>First paragraph.</p><p data-page-number="3">Second paragraph.</p>',
+            [("FigureCaption", "First paragraph.", 2), ("FigureCaption", "Second paragraph.", 3)],
+        ),
+        # -- nested wrappers --
+        (
+            "<div><div><p>Nested caption.</p></div></div>",
+            [("FigureCaption", "Nested caption.", 2)],
+        ),
+        # -- headings, code and tables keep their own types --
+        (
+            "<h2>Caption heading</h2><pre>x = 2</pre>"
+            "<table><tr><td>Value</td><td>20</td></tr></table><p>Caption end.</p>",
+            [
+                ("Title", "Caption heading", 2),
+                ("CodeSnippet", "x = 2", 2),
+                ("Table", "Value 20", 2),
+                ("FigureCaption", "Caption end.", 2),
+            ],
+        ),
+    ],
+)
+def test_partition_html_keeps_all_figcaption_text_a_figure_caption(
+    caption: str, expected: list[tuple[str, str, int]]
+):
+    html_text = (
+        '<html><body><div data-page-number="1"><figure><img src="/d.png" alt="Diagram">'
+        f'<figcaption data-page-number="2">{caption}</figcaption>Text after the caption.'
+        "</figure><p>Text after the figure.</p></div></body></html>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [(e.category, e.text, e.metadata.page_number) for e in elements] == [
+        ("Image", "Diagram", 1),
+        *expected,
+        ("UncategorizedText", "Text after the caption.", 1),
+        ("UncategorizedText", "Text after the figure.", 1),
+    ]
+
+
+def test_partition_html_keeps_link_and_emphasis_metadata_on_a_wrapped_caption():
+    html_text = (
+        '<html><body><figure><img src="/d.png" alt="Diagram"><figcaption><div><p>The '
+        '<a href="/guide">guide</a> has <b>bold</b> text.</p></div></figcaption></figure>'
+        "</body></html>"
+    )
+
+    _, caption = partition_html(text=html_text)
+
+    assert isinstance(caption, FigureCaption)
+    assert caption.text == "The guide has bold text."
+    assert caption.metadata.link_texts == ["guide"]
+    assert caption.metadata.link_urls == ["/guide"]
+    assert caption.metadata.emphasized_text_contents == ["bold"]
+    assert caption.metadata.emphasized_text_tags == ["b"]

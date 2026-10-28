@@ -76,6 +76,7 @@ Other background
 from __future__ import annotations
 
 import html
+import itertools
 import re
 from collections import defaultdict, deque
 from functools import cached_property
@@ -92,6 +93,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     EmailAddress,
+    FigureCaption,
     Image,
     ListItem,
     NarrativeText,
@@ -99,7 +101,10 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.common.metadata import category_depth_from_html_tag
+from unstructured.partition.common.metadata import (
+    category_depth_from_html_tag,
+    set_element_hierarchy,
+)
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -265,6 +270,8 @@ class _ElementAccumulator:
             return
 
         # -- if we don't have a more specific element-class, choose one based on the text --
+        if ElementCls is None and self._element._is_in_figcaption:
+            ElementCls = FigureCaption
         if ElementCls is None:
             ElementCls = derive_element_type_from_text(normalized_text)
             # -- normalized text that contains only a single character is skipped unless it
@@ -363,19 +370,29 @@ class Flow(etree.ElementBase):
 
     @cached_property
     def _page_number(self) -> int | None:
-        """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute."""
-        # -- iterative, not recursive, because this can be called from deep inside nested
-        # -- unrecognized elements (which are Flow) where the call stack is already deep --
-        element: etree._Element | None = self
-        while isinstance(element, Flow):
+        """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute.
+
+        Phrasing ancestors are included, so an image inside an `<a>` gets its container's page.
+        """
+        for element in itertools.chain((self,), self.iterancestors()):
             page_attr = element.get("data-page-number")
-            if page_attr is not None:
-                try:
-                    return int(page_attr)
-                except (ValueError, TypeError):
-                    pass
-            element = element.getparent()
+            if page_attr is None:
+                continue
+            try:
+                return int(page_attr)
+            except (ValueError, TypeError):
+                continue
         return None
+
+    @cached_property
+    def _is_in_figcaption(self) -> bool:
+        """True when this element is a `<figcaption>` or inside one, but not in a nested figure."""
+        for element in itertools.chain((self,), self.iterancestors()):
+            if isinstance(element, FigureCaptionBlock):
+                return True
+            if isinstance(element, Figure):
+                return False
+        return False
 
     def iter_elements(self) -> Iterator[Element]:
         """Generate paragraph string for each block item within."""
@@ -473,6 +490,48 @@ class Heading(Flow):
     _ElementCls = Title
 
 
+class Figure(Flow):
+    """A `<figure>` element, such as an image, code listing or table with its `<figcaption>`.
+
+    It is traversed like a `<div>`. The distinct class keeps a list item from adopting a figure as
+    though it were a plain paragraph.
+    """
+
+    def iter_elements(self) -> Iterator[Element]:
+        """Parent the figure's content to the list item it is in, when there is one.
+
+        `set_element_hierarchy()` has no rule for an image or caption under a list item, so it
+        would end the item there and a nested list after the figure would lose its parent. Content
+        with a `parent_id` is skipped by that pass and leaves the item in place.
+        """
+        parent_id = None
+        for ancestor in self.iterancestors():
+            if isinstance(ancestor, Figure):
+                break
+            if isinstance(ancestor, ListItemBlock) and ancestor._figure_parent_id:
+                parent_id = ancestor._figure_parent_id
+                break
+
+        if parent_id is None:
+            yield from super().iter_elements()
+            return
+
+        for element in set_element_hierarchy(list(super().iter_elements())):
+            if element.metadata.parent_id is None:
+                element.metadata.parent_id = parent_id
+            yield element
+
+
+class FigureCaptionBlock(Flow):
+    """A `<figcaption>` element.
+
+    Its text, including text in nested blocks without an element class of their own, generates
+    `FigureCaption` elements.
+    """
+
+    _ElementCls = FigureCaption
+
+
 class ListBlock(Flow):
     """Either a `<ul>` or `<ol>` element, maybe a `<dl>` element at some point.
 
@@ -495,8 +554,13 @@ class ListItemBlock(Flow):
 
     _ElementCls = ListItem
 
+    # -- what a figure in this item is parented to: the item's own `ListItem`, or a later `Title`
+    # -- that ends the item for `set_element_hierarchy()`. Set while this item is traversed. --
+    _figure_parent_id: str | None = None
+
     def iter_elements(self) -> Iterator[Element]:
         """Adopt a sole text block, as produced by Markdown loose lists."""
+        self._figure_parent_id = None
         if len(self) == 1 and not (self.text or "").strip():
             child = self[0]
             # Only unwrap ordinary text blocks, not tables, images, headings, or code.
@@ -515,7 +579,18 @@ class ListItemBlock(Flow):
                     yield element
                 return
 
-        yield from super().iter_elements()
+        depth = self._element_accum._category_depth(ListItem)
+        for element in super().iter_elements():
+            if element.metadata.parent_id is None and (
+                isinstance(element, Title)
+                or (
+                    self._figure_parent_id is None
+                    and isinstance(element, ListItem)
+                    and element.metadata.category_depth == depth
+                )
+            ):
+                self._figure_parent_id = element.id
+            yield element
 
 
 class Pre(BlockItem):
@@ -1164,6 +1239,8 @@ element_class_lookup.get_namespace(None).update(
         "dt": BlockItem,
         "li": ListItemBlock,
         # -- image --
+        "figure": Figure,
+        "figcaption": FigureCaptionBlock,
         "img": ImageBlock,
         # -- table --
         "table": TableBlock,
@@ -1226,7 +1303,6 @@ element_class_lookup.get_namespace(None).update(
         "xml": RemovedPhrasing,  # -- legacy "data island", like Office document-properties --
         # -- removed block --
         "details": RemovedBlock,  # -- likely boilerplate --
-        "figure": RemovedBlock,
         "hr": RemovedBlock,
         "nav": RemovedBlock,
         "template": RemovedBlock,
