@@ -383,6 +383,19 @@ def and_it_rehydrates_element_shaped_lines_including_a_TableChunk_line():
     assert elements[1].metadata.table_id == "t-1"
 
 
+def and_it_keeps_the_embeddings_of_rehydrated_elements():
+    serialized = elements_to_ndjson(
+        [
+            Title("Intro", embeddings=[0.1, 0.2, 0.3]),
+            Text("Hello there.", embeddings=[0.4, 0.5, 0.6]),
+        ]
+    )
+
+    elements = partition_ndjson(text=serialized)
+
+    assert [e.embeddings for e in elements] == [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+
+
 def it_chunks_arbitrary_ndjson_when_a_chunking_strategy_is_specified():
     chunks = partition_ndjson(text='{"hi": "there"}\n', chunking_strategy="basic")
 
