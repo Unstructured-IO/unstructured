@@ -10,6 +10,7 @@ from functools import cached_property
 from typing import IO, Any, Iterator, Protocol, Sequence, cast
 
 import pptx
+from pptx.oxml.ns import qn
 from pptx.presentation import Presentation
 from pptx.shapes.autoshape import Shape
 from pptx.shapes.base import BaseShape
@@ -55,6 +56,36 @@ def _break_lines(text: str) -> str:
     element text.
     """
     return text.replace("\v", "\n")
+
+
+def _group_transform(group: Any) -> tuple[int, int, int, int, int, int, int, int] | None:
+    """The `a:xfrm` values of `group` as `(off_x, off_y, ext_cx, ext_cy, chOff_x, chOff_y,
+    chExt_cx, chExt_cy)`.
+
+    A group shape's `a:off`/`a:ext` position it on the slide while its `a:chOff`/`a:chExt` define
+    the coordinate system of the shapes it contains. Returns `None` when any of those values is
+    missing or the child coordinate system has no area.
+    """
+    grpSpPr = group.find(qn("p:grpSpPr"))
+    xfrm = grpSpPr.find(qn("a:xfrm")) if grpSpPr is not None else None
+    if xfrm is None:
+        return None
+    off = xfrm.find(qn("a:off"))
+    ext = xfrm.find(qn("a:ext"))
+    chOff = xfrm.find(qn("a:chOff"))
+    chExt = xfrm.find(qn("a:chExt"))
+    if off is None or ext is None or chOff is None or chExt is None:
+        return None
+    try:
+        off_x, off_y = int(off.get("x")), int(off.get("y"))
+        ext_cx, ext_cy = int(ext.get("cx")), int(ext.get("cy"))
+        ch_off_x, ch_off_y = int(chOff.get("x")), int(chOff.get("y"))
+        ch_ext_cx, ch_ext_cy = int(chExt.get("cx")), int(chExt.get("cy"))
+    except (TypeError, ValueError):
+        return None
+    if ch_ext_cx <= 0 or ch_ext_cy <= 0:
+        return None
+    return off_x, off_y, ext_cx, ext_cy, ch_off_x, ch_off_y, ch_ext_cx, ch_ext_cy
 
 
 def register_picture_partitioner(picture_partitioner: AbstractPicturePartitioner) -> None:
@@ -342,11 +373,7 @@ class _PptxPartitioner:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
         if self._opts.include_off_slide_shapes:
             return False
-        # -- python-pptx reports a missing position as `None` even though its type says `Length` --
-        left = cast("int | None", shape.left)
-        top = cast("int | None", shape.top)
-        width = cast("int | None", shape.width)
-        height = cast("int | None", shape.height)
+        left, top, width, height = self._shape_slide_box(shape)
         # -- a shape with no position is placed at the top-left of the slide, so it is on-slide --
         if left is None or top is None:
             return False
@@ -360,6 +387,41 @@ class _PptxPartitioner:
         visible_width = max(0, min(left + width, slide_width) - max(left, 0))
         visible_height = max(0, min(top + height, slide_height) - max(top, 0))
         return visible_width * visible_height < 0.5 * width * height
+
+    def _shape_slide_box(
+        self, shape: Shape
+    ) -> tuple[float | None, float | None, float | None, float | None]:
+        """The bounding box of `shape` in slide coordinates.
+
+        A shape inside a group shape is positioned in the group's child coordinate system
+        (`a:chOff`/`a:chExt`), which the group's own `a:off`/`a:ext` translate and scale onto the
+        slide. Walks up the group hierarchy and maps the box through each group. Falls back to the
+        shape's own coordinates when a group does not provide a usable transform, preserving the
+        previous behavior for those groups.
+        """
+        shape_left = cast("int | None", shape.left)
+        shape_top = cast("int | None", shape.top)
+        shape_width = cast("int | None", shape.width)
+        shape_height = cast("int | None", shape.height)
+        if shape_left is None or shape_top is None:
+            return shape_left, shape_top, shape_width, shape_height
+
+        left, top = shape_left, shape_top
+        width, height = shape_width, shape_height
+        element = shape._element
+        while (parent := element.getparent()) is not None and parent.tag == qn("p:grpSp"):
+            transform = _group_transform(parent)
+            if transform is None:
+                return shape_left, shape_top, shape_width, shape_height
+            off_x, off_y, ext_cx, ext_cy, ch_off_x, ch_off_y, ch_ext_cx, ch_ext_cy = transform
+            left = off_x + (left - ch_off_x) * ext_cx / ch_ext_cx
+            top = off_y + (top - ch_off_y) * ext_cy / ch_ext_cy
+            if width is not None:
+                width = width * ext_cx / ch_ext_cx
+            if height is not None:
+                height = height * ext_cy / ch_ext_cy
+            element = parent
+        return left, top, width, height
 
 
 class PptxPartitionerOptions:
