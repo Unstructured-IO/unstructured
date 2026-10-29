@@ -208,29 +208,41 @@ def is_ndjson_processable(
 
 _MAX_ENCODING_UNIT_BYTES = 4
 
+# -- the reasons a codec gives for finding the END OF DATA inside a character rather than a byte
+# -- sequence it rejects outright; only these describe a read cut at the boundary --
+_INCOMPLETE_SEQUENCE_REASONS = frozenset(
+    {"unexpected end of data", "truncated data", "incomplete multibyte sequence"}
+)
+
 
 def _decode_prefix(content: bytes, encoding: str) -> str | None:
-    """Strictly decode `content` when its tail may be cut inside a character.
+    """Decode `content` when its tail may be cut inside a character.
 
-    Withholds one to `_MAX_ENCODING_UNIT_BYTES` trailing bytes and retries, so the declared
-    codec keeps deciding BOM handling and byte order exactly as it does for a whole file. An
-    `eof_reached=True` call is never a boundary split and skips this. Returns `None` when the
-    bytes are not a truncated form of `encoding`: a failure further from the end is a wrong
-    encoding, not a split character.
+    Withholds exactly the trailing bytes the declared codec reports as an unfinished sequence,
+    so the codec keeps deciding BOM handling and byte order exactly as it does for a whole file,
+    and no decodable byte is dropped. An `eof_reached=True` call is never a boundary split and
+    skips this.
+
+    Returns `None` when `content` is not a truncated form of `encoding`. Bytes a codec rejects as
+    invalid are not a split character: trimming them would delete a complete character together
+    with valid punctuation and skip the fallback that decodes them, so only the incomplete-end
+    reasons count, and only within one encoding unit of the end. Anything further from the end is
+    a wrong encoding rather than a boundary split.
     """
-    for withheld in range(_MAX_ENCODING_UNIT_BYTES):
-        if withheld >= len(content):
-            # -- nothing left to decode: the bytes are not a truncated form of the encoding --
-            break
-        candidate = content[: len(content) - withheld] if withheld else content
-        try:
-            return candidate.decode(encoding=encoding)
-        except UnicodeDecodeError as error:
-            if error.start < len(candidate) - _MAX_ENCODING_UNIT_BYTES:
-                return None
-        except UnicodeError:
+    try:
+        return content.decode(encoding=encoding)
+    except UnicodeDecodeError as error:
+        if (
+            error.reason not in _INCOMPLETE_SEQUENCE_REASONS
+            or error.start < len(content) - _MAX_ENCODING_UNIT_BYTES
+            or error.start == 0
+        ):
             return None
-    return None
+        # -- everything before the first rejected byte already decoded: the withheld tail is the
+        # -- unfinished sequence itself --
+        return content[: error.start].decode(encoding=encoding)
+    except UnicodeError:
+        return None
 
 
 def _read_prefix(file: IO, limit: int) -> str | bytes:
