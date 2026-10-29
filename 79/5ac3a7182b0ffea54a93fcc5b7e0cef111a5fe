@@ -1,0 +1,19 @@
+unstructured/__version__.py
+  s_5de2fd8e72b875::t_ff0b71e1b9e3bf 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "795ac3a7182b0ffea54a93fcc5b7e0cef111a5fe",
+  "prompts": {},
+  "sessions": {
+    "s_5de2fd8e72b875": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f086ad84-953a-4a5b-acad-a2a51b0390fd",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "aballman <35912177+aballman@users.noreply.github.com>"
+    }
+  }
+}
