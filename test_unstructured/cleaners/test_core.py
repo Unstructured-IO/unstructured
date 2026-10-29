@@ -227,10 +227,35 @@ def test_clean_prefix(text, pattern, ignore_case, strip, expected):
         ("Report END", "(?x)  # readable expression\n(?i) end", False, True, "Report"),
         ("Report", "(?x)  # readable expression\n(?i) end", False, True, "Report"),
         ("The end sign. stop", "(?x) (?i) end | stop", False, True, "The end sign."),
+        ("Report END", r"(?#\))(?i)end", False, False, "Report "),
+        ("Report", r"(?#\))(?i)end", False, False, "Report"),
+        ("Report END", r"(?#\\)(?i)end", False, False, "Report "),
+        ("Report END", r"(?#\\\))(?i)end", False, False, "Report "),
+        ("Report END end", "(?x) # continued \\\n(?i) end", False, False, "Report END end"),
+        ("Report END", "(?x) # ends here \\\\\n(?i) end", False, False, "Report "),
     ],
 )
 def test_clean_postfix(text, pattern, ignore_case, strip, expected):
     assert core.clean_postfix(text, pattern, ignore_case, strip) == expected
+
+
+@pytest.mark.parametrize("text", ["keep DELETE here", "nothing to remove"])
+@pytest.mark.parametrize(
+    ("cleaner", "pattern"),
+    [(core.clean_prefix, r")|DELETE("), (core.clean_postfix, r"DELETE)|(")],
+)
+def test_clean_prefix_and_postfix_reject_malformed_patterns(cleaner, pattern, text):
+    with pytest.raises(re.error):
+        cleaner(text, pattern, strip=False)
+
+
+def test_malformed_pattern_leaves_text_element_unchanged():
+    from unstructured.documents.elements import Text
+
+    element = Text("keep DELETE here")
+    with pytest.raises(re.error):
+        element.apply(lambda s: core.clean_postfix(s, r"DELETE)|(", strip=False))
+    assert element.text == "keep DELETE here"
 
 
 def test_group_broken_paragraphs():
