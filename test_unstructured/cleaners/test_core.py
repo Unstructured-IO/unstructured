@@ -196,6 +196,9 @@ def test_clean_trailing_punctuation(text, expected):
         ("summary: A great SUMMARY", r"(?i)summary:", False, True, "A great SUMMARY"),
         ("A great SUMMARY", r"(?i)summary:", False, True, "A great SUMMARY"),
         ("desc: A SUMMARY: line", r"(?i)summary:|desc:", False, True, "A SUMMARY: line"),
+        ("summary: A great SUMMARY", r"(?# prefix)(?i)summary:", False, True, "A great SUMMARY"),
+        ("A great SUMMARY", r"(?# prefix)(?i)summary:", False, True, "A great SUMMARY"),
+        ("desc: A SUMMARY: x", "(?x) # label\n(?i) summary: | desc:", False, True, "A SUMMARY: x"),
     ],
 )
 def test_clean_prefix(text, pattern, ignore_case, strip, expected):
@@ -218,6 +221,12 @@ def test_clean_prefix(text, pattern, ignore_case, strip, expected):
         ("Report END", r"(?i)(?s)end", False, True, "Report"),
         ("Report END", r"(?i:end)", False, True, "Report"),
         ("Report END end", r"(?x) end  # lower-case only", False, True, "Report END"),
+        ("Report END", r"(?# suffix)(?i)end", False, True, "Report"),
+        ("Report", r"(?# suffix)(?i)end", False, True, "Report"),
+        ("Report END", r"(?i)(?# between)(?s)end", False, True, "Report"),
+        ("Report END", "(?x)  # readable expression\n(?i) end", False, True, "Report"),
+        ("Report", "(?x)  # readable expression\n(?i) end", False, True, "Report"),
+        ("The end sign. stop", "(?x) (?i) end | stop", False, True, "The end sign."),
     ],
 )
 def test_clean_postfix(text, pattern, ignore_case, strip, expected):

@@ -441,17 +441,28 @@ def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
 
 
 # Leading global inline flags such as `(?i)` must stay at the start of the expression, so they are
-# kept outside the group that anchors the rest of the pattern.
-_LEADING_GLOBAL_FLAGS = re.compile(r"(?:\(\?[aiLmsux]+\))+")
+# kept outside the group that anchors the rest of the pattern. Python also accepts `(?#...)`
+# comments before and between them, and whitespace and `#` comments once `(?x)` is on.
+_GLOBAL_FLAGS = re.compile(r"\(\?[aiLmsux]+\)")
+_VERBOSE_SKIP = re.compile(r"(?:[ \t\n\r\v\f]+|#[^\n]*(?:\n|$))+")
 
 
 def _split_leading_flags(pattern: str) -> Tuple[str, str]:
-    match = _LEADING_GLOBAL_FLAGS.match(pattern)
-    if match is None:
-        return "", pattern
-    flags, body = match.group(), pattern[match.end() :]
+    pos = end = 0
+    verbose = False
+    while pos < len(pattern):
+        if verbose and (skip := _VERBOSE_SKIP.match(pattern, pos)):
+            pos = skip.end()
+        elif pattern.startswith("(?#", pos) and (close := pattern.find(")", pos)) != -1:
+            pos = close + 1
+        elif flag := _GLOBAL_FLAGS.match(pattern, pos):
+            verbose = verbose or "x" in flag.group()
+            pos = end = flag.end()
+        else:
+            break
+    flags, body = pattern[:end], pattern[end:]
     # In verbose mode a trailing `# comment` would swallow the closing parenthesis of the group.
-    return flags, f"{body}\n" if "x" in flags else body
+    return flags, f"{body}\n" if verbose else body
 
 
 def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
