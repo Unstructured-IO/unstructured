@@ -29,6 +29,7 @@ from unstructured.file_utils.encoding import EncodingDetectionWarning
 from unstructured.file_utils.filetype import (
     _JSON_DISAMBIGUATION_MAX_CHARS,
     _decode_head_bytes,
+    _decode_prefix,
     _FileTypeDetectionContext,
     _OleFileDetector,
     _TextFileDifferentiator,
@@ -943,6 +944,52 @@ def and_it_reads_past_a_short_read_until_the_budget_or_EOF():
     )
     short_prefix_reads = short_stream.prefix_reads()
     assert sum(returned for _, _, returned in short_prefix_reads) == len(short_payload)
+
+
+# -- a byte sequence the declared codec REJECTS and a character the read boundary CUT look the
+# -- same to a decoder that only retries shorter prefixes: both decode once the tail is gone. The
+# -- difference is what the tail means. `é` is a complete character followed by a delimiter, so
+# -- dropping it deletes real content and the fallback never runs; `\xc3` on its own is an
+# -- unfinished character whose completion is simply not in this read.
+
+
+@pytest.mark.parametrize(
+    ("content", "encoding", "expected_value"),
+    [
+        # -- an unfinished character: withhold it, keep everything that did decode --
+        (b'{"a":1}\n{"a":2}\n' + b"\xc3", "utf-8", '{"a":1}\n{"a":2}\n'),
+        (b"ab\xe2\x82", "utf-8", "ab"),
+        (b"a\x00b", "utf-16-le", "a"),
+        ("\u65e5\u672c".encode("shift_jis") + b"\x93", "shift_jis", "\u65e5\u672c"),
+        # -- a complete character the codec rejects outright: not a boundary split --
+        (b"a,b\n" + b"a" * 4089 + b"\xc3\xa9,", "ascii", None),
+        (b"ab\xff", "ascii", None),
+        # -- a wrong encoding rather than a split character, so nothing is withheld --
+        (b"\xff" + b"ab" * 100, "ascii", None),
+        # -- a whole read that is one unfinished character has nothing to classify --
+        (b"\xc3", "utf-8", None),
+    ],
+)
+def it_decodes_a_cut_character_without_dropping_a_rejected_one(content, encoding, expected_value):
+    assert _decode_prefix(content, encoding) == expected_value
+
+
+def and_it_keeps_a_complete_character_at_the_read_boundary_in_the_text_it_classifies(
+    ctx_mime_type_: Mock,
+):
+    # -- an ASCII-asserted CSV whose 4096-byte read ends on a complete UTF-8 `é` and the comma
+    # -- after it: withholding bytes until ASCII accepted the remainder deleted both, so the
+    # -- second row lost its delimiter, `_is_csv` rejected it, and the file classified as TXT
+    ctx_mime_type_.return_value = "text/plain"
+    payload = b"a,b\n" + b"a" * 4089 + "é,".encode() + b"rest\n"
+    head = payload[:4096]
+    assert head.endswith("é,".encode())
+    assert len(head) == 4096
+
+    assert detect_filetype(file=io.BytesIO(payload), encoding="ascii") is FileType.CSV
+
+    ctx = _FileTypeDetectionContext(file=io.BytesIO(payload), encoding="ascii")
+    assert ctx.text_head.endswith("é,")
 
 
 def it_routes_not_unstructured_payload_json_away_from_ndjson_via_detect_filetype():
