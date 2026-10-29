@@ -340,6 +340,15 @@ def test_partition_text_recognizes_addresses_in_the_first_and_last_listed_states
     ]
 
 
+def test_partition_text_does_not_make_an_address_of_a_sentence_that_starts_with_one():
+    text = "Doylestown, PA 18901 is where the team met last spring."
+
+    elements = partition_text(text=text)
+
+    assert elements
+    assert not any(isinstance(element, Address) for element in elements)
+
+
 def test_partition_text_keeps_a_sentence_that_starts_with_an_email_address_narrative():
     text = (
         "billing@example.com\n"
