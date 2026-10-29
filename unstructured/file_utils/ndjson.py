@@ -7,6 +7,23 @@ import json
 from typing import IO, Any
 
 
+def split_lines(s: str) -> list[str]:
+    """
+    Splits an ndjson document into its non-blank lines
+
+    Only "\n" ends a line (a "\r" before it is JSON whitespace). `str.splitlines()` also breaks
+    on U+0085, U+2028 and U+2029, which a JSON string may contain unescaped, and so would cut a
+    record that contains one in two.
+
+    Args:
+        s (str): Raw string to split
+
+    Returns:
+        list[str]: The lines that hold a JSON value, in order
+    """
+    return [line for line in s.split("\n") if line.strip()]
+
+
 def dumps(obj: list[dict[str, Any]], **kwargs) -> str:
     """
     Converts the list of dictionaries into string representation
@@ -50,7 +67,7 @@ def loads(s: str, **kwargs) -> list[dict[str, Any]]:
     Returns:
         list[dict[str, Any]]: List of dictionaries parsed from the input string
     """
-    return [json.loads(line, **kwargs) for line in s.splitlines()]
+    return [json.loads(line, **kwargs) for line in split_lines(s)]
 
 
 def load(fp: IO, **kwargs) -> list[dict[str, Any]]:
