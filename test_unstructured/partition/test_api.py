@@ -1,8 +1,11 @@
 import base64
 import contextlib
+import gzip
+import inspect
 import json
 import os
 import pathlib
+import tempfile
 from typing import Any
 from unittest.mock import Mock
 
@@ -34,6 +37,40 @@ is_in_ci = os.getenv("CI", "").lower() not in {"", "false", "f", "0"}
 skip_not_on_main = os.getenv("GITHUB_REF_NAME", "").lower() != "main"
 
 
+def _multipart_form(partition_parameters: PartitionParameters) -> tuple[dict[str, Any], list[Any]]:
+    """Serialize `partition_parameters` the way the SDK would for a multipart POST.
+
+    `serialize_request_body` changed signature between SDK releases: the advertised minimum
+    0.25.9 returns a `(content_type, data, form)` tuple, while the locked/current SDK (0.43.2+)
+    returns a `SerializedRequestBody` with `.data`/`.files`. This tolerates both so the wire
+    assertions hold on the floor SDK and the locked SDK without downgrading the ordinary suite.
+    """
+    from unstructured_client import utils
+
+    params = list(inspect.signature(utils.serialize_request_body).parameters)
+    if "request_field_name" in params:  # SDK 0.25.9 tuple form
+        _, _, form = utils.serialize_request_body(
+            PartitionRequest(partition_parameters=partition_parameters),
+            PartitionRequest,
+            "partition_parameters",
+            False,
+            False,
+            "multipart",
+        )
+        data = {key: value[1] for key, value in form if value and value[0] is None}
+        files = [(key, value) for key, value in form if value and value[0] is not None]
+        return data, files
+
+    body = utils.serialize_request_body(
+        partition_parameters,
+        False,
+        False,
+        "multipart",
+        shared.PartitionParameters,
+    )
+    return body.data or {}, body.files or []
+
+
 def test_partition_via_api_with_filename_correctly_calls_sdk(
     request: FixtureRequest, expected_call_: list[Any]
 ):
@@ -50,6 +87,248 @@ def test_partition_via_api_with_filename_correctly_calls_sdk(
     assert len(elements) == 1
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
+
+
+def test_partition_via_api_sends_an_explicit_content_type_for_a_filename(
+    request: FixtureRequest,
+):
+    """`content_type` rides on `PartitionParameters` (multipart form field) across the SDK range."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    partition_via_api(
+        filename=example_doc_path("eml/fake-email.eml"), content_type="message/rfc822"
+    )
+
+    sent = partition_mock_.call_args_list[0].kwargs["request"]
+    partition_parameters = sent.partition_parameters
+    assert partition_parameters.content_type == "message/rfc822"
+    # Not forwarded to `shared.Files`, whose `content_type` kwarg only exists from SDK 0.26.0.
+    assert getattr(partition_parameters.files, "content_type", None) is None
+
+    data, files = _multipart_form(partition_parameters)
+    # Wire: explicit MIME reaches the multipart `content_type` form field and the file part stays.
+    assert data.get("content_type") == "message/rfc822"
+    assert files
+
+
+def test_partition_via_api_sends_an_explicit_content_type_for_bytes(request: FixtureRequest):
+    """Bytes input still carries the explicit MIME type on the wire."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        raw = f.read()
+
+    partition_via_api(
+        file=raw,
+        metadata_filename=example_doc_path("eml/fake-email.eml"),
+        content_type="message/rfc822",
+    )
+
+    sent = partition_mock_.call_args_list[0].kwargs["request"]
+    partition_parameters = sent.partition_parameters
+    assert partition_parameters.content_type == "message/rfc822"
+    assert getattr(partition_parameters.files, "content_type", None) is None
+
+    data, files = _multipart_form(partition_parameters)
+    assert data.get("content_type") == "message/rfc822"
+    assert files
+
+
+def test_partition_via_api_sends_an_explicit_content_type_for_a_stream(request: FixtureRequest):
+    """An open binary stream (file=IO) still carries the explicit MIME type on the wire."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        partition_via_api(
+            file=f,
+            metadata_filename=example_doc_path("eml/fake-email.eml"),
+            content_type="message/rfc822",
+        )
+
+    sent = partition_mock_.call_args_list[0].kwargs["request"]
+    partition_parameters = sent.partition_parameters
+    assert partition_parameters.content_type == "message/rfc822"
+    assert getattr(partition_parameters.files, "content_type", None) is None
+
+    data, files = _multipart_form(partition_parameters)
+    assert data.get("content_type") == "message/rfc822"
+    assert files
+
+
+def test_partition_via_api_content_type_and_request_kwargs_reach_the_wire(request: FixtureRequest):
+    """Explicit `content_type` and a caller keyword (e.g. `strategy`) reach multipart fields."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    partition_via_api(
+        filename=example_doc_path("eml/fake-email.eml"),
+        content_type="message/rfc822",
+        strategy="fast",
+    )
+
+    sent = partition_mock_.call_args_list[0].kwargs["request"]
+    partition_parameters = sent.partition_parameters
+    assert partition_parameters.content_type == "message/rfc822"
+
+    data, files = _multipart_form(partition_parameters)
+    assert data.get("content_type") == "message/rfc822"
+    assert data.get("strategy") == "fast"
+    assert files
+
+
+def test_partition_via_api_leaves_content_type_unset_when_not_given(request: FixtureRequest):
+    """Omitting it must keep the SDK inferring the type from the file name, as before."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    partition_via_api(filename=example_doc_path("eml/fake-email.eml"))
+
+    sent = partition_mock_.call_args_list[0].kwargs["request"]
+    partition_parameters = sent.partition_parameters
+    assert partition_parameters.content_type is None
+    assert getattr(partition_parameters.files, "content_type", None) is None
+
+    data, files = _multipart_form(partition_parameters)
+    # Wire: no `content_type` field is emitted, so the SDK's file-name inference path is untouched.
+    assert "content_type" not in data
+    assert files
+
+
+def test_partition_via_api_leaves_content_type_unset_for_bytes(request: FixtureRequest):
+    """Omitted MIME on bytes input emits no `content_type` form field."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        raw = f.read()
+
+    partition_via_api(
+        file=raw,
+        metadata_filename=example_doc_path("eml/fake-email.eml"),
+    )
+
+    partition_parameters = partition_mock_.call_args_list[0].kwargs["request"].partition_parameters
+    assert partition_parameters.content_type is None
+    data, files = _multipart_form(partition_parameters)
+    assert "content_type" not in data
+    assert files
+
+
+def test_partition_via_api_leaves_content_type_unset_for_a_stream(request: FixtureRequest):
+    """Omitted MIME on a stream (file=IO) emits no `content_type` form field."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        partition_via_api(
+            file=f,
+            metadata_filename=example_doc_path("eml/fake-email.eml"),
+        )
+
+    partition_parameters = partition_mock_.call_args_list[0].kwargs["request"].partition_parameters
+    assert partition_parameters.content_type is None
+    data, files = _multipart_form(partition_parameters)
+    assert "content_type" not in data
+    assert files
+
+
+# A real gzip archive wrapping explicit Markdown. The gzip regression cases below
+# (filename / bytes / stream) exercise the outer/inner MIME interaction over
+# genuine compressed bytes rather than a renamed plain file.
+_REAL_GZ_MARKDOWN = gzip.compress(
+    b"# Title\n\nExplicit Markdown carried inside a real gzip archive.\n",
+    mtime=0,
+)
+
+
+def _assert_inner_mime_governs_gzip_upload(partition_mock_: Mock) -> None:
+    """Shared assertions: suppress the outer MIME hint, keep the inner MIME on the wire.
+
+    The self-hosted API decompresses first (honoring `gz_uncompressed_content_type`)
+    and then treats a form-level `content_type` hint as truth ahead of the inner
+    MIME. A non-partitionable `application/gzip` hint would therefore drop the
+    explicit Markdown hint, so the outer container MIME must not be forwarded
+    while the explicit uncompressed MIME still reaches the API.
+    """
+    partition_parameters = partition_mock_.call_args_list[0].kwargs["request"].partition_parameters
+    data, files = _multipart_form(partition_parameters)
+    # The outer container MIME is not forwarded as a truth-taking form hint...
+    assert "content_type" not in data
+    # ...while the explicit uncompressed MIME still reaches the API.
+    assert data.get("gz_uncompressed_content_type") == "text/markdown"
+    assert files
+
+
+def test_partition_via_api_keeps_inner_mime_for_gzip_upload_filename(
+    request: FixtureRequest,
+):
+    """Filename gzip: outer gzip MIME does not override gz_uncompressed_content_type."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        path = os.path.join(tmp_dir, "payload.txt.gz")
+        with open(path, "wb") as f:
+            f.write(_REAL_GZ_MARKDOWN)
+        partition_via_api(
+            filename=path,
+            content_type="application/gzip",
+            gz_uncompressed_content_type="text/markdown",
+        )
+
+    _assert_inner_mime_governs_gzip_upload(partition_mock_)
+
+
+def test_partition_via_api_keeps_inner_mime_for_gzip_upload_bytes(
+    request: FixtureRequest,
+):
+    """Bytes gzip: outer gzip MIME does not override gz_uncompressed_content_type."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    partition_via_api(
+        file=_REAL_GZ_MARKDOWN,
+        metadata_filename="payload.txt.gz",
+        content_type="application/gzip",
+        gz_uncompressed_content_type="text/markdown",
+    )
+
+    _assert_inner_mime_governs_gzip_upload(partition_mock_)
+
+
+def test_partition_via_api_keeps_inner_mime_for_gzip_upload_stream(
+    request: FixtureRequest,
+):
+    """Stream gzip: outer gzip MIME does not override gz_uncompressed_content_type."""
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
+    )
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        path = os.path.join(tmp_dir, "payload.txt.gz")
+        with open(path, "wb") as f:
+            f.write(_REAL_GZ_MARKDOWN)
+        with open(path, "rb") as stream:
+            partition_via_api(
+                file=stream,
+                metadata_filename="payload.txt.gz",
+                content_type="application/gzip",
+                gz_uncompressed_content_type="text/markdown",
+            )
+
+    _assert_inner_mime_governs_gzip_upload(partition_mock_)
 
 
 def test_partition_via_api_with_file_correctly_calls_sdk(
