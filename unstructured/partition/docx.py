@@ -669,7 +669,18 @@ class _DocxPartitioner:
 
             This includes paragraphs as well as table cell contents.
             """
-            for block_item in hdrftr.iter_inner_content():
+            # -- A corrupt DOCX can reference a header/footer part by a relationship-id that does
+            # -- not resolve to a part. python-docx raises `KeyError` resolving that missing part;
+            # -- treat it like an absent header/footer and contribute no text, but warn so the
+            # -- dropped header/footer is observable rather than silently lost. --
+            try:
+                block_items = list(hdrftr.iter_inner_content())
+            except KeyError as err:
+                logging.warning(
+                    "Skipping a header/footer with an unresolved relationship id %s", err
+                )
+                return
+            for block_item in block_items:
                 if isinstance(block_item, Paragraph):
                     yield block_item.text.strip()
                 # -- can only be a Paragraph or Table so far but more types may come later --

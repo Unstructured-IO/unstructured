@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import logging
 import pathlib
 import re
 import tempfile
@@ -2767,6 +2768,32 @@ class Describe_DocxPartitioner:
         )
 
         assert [element.text for element in elements] == ["Header", "Body", "Footer"]
+
+
+def test_partition_docx_skips_a_header_whose_relationship_is_missing(
+    caplog: pytest.LogCaptureFixture,
+):
+    """A dangling header `r:id` must not abort partitioning with a raw `KeyError`.
+
+    The body content is still returned and a warning records the dropped header.
+    """
+    document = docx.Document()
+    document.add_paragraph("Body")
+    sectPr = document.sections[0]._sectPr
+    headerReference = sectPr.makeelement(qn("w:headerReference"), {})
+    headerReference.set(qn("r:id"), "rIdDoesNotExist")
+    headerReference.set(qn("w:type"), "default")
+    sectPr.insert(0, headerReference)
+
+    file = io.BytesIO()
+    document.save(file)
+    file.seek(0)
+
+    with caplog.at_level(logging.WARNING):
+        elements = partition_docx(file=file)
+
+    assert [element.text for element in elements] == ["Body"]
+    assert "unresolved relationship id" in caplog.text
 
 
 def test_partition_docx_skips_malformed_row_cells():
