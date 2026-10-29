@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import io
+import json
 import logging
 import math
 import os
@@ -17,6 +18,7 @@ from unittest import mock
 
 import pytest
 from pdf2image.exceptions import PDFPageCountError
+from pdfminer.pdfdocument import PDFPasswordIncorrect
 from PIL import Image
 from pypdf import PdfWriter
 from pypdf.errors import LimitReachedError
@@ -341,7 +343,7 @@ def test_partition_pdf_with_model_name_env_var(
     monkeypatch,
 ):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "pdf_has_extractable_text", lambda *args, **kwargs: False)
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -355,7 +357,7 @@ def test_partition_pdf_passes_configured_dpi_to_inference(
     monkeypatch,
 ):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "pdf_has_extractable_text", lambda *args, **kwargs: False)
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -367,7 +369,7 @@ def test_partition_pdf_passes_configured_dpi_to_inference(
 
 def test_partition_pdf_passes_render_max_pixels_to_inference(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "pdf_has_extractable_text", lambda *args, **kwargs: False)
 
     with (
         mock.patch.object(
@@ -405,7 +407,7 @@ def test_partition_pdf_passes_render_max_pixels_to_inference(monkeypatch):
 
 def test_partition_pdf_render_too_large_error_is_unprocessable(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "pdf_has_extractable_text", lambda *args, **kwargs: False)
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -424,7 +426,7 @@ def test_partition_pdf_with_model_name(
     model_name,
 ):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "pdf_has_extractable_text", lambda *args, **kwargs: False)
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -453,7 +455,7 @@ def test_partition_pdf_with_model_name(
 
 def test_partition_pdf_with_hi_res_model_name(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "pdf_has_extractable_text", lambda *args, **kwargs: False)
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -468,7 +470,7 @@ def test_partition_pdf_with_hi_res_model_name(monkeypatch):
 
 def test_partition_pdf_or_image_with_hi_res_model_name(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "pdf_has_extractable_text", lambda *args, **kwargs: False)
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -1668,6 +1670,31 @@ def test_analysis_artifacts_saved(is_path: bool, example_doc: str, doc_pages: in
             file.close()
 
 
+def test_analysis_bboxes_are_drawn_on_pages_rendered_at_pdf_image_dpi(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+):
+    # the caption is a strip added above the page, which would change the image height
+    monkeypatch.setenv("ANALYSIS_BBOX_DRAW_CAPTION", "false")
+
+    pdf.partition_pdf(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        strategy=PartitionStrategy.HI_RES,
+        analysis=True,
+        analyzed_image_output_dir_path=str(tmp_path),
+        pdf_image_dpi=100,
+    )
+
+    file_analysis_root = tmp_path / "analysis" / "layout-parser-paper-fast"
+    od_layout_dump = json.loads(
+        (file_analysis_root / "layout_dump" / "object_detection.json").read_text()
+    )
+    for page in od_layout_dump["pages"]:
+        layout_page_size = (page["size"]["width"], page["size"]["height"])
+        page_render = file_analysis_root / "bboxes" / f"page{page['number']}_layout_od_model.png"
+        with Image.open(page_render) as image:
+            assert image.size == layout_page_size == (850, 1100)
+
+
 @pytest.mark.parametrize(
     ("filename", "pdf_hi_res_max_pages", "expected_error"),
     [
@@ -2261,3 +2288,222 @@ def test_hi_res_groups_rotated_page_text_into_words():
     assert len(single_chars) == 0, (
         f"Rotated page produced {len(single_chars)} single-char elements: {single_chars[:10]}"
     )
+
+
+@pytest.mark.parametrize("strategy", [PartitionStrategy.HI_RES, PartitionStrategy.OCR_ONLY])
+def test_partition_pdf_or_image_checks_text_presence_without_the_full_pdfminer_pass(strategy):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    with (
+        mock.patch.object(pdf, "extractable_elements") as mock_extract,
+        mock.patch.object(
+            pdf, "pdf_has_extractable_text", wraps=pdf.pdf_has_extractable_text
+        ) as mock_check,
+        mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[]) as mock_local,
+        mock.patch.object(pdf, "_partition_pdf_or_image_with_ocr", return_value=[]) as mock_ocr,
+    ):
+        pdf.partition_pdf_or_image(filename, strategy=strategy)
+
+    mock_extract.assert_not_called()
+    mock_check.assert_called_once()
+    if strategy == PartitionStrategy.HI_RES:
+        assert mock_local.call_args.kwargs["pdf_text_extractable"] is True
+    else:
+        mock_ocr.assert_called_once()
+
+
+@pytest.mark.parametrize("strategy", [PartitionStrategy.FAST, PartitionStrategy.AUTO])
+def test_partition_pdf_or_image_runs_the_full_pdfminer_pass_when_fast_is_possible(strategy):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    expected = pdf.partition_pdf_or_image(filename, strategy=PartitionStrategy.FAST)
+
+    with (
+        mock.patch.object(
+            pdf, "extractable_elements", wraps=pdf.extractable_elements
+        ) as mock_extract,
+        mock.patch.object(pdf, "pdf_has_extractable_text") as mock_check,
+    ):
+        elements = pdf.partition_pdf_or_image(filename, strategy=strategy)
+
+    mock_extract.assert_called_once()
+    mock_check.assert_not_called()
+
+    def as_comparable(elements):
+        return [(type(e), e.text, e.metadata.to_dict()) for e in elements]
+
+    assert as_comparable(elements) == as_comparable(expected)
+
+
+def test_pdf_has_extractable_text_stops_at_the_first_page_with_text():
+    filename = example_doc_path("pdf/layout-parser-paper.pdf")
+    with mock.patch.object(
+        pdf, "_pdfminer_page_elements", wraps=pdf._pdfminer_page_elements
+    ) as mock_page:
+        assert pdf.pdf_has_extractable_text(filename=filename) is True
+
+    assert mock_page.call_count == 1
+    assert len(pdf.extractable_elements(filename=filename)) > 1
+
+
+def test_pdf_has_extractable_text_finds_text_after_blank_pages(tmp_path):
+    writer = PdfWriter()
+    for _ in range(3):
+        writer.add_blank_page(width=612, height=792)
+    writer.append(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
+    filename = str(tmp_path / "blank-pages-then-text.pdf")
+    writer.write(filename)
+
+    with mock.patch.object(
+        pdf, "_pdfminer_page_elements", wraps=pdf._pdfminer_page_elements
+    ) as mock_page:
+        assert pdf.pdf_has_extractable_text(filename=filename) is True
+
+    assert mock_page.call_count == 4
+
+
+@pytest.mark.parametrize("n_pages", [0, 2])
+def test_pdf_has_extractable_text_is_false_for_a_document_without_text(tmp_path, n_pages):
+    writer = PdfWriter()
+    for _ in range(n_pages):
+        writer.add_blank_page(width=612, height=792)
+    filename = str(tmp_path / "blank.pdf")
+    writer.write(filename)
+
+    assert _text_extractable_by_full_pass(filename) is False
+    assert pdf.pdf_has_extractable_text(filename=filename) is False
+    with open(filename, "rb") as f:
+        assert pdf.pdf_has_extractable_text(file=f.read()) is False
+
+
+@pytest.mark.parametrize(
+    ("password", "expected"), [(None, None), ("password", True)], ids=["no-password", "password"]
+)
+def test_pdf_has_extractable_text_on_an_encrypted_pdf(password, expected):
+    filename = example_doc_path("pdf/password.pdf")
+
+    def full_pass():
+        elements = pdf.extractable_elements(filename=filename, password=password)
+        return any(pdf._has_text_element(page) for page in elements)
+
+    if expected is None:
+        with pytest.raises(Exception) as full_error:
+            full_pass()
+        with pytest.raises(type(full_error.value)):
+            pdf.pdf_has_extractable_text(filename=filename, password=password)
+    else:
+        assert full_pass() is expected
+        assert pdf.pdf_has_extractable_text(filename=filename, password=password) is expected
+
+
+def _text_extractable_by_full_pass(filename: str) -> bool:
+    elements = pdf.extractable_elements(filename=filename)
+    return any(
+        isinstance(el, Text) and el.text.strip()
+        for page_elements in elements
+        for el in page_elements
+    )
+
+
+def _text_extractable_by_presence_check(filename: str) -> bool:
+    return pdf.pdf_has_extractable_text(filename=filename)
+
+
+_LONG_TEXT_PDFS = ("DA-619p.pdf", "pdf2image-memory-error-test-400p.pdf")
+
+
+@pytest.mark.parametrize(
+    ("helper", "extractor"),
+    [
+        (_text_extractable_by_full_pass, "extractable_elements"),
+        (_text_extractable_by_presence_check, "pdf_has_extractable_text"),
+    ],
+)
+def test_text_presence_oracles_propagate_unexpected_errors(helper, extractor):
+    with mock.patch.object(pdf, extractor, side_effect=RuntimeError("unexpected parser failure")):
+        with pytest.raises(RuntimeError, match="unexpected parser failure"):
+            helper("unused.pdf")
+
+
+@pytest.mark.parametrize(
+    "filename",
+    sorted(
+        str(path)
+        for path in Path(example_doc_path("pdf")).glob("*.pdf")
+        if path.name not in _LONG_TEXT_PDFS
+    ),
+    ids=lambda filename: Path(filename).name,
+)
+def test_pdf_has_extractable_text_agrees_with_the_full_pdfminer_pass(filename):
+    if Path(filename).name == "password.pdf":
+        # The fixture requires a password; neither path should hide that failure.
+        with pytest.raises(PDFPasswordIncorrect):
+            _text_extractable_by_full_pass(filename)
+        with pytest.raises(PDFPasswordIncorrect):
+            _text_extractable_by_presence_check(filename)
+        return
+    assert _text_extractable_by_presence_check(filename) is _text_extractable_by_full_pass(filename)
+
+
+@pytest.mark.parametrize("name", _LONG_TEXT_PDFS)
+def test_pdf_has_extractable_text_reads_only_the_first_pages_of_a_long_text_pdf(name):
+    with mock.patch.object(
+        pdf, "_pdfminer_page_elements", wraps=pdf._pdfminer_page_elements
+    ) as mock_page:
+        assert pdf.pdf_has_extractable_text(filename=example_doc_path(f"pdf/{name}")) is True
+
+    assert 1 <= mock_page.call_count <= 3
+
+
+def _pdfminer_pages_failing_after_the_first(real_generator):
+    def pages(*args, **kwargs):
+        page_iter = real_generator(*args, **kwargs)
+        yield next(page_iter)
+        raise RuntimeError("unreadable page")
+
+    return pages
+
+
+@pytest.mark.parametrize("from_file", [False, True], ids=["filename", "file"])
+def test_partition_pdf_hi_res_skips_the_text_layer_when_its_extraction_fails(caplog, from_file):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    processor = "process_data_with_pdfminer" if from_file else "process_file_with_pdfminer"
+    with (
+        caplog.at_level(logging.INFO),
+        mock.patch.object(
+            pdfminer_processing, processor, side_effect=RuntimeError("unreadable page")
+        ) as mock_text_layer,
+    ):
+        if from_file:
+            with open(filename, "rb") as f:
+                elements = pdf.partition_pdf(file=f, strategy=PartitionStrategy.HI_RES)
+        else:
+            elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
+
+    mock_text_layer.assert_called_once()
+    assert elements
+    assert "PDF text extraction failed, skip text extraction..." in caplog.text
+
+
+def test_partition_pdf_hi_res_matches_a_failed_full_pass_when_a_later_page_fails():
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    failing_pages = mock.patch.object(
+        pdf,
+        "open_pdfminer_pages_generator",
+        _pdfminer_pages_failing_after_the_first(pdf.open_pdfminer_pages_generator),
+    )
+    failing_text_layer_pages = mock.patch.object(
+        pdfminer_processing,
+        "open_pdfminer_pages_generator",
+        _pdfminer_pages_failing_after_the_first(pdfminer_processing.open_pdfminer_pages_generator),
+    )
+
+    with failing_pages:
+        assert pdf.pdf_has_extractable_text(filename=filename) is True
+        with pytest.raises(RuntimeError, match="unreadable page"):
+            _text_extractable_by_full_pass(filename)
+
+    with mock.patch.object(pdf, "pdf_has_extractable_text", return_value=False):
+        expected = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
+    with failing_pages, failing_text_layer_pages:
+        elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
+
+    assert [e.to_dict() for e in elements] == [e.to_dict() for e in expected]

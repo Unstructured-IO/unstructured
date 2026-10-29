@@ -2,7 +2,16 @@
 
 from __future__ import annotations
 
+import io
+import tracemalloc
+from contextlib import ExitStack
+from io import BytesIO
+from pathlib import Path
+from tempfile import SpooledTemporaryFile
+from typing import Callable
+
 import pytest
+from lxml import etree
 from pytest_mock import MockerFixture
 
 from test_unstructured.unit_utils import example_doc_path
@@ -10,8 +19,115 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.partition.xml import partition_xml
+from unstructured.partition.xml import _partition_events, get_leaf_elements, partition_xml
 from unstructured.staging.base import elements_to_json
+
+
+@pytest.mark.parametrize("source", ["filename", "file", "bytesio", "spooled"])
+@pytest.mark.parametrize("xml_path", [None, "//item"])
+@pytest.mark.parametrize(
+    ("encoding", "byte_encoding", "text"),
+    [
+        ("windows-1252", "windows-1252", "Café crème"),
+        ("windows-1251", "windows-1251", "Привет"),
+        ("utf-8-sig", "utf-8", "Café 中文"),
+        ("utf-8-sig", "utf-8-sig", "Café 中文"),
+        ("utf_8_sig", "utf-8", "Café 中文"),
+        ("utf_8_sig", "utf-8-sig", "Café 中文"),
+    ],
+)
+def test_partition_xml_honors_explicit_encoding(
+    tmp_path: Path, source: str, xml_path: str | None, encoding: str, byte_encoding: str, text: str
+):
+    data = f"<root><item>{text}</item></root>".encode(byte_encoding)
+    path = tmp_path / "encoded.xml"
+    path.write_bytes(data)
+
+    with ExitStack() as stack:
+        if source == "filename":
+            kwargs = {"filename": str(path)}
+        elif source == "file":
+            kwargs = {"file": stack.enter_context(path.open("rb"))}
+        elif source == "bytesio":
+            kwargs = {"file": BytesIO(data)}
+        else:
+            stream = stack.enter_context(SpooledTemporaryFile(max_size=1))
+            stream.write(data)
+            stream.seek(0)
+            kwargs = {"file": stream}
+
+        elements = partition_xml(**kwargs, encoding=encoding, xml_path=xml_path, languages=["eng"])
+
+        if "file" in kwargs:
+            assert not kwargs["file"].closed
+            kwargs["file"].seek(0)
+            assert kwargs["file"].read() == data
+
+    assert [element.text for element in elements] == [text]
+
+
+@pytest.mark.parametrize("xml_path", [None, "//item"])
+@pytest.mark.parametrize(
+    ("encoding", "byte_encoding", "declaration"),
+    [
+        ("windows-1252", "windows-1252", "UTF-8"),
+        ("utf-8-sig", "utf-8", "windows-1252"),
+        ("utf-8-sig", "utf-8-sig", "windows-1252"),
+        ("utf_8_sig", "utf-8", "windows-1252"),
+        ("utf_8_sig", "utf-8-sig", "windows-1252"),
+    ],
+)
+def test_partition_xml_explicit_encoding_overrides_declaration(
+    encoding: str, byte_encoding: str, declaration: str, xml_path: str | None
+):
+    data = (f'<?xml version="1.0" encoding="{declaration}"?><root><item>Café</item></root>').encode(
+        byte_encoding
+    )
+
+    stream = BytesIO(data)
+    elements = partition_xml(file=stream, encoding=encoding, xml_path=xml_path, languages=["eng"])
+
+    assert [element.text for element in elements] == ["Café"]
+    assert not stream.closed
+
+
+@pytest.mark.parametrize("xml_path", [None, "//item"])
+def test_partition_xml_preserves_libxml2_encoding_names(xml_path: str | None):
+    data = "<root><item>Café</item></root>".encode("utf-32-be")
+
+    elements = partition_xml(
+        file=BytesIO(data), encoding="UCS-4", xml_path=xml_path, languages=["eng"]
+    )
+
+    assert [element.text for element in elements] == ["Café"]
+
+
+@pytest.mark.parametrize("xml_path", [None, "//item"])
+def test_partition_xml_rejects_unknown_encoding_without_closing_stream(xml_path: str | None):
+    stream = BytesIO(b"<root><item>Example</item></root>")
+
+    with pytest.raises(LookupError, match="unknown encoding"):
+        partition_xml(file=stream, encoding="not-an-encoding", xml_path=xml_path)
+
+    assert not stream.closed
+
+
+def test_partition_xml_detects_declared_encoding():
+    data = '<?xml version="1.0" encoding="windows-1252"?><root><item>Café</item></root>'.encode(
+        "windows-1252"
+    )
+
+    elements = partition_xml(file=BytesIO(data), languages=["eng"])
+
+    assert [element.text for element in elements] == ["Café"]
+
+
+def test_partition_xml_does_not_apply_byte_encoding_to_text():
+    elements = partition_xml(
+        text="<root><item>Café 中文</item></root>", encoding="windows-1252", languages=["eng"]
+    )
+
+    assert [element.text for element in elements] == ["Café 中文"]
 
 
 @pytest.mark.parametrize("filename", ["factbook.xml", "factbook-utf-16.xml"])
@@ -204,6 +320,260 @@ def test_partition_xml_with_narrative_line_breaks():
     assert isinstance(elements[1], NarrativeText)
     assert str(elements[1]).startswith("A conure is a very friendly bird.")
     assert str(elements[1]).strip().endswith("Conures are feathery and like to dance.")
+
+
+@pytest.mark.parametrize("xml_path", [None, ".//body"])
+def test_partition_xml_keeps_text_that_runs_through_child_elements(xml_path: str | None):
+    xml_text = (
+        "<doc><body><title>Report</title>"
+        "<p>The <b>quick</b> brown <i>fox</i> jumps<!-- a comment --> over the dog.</p>"
+        "<list><item>One</item><item>Two</item></list></body></doc>"
+    )
+
+    elements = partition_xml(text=xml_text, xml_path=xml_path)
+
+    assert [e.text for e in elements] == [
+        "Report",
+        "The quick brown fox jumps over the dog.",
+        "One",
+        "Two",
+    ]
+
+
+@pytest.mark.parametrize("xml_path", [None, ".//body"])
+@pytest.mark.parametrize(
+    ("body", "expected_texts"),
+    [
+        # -- a record of fields keeps its fields apart, and so does the prose around it --
+        (
+            "<body>Inventory:<record><name>Alice</name><price>12</price></record>"
+            "<record><name>Bob</name><price>34</price></record>Total: 46</body>",
+            ["Inventory:", "Alice", "12", "Bob", "34", "Total: 46"],
+        ),
+        # -- so does a list --
+        (
+            "<body>Steps:<list><item>Install</item><item>Run</item></list>then check the logs."
+            "</body>",
+            ["Steps:", "Install", "Run", "then check the logs."],
+        ),
+        # -- an inline element that wraps another one is still part of the sentence --
+        (
+            "<body>See <link><label>the docs</label></link> for <b>more</b>.</body>",
+            ["See the docs for more."],
+        ),
+    ],
+)
+def test_partition_xml_keeps_structural_children_of_prose_apart(
+    body: str, expected_texts: list[str], xml_path: str | None
+):
+    elements = partition_xml(text=f"<doc>{body}</doc>", xml_path=xml_path)
+
+    assert [e.text for e in elements] == expected_texts
+
+
+def test_partition_xml_reads_a_wrapper_as_the_text_it_wraps():
+    # -- the indentation around a lone child is not part of its text --
+    xml_text = (
+        "<doc>\n  <paragraph>\n    <content>Text one.</content>\n  </paragraph>\n"
+        "  <paragraph>\n    <content>Text two.</content>\n  </paragraph>\n</doc>"
+    )
+
+    assert list(get_leaf_elements(None, None, xml_text, None)) == ["Text one.", "Text two."]
+
+
+@pytest.mark.parametrize(
+    ("xml_text", "xml_path", "expected_texts"),
+    [
+        (
+            "<doc><section><p>Alpha.</p><p>Beta.</p></section></doc>",
+            ".//section | .//p",
+            ["Alpha.", "Beta."],
+        ),
+        ("<doc><section><p>Alpha.</p><p>Beta.</p></section></doc>", ".//*", ["Alpha.", "Beta."]),
+        # -- distinct elements with the same text are both kept --
+        ("<doc><p>Same.</p><p>Same.</p></doc>", ".//p", ["Same.", "Same."]),
+        # -- a comment or processing instruction ahead of the root is not the context node --
+        ('<?xml-stylesheet href="s.xsl"?><!-- head --><doc><p>One.</p></doc>', ".//p", ["One."]),
+    ],
+)
+def test_partition_xml_reads_overlapping_xpath_matches_once(
+    xml_text: str, xml_path: str, expected_texts: list[str]
+):
+    elements = partition_xml(text=xml_text, xml_path=xml_path)
+
+    assert [e.text for e in elements] == expected_texts
+
+
+@pytest.mark.parametrize("xml_path", [None, ".//p"])
+def test_partition_xml_keeps_the_text_around_a_comment_or_processing_instruction(
+    xml_path: str | None,
+):
+    xml_text = "<root><p>alpha <!-- a note -->beta</p><p>gamma <?php echo 1; ?>delta</p></root>"
+
+    elements = partition_xml(text=xml_text, xml_path=xml_path)
+
+    assert [e.text for e in elements] == ["alpha beta", "gamma delta"]
+
+
+class _TrickleFile(io.RawIOBase):
+    """A file whose reads return at most `size` bytes, so text is split across parser reads."""
+
+    def __init__(self, data: bytes, size: int):
+        self._data, self._position, self._size = data, 0, size
+        self.bytes_read = 0
+
+    def readable(self) -> bool:
+        return True
+
+    def read(self, size: int | None = -1) -> bytes:
+        size = self._size if size is None or size < 0 else min(size, self._size)
+        chunk = self._data[self._position : self._position + size]
+        self._position += len(chunk)
+        self.bytes_read += len(chunk)
+        return chunk
+
+
+@pytest.mark.parametrize("read_size", [1, 2, 3, 7])
+def test_partition_xml_does_not_depend_on_where_the_parser_reads_end(read_size: int):
+    xml = (
+        "<doc><body>Intro <b>bold</b> and caf&#233; &amp; more.<record><name>Alice</name>"
+        "<price>12</price></record><!-- c -->tail text<?pi x?> end.</body></doc>"
+    ).encode()
+
+    texts = list(get_leaf_elements(None, _TrickleFile(xml, read_size), None, None))
+
+    assert texts == ["Intro bold and café & more.", "Alice", "12", "tail text end."]
+
+
+def _whitespace_records(count: int) -> bytes:
+    return ("<root>" + "<record>   </record>\n" * count + "</root>").encode()
+
+
+def _records(count: int) -> bytes:
+    record = "<record><name>Alice</name><price>12</price></record>\n"
+    return ("<root>" + record * count + "</root>").encode()
+
+
+def _nested_records(depth: int) -> bytes:
+    level = "<section>" + "<record><name>Alice</name><price>12</price></record>" * 50
+    return (level * depth + "</section>" * depth).encode()
+
+
+def _blank_sections(count: int) -> bytes:
+    # -- blank records nested in sections: no text is emitted, and none may be kept --
+    section = "<section>" + "<record> </record>" * 500 + "</section>"
+    return ("<root>" + section * count + "</root>").encode()
+
+
+def _comments(count: int) -> bytes:
+    return ("<root>" + "<!-- c -->   \n<?pi x?>\n" * count + "</root>").encode()
+
+
+# -- 100 blank elements stay below the piece limit; it is the size of their whitespace that grows --
+def _wide_whitespace_records(width: int) -> bytes:
+    return ("<root>" + ("<record>" + " " * width + "</record>") * 100 + "</root>").encode()
+
+
+def _wide_blank_sections(width: int) -> bytes:
+    section = "<section>" + ("<record>" + " " * width + "</record>") * 10 + "</section>"
+    return ("<root>" + section * 10 + "</root>").encode()
+
+
+def _wide_comment_tails(width: int) -> bytes:
+    return ("<root>" + ("<!-- c -->" + " " * width + "<?pi x?>") * 50 + "</root>").encode()
+
+
+def _peak_memory_while_partitioning(xml: bytes) -> int:
+    tracemalloc.start()
+    try:
+        for _ in get_leaf_elements(None, io.BytesIO(xml), None, None):
+            pass
+        return tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+
+
+@pytest.mark.parametrize(
+    ("make_xml", "small", "large"),
+    [
+        (_whitespace_records, 10_000, 100_000),
+        (_records, 10_000, 100_000),
+        (_nested_records, 20, 200),
+        (_blank_sections, 20, 200),
+        (_comments, 10_000, 100_000),
+        (_wide_whitespace_records, 16_384, 163_840),
+        (_wide_blank_sections, 16_384, 163_840),
+        (_wide_comment_tails, 16_384, 163_840),
+    ],
+)
+def test_partition_xml_keeps_pending_text_bounded(
+    make_xml: Callable[[int], bytes], small: int, large: int
+):
+    # -- text that is final is emitted, not kept until the root closes, so ten times the input
+    # -- does not take ten times the memory --
+    small_peak = _peak_memory_while_partitioning(make_xml(small))
+    large_peak = _peak_memory_while_partitioning(make_xml(large))
+
+    assert large_peak < 2 * small_peak
+
+
+_BETWEEN_RECORDS = (
+    "<root><record><a>A</a><b>B</b></record>BETWEEN"
+    "<wrapper><record><a>C</a><b>D</b></record></wrapper>{after}</root>"
+)
+
+
+@pytest.mark.parametrize(
+    ("after", "expected_texts"),
+    [("", ["A", "B", "BETWEEN", "C", "D"]), ("AFTER", ["A", "B", "BETWEEN", "C", "D", "AFTER"])],
+)
+@pytest.mark.parametrize("read_size", [None, 1, 3, 7])
+def test_partition_xml_keeps_text_between_records_in_document_order(
+    after: str, expected_texts: list[str], read_size: int | None
+):
+    xml = _BETWEEN_RECORDS.format(after=after).encode()
+    file = io.BytesIO(xml) if read_size is None else _TrickleFile(xml, read_size)
+
+    assert list(get_leaf_elements(None, file, None, None)) == expected_texts
+    assert [e.text for e in partition_xml(text=xml.decode(), xml_path=".")] == expected_texts
+
+
+def test_partition_xml_releases_a_tail_it_has_read_before_the_parent_ends():
+    tail = " " * 1000 + "BETWEEN"
+    xml = f"<root><record><a>A</a><b>B</b></record>{tail}<record><a>C</a><b>D</b></record></root>"
+    records: list[etree._Element] = []  # pyright: ignore[reportPrivateUsage]
+
+    def events():
+        events = ("start", "end", "comment", "pi")
+        for event, node in etree.iterparse(_TrickleFile(xml.encode(), 7), events=events):
+            if event == "end" and node.tag == "record":
+                records.append(node)
+            yield event, node
+
+    texts = _partition_events(events(), clear=True)
+
+    assert [next(texts) for _ in range(3)] == ["A", "B", tail]
+    # -- the root is still open, and the record keeps no copy of the text it handed over --
+    assert records[0].tail is None
+    assert list(texts) == ["C", "D"]
+
+
+def test_partition_xml_leaves_the_tree_unchanged_when_it_does_not_clear_it():
+    root = etree.fromstring("<root><record><a>A</a><b>B</b></record>BETWEEN<record/></root>")
+
+    events = etree.iterwalk(root, events=("start", "end", "comment", "pi"))
+    assert list(_partition_events(events, clear=False)) == ["A", "B", "BETWEEN"]
+    assert root[0].tail == "BETWEEN"
+
+
+def test_partition_xml_streams_the_texts_of_a_large_file():
+    xml = _records(100_000)
+    file = _TrickleFile(xml, 64 * 1024)
+
+    first_text = next(get_leaf_elements(None, file, None, None))
+
+    assert first_text == "Alice"
+    assert file.bytes_read < len(xml) // 10
 
 
 def test_add_chunking_strategy_on_partition_xml():

@@ -14,15 +14,15 @@ US_PHONE_NUMBERS_RE = re.compile(US_PHONE_NUMBERS_PATTERN)
 # ref: https://regex101.com/library/oR3jU1?page=673
 US_CITY_STATE_ZIP_PATTERN = (
     r"(?i)\b(?:[A-Z][a-z.-]{1,15}[ ]?){1,5},\s?"
-    r"(?:{Alabama|Alaska|Arizona|Arkansas|California|Colorado|Connecticut|Delaware|Florida"
+    r"(?:Alabama|Alaska|Arizona|Arkansas|California|Colorado|Connecticut|Delaware|Florida"
     r"|Georgia|Hawaii|Idaho|Illinois|Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland"
     r"|Massachusetts|Michigan|Minnesota|Mississippi|Missouri|Montana|Nebraska|Nevada|"
     r"New[ ]Hampshire|New[ ]Jersey|New[ ]Mexico|New[ ]York|North[ ]Carolina|North[ ]Dakota"
     r"|Ohio|Oklahoma|Oregon|Pennsylvania|Rhode[ ]Island|South[ ]Carolina|South[ ]Dakota"
-    r"|Tennessee|Texas|Utah|Vermont|Virginia|Washington|West[ ]Virginia|Wisconsin|Wyoming}"
-    r"|{AL|AK|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN"
+    r"|Tennessee|Texas|Utah|Vermont|Virginia|Washington|West[ ]Virginia|Wisconsin|Wyoming"
+    r"|AL|AK|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN"
     r"|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|MP|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|"
-    r"WA|WV|WI|WY})(, |\s)?(?:\b\d{5}(?:-\d{4})?\b)"
+    r"WA|WV|WI|WY)(, |\s)?(?:\b\d{5}(?:-\d{4})?\b)"
 )
 US_CITY_STATE_ZIP_RE = re.compile(US_CITY_STATE_ZIP_PATTERN)
 
@@ -101,6 +101,7 @@ BULLET_SPLIT_RE_0W = re.compile(
     f"(?:(?={UNAMBIGUOUS_BULLETS_PATTERN})(?<!{UNAMBIGUOUS_BULLETS_PATTERN}))"
     f"|(?:(?:(?<=\\n)|\\A){NON_NEWLINE_WHITESPACE}(?={QUALIFIED_AMBIGUOUS_BULLET}))",
 )
+UNAMBIGUOUS_BULLETS_RE = re.compile(UNAMBIGUOUS_BULLETS_PATTERN)
 E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 
 # NOTE(klaijan) - Captures reference of format [1] or [i] or [a] at any point in the line.

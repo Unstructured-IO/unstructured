@@ -9,6 +9,7 @@ import tempfile
 import time
 import warnings
 from importlib import import_module
+from types import SimpleNamespace
 from typing import Iterator
 from unittest.mock import MagicMock, patch
 
@@ -445,6 +446,41 @@ def test_auto_partition_json_from_file_preserves_original_elements():
         partitioned_elements = partition(file=f)
 
     assert elements_to_dicts(partitioned_elements) == elements_to_dicts(original_elements)
+
+
+def test_auto_partition_forwards_encoding_to_the_json_partitioner(tmp_path: pathlib.Path):
+    # -- `encoding` is a named parameter of `partition()`, so it is absent from `**kwargs`; the
+    # -- JSON/NDJSON special case has to forward it explicitly or the caller's codec is dropped.
+    # -- Detection is patched to fail: the shared detector can recognize BOM-less UTF-16, so
+    # -- only a forwarded explicit codec proves the argument reaches the partitioner; a dropped
+    # -- argument would fall back to detection and raise here. --
+    text = "R\u200bAG \u4e2d\u6587"
+    payload = json.dumps([{"type": "NarrativeText", "element_id": "x", "text": text}])
+    path = tmp_path / "utf16le.json"
+    path.write_bytes(payload.encode("utf-16-le"))
+
+    with patch(
+        "unstructured.partition.common.json_partitioning.detect_file_encoding",
+        side_effect=AssertionError("explicit encoding must bypass detection"),
+    ):
+        elements = partition(filename=str(path), encoding="utf-16-le")
+
+    assert elements[0].text == text
+
+
+def test_auto_partition_forwards_encoding_to_the_ndjson_partitioner(tmp_path: pathlib.Path):
+    text = "R\u200bAG \u4e2d\u6587"
+    payload = json.dumps({"type": "NarrativeText", "element_id": "x", "text": text})
+    path = tmp_path / "utf16le.ndjson"
+    path.write_bytes(payload.encode("utf-16-le"))
+
+    with patch(
+        "unstructured.partition.common.json_partitioning.detect_file_encoding",
+        side_effect=AssertionError("explicit encoding must bypass detection"),
+    ):
+        elements = partition(filename=str(path), encoding="utf-16-le")
+
+    assert elements[0].text == text
 
 
 def test_auto_partition_routes_single_line_json_object_to_json_not_ndjson(tmp_path: pathlib.Path):
@@ -1140,6 +1176,30 @@ def test_auto_partition_from_url_without_providing_content_type():
 
     assert elements[0] == Title("Apache License")
     assert all(e.metadata.url == url for e in elements)
+
+
+def test_auto_partition_from_url_detects_file_type_when_served_as_octet_stream(
+    request: FixtureRequest,
+):
+    # -- many servers, GitHub raw among them, send a PDF as "application/octet-stream" --
+    with open(example_doc_path("pdf/layout-parser-paper-fast.pdf"), "rb") as f:
+        content = f.read()
+    function_mock(
+        request,
+        "unstructured.partition.auto.safe_get",
+        return_value=SimpleNamespace(
+            status_code=200,
+            ok=True,
+            headers={"Content-Type": "application/octet-stream"},
+            content=content,
+            encoding=None,
+        ),
+    )
+
+    elements = partition(url="https://example.com/files/12345", strategy=PartitionStrategy.FAST)
+
+    assert len(elements) > 0
+    assert all(e.metadata.filetype == "application/pdf" for e in elements)
 
 
 def test_auto_partition_warns_if_header_set_and_not_url(caplog: LogCaptureFixture):

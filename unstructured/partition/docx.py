@@ -1097,6 +1097,9 @@ class _DocxPartitioner:
             link_urls=link_urls or None,
             links=links or None,
             page_number=self._opts.metadata_page_number,
+            # -- `category_depth` is 0 for both `Title` and `Heading 1`, so the style name is the
+            # -- only thing that lets a consumer tell a document title from a top-level heading.
+            style_name=self._style_name(paragraph),
         )
         element_metadata.detection_origin = "docx"
         return element_metadata

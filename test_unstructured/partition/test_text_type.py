@@ -301,6 +301,10 @@ def test_item_titles():
         ("DOYLESTOWN, PENNSYLVANIA 18901", True),
         ("Doylestown, Pennsylvania 18901", True),
         ("     Doylestown, Pennsylvania 18901", True),
+        ("Birmingham, AL 35203", True),
+        ("Montgomery, Alabama 36104", True),
+        ("Cheyenne, WY 82001", True),
+        ("Cheyenne, Wyoming 82001", True),
         ("The Business Report is expected within 6 hours of closing", False),
         ("", False),
     ],
@@ -319,6 +323,8 @@ def test_is_us_city_state_zip(text, expected):
         ("     fake@gmail.com", True),
         ("fak!/$e@gmail.com", False),
         ("", False),
+        ("fake@gmail.com is where the invoices go", False),
+        ("fake@gmail.com, fake@yahoo.com", False),
     ],
 )
 def test_is_email_address(text, expected):
