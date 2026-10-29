@@ -306,6 +306,8 @@ def test_item_titles():
         ("Cheyenne, WY 82001", True),
         ("Cheyenne, Wyoming 82001", True),
         ("The Business Report is expected within 6 hours of closing", False),
+        ("Doylestown, PA 18901 is where the team met last spring.", False),
+        ("Birmingham, AL 35203 and then keep going", False),
         ("", False),
     ],
 )
