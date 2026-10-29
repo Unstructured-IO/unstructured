@@ -715,7 +715,7 @@ class PreChunkBuilder:
         - A `Table` element will never fit with any other element. It will only fit in an empty
           pre-chunk.
         - No element will fit in a pre-chunk that already contains a `Table` element.
-        - A text-element will not fit in a pre-chunk that already exceeds the soft-max
+        - A text-element will not fit in a pre-chunk that has reached the soft-max
           (aka. new_after_n_chars/new_after_n_tokens).
         - A text-element will not fit when together with the elements already present it would
           exceed the hard-max (aka. max_characters/max_tokens).
@@ -733,8 +733,11 @@ class PreChunkBuilder:
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
         if len(self._elements) == 0:
             return True
-        # -- a pre-chunk that already exceeds the soft-max is considered "full" --
-        if self._text_length > self._opts.soft_max:
+        # -- a pre-chunk that has reached the soft-max is considered "full"; the docs for
+        # -- `new_after_n_chars` say a chunk "of this length or greater" is not extended, so the
+        # -- boundary is inclusive. Using ">" here let a pre-chunk of exactly `new_after_n_chars`
+        # -- take one more element and produce a chunk past the requested soft max.
+        if self._text_length >= self._opts.soft_max:
             return False
         # -- don't add an element if it would increase total size beyond the hard-max --
         # -- for token counting, compute what the new total would be --
