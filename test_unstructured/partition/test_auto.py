@@ -9,6 +9,7 @@ import tempfile
 import time
 import warnings
 from importlib import import_module
+from types import SimpleNamespace
 from typing import Iterator
 from unittest.mock import MagicMock, patch
 
@@ -1175,6 +1176,30 @@ def test_auto_partition_from_url_without_providing_content_type():
 
     assert elements[0] == Title("Apache License")
     assert all(e.metadata.url == url for e in elements)
+
+
+def test_auto_partition_from_url_detects_file_type_when_served_as_octet_stream(
+    request: FixtureRequest,
+):
+    # -- many servers, GitHub raw among them, send a PDF as "application/octet-stream" --
+    with open(example_doc_path("pdf/layout-parser-paper-fast.pdf"), "rb") as f:
+        content = f.read()
+    function_mock(
+        request,
+        "unstructured.partition.auto.safe_get",
+        return_value=SimpleNamespace(
+            status_code=200,
+            ok=True,
+            headers={"Content-Type": "application/octet-stream"},
+            content=content,
+            encoding=None,
+        ),
+    )
+
+    elements = partition(url="https://example.com/files/12345", strategy=PartitionStrategy.FAST)
+
+    assert len(elements) > 0
+    assert all(e.metadata.filetype == "application/pdf" for e in elements)
 
 
 def test_auto_partition_warns_if_header_set_and_not_url(caplog: LogCaptureFixture):

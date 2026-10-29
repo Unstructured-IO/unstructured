@@ -168,6 +168,36 @@ def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_ty
     assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
 
 
+@pytest.mark.parametrize(
+    ("expected_value", "file_name", "mime_type", "metadata_file_path"),
+    [
+        # -- detected by MIME-type guessing --
+        (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf", None),
+        (FileType.HTML, "example-10k-1p.html", "text/html", None),
+        # -- detected by filename extension --
+        (FileType.MD, "README.md", None, "README.md"),
+    ],
+)
+def test_it_ignores_asserted_octet_stream_content_type(
+    file_name: str,
+    mime_type: str | None,
+    metadata_file_path: str | None,
+    expected_value: FileType,
+    ctx_mime_type_: Mock,
+):
+    # -- the generic "application/octet-stream" maps to `FileType.UNK` and must not end detection
+    # -- before MIME-type guessing and the filename extension get a chance --
+    ctx_mime_type_.return_value = mime_type
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    file_type = detect_filetype(
+        file=file, content_type="application/octet-stream", metadata_file_path=metadata_file_path
+    )
+
+    assert file_type is expected_value
+
+
 # ================================================================================================
 # STRATEGY #3 - GUESS MIME-TYPE WITH LIBMAGIC/FILETYPE LIBRARY
 # ================================================================================================
