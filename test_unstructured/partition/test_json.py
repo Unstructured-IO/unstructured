@@ -88,6 +88,19 @@ def test_partition_json_preserves_attachment_filename_during_rehydration():
     assert elements[0].metadata.attached_to_filename == "message.eml"
 
 
+def test_partition_json_preserves_element_embeddings_during_rehydration():
+    serialized = elements_to_json(
+        [
+            Title("Intro", embeddings=[0.1, 0.2, 0.3]),
+            Text("Hello there.", embeddings=[0.4, 0.5, 0.6]),
+        ]
+    )
+
+    elements = partition_json(text=serialized)
+
+    assert [e.embeddings for e in elements] == [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+
+
 def test_partition_json_passes_complete_call_arguments_to_custom_chunker():
     call_args: dict[str, object] = {}
 
