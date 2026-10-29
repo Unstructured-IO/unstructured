@@ -1,5 +1,6 @@
 # pyright: reportPrivateUsage=false, reportUnknownMemberType=false, reportOptionalMemberAccess=false
 # pyright: reportAttributeAccessIssue=false, reportUnknownLambdaType=false
+import io
 from collections import defaultdict
 from typing import Any, Optional
 
@@ -268,7 +269,17 @@ def test_title_element_html_tag(title_element_html: TitleElementHtml) -> None:
 
 @pytest.mark.parametrize(
     ("category_depth", "expected_tag"),
-    [(None, "h1"), (0, "h1"), (1, "h2"), (2, "h3"), (5, "h6"), (6, "h6"), (8, "h6")],
+    [
+        (None, "h1"),
+        (-1, "h1"),
+        (0, "h1"),
+        (1, "h2"),
+        (2, "h3"),
+        (5, "h6"),
+        (6, "h6"),
+        (8, "h6"),
+        (99, "h6"),
+    ],
 )
 def test_title_element_html_tag_follows_zero_based_category_depth(
     mock_element: MockElement, category_depth: Optional[int], expected_tag: str
@@ -312,6 +323,35 @@ def test_elements_to_html_renders_headings_deeper_than_h6_as_h6() -> None:
         ("h6", "Level 7"),
         ("h6", "Level 8"),
         ("h6", "Level 9"),
+    ]
+
+
+def test_elements_to_html_keeps_docx_heading_levels_through_a_json_round_trip() -> None:
+    # -- titles reloaded from stored JSON render from their stored `category_depth` --
+    docx = pytest.importorskip("docx")
+    from unstructured.partition.docx import partition_docx
+    from unstructured.staging.base import elements_from_json, elements_to_json
+
+    document = docx.Document()
+    document.add_heading("Report", level=0)
+    document.add_paragraph("A short subtitle", style="Subtitle")
+    document.add_heading("Background", level=1)
+    document.add_paragraph("The background section has a paragraph of body text.")
+    document.add_heading("Details", level=2)
+    document.add_paragraph("The details section has a paragraph of body text too.")
+    file = io.BytesIO()
+    document.save(file)
+    file.seek(0)
+
+    elements = elements_from_json(text=elements_to_json(partition_docx(file=file)))
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    headings = BeautifulSoup(html, HTML_PARSER).find_all(["h1", "h2", "h3", "h4", "h5", "h6"])
+    assert [(h.name, h.get_text(strip=True)) for h in headings] == [
+        ("h1", "Report"),
+        ("h2", "A short subtitle"),
+        ("h1", "Background"),
+        ("h2", "Details"),
     ]
 
 
