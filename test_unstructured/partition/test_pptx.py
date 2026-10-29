@@ -673,6 +673,77 @@ def test_partition_pptx_uses_the_rotated_bounds_of_a_grouped_leaf(
     assert [e.text for e in elements] == ["Visible as a rotated box."]
 
 
+def test_partition_pptx_keeps_a_rotated_leaf_under_nonuniform_group_scaling(
+    tmp_path: pathlib.Path,
+):
+    """Unequal group scaling and leaf rotation do not commute, so the leaf keeps its own box.
+
+    Scaling the rotated box instead of rotating the scaled box widens it to about 22.9 inches,
+    leaving 43.6% of it visible, while the leaf's own box is fully on the slide.
+    """
+    filename = str(tmp_path / "test-group-nonuniform-rotated-leaf.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    txBox = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(1), Inches(4))
+    txBox.text_frame.text = "Kept under nonuniform group scaling."
+    txBox.rotation = 30
+
+    _add_group(
+        slide.shapes._spTree,
+        [txBox._element],
+        offset=(Inches(1), Inches(1.75)),
+        extent=(Inches(8), Inches(4)),
+        child_offset=(Inches(1), Inches(1)),
+        child_extent=(Inches(1), Inches(4)),
+        shape_id=100,
+    )
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == ["Kept under nonuniform group scaling."]
+
+
+def test_partition_pptx_keeps_a_rotated_leaf_under_nested_nonuniform_group_scaling(
+    tmp_path: pathlib.Path,
+):
+    """The accumulated scale is nonuniform although the inner group's own scale is uniform."""
+    filename = str(tmp_path / "test-nested-group-nonuniform-rotated-leaf.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    txBox = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(1), Inches(4))
+    txBox.text_frame.text = "Kept under nested nonuniform group scaling."
+    txBox.rotation = 30
+
+    inner_group = _add_group(
+        slide.shapes._spTree,
+        [txBox._element],
+        offset=(Inches(1), Inches(1)),
+        extent=(Inches(2), Inches(8)),
+        child_offset=(Inches(1), Inches(1)),
+        child_extent=(Inches(1), Inches(4)),
+        shape_id=101,
+    )
+    _add_group(
+        slide.shapes._spTree,
+        [inner_group],
+        offset=(Inches(1), Inches(1)),
+        extent=(Inches(4), Inches(2)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(1), Inches(4)),
+        shape_id=100,
+    )
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == ["Kept under nested nonuniform group scaling."]
+
+
 def test_partition_pptx_group_with_zero_area_child_coordinates_keeps_previous_behavior(
     tmp_path: pathlib.Path,
 ):

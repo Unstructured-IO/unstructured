@@ -403,9 +403,10 @@ class _PptxPartitioner:
         A shape inside a group shape is positioned in the group's child coordinate system
         (`a:chOff`/`a:chExt`), which the group's own `a:off`/`a:ext` translate and scale onto the
         slide. Walks up the group hierarchy and maps the box through each group. A rotated leaf
-        maps to the bounding box of its rotated corners. Falls back to the shape's own coordinates
-        when a group does not provide a usable transform (including a rotated or flipped group),
-        preserving the previous behavior for those groups.
+        maps to the bounding box of its rotated corners; under nonuniform accumulated scaling it
+        keeps its own box instead, since that combination is order-sensitive. Falls back to the
+        shape's own coordinates when a group does not provide a usable transform (including a
+        rotated or flipped group), preserving the previous behavior for those groups.
         """
         shape_left = cast("int | None", shape.left)
         shape_top = cast("int | None", shape.top)
@@ -441,6 +442,10 @@ class _PptxPartitioner:
         rotation = shape.rotation
         if not rotation:
             return left, top, shape_width * scale_x, shape_height * scale_y
+        if not math.isclose(scale_x, scale_y, rel_tol=1e-9):
+            # -- nonuniform scaling and rotation do not commute; keep the leaf's own box instead
+            # -- of one computed in an order the group transform does not follow --
+            return shape_left, shape_top, shape_width, shape_height
         # -- rotation is about the shape's center, so the mapped box is the bounding box of the
         # -- rotated corners, mapped in turn through the group transforms --
         radians = math.radians(rotation)
