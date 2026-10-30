@@ -1,3 +1,5 @@
+import builtins
+import json
 from unittest import mock
 
 import numpy as np
@@ -698,3 +700,43 @@ def test_table_eval_processor_when_only_pred():
     assert result.element_col_level_index_acc == 0
     assert result.element_row_level_content_acc == 0
     assert result.element_col_level_content_acc == 0
+
+
+def test_table_eval_processor_from_json_files_decodes_utf8_regardless_of_locale(
+    tmp_path, monkeypatch
+):
+    """Prediction and ground-truth JSON files are decoded as UTF-8.
+
+    `open()` without an `encoding` falls back to the locale encoding, which is cp1252 on most
+    Windows machines. The patched `open` makes cp1252 that fallback on every platform; cp1252
+    cannot decode the 0x9D byte of the closing quote below.
+    """
+    text = "It’s a café — “naïve” résumé. 中文"
+    prediction = [
+        {
+            "type": "Table",
+            "metadata": {"text_as_html": f"<table><tr><td>{text}</td></tr></table>"},
+        }
+    ]
+    ground_truth = [
+        {
+            "type": "Table",
+            "text": [{"id": "1", "x": 0, "y": 0, "w": 1, "h": 1, "content": text}],
+        }
+    ]
+    prediction_file = tmp_path / "prediction.json"
+    ground_truth_file = tmp_path / "ground_truth.json"
+    prediction_file.write_text(json.dumps(prediction, ensure_ascii=False), encoding="utf-8")
+    ground_truth_file.write_text(json.dumps(ground_truth, ensure_ascii=False), encoding="utf-8")
+
+    def open_with_cp1252_default(file, mode="r", *args, encoding=None, **kwargs):
+        return builtins.open(file, mode, *args, encoding=encoding or "cp1252", **kwargs)
+
+    monkeypatch.setattr(
+        "unstructured.metrics.table.table_eval.open", open_with_cp1252_default, raising=False
+    )
+
+    te_processor = TableEvalProcessor.from_json_files(prediction_file, ground_truth_file)
+
+    assert te_processor.prediction == prediction
+    assert te_processor.ground_truth == ground_truth

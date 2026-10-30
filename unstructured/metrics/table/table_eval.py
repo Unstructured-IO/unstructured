@@ -213,9 +213,9 @@ class TableEvalProcessor:
         Returns:
           TableEvalProcessor: An instance of the class initialized with the provided data.
         """
-        with open(prediction_file) as f:
+        with open(prediction_file, encoding="utf-8") as f:
             prediction = json.load(f)
-        with open(ground_truth_file) as f:
+        with open(ground_truth_file, encoding="utf-8") as f:
             ground_truth = json.load(f)
         if cutoff is not None:
             return cls(

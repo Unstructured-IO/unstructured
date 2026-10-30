@@ -844,7 +844,7 @@ class ObjectDetectionPerClassMetricsCalculator(ObjectDetectionMetricsCalculatorB
         classes = set()
         for gt_file in self._ground_truth_paths:
             gt_file_path = self.ground_truths_dir / gt_file
-            with open(gt_file_path) as f:
+            with open(gt_file_path, encoding="utf-8") as f:
                 gt = json.load(f)
                 gt_classes = gt["object_detection_classes"]
                 classes.update(gt_classes)
