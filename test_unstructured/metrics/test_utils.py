@@ -1,8 +1,11 @@
+import builtins
+
 import pytest
 
 from unstructured.metrics.utils import (
     _mean,
     _pstdev,
+    _read_text_file,
     _stdev,
     _uniquity_file,
 )
@@ -45,3 +48,21 @@ def test_mean_ignores_unmeasured_scores():
     assert _mean([None, None]) is None
     assert _mean([]) is None
     assert _mean([1.0, 2.0]) == 1.5
+
+
+def test_read_text_file_decodes_utf8_regardless_of_locale(tmp_path, monkeypatch):
+    """Ground truths are decoded as UTF-8, like the JSON output they are scored against.
+
+    `open()` without an `encoding` falls back to the locale encoding, which is cp1252 on most
+    Windows machines. The patched `open` makes cp1252 that fallback on every platform.
+    """
+    text = "It’s a café — “naïve” résumé. 中文"
+    ground_truth = tmp_path / "doc.pdf.txt"
+    ground_truth.write_text(text, encoding="utf-8")
+
+    def open_with_cp1252_default(file, mode="r", *args, encoding=None, **kwargs):
+        return builtins.open(file, mode, *args, encoding=encoding or "cp1252", **kwargs)
+
+    monkeypatch.setattr("unstructured.metrics.utils.open", open_with_cp1252_default, raising=False)
+
+    assert _read_text_file(ground_truth) == text

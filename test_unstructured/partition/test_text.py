@@ -340,6 +340,15 @@ def test_partition_text_recognizes_addresses_in_the_first_and_last_listed_states
     ]
 
 
+def test_partition_text_does_not_make_an_address_of_a_sentence_that_starts_with_one():
+    text = "Doylestown, PA 18901 is where the team met last spring."
+
+    elements = partition_text(text=text)
+
+    assert elements
+    assert not any(isinstance(element, Address) for element in elements)
+
+
 def test_partition_text_keeps_a_sentence_that_starts_with_an_email_address_narrative():
     text = (
         "billing@example.com\n"
@@ -699,6 +708,11 @@ def test_partition_text_respects_languages_arg():
 def test_partition_text_element_metadata_raises_TypeError():
     with pytest.raises(TypeError):
         partition_text(example_doc_path("norwich-city.txt"), languages="eng")
+
+
+def test_partition_text_keeps_languages_arg_on_short_ascii_text():
+    elements = partition_text(text="Bonjour le monde", languages=["fra"])
+    assert [e.metadata.languages for e in elements] == [["fra"]]
 
 
 def test_partition_text_detects_more_than_3_languages():

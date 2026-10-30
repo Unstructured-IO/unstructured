@@ -243,7 +243,7 @@ def _read_text_file(path):
         raise FileNotFoundError(f"The file at {path} does not exist.")
 
     try:
-        with open(path, errors="ignore") as f:
+        with open(path, encoding="utf-8", errors="ignore") as f:
             text = f.read()
         return text
     except OSError as e:
