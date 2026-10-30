@@ -442,6 +442,10 @@ def detect_languages(
     responsible for returning valid ISO 639-3 codes (e.g. "eng", "fra"); invalid
     entries are filtered out and a warning is logged; if none remain, this function
     returns None.
+
+    The short-text rule applies only when ``languages`` contains "auto". When the
+    caller passes explicit languages, those are returned for short text too, and
+    ``language_fallback`` is not called.
     """
     if languages is None:
         languages = ["auto"]
@@ -460,7 +464,8 @@ def detect_languages(
 
     # If text contains special characters (like ñ, å, or Korean/Mandarin/etc.) it will NOT default
     # to English. It will default to English if text is only ascii characters and is short.
-    if _ASCII_RE.match(text) and len(text.split()) < 5:
+    # Only detection is unreliable on short text, so languages the user provided still apply.
+    if "auto" in languages and _ASCII_RE.match(text) and len(text.split()) < 5:
         if language_fallback is not None:
             return _validate_fallback_languages(language_fallback(text))
         logger.debug(f'short text: "{text}". Defaulting to English.')

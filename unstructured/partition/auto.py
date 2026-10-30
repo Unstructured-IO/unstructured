@@ -101,7 +101,8 @@ def partition(
     language_fallback
         Optional callable for short text (e.g. when detection defaults to English).
         Called with the text; return a list of ISO 639-3 codes or None to leave
-        language unspecified.
+        language unspecified. Called only when ``languages`` contains "auto";
+        explicit languages are kept for short text too.
     pdf_infer_table_structure
         Deprecated! Use `skip_infer_table_types` to opt out of table extraction for any document
         type.
