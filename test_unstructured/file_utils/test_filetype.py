@@ -768,6 +768,18 @@ def it_classifies_multiple_json_object_lines_as_NDJSON():
     assert detect_filetype(file=io.BytesIO(payload)) == FileType.NDJSON
 
 
+@pytest.mark.parametrize("separator", [chr(0x85), chr(0x2028), chr(0x2029)])
+def and_it_classifies_lines_whose_strings_hold_a_Unicode_line_separator_as_NDJSON(
+    separator: str, tmp_path: Path
+):
+    # -- JSON allows U+0085, U+2028 and U+2029 unescaped in a string, so they don't end a line --
+    lines = [json.dumps({"key": f"a{separator}b"}, ensure_ascii=False), json.dumps({"key": "c"})]
+    path = tmp_path / "records.json"
+    path.write_bytes("\n".join(lines).encode("utf-8"))
+
+    assert detect_filetype(str(path)) == FileType.NDJSON
+
+
 def and_it_classifies_an_arbitrary_ndjson_file_as_NDJSON():
     assert detect_filetype(example_doc_path("arbitrary-records.ndjson")) == FileType.NDJSON
 
