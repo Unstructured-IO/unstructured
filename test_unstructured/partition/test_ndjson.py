@@ -19,7 +19,7 @@ from unstructured.partition.html import partition_html
 from unstructured.partition.ndjson import partition_ndjson
 from unstructured.partition.text import partition_text
 from unstructured.partition.xml import partition_xml
-from unstructured.staging.base import elements_to_ndjson
+from unstructured.staging.base import elements_to_dicts, elements_to_ndjson
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -556,6 +556,39 @@ def it_partitions_an_arbitrary_line_holding_a_lone_surrogate_escape():
 
     assert len(elements) == 1
     assert json.loads(elements[0].text) == value
+
+
+# -- Unicode line separators inside JSON strings --------------------------------------------------
+
+# -- JSON allows U+0085, U+2028 and U+2029 unescaped inside a string, so they don't end a line --
+_UNICODE_LINE_SEPARATORS = [chr(0x85), chr(0x2028), chr(0x2029)]
+
+
+@pytest.mark.parametrize("separator", _UNICODE_LINE_SEPARATORS)
+def it_keeps_a_line_whole_when_a_string_in_it_holds_a_Unicode_line_separator(separator: str):
+    lines = [json.dumps({"key": f"a{separator}b"}, ensure_ascii=False), json.dumps({"key": "c"})]
+
+    elements = partition_ndjson(text="\n".join(lines))
+
+    assert [json.loads(e.text) for e in elements] == [{"key": f"a{separator}b"}, {"key": "c"}]
+
+
+@pytest.mark.parametrize("separator", _UNICODE_LINE_SEPARATORS)
+def and_its_elements_round_trip_through_NDJSON_written_without_escapes(separator: str):
+    elements = partition_ndjson(text=json.dumps({"key": f"a{separator}b"}))
+    ndjson = "\n".join(
+        json.dumps(element_dict, ensure_ascii=False) for element_dict in elements_to_dicts(elements)
+    )
+
+    rehydrated = partition_ndjson(text=ndjson)
+
+    assert [e.text for e in rehydrated] == [e.text for e in elements]
+
+
+def it_still_splits_lines_on_a_lone_carriage_return():
+    elements = partition_ndjson(text='{"key": "a"}\r{"key": "b"}\r')
+
+    assert [json.loads(e.text) for e in elements] == [{"key": "a"}, {"key": "b"}]
 
 
 # -- the file-like contract ------------------------------------------------------------------------

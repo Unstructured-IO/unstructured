@@ -17,6 +17,7 @@ from typing import IO, Any, Optional
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, Text, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.ndjson import split_lines
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.json_partitioning import (
     is_element_shaped_dict,
@@ -92,7 +93,7 @@ def partition_ndjson(
 
     values: list[Any] = []
     try:
-        for line in file_text.splitlines():
+        for line in split_lines(file_text):
             if not line.strip():
                 continue
             values.append(loads_strict_json(line))
