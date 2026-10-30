@@ -6,7 +6,7 @@ import markdown
 from markdown.extensions import Extension
 
 from unstructured.documents.elements import Element
-from unstructured.file_utils.encoding import read_txt_file
+from unstructured.file_utils.encoding import read_response_text, read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
@@ -78,8 +78,10 @@ def partition_md(
         Use ``[""]`` to disable language detection.
     encoding
         The source encoding for filename, file, or URL bytes. When None, local files use
-        best-effort detection and URLs use the HTTP response's encoding. An explicit
-        encoding is decoded strictly and is never replaced by an automatic guess.
+        best-effort detection, and URLs use the charset in the response's Content-Type header.
+        A response that declares no charset is read as UTF-8 when it is valid UTF-8, and as
+        ISO-8859-1 otherwise. An explicit encoding is decoded strictly and is never replaced by
+        an automatic guess.
 
     Other keyword arguments are forwarded to ``partition_html``. In addition, ``extensions`` may be
     passed to ``markdown.markdown()`` as a list of registered extension names (``str``) and/or
@@ -116,7 +118,7 @@ def partition_md(
                 f"Expected content type text/markdown. Got {content_type}.",
             )
 
-        text = response.content.decode(encoding) if encoding else response.text
+        text = read_response_text(response, encoding=encoding)
 
     # -- optional markdown extensions; default matches historical partition_md behavior --
     extensions = _validate_markdown_extensions(
