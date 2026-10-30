@@ -140,10 +140,14 @@ def sort_page_elements(
 
         for coord in coordinates_list:
             if coord is None or not coord.points:
-                trace_logger.detail(  # type: ignore
-                    "some or all elements are missing coordinates, skipping sort",
-                )
-                return False
+                # -- XY-cut cannot place an element it has no coordinates for, but basic sorting
+                # -- can: the docstring above promises to push such elements to the end --
+                if strict_points:
+                    trace_logger.detail(  # type: ignore
+                        "some or all elements are missing coordinates, skipping sort",
+                    )
+                    return False
+                continue
             elif not coord_has_valid_points(coord):
                 if not warned:
                     trace_logger.detail(f"coord {coord} does not have valid points")  # type: ignore
@@ -151,6 +155,13 @@ def sort_page_elements(
                 if strict_points:
                     return False
         return True
+
+    def _top_left(el: Element) -> tuple[float, float]:
+        """Sort key: the (top, left) corner of `el`, `(inf, inf)` when it has none."""
+        coords = el.metadata.coordinates
+        if coords is None or not coords.points:
+            return float("inf"), float("inf")
+        return coords.points[0][1], coords.points[0][0]
 
     if sort_mode == SORT_MODE_XY_CUT:
         if not _coords_ok(strict_points=True):
@@ -174,13 +185,7 @@ def sort_page_elements(
     elif sort_mode == SORT_MODE_BASIC:
         if not _coords_ok(strict_points=False):
             return page_elements
-        sorted_page_elements = sorted(
-            page_elements,
-            key=lambda el: (
-                el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
-                el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
-            ),
-        )
+        sorted_page_elements = sorted(page_elements, key=_top_left)
     else:
         sorted_page_elements = page_elements
 
