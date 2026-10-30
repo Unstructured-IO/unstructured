@@ -1,5 +1,6 @@
 # pyright: reportPrivateUsage=false, reportUnknownMemberType=false, reportOptionalMemberAccess=false
 # pyright: reportAttributeAccessIssue=false, reportUnknownLambdaType=false
+import io
 from collections import defaultdict
 from typing import Any, Optional
 
@@ -7,7 +8,7 @@ import pytest
 from bs4 import BeautifulSoup, Tag
 from pytest_mock import MockerFixture
 
-from unstructured.documents.elements import Element, ElementMetadata, ElementType
+from unstructured.documents.elements import Element, ElementMetadata, ElementType, Title
 from unstructured.partition.html.convert import (
     HTML_PARSER,
     ElementHtml,
@@ -264,6 +265,94 @@ def test_set_children(element_html: ElementHtml) -> None:
 
 def test_title_element_html_tag(title_element_html: TitleElementHtml) -> None:
     assert title_element_html.html_tag == "h1"
+
+
+@pytest.mark.parametrize(
+    ("category_depth", "expected_tag"),
+    [
+        (None, "h1"),
+        (-1, "h1"),
+        (0, "h1"),
+        (1, "h2"),
+        (2, "h3"),
+        (5, "h6"),
+        (6, "h6"),
+        (8, "h6"),
+        (99, "h6"),
+    ],
+)
+def test_title_element_html_tag_follows_zero_based_category_depth(
+    mock_element: MockElement, category_depth: Optional[int], expected_tag: str
+) -> None:
+    mock_element.metadata.category_depth = category_depth
+    assert TitleElementHtml(mock_element).html_tag == expected_tag
+
+
+def test_elements_to_html_keeps_the_heading_levels_of_partitioned_html() -> None:
+    elements = partition_html(
+        text=(
+            "<h1>Chapter</h1><p>The chapter starts with this paragraph of text.</p>"
+            "<h2>Section</h2><p>The section has a paragraph of its own here.</p>"
+            "<h3>Subsection</h3><p>And the subsection has one more paragraph.</p>"
+        )
+    )
+
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    headings = BeautifulSoup(html, HTML_PARSER).find_all(["h1", "h2", "h3", "h4", "h5", "h6"])
+    assert [(h.name, h.get_text(strip=True)) for h in headings] == [
+        ("h1", "Chapter"),
+        ("h2", "Section"),
+        ("h3", "Subsection"),
+    ]
+
+
+def test_elements_to_html_renders_headings_deeper_than_h6_as_h6() -> None:
+    # -- e.g. DOCX "Heading 8" and "Heading 9"; an `<h7>` or `<h8>` tag would be dropped by the
+    # -- sanitization pass, leaving the text without heading markup --
+    elements: list[Element] = [
+        Title("Level 7", metadata=ElementMetadata(category_depth=6)),
+        Title("Level 8", metadata=ElementMetadata(category_depth=7)),
+        Title("Level 9", metadata=ElementMetadata(category_depth=8)),
+    ]
+
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    headings = BeautifulSoup(html, HTML_PARSER).find_all(["h1", "h2", "h3", "h4", "h5", "h6"])
+    assert [(h.name, h.get_text(strip=True)) for h in headings] == [
+        ("h6", "Level 7"),
+        ("h6", "Level 8"),
+        ("h6", "Level 9"),
+    ]
+
+
+def test_elements_to_html_keeps_docx_heading_levels_through_a_json_round_trip() -> None:
+    # -- titles reloaded from stored JSON render from their stored `category_depth` --
+    docx = pytest.importorskip("docx")
+    from unstructured.partition.docx import partition_docx
+    from unstructured.staging.base import elements_from_json, elements_to_json
+
+    document = docx.Document()
+    document.add_heading("Report", level=0)
+    document.add_paragraph("A short subtitle", style="Subtitle")
+    document.add_heading("Background", level=1)
+    document.add_paragraph("The background section has a paragraph of body text.")
+    document.add_heading("Details", level=2)
+    document.add_paragraph("The details section has a paragraph of body text too.")
+    file = io.BytesIO()
+    document.save(file)
+    file.seek(0)
+
+    elements = elements_from_json(text=elements_to_json(partition_docx(file=file)))
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    headings = BeautifulSoup(html, HTML_PARSER).find_all(["h1", "h2", "h3", "h4", "h5", "h6"])
+    assert [(h.name, h.get_text(strip=True)) for h in headings] == [
+        ("h1", "Report"),
+        ("h2", "A short subtitle"),
+        ("h1", "Background"),
+        ("h2", "Details"),
+    ]
 
 
 def test_image_element_html_content(image_element_html: ImageElementHtml) -> None:
