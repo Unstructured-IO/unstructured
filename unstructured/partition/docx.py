@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import itertools
 import logging
 import os
@@ -792,7 +793,8 @@ class _DocxPartitioner:
         """Generate zero-or-more document elements for `paragraph`.
 
         The generated elements can be both textual elements and PageBreak elements. An empty
-        paragraph produces no elements.
+        paragraph produces no elements of its own. The elements of the paragraphs in the text boxes
+        anchored in `paragraph` follow its own, see `._iter_text_box_elements()`.
         """
 
         def iter_paragraph_items(paragraph: Paragraph) -> Iterator[Paragraph | RenderedPageBreak]:
@@ -837,6 +839,33 @@ class _DocxPartitioner:
                     label = ""
             else:
                 yield from self._opts.increment_page_number()
+
+        yield from self._iter_text_box_elements(paragraph)
+
+    def _iter_text_box_elements(self, paragraph: Paragraph) -> Iterator[Element]:
+        """Generate the elements of the paragraphs in each text box anchored in `paragraph`.
+
+        The runs of an inline DrawingML shape are part of the text of the paragraph that holds it,
+        but any other text box, floating or VML, is only anchored in its paragraph. Each paragraph
+        in such a text box is classified like a body paragraph, in document order, and is followed
+        by the elements of any text box anchored in it.
+
+        A text box sits on the page of the paragraph it is anchored in, so a rendered page-break in
+        it neither splits its paragraph nor starts a page. Its paragraphs are not sent to the
+        picture sub-partitioner, which already receives the paragraph the text box is anchored in.
+        """
+        for text_box in _text_boxes(paragraph._p):
+            # NOTE(tanishqbaweja): Word numbers the list paragraphs of each text box on their own,
+            # apart from those of the body and of any other text box. [MS-DOC] 2.4.6.4 counts, for
+            # a numbered paragraph, only the list paragraphs in the same "valid selection", and
+            # 2.2.3 keeps a valid selection within one document part and, in the text-box part,
+            # within one text box. So each text box gets list counters of its own.
+            list_labels = self._list_labels.with_new_counters()
+            for p in text_box.iterchildren(qn("w:p")):
+                text_box_paragraph = Paragraph(p, paragraph._parent)
+                label = list_labels.label(text_box_paragraph)
+                yield from self._classify_paragraph_to_element(text_box_paragraph, label)
+                yield from self._iter_text_box_elements(text_box_paragraph)
 
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
@@ -1234,13 +1263,46 @@ def _row_grid_width(row: _Row) -> int:
 
 
 def _paragraph_text(paragraph: Paragraph) -> str:
-    """The text of `paragraph` that becomes element text: its runs, hyperlinks and inline runs."""
-    return "".join(
-        e.text
-        for e in paragraph._p.xpath(
-            "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
-        )
-    )
+    """The text of `paragraph` that becomes element text: its runs, hyperlinks and inline runs.
+
+    The runs of an inline shape in a text box that `paragraph` anchors belong to the paragraph in
+    the text box instead.
+    """
+    p = paragraph._p
+    return "".join(e.text for e in _PARAGRAPH_TEXT_XPATH(p, depth=_text_box_depth(p)))
+
+
+def _text_boxes(p: CT_P) -> list[etree._Element]:
+    """The `w:txbxContent` element of each text box anchored in `p`, in document order.
+
+    A text box in an inline DrawingML shape (`wp:inline`) is left out because its runs are part of
+    the text of `p`, and so is the VML copy of a text box in `mc:Fallback`. A text box nested in
+    another text box is left out too, since it is read with that one.
+    """
+    return _TEXT_BOXES_XPATH(p, depth=_text_box_depth(p))
+
+
+def _text_box_depth(p: CT_P) -> int:
+    """The number of text boxes `p` is nested in, 0 for a paragraph that is not in a text box."""
+    return int(_TEXT_BOX_DEPTH_XPATH(p))
+
+
+# NOTE(tanishqbaweja): `$depth` is the number of text boxes the paragraph is nested in. Comparing it
+# with the text-box depth of a shape keeps each expression to the paragraph's own shapes; a shape in
+# one of its text boxes belongs to a paragraph in that text box. Word writes a text box as a
+# DrawingML shape in `mc:AlternateContent/mc:Choice` and again as a VML shape in `mc:Fallback`, for
+# readers that can't read DrawingML, so that copy is skipped.
+_PARAGRAPH_TEXT_XPATH = etree.XPath(
+    "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing]"
+    "[count(ancestor::w:txbxContent) = $depth][1]//w:r",
+    namespaces=nsmap,
+)
+_TEXT_BOXES_XPATH = etree.XPath(
+    "w:r//w:txbxContent[count(ancestor::w:txbxContent) = $depth]"
+    "[not(ancestor::wp:inline | ancestor::mc:Fallback)]",
+    namespaces={**nsmap, "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006"},
+)
+_TEXT_BOX_DEPTH_XPATH = etree.XPath("count(ancestor::w:txbxContent)", namespaces=nsmap)
 
 
 class _ListLabels:
@@ -1270,6 +1332,17 @@ class _ListLabels:
         self._counters: dict[str, list[int | None]] = {}
         self._restarted: set[tuple[str, int]] = set()
         self._style_num_prs: dict[str | None, tuple[str | None, int | None, str | None]] = {}
+
+    def with_new_counters(self) -> _ListLabels:
+        """A renderer for a separately numbered part of the document, such as a text box.
+
+        It shares the numbering definitions and the style lookups of this one, but every list in it
+        starts anew, and labeling its paragraphs leaves the counters of this one unchanged.
+        """
+        list_labels = copy.copy(self)
+        list_labels._counters = {}
+        list_labels._restarted = set()
+        return list_labels
 
     def style_of(self, paragraph: Paragraph) -> Any:
         """The style of `paragraph`, looked up once per style-id.

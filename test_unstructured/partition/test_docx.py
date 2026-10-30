@@ -10,7 +10,7 @@ import logging
 import pathlib
 import re
 import tempfile
-from typing import Any, Iterator
+from typing import Any, Callable, Iterator
 
 import docx
 import pytest
@@ -1990,13 +1990,336 @@ def test_partition_docx_assigns_deterministic_and_unique_element_ids():
 
 
 def test_it_considers_text_inside_shapes():
-    # -- <bracketed> text is written inside inline shapes --
+    # -- <bracketed> text is written inside shapes. The text of an inline shape is part of the
+    # -- paragraph it is in --
     partitioned_doc = partition_docx(example_doc_path("docx-shapes.docx"))
     assert [element.text for element in partitioned_doc] == [
         "Paragraph with single <inline-image> within.",
         "Paragraph with <inline-image1> and <inline-image2> within.",
-        # -- text "<floating-shape>" in floating shape is ignored --
         "Paragraph with floating shape attached.",
+        # -- the paragraph of a floating shape follows the paragraph the shape is anchored in --
+        "<floating-shape>",
+    ]
+
+
+_SHAPE_NS = (
+    f"{_W_NS}"
+    ' xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"'
+    ' xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"'
+    ' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"'
+    ' xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"'
+    ' xmlns:v="urn:schemas-microsoft-com:vml"'
+)
+
+
+def _box_paragraph_xml(text: str, num_id: int | None = None, shape_xml: str = "") -> str:
+    """XML of a `w:p` holding `text`, then a run holding `shape_xml` when that is not empty.
+
+    The paragraph is numbered at level 0 of `num_id` when one is given.
+    """
+    num_pr = (
+        ""
+        if num_id is None
+        else f'<w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="{num_id}"/></w:numPr></w:pPr>'
+    )
+    shape_run = f"<w:r>{shape_xml}</w:r>" if shape_xml else ""
+    return f'<w:p>{num_pr}<w:r><w:t xml:space="preserve">{text}</w:t></w:r>{shape_run}</w:p>'
+
+
+def _drawingml_text_box_xml(content_xml: str, placement: str = "anchor") -> str:
+    """XML of a `w:drawing` text box holding the paragraphs in `content_xml`.
+
+    `placement` is "anchor" for a floating shape and "inline" for an inline one.
+    """
+    return (
+        f"<w:drawing><wp:{placement}><a:graphic><a:graphicData"
+        ' uri="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"><wps:wsp>'
+        f"<wps:txbx><w:txbxContent>{content_xml}</w:txbxContent></wps:txbx><wps:bodyPr/>"
+        f"</wps:wsp></a:graphicData></a:graphic></wp:{placement}></w:drawing>"
+    )
+
+
+def _vml_text_box_xml(content_xml: str, placement: str = "anchor") -> str:
+    """XML of a VML `w:pict` text box holding the paragraphs in `content_xml`.
+
+    `placement` is "anchor" for a floating shape and "inline" for an inline one.
+    """
+    position = "position:absolute;" if placement == "anchor" else ""
+    return (
+        f'<w:pict><v:shape style="{position}width:144pt;height:72pt"><v:textbox>'
+        f"<w:txbxContent>{content_xml}</w:txbxContent></v:textbox></v:shape></w:pict>"
+    )
+
+
+def _text_box_xml(content_xml: str, placement: str = "anchor") -> str:
+    """XML of a text box the way Word writes it: a DrawingML shape and a VML copy of it.
+
+    A reader that cannot read the DrawingML shape in `mc:Choice` reads the copy in `mc:Fallback`.
+    """
+    return (
+        '<mc:AlternateContent><mc:Choice Requires="wps">'
+        f"{_drawingml_text_box_xml(content_xml, placement)}</mc:Choice>"
+        f"<mc:Fallback>{_vml_text_box_xml(content_xml, placement)}</mc:Fallback>"
+        "</mc:AlternateContent>"
+    )
+
+
+def _add_shape_run(paragraph: Paragraph, shape_xml: str) -> None:
+    """Append a run holding `shape_xml` to `paragraph`, which anchors the shape."""
+    paragraph._p.append(parse_xml(f"<w:r {_SHAPE_NS}>{shape_xml}</w:r>"))
+
+
+@pytest.mark.parametrize(
+    "text_box_xml",
+    [
+        pytest.param(_text_box_xml, id="DrawingML-with-VML-fallback"),
+        pytest.param(_drawingml_text_box_xml, id="DrawingML-only"),
+        pytest.param(_vml_text_box_xml, id="VML-only"),
+    ],
+)
+def test_partition_docx_partitions_the_paragraphs_of_a_floating_text_box_after_its_anchor(
+    text_box_xml: Callable[[str], str], tmp_path: pathlib.Path
+):
+    document = docx.Document()
+    document.add_paragraph("Summary of the quarter.")
+    _add_shape_run(
+        document.add_paragraph("Paragraph with a text box."),
+        text_box_xml(
+            _box_paragraph_xml("Revenue grew by ten percent.")
+            + _box_paragraph_xml("Costs stayed flat.")
+        ),
+    )
+    document.add_paragraph("Details follow.")
+    path = str(tmp_path / "text-box.docx")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- each paragraph once, so not again from the VML copy of the box --
+    assert [e.text for e in elements] == [
+        "Summary of the quarter.",
+        "Paragraph with a text box.",
+        "Revenue grew by ten percent.",
+        "Costs stayed flat.",
+        "Details follow.",
+    ]
+
+
+def test_partition_docx_partitions_a_VML_text_box_in_line_with_text_like_a_floating_one(
+    tmp_path: pathlib.Path,
+):
+    document = docx.Document()
+    _add_shape_run(
+        document.add_paragraph("Paragraph with a text box."),
+        _vml_text_box_xml(_box_paragraph_xml("In the box."), placement="inline"),
+    )
+    document.add_paragraph("After.")
+    path = str(tmp_path / "vml-text-box.docx")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- only the runs of an inline DrawingML shape (`wp:inline`) are part of the text of its
+    # -- paragraph. A VML text box outside `mc:Fallback`, as Word 2007 writes one, gives elements
+    # -- of its own whether or not it floats --
+    assert [e.text for e in elements] == ["Paragraph with a text box.", "In the box.", "After."]
+
+
+def test_partition_docx_reads_a_document_whose_only_text_is_in_a_floating_text_box(
+    tmp_path: pathlib.Path,
+):
+    document = docx.Document()
+    _add_shape_run(
+        document.add_paragraph(),
+        _text_box_xml(
+            _box_paragraph_xml("Here is a short text:")
+            + _box_paragraph_xml("The sun was setting, casting a warm glow over the city.")
+            + "<w:p/>"
+        ),
+    )
+    path = str(tmp_path / "text-box-only.docx")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [
+        (NarrativeText, "Here is a short text:"),
+        (NarrativeText, "The sun was setting, casting a warm glow over the city."),
+    ]
+
+
+def test_partition_docx_makes_a_list_item_of_each_bulleted_paragraph_in_a_text_box(
+    tmp_path: pathlib.Path,
+):
+    path = _numbered_docx(tmp_path, [("Lorem Ipsum", None, 0)])
+    document = docx.Document(path)
+    _add_shape_run(
+        document.add_paragraph(),
+        _text_box_xml(
+            "".join(_box_paragraph_xml(text, num_id=2) for text in ("Aaa", "Bbb", "ccc"))
+        ),
+    )
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [(type(e), e.text) for e in elements] == [
+        (Text, "Lorem Ipsum"),
+        (ListItem, "Aaa"),
+        (ListItem, "Bbb"),
+        (ListItem, "ccc"),
+    ]
+
+
+def test_partition_docx_numbers_a_text_box_apart_from_the_body(tmp_path: pathlib.Path):
+    path = _numbered_docx(tmp_path, [("alpha", 1, 0)])
+    document = docx.Document(path)
+    anchor = document.add_paragraph()
+    # -- "gamma" starts page two, so a text box on page one doesn't move it on its page --
+    gamma = document.add_paragraph()
+    gamma._p.append(parse_xml(f"<w:r {_W_NS}><w:lastRenderedPageBreak/><w:t>gamma</w:t></w:r>"))
+    _add_direct_num_pr(gamma)
+    document.save(path)
+    elements_without_text_box = partition_docx(path)
+    _add_shape_run(anchor, _text_box_xml(_box_paragraph_xml("beta", num_id=1)))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- Word numbers the paragraphs of a text box apart from those of the body --
+    assert [(type(e), e.text) for e in elements] == [
+        (ListItem, "1. alpha"),
+        (ListItem, "1. beta"),
+        (PageBreak, ""),
+        (ListItem, "2. gamma"),
+    ]
+    # -- so each body element keeps the label and the id it has without the text box --
+    assert [(e.text, e.id) for e in elements if e.text != "1. beta"] == [
+        (e.text, e.id) for e in elements_without_text_box
+    ]
+
+
+def test_partition_docx_numbers_the_paragraphs_of_each_text_box_on_their_own(
+    tmp_path: pathlib.Path,
+):
+    path = _numbered_docx(tmp_path, [("alpha", 1, 0)])
+    document = docx.Document(path)
+    _add_shape_run(
+        document.add_paragraph(),
+        _text_box_xml(_box_paragraph_xml("beta", num_id=1) + _box_paragraph_xml("gamma", num_id=1)),
+    )
+    _add_direct_num_pr(document.add_paragraph("delta"))
+    _add_shape_run(document.add_paragraph(), _text_box_xml(_box_paragraph_xml("epsilon", num_id=1)))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- a list goes on through the paragraphs of a text box and starts again in the next one --
+    assert [e.text for e in elements] == [
+        "1. alpha",
+        "1. beta",
+        "2. gamma",
+        "2. delta",
+        "1. epsilon",
+    ]
+
+
+def test_partition_docx_keeps_a_list_restart_in_a_text_box_out_of_the_body(tmp_path: pathlib.Path):
+    path = _numbered_docx(tmp_path, [("alpha", 1, 0)])
+    document = docx.Document(path)
+    # -- numId 3 continues the list of numId 1, but restarts it at 5 where it is first used --
+    _add_shape_run(document.add_paragraph(), _text_box_xml(_box_paragraph_xml("beta", num_id=3)))
+    _add_direct_num_pr(document.add_paragraph("gamma"), num_id=3)
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- the restart in the text box doesn't count as the first use of numId 3 in the body --
+    assert [e.text for e in elements] == ["1. alpha", "5. beta", "5. gamma"]
+
+
+@pytest.mark.parametrize(
+    ("placement", "expected_box_texts"),
+    [
+        pytest.param("anchor", ["Outer one.", "Outer two.", "Inner."], id="floating-in-floating"),
+        # -- the text of an inline shape is part of the paragraph it is in --
+        pytest.param("inline", ["Outer one.", "Outer two.Inner."], id="inline-in-floating"),
+    ],
+)
+def test_partition_docx_partitions_each_paragraph_of_nested_text_boxes_once(
+    placement: str, expected_box_texts: list[str], tmp_path: pathlib.Path
+):
+    document = docx.Document()
+    inner_box_xml = _text_box_xml(_box_paragraph_xml("Inner."), placement)
+    _add_shape_run(
+        document.add_paragraph("Anchor."),
+        _text_box_xml(
+            _box_paragraph_xml("Outer one.")
+            + _box_paragraph_xml("Outer two.", shape_xml=inner_box_xml)
+        ),
+    )
+    document.add_paragraph("After.")
+    path = str(tmp_path / "nested-text-boxes.docx")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["Anchor.", *expected_box_texts, "After."]
+
+
+def test_partition_docx_does_not_start_a_page_at_a_rendered_page_break_in_a_text_box(
+    tmp_path: pathlib.Path,
+):
+    document = docx.Document()
+    document.add_paragraph("Page one.")
+    _add_shape_run(
+        document.add_paragraph("Anchor."),
+        _text_box_xml(
+            '<w:p><w:r><w:t xml:space="preserve">Box start. </w:t><w:lastRenderedPageBreak/>'
+            "<w:t>Box end.</w:t></w:r></w:p>"
+        ),
+    )
+    document.add_paragraph()._p.append(
+        parse_xml(f"<w:r {_W_NS}><w:lastRenderedPageBreak/><w:t>Page two.</w:t></w:r>")
+    )
+    path = str(tmp_path / "text-box-page-break.docx")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- a text box floats on the page of the paragraph it is anchored in, so a page-break in it
+    # -- neither splits its paragraph nor starts a page --
+    assert [(e.text, e.metadata.page_number) for e in elements] == [
+        ("Page one.", 1),
+        ("Anchor.", 1),
+        ("Box start. Box end.", 1),
+        ("", None),
+        ("Page two.", 2),
+    ]
+    assert isinstance(elements[3], PageBreak)
+
+
+def test_partition_docx_partitions_a_text_box_after_the_last_part_of_its_anchor_paragraph(
+    tmp_path: pathlib.Path,
+):
+    document = docx.Document()
+    paragraph = document.add_paragraph("Page one.")
+    _add_shape_run(paragraph, _text_box_xml(_box_paragraph_xml("In the box.")))
+    paragraph._p.append(
+        parse_xml(f"<w:r {_W_NS}><w:lastRenderedPageBreak/><w:t>Page two.</w:t></w:r>")
+    )
+    path = str(tmp_path / "split-anchor.docx")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- the elements of a text box follow those of the paragraph it is anchored in, so when a
+    # -- page-break splits that paragraph, they follow its last part and take that part's page --
+    assert [(e.text, e.metadata.page_number) for e in elements] == [
+        ("Page one.", 1),
+        ("", None),
+        ("Page two.", 2),
+        ("In the box.", 2),
     ]
 
 
@@ -2037,6 +2360,37 @@ def test_partition_docx_uses_registered_picture_partitioner():
         "Image with hash a41b819c7b4a9750ec0f9198c59c2057d39c653c, strategy: hi_res",
         "Image with hash ba0dc2a1205af8f6d9e06c8d415df096b0a9c428, strategy: hi_res",
     ]
+
+
+def test_partition_docx_does_not_send_text_box_paragraphs_to_the_picture_partitioner(
+    tmp_path: pathlib.Path,
+):
+    paragraph_texts: list[str] = []
+
+    class RecordingPicturePartitioner:
+        @classmethod
+        def iter_elements(
+            cls, paragraph: Paragraph, opts: DocxPartitionerOptions
+        ) -> Iterator[Image]:
+            paragraph_texts.append(paragraph.text)
+            return iter(())
+
+    document = docx.Document()
+    _add_shape_run(
+        document.add_paragraph("Anchor."), _text_box_xml(_box_paragraph_xml("In the box."))
+    )
+    path = str(tmp_path / "text-box.docx")
+    document.save(path)
+
+    register_picture_partitioner(RecordingPicturePartitioner)
+    try:
+        elements = partition_docx(path)
+    finally:
+        DocxPartitionerOptions._PicturePartitionerCls = None
+
+    # -- the paragraph a text box is anchored in, which holds the text box, is sent as before --
+    assert [e.text for e in elements] == ["Anchor.", "In the box."]
+    assert paragraph_texts == ["Anchor."]
 
 
 # -- module-level fixtures -----------------------------------------------------------------------
