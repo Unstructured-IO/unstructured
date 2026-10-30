@@ -1,4 +1,5 @@
 import csv
+import io
 import json
 import os
 import pathlib
@@ -138,6 +139,172 @@ def test_convert_to_csv(tmp_path: str):
     with open(output_csv_path) as csv_file:
         csv_rows = csv.DictReader(csv_file)
         assert all(set(row.keys()) == set(base.TABLE_FIELDNAMES) for row in csv_rows)
+
+
+def test_convert_to_csv_includes_flattened_nested_metadata():
+    # Regression for #4548: nested metadata (data_source, enrichment_origins) is
+    # flattened into sub-keys, but the CSV whitelist used to only contain the raw
+    # dict keys, so those sub-keys were dropped and the columns stayed empty.
+    elements = [
+        NarrativeText(
+            text="Hello",
+            metadata=ElementMetadata(
+                data_source=DataSourceMetadata(url="s3://bucket/report.pdf", version="v3"),
+                enrichment_origins={"ner": [{"mode": "Auto"}]},
+            ),
+        ),
+    ]
+    csv_file = io.StringIO(base.convert_to_csv(elements))
+    reader = csv.DictReader(csv_file)
+    row = next(reader)
+
+    # Flattened sub-keys must be present as columns and carry the values.
+    assert row["data_source_url"] == "s3://bucket/report.pdf"
+    assert row["data_source_version"] == "v3"
+    assert row["enrichment_origins_ner"] == str([{"mode": "Auto"}])
+
+    # Backward compatibility: the fixed column set must still be present.
+    for column in base.TABLE_FIELDNAMES:
+        assert column in row
+
+
+def test_convert_to_csv_disambiguates_metadata_key_colliding_with_top_level_attribute():
+    # Regression for #4549 (same-row): an ad-hoc metadata key that shares a name with a real
+    # top-level Element attribute (here `embeddings`, carried by Text) must not overwrite that
+    # column. The real value stays in `embeddings`; the metadata value is renamed aside.
+    elements = [
+        Text(
+            text="Hello",
+            embeddings=[0.1, 0.2],
+            metadata=ElementMetadata.from_dict({"embeddings": [9.0, 9.0]}),
+        ),
+    ]
+    reader = csv.DictReader(io.StringIO(base.convert_to_csv(elements)))
+    row = next(reader)
+
+    # The real top-level embeddings wins the `embeddings` column.
+    assert row["embeddings"] == str([0.1, 0.2])
+    # The colliding metadata value is preserved under a disambiguated column, not dropped.
+    assert row["metadata_embeddings"] == str([9.0, 9.0])
+
+
+def test_convert_to_csv_disambiguates_colliding_metadata_key_across_rows():
+    # Regression for #4549 (cross-row): one row's real top-level `embeddings` and another row's
+    # ad-hoc `metadata.embeddings` must not register under the same batch-wide header.
+    elements = [
+        NarrativeText(text="row-a", embeddings=[0.1, 0.2]),
+        NarrativeText(
+            text="row-b",
+            metadata=ElementMetadata.from_dict({"embeddings": [9.0, 9.0]}),
+        ),
+    ]
+    reader = csv.DictReader(io.StringIO(base.convert_to_csv(elements)))
+    rows = list(reader)
+
+    assert "embeddings" in reader.fieldnames
+    assert "metadata_embeddings" in reader.fieldnames
+
+    # Row A contributes its real embeddings to the real column and nothing to the renamed one.
+    assert rows[0]["embeddings"] == str([0.1, 0.2])
+    assert rows[0]["metadata_embeddings"] in (None, "")
+    # Row B contributes only to the renamed column and leaves the real column empty.
+    assert rows[1]["embeddings"] in (None, "")
+    assert rows[1]["metadata_embeddings"] == str([9.0, 9.0])
+
+
+@pytest.mark.parametrize(
+    "metadata",
+    [
+        {"embeddings": [9.0, 9.0], "metadata_embeddings": [8.0, 8.0]},
+        {"metadata_embeddings": [8.0, 8.0], "embeddings": [9.0, 9.0]},
+    ],
+)
+def test_convert_to_csv_metadata_replacement_names_do_not_collide_same_row(metadata):
+    # Regression for #4549 (P2, same-row, both insertion orders): a colliding metadata key is
+    # renamed aside, but the replacement name must not collide with a pre-existing metadata field
+    # (here `metadata_embeddings`); each distinct field keeps its own value and column, and the
+    # outcome must not depend on metadata insertion order.
+    elements = [
+        Text(
+            text="Hello",
+            embeddings=[0.1, 0.2],
+            metadata=ElementMetadata.from_dict(metadata),
+        )
+    ]
+    row = next(csv.DictReader(io.StringIO(base.convert_to_csv(elements))))
+
+    assert row["embeddings"] == str([0.1, 0.2])
+    assert row["metadata_embeddings"] == str([9.0, 9.0])
+    assert row["metadata_metadata_embeddings"] == str([8.0, 8.0])
+
+
+def test_convert_to_csv_checked_metadata_names_do_not_collide_across_rows():
+    # Regression for #4549 (P2, cross-row): a real CheckBox `checked` and ad-hoc metadata
+    # `checked` / pre-existing `metadata_checked` must each keep a distinct column instead of
+    # collapsing onto one name and silently dropping a value.
+    elements = [
+        CheckBox(checked=False, metadata=ElementMetadata.from_dict({"checked": "yes"})),
+        Text(text="b", metadata=ElementMetadata.from_dict({"metadata_checked": "no"})),
+    ]
+    rows = list(csv.DictReader(io.StringIO(base.convert_to_csv(elements))))
+    row1, row2 = rows
+
+    assert row1["checked"] == "False"
+    assert row1["metadata_checked"] == "yes"
+    assert row1["metadata_metadata_checked"] in (None, "")
+    assert row2["metadata_checked"] in (None, "")
+    assert row2["metadata_metadata_checked"] == "no"
+
+
+@pytest.mark.parametrize(
+    "elements",
+    [
+        [
+            NarrativeText(text="a", embeddings=[0.1, 0.2]),
+            NarrativeText(text="b", metadata=ElementMetadata.from_dict({"embeddings": [9.0, 9.0]})),
+        ],
+        [
+            NarrativeText(text="b", metadata=ElementMetadata.from_dict({"embeddings": [9.0, 9.0]})),
+            NarrativeText(text="a", embeddings=[0.1, 0.2]),
+        ],
+    ],
+)
+def test_convert_to_csv_embeddings_collision_stable_across_row_orders(elements):
+    # Regression for #4549 (P2, cross-row, both row orders): the real vector and the ad-hoc
+    # metadata embeddings stay in separate columns regardless of which row comes first.
+    rows = list(csv.DictReader(io.StringIO(base.convert_to_csv(elements))))
+    fieldnames = list(rows[0].keys())
+    assert "embeddings" in fieldnames
+    assert "metadata_embeddings" in fieldnames
+
+    real = [r for r in rows if r["embeddings"] not in (None, "")]
+    meta = [r for r in rows if r["metadata_embeddings"] not in (None, "")]
+    assert len(real) == 1
+    assert real[0]["embeddings"] == str([0.1, 0.2])
+    assert len(meta) == 1
+    assert meta[0]["metadata_embeddings"] == str([9.0, 9.0])
+
+
+def test_convert_to_csv_promoted_top_level_columns_are_ordered_deterministically():
+    # Regression for #4549 (P2): promoted real top-level columns (`embeddings`, `checked`)
+    # append in first-seen order rather than set iteration, so the header is reproducible;
+    # `False` and blank cells are preserved and later-row custom metadata still lands after.
+    elements = [
+        Text(text="a", embeddings=[0.1, 0.2]),
+        CheckBox(checked=False),
+        NarrativeText(text="c", metadata=ElementMetadata.from_dict({"custom_tag": "v"})),
+    ]
+    reader = csv.DictReader(io.StringIO(base.convert_to_csv(elements)))
+    headers = reader.fieldnames
+    rows = list(reader)
+
+    assert headers[:3] == ["type", "text", "element_id"]
+    assert headers.index("embeddings") < headers.index("checked")
+    assert "custom_tag" in headers
+
+    assert rows[0]["checked"] in (None, "")
+    assert rows[1]["checked"] == "False"
+    assert rows[2]["custom_tag"] == "v"
 
 
 def test_convert_to_dataframe():
