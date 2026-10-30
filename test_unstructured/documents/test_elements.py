@@ -800,6 +800,24 @@ class DescribeElementMetadata:
             )
 
 
+def test_hash_ids_are_unique_when_a_page_is_not_contiguous_in_the_element_list():
+    # GIVEN -- a list whose page numbers are not sorted, as happens when elements of two
+    # partitions of the same document are combined
+    elements: list[Element] = [
+        Text(text="Section", metadata=ElementMetadata(page_number=1)),
+        Text(text="Interlude", metadata=ElementMetadata(page_number=2)),
+        Text(text="Section", metadata=ElementMetadata(page_number=1)),
+    ]
+
+    # WHEN
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+
+    # THEN -- the third element is the second element of page 1 and must not collide with the
+    # first element of page 1, which also says "Section"
+    ids = [element.id for element in updated_elements]
+    assert len(ids) == len(set(ids)), "Recalculated IDs must be unique."
+
+
 def test_hash_ids_are_unique_for_duplicate_elements():
     # GIVEN
     parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))

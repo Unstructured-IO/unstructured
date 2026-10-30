@@ -10,7 +10,6 @@ import os
 import pathlib
 import uuid
 from functools import cached_property
-from itertools import groupby
 from types import MappingProxyType
 from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
@@ -619,10 +618,15 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
         List of updated Element objects with hashes for `id` and `parent_id`.
     """
     # -- generate sequence number for each element on a page --
+    # -- Count per page number, not per contiguous run of equal page numbers: otherwise the
+    # -- sequence number of an element depends on which elements precede it and two elements that
+    # -- share their text on a page that is not contiguous in this list collide.
     page_numbers = [e.metadata.page_number for e in elements]
-    page_seq_pairs = [
-        seq_on_page for _, group in groupby(page_numbers) for seq_on_page, _ in enumerate(group)
-    ]
+    page_seq_counts: dict[int | None, int] = {}
+    page_seq_pairs: list[int] = []
+    for page_number in page_numbers:
+        page_seq_pairs.append(page_seq_counts.get(page_number, 0))
+        page_seq_counts[page_number] = page_seq_pairs[-1] + 1
 
     # -- assign hash IDs to elements --
     old_to_new_mapping = {
