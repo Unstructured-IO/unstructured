@@ -75,7 +75,7 @@ def _group_transform(group: Any) -> tuple[int, int, int, int, int, int, int, int
         return None
     if xfrm.get("rot") not in (None, "0"):
         return None
-    if xfrm.get("flipH") in ("1", "true") or xfrm.get("flipV") in ("1", "true"):
+    if any(xfrm.get(axis, "").strip(" \t\r\n") in ("1", "true") for axis in ("flipH", "flipV")):
         return None
     off = xfrm.find(qn("a:off"))
     ext = xfrm.find(qn("a:ext"))

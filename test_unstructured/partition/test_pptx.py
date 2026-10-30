@@ -468,8 +468,26 @@ def test_partition_pptx_excludes_group_children_that_map_off_the_slide(
     assert [e.text for e in elements] == ["On the slide."]
 
 
-def test_partition_pptx_keeps_group_child_when_the_group_is_flipped(
+@pytest.mark.parametrize("flip_attribute", ["flipH", "flipV"])
+@pytest.mark.parametrize(
+    ("flip_value", "is_flipped"),
+    [
+        ("1", True),
+        ("true", True),
+        (" 1 ", True),
+        (" true ", True),
+        ("\ttrue\r\n", True),
+        (None, False),
+        ("0", False),
+        ("false", False),
+        (" false ", False),
+    ],
+)
+def test_partition_pptx_handles_group_flip_flags(
     tmp_path: pathlib.Path,
+    flip_attribute: str,
+    flip_value: str | None,
+    is_flipped: bool,
 ):
     """A flipped group cannot be mapped by translation and scaling, so the child keeps its own box.
 
@@ -480,25 +498,30 @@ def test_partition_pptx_keeps_group_child_when_the_group_is_flipped(
     presentation = pptx.Presentation()
     slide = presentation.slides.add_slide(presentation.slide_layouts[6])
 
-    txBox = slide.shapes.add_textbox(Inches(3), Inches(0), Inches(1), Inches(1))
+    left, top = (3, 0) if flip_attribute == "flipH" else (0, 3)
+    txBox = slide.shapes.add_textbox(Inches(left), Inches(top), Inches(1), Inches(1))
     txBox.text_frame.text = "Kept because the group flip is not mapped."
 
-    _add_group(
+    group = _add_group(
         slide.shapes._spTree,
         [txBox._element],
-        offset=(Inches(8), Inches(1)),
-        extent=(Inches(4), Inches(2)),
+        offset=(Inches(8), Inches(1)) if flip_attribute == "flipH" else (Inches(1), Inches(6)),
+        extent=(Inches(4), Inches(2)) if flip_attribute == "flipH" else (Inches(2), Inches(4)),
         child_offset=(Inches(0), Inches(0)),
-        child_extent=(Inches(4), Inches(2)),
+        child_extent=(Inches(4), Inches(2))
+        if flip_attribute == "flipH"
+        else (Inches(2), Inches(4)),
         shape_id=100,
-        flip_h=True,
     )
 
+    if flip_value is not None:
+        group.grpSpPr.xfrm.set(flip_attribute, flip_value)
     presentation.save(filename)
 
     elements = partition_pptx(filename=filename)
 
-    assert [e.text for e in elements] == ["Kept because the group flip is not mapped."]
+    expected = ["Kept because the group flip is not mapped."] if is_flipped else []
+    assert [e.text for e in elements] == expected
 
 
 def test_partition_pptx_keeps_group_child_when_the_group_is_rotated(
@@ -533,8 +556,12 @@ def test_partition_pptx_keeps_group_child_when_the_group_is_rotated(
     assert [e.text for e in elements] == ["Kept because the group rotation is not mapped."]
 
 
+@pytest.mark.parametrize("flip_attribute", ["flipH", "flipV"])
+@pytest.mark.parametrize("flip_value", ["1", "true", " 1 ", " true ", "\t1\r\n"])
 def test_partition_pptx_keeps_group_child_when_an_outer_group_is_unsupported(
     tmp_path: pathlib.Path,
+    flip_attribute: str,
+    flip_value: str,
 ):
     """An inner transform is not left partly applied when an outer group cannot be mapped."""
     filename = str(tmp_path / "test-nested-group-unsupported-outer.pptx")
@@ -553,7 +580,7 @@ def test_partition_pptx_keeps_group_child_when_an_outer_group_is_unsupported(
         child_extent=(Inches(2), Inches(2)),
         shape_id=101,
     )
-    _add_group(
+    outer_group = _add_group(
         slide.shapes._spTree,
         [inner_group],
         offset=(Inches(0), Inches(0)),
@@ -561,9 +588,9 @@ def test_partition_pptx_keeps_group_child_when_an_outer_group_is_unsupported(
         child_offset=(Inches(0), Inches(0)),
         child_extent=(Inches(2), Inches(2)),
         shape_id=100,
-        flip_h=True,
     )
 
+    outer_group.grpSpPr.xfrm.set(flip_attribute, flip_value)
     presentation.save(filename)
 
     elements = partition_pptx(filename=filename)
