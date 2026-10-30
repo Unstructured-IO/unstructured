@@ -20,6 +20,7 @@ from test_unstructured.unit_utils import (
     example_doc_path,
     example_doc_text,
     function_mock,
+    http_response,
 )
 from unstructured.chunking.dispatch import reconstruct_table_from_chunks
 from unstructured.chunking.title import chunk_by_title
@@ -248,6 +249,46 @@ def test_partition_from_url_includes_provided_headers_in_request(safe_get_: Mock
     safe_get_.assert_called_once_with(
         "https://example.com", headers={"User-Agent": "test"}, verify=True
     )
+
+
+def test_partition_html_from_url_reads_a_UTF_8_page_that_declares_no_charset(safe_get_: Mock):
+    # -- `requests` decodes a `text/*` response without a charset as ISO-8859-1 --
+    text = "It’s a naïve “quote” — 中文 … résumé"
+    safe_get_.return_value = http_response(
+        f"<h1>Café menü</h1><p>{text}</p>".encode("utf-8"), "text/html"
+    )
+
+    elements = partition_html(url="https://example.com")
+
+    assert [e.text for e in elements] == ["Café menü", text]
+
+
+def test_partition_html_from_url_decodes_with_an_explicit_encoding(safe_get_: Mock):
+    text = "It’s a naïve “quote” — résumé…"
+    safe_get_.return_value = http_response(f"<p>{text}</p>".encode("cp1252"), "text/html")
+
+    elements = partition_html(url="https://example.com", encoding="cp1252")
+
+    assert [e.text for e in elements] == [text]
+
+
+@pytest.mark.parametrize(
+    ("content_type", "codec", "text"),
+    [
+        # -- a declared charset is used --
+        ("text/html; charset=windows-1252", "cp1252", "It’s a naïve “quote” — résumé…"),
+        # -- a page that declares no charset and is not UTF-8 is still read as ISO-8859-1 --
+        ("text/html", "latin-1", "Le café de la gare est fermé le dimanche."),
+    ],
+)
+def test_partition_html_from_url_keeps_decoding_a_page_that_is_not_UTF_8_as_before(
+    safe_get_: Mock, content_type: str, codec: str, text: str
+):
+    safe_get_.return_value = http_response(f"<p>{text}</p>".encode(codec), content_type)
+
+    elements = partition_html(url="https://example.com")
+
+    assert [e.text for e in elements] == [text]
 
 
 # ================================================================================================
@@ -1478,6 +1519,7 @@ EXPECTED_OUTPUT_LANGUAGE_DE = [
 class FakeResponse:
     def __init__(self, text: str, status_code: int, headers: dict[str, str] = {}):
         self.text = text
+        self.content = text.encode("utf-8")
         self.status_code = status_code
         self.ok = status_code < 300
         self.headers = headers

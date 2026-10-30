@@ -7,7 +7,11 @@ import pytest
 from markdown.extensions.fenced_code import FencedCodeExtension
 from pytest_mock import MockFixture
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from test_unstructured.unit_utils import (
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    http_response,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ElementType, Title
 from unstructured.partition.md import partition_md
@@ -66,6 +70,7 @@ def test_partition_md_with_whitespace_text_still_validates_extensions():
 class MockResponse:
     def __init__(self, text: str, status_code: int, headers: dict[str, Any] = {}):
         self.text = text
+        self.content = text.encode("utf-8")
         self.status_code = status_code
         self.ok = status_code < 300
         self.headers = headers
@@ -86,6 +91,17 @@ def test_partition_md_from_url():
 
     assert len(elements) > 0
     assert all(e.metadata.filename is None for e in elements)
+
+
+def test_partition_md_from_url_reads_a_UTF_8_document_that_declares_no_charset():
+    # -- `requests` decodes a `text/*` response without a charset as ISO-8859-1 --
+    text = "It’s a naïve “quote” — 中文 … résumé"
+    response = http_response(f"# Café menü\n\n{text}\n".encode("utf-8"), "text/markdown")
+
+    with patch("unstructured.partition.md.safe_get", return_value=response):
+        elements = partition_md(url="https://example.com/menu.md")
+
+    assert [e.text for e in elements] == ["Café menü", text]
 
 
 def test_partition_md_from_url_raises_with_bad_status_code():
