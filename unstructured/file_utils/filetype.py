@@ -223,6 +223,12 @@ def _decode_prefix(content: bytes, encoding: str) -> str | None:
     and no decodable byte is dropped. An `eof_reached=True` call is never a boundary split and
     skips this.
 
+    The withheld length is measured from the END of `content`, never from an offset the codec
+    reports: a BOM-stripping codec such as ``utf-8-sig`` reports offsets relative to the buffer
+    AFTER the BOM it consumed, so applying one to the original bytes deletes that many valid
+    bytes ahead of the cut and can take a CSV delimiter with them. Trimming the tail keeps the
+    whole prefix, BOM included, in front of the plain codec.
+
     Returns `None` when `content` is not a truncated form of `encoding`. Bytes a codec rejects as
     invalid are not a split character: trimming them would delete a complete character together
     with valid punctuation and skip the fallback that decodes them, so only the incomplete-end
@@ -232,17 +238,27 @@ def _decode_prefix(content: bytes, encoding: str) -> str | None:
     try:
         return content.decode(encoding=encoding)
     except UnicodeDecodeError as error:
-        if (
-            error.reason not in _INCOMPLETE_SEQUENCE_REASONS
-            or error.start < len(content) - _MAX_ENCODING_UNIT_BYTES
-            or error.start == 0
-        ):
+        if error.reason not in _INCOMPLETE_SEQUENCE_REASONS:
             return None
-        # -- everything before the first rejected byte already decoded: the withheld tail is the
-        # -- unfinished sequence itself --
-        return content[: error.start].decode(encoding=encoding)
     except UnicodeError:
         return None
+
+    for withheld in range(1, _MAX_ENCODING_UNIT_BYTES + 1):
+        remainder = content[: len(content) - withheld]
+        # -- a whole read that is one unfinished character has nothing to classify --
+        if not remainder:
+            return None
+        try:
+            return remainder.decode(encoding=encoding)
+        except UnicodeDecodeError as error:
+            # -- still inside the character: withhold one more byte, but never past a byte the
+            # -- codec rejects outright, and never further than one encoding unit --
+            if error.reason not in _INCOMPLETE_SEQUENCE_REASONS:
+                return None
+        except UnicodeError:
+            return None
+    return None
+
 
 
 def _read_prefix(file: IO, limit: int) -> str | bytes:

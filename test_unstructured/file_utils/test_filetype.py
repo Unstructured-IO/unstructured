@@ -992,6 +992,80 @@ def and_it_keeps_a_complete_character_at_the_read_boundary_in_the_text_it_classi
     assert ctx.text_head.endswith("é,")
 
 
+# -- a BOM-prefixed CSV whose 4,096-byte read ends inside `é`, one byte short of the second
+# -- row's delimiter-adjacent multibyte character. `utf-8-sig` strips the three BOM bytes before
+# -- reporting a decode offset, so applying that offset to the original buffer removed three
+# -- valid bytes ahead of the cut: the row delimiter and the two characters before it. All
+# -- complete characters and the delimiter have to survive for `_is_csv` to see two columns.
+_BOM_PREFIXED_CSV_CUT_INSIDE_A_CHARACTER = (
+    codecs.BOM_UTF8 + b"a,b\n" + b"a" * 4087 + b",\xc3\xa9rest\n"
+)
+_BOM_PREFIXED_CSV_HEAD_BYTES = 4096
+
+
+def and_it_withholds_only_the_cut_character_when_UTF8_sig_carries_a_BOM():
+    head = _BOM_PREFIXED_CSV_CUT_INSIDE_A_CHARACTER[:_BOM_PREFIXED_CSV_HEAD_BYTES]
+    assert head.endswith(b",\xc3")
+
+    text = _decode_prefix(head, "utf-8-sig")
+
+    assert text == head[:-1].decode("utf-8-sig")
+    assert text.endswith(",")
+
+
+def and_it_keeps_a_multibyte_character_that_sits_ahead_of_the_cut_character():
+    # -- the byte offset `utf-8-sig` reports is relative to the buffer after the BOM, so a cut
+    # -- taken from it landed inside the complete `e-acute` before the unfinished character and
+    # -- the retry raised UnicodeDecodeError on a valid read
+    payload = codecs.BOM_UTF8 + b"a,b\n" + b"a" * 4084 + "\u00e9".encode() + b"aa" + b"\xc3"
+    head = payload[:4096]
+    assert head.endswith("\u00e9aa".encode() + b"\xc3")
+    assert head[4091:4093] == "\u00e9".encode()
+
+    assert _decode_prefix(head, "utf-8-sig") == head[:-1].decode("utf-8-sig")
+
+
+def and_it_classifies_a_BOM_prefixed_UTF8_sig_CSV_cut_inside_a_character(
+    ctx_mime_type_: Mock,
+):
+    # -- the reported regression, end to end on a byte stream: the cut character is withheld, the
+    # -- delimiter before it survives, the CSV is still a CSV, and no inference runs --
+    ctx_mime_type_.return_value = "text/plain"
+    payload = _BOM_PREFIXED_CSV_CUT_INSIDE_A_CHARACTER
+
+    with (
+        patch("unstructured.file_utils.filetype.detect_file_encoding") as detect_mock,
+        warnings.catch_warnings(),
+    ):
+        warnings.simplefilter("error", EncodingDetectionWarning)
+        assert detect_filetype(file=io.BytesIO(payload), encoding="utf-8-sig") is FileType.CSV
+    detect_mock.assert_not_called()
+
+    ctx = _FileTypeDetectionContext(file=io.BytesIO(payload), encoding="utf-8-sig")
+    assert ctx.text_head == payload[:_BOM_PREFIXED_CSV_HEAD_BYTES - 1].decode("utf-8-sig")
+    assert "\xc3\xa9" not in ctx.text_head
+
+
+def and_it_classifies_the_same_BOM_prefixed_UTF8_sig_CSV_from_a_path(
+    ctx_mime_type_: Mock, tmp_path
+):
+    # -- the path branch reads text through the codec, so it never splits a character; the same
+    # -- payload has to classify identically from disk --
+    ctx_mime_type_.return_value = "text/plain"
+    csv_file = tmp_path / "records"
+    csv_file.write_bytes(_BOM_PREFIXED_CSV_CUT_INSIDE_A_CHARACTER)
+
+    with (
+        patch("unstructured.file_utils.filetype.detect_file_encoding") as detect_mock,
+        warnings.catch_warnings(),
+    ):
+        warnings.simplefilter("error", EncodingDetectionWarning)
+        assert (
+            detect_filetype(file_path=str(csv_file), encoding="utf-8-sig") is FileType.CSV
+        )
+    detect_mock.assert_not_called()
+
+
 def it_routes_not_unstructured_payload_json_away_from_ndjson_via_detect_filetype():
     file_type = detect_filetype(example_doc_path("not-unstructured-payload.json"))
     # A multi-line single-object JSON file used to get classified as NDJSON. It should now end up
