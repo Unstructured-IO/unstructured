@@ -6,6 +6,7 @@ from unstructured.documents.coordinates import (
     RelativeCoordinateSystem,
     convert_coordinate,
 )
+from unstructured.documents.elements import CoordinatesMetadata
 
 
 @pytest.mark.parametrize(
@@ -71,3 +72,18 @@ def test_relative_system(width, height, orientation, x, y, expected_x, expected_
     coord1.orientation = orientation
     coord2 = RelativeCoordinateSystem()
     assert coord1.convert_coordinates_to_new_system(coord2, x, y) == (expected_x, expected_y)
+
+
+def test_coordinate_system_defaults_to_cartesian_without_an_explicit_orientation():
+    coordinate_system = CoordinateSystem(width=100, height=200)
+
+    assert coordinate_system.orientation is Orientation.CARTESIAN
+    assert coordinate_system == CoordinateSystem(width=100, height=200)
+
+
+def test_coordinate_system_metadata_round_trip_compares_equal():
+    coordinates = CoordinatesMetadata(
+        points=((0.1, 0.2),), system=CoordinateSystem(width=100, height=200)
+    )
+
+    assert CoordinatesMetadata.from_dict(coordinates.to_dict()) == coordinates
