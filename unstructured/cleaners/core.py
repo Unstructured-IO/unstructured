@@ -440,6 +440,46 @@ def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
     return quopri.decodestring(text.encode(formatted_encoding)).decode(formatted_encoding)
 
 
+# Leading global inline flags such as `(?i)` must stay at the start of the expression, so they are
+# kept outside the group that anchors the rest of the pattern. Python also accepts `(?#...)`
+# comments before and between them, and whitespace and `#` comments once `(?x)` is on.
+_GLOBAL_FLAGS = re.compile(r"\(\?[aiLmsux]+\)")
+_VERBOSE_SPACE = frozenset(" \t\n\r\v\f")
+
+
+def _skip_past(pattern: str, pos: int, stop: str) -> int:
+    # Like Python's regex tokenizer, a backslash and the character after it are one token, so
+    # `\)` does not close a comment group and a backslash-newline does not end a verbose comment.
+    while pos < len(pattern):
+        if pattern[pos] == "\\":
+            pos += 2
+        elif pattern[pos] == stop:
+            return pos + 1
+        else:
+            pos += 1
+    return len(pattern)
+
+
+def _split_leading_flags(pattern: str) -> Tuple[str, str]:
+    pos = end = 0
+    verbose = False
+    while pos < len(pattern):
+        if verbose and pattern[pos] in _VERBOSE_SPACE:
+            pos += 1
+        elif verbose and pattern[pos] == "#":
+            pos = _skip_past(pattern, pos + 1, "\n")
+        elif pattern.startswith("(?#", pos):
+            pos = _skip_past(pattern, pos + 3, ")")
+        elif flag := _GLOBAL_FLAGS.match(pattern, pos):
+            verbose = verbose or "x" in flag.group()
+            pos = end = flag.end()
+        else:
+            break
+    flags, body = pattern[:end], pattern[end:]
+    # In verbose mode a trailing `# comment` would swallow the closing parenthesis of the group.
+    return flags, f"{body}\n" if verbose else body
+
+
 def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
     """Removes prefixes from a string according to the specified pattern. Strips leading
     whitespace if the strip parameter is set to True.
@@ -452,7 +492,10 @@ def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool
     strip: If True, removes leading whitespace from the cleaned string.
     """
     flags = re.IGNORECASE if ignore_case else 0
-    clean_text = re.sub(rf"^{pattern}", "", text, flags=flags)
+    # Compile the pattern as given first, so a malformed one raises instead of closing the group.
+    re.compile(pattern, flags)
+    leading_flags, body = _split_leading_flags(pattern)
+    clean_text = re.sub(rf"{leading_flags}^(?:{body})", "", text, flags=flags)
     clean_text = clean_text.lstrip() if strip else clean_text
     return clean_text
 
@@ -469,7 +512,10 @@ def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: boo
     strip: If True, removes trailing whitespace from the cleaned string.
     """
     flags = re.IGNORECASE if ignore_case else 0
-    clean_text = re.sub(rf"{pattern}$", "", text, flags=flags)
+    # Compile the pattern as given first, so a malformed one raises instead of closing the group.
+    re.compile(pattern, flags)
+    leading_flags, body = _split_leading_flags(pattern)
+    clean_text = re.sub(rf"{leading_flags}(?:{body})$", "", text, flags=flags)
     clean_text = clean_text.rstrip() if strip else clean_text
     return clean_text
 

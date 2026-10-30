@@ -191,6 +191,14 @@ def test_clean_trailing_punctuation(text, expected):
         ("DESC: A great SUMMARY", r"(SUMMARY|DESC):", False, True, "A great SUMMARY"),
         ("SUMMARY: A great SUMMARY", r"(SUMMARY|DESC):", False, False, " A great SUMMARY"),
         ("summary: A great SUMMARY", r"(SUMMARY|DESC):", True, True, "A great SUMMARY"),
+        ("SUMMARY: A great DESC: line", r"SUMMARY:|DESC:", False, True, "A great DESC: line"),
+        ("A great DESC: line", r"SUMMARY:|DESC:", False, True, "A great DESC: line"),
+        ("summary: A great SUMMARY", r"(?i)summary:", False, True, "A great SUMMARY"),
+        ("A great SUMMARY", r"(?i)summary:", False, True, "A great SUMMARY"),
+        ("desc: A SUMMARY: line", r"(?i)summary:|desc:", False, True, "A SUMMARY: line"),
+        ("summary: A great SUMMARY", r"(?# prefix)(?i)summary:", False, True, "A great SUMMARY"),
+        ("A great SUMMARY", r"(?# prefix)(?i)summary:", False, True, "A great SUMMARY"),
+        ("desc: A SUMMARY: x", "(?x) # label\n(?i) summary: | desc:", False, True, "A SUMMARY: x"),
     ],
 )
 def test_clean_prefix(text, pattern, ignore_case, strip, expected):
@@ -204,10 +212,50 @@ def test_clean_prefix(text, pattern, ignore_case, strip, expected):
         ("The END! STOP", r"(END|STOP)", False, True, "The END!"),
         ("The END! END", r"(END|STOP)", False, False, "The END! "),
         ("The END! end", r"(END|STOP)", True, True, "The END!"),
+        ("The END sign. STOP", r"END|STOP", False, True, "The END sign."),
+        ("The END sign.", r"END|STOP", False, True, "The END sign."),
+        ("Report END", r"(?i)end", False, True, "Report"),
+        ("Report", r"(?i)end", False, True, "Report"),
+        ("The end sign. stop", r"(?i)end|stop", False, True, "The end sign."),
+        ("Report END\nNext", r"(?m)END", False, True, "Report \nNext"),
+        ("Report END", r"(?i)(?s)end", False, True, "Report"),
+        ("Report END", r"(?i:end)", False, True, "Report"),
+        ("Report END end", r"(?x) end  # lower-case only", False, True, "Report END"),
+        ("Report END", r"(?# suffix)(?i)end", False, True, "Report"),
+        ("Report", r"(?# suffix)(?i)end", False, True, "Report"),
+        ("Report END", r"(?i)(?# between)(?s)end", False, True, "Report"),
+        ("Report END", "(?x)  # readable expression\n(?i) end", False, True, "Report"),
+        ("Report", "(?x)  # readable expression\n(?i) end", False, True, "Report"),
+        ("The end sign. stop", "(?x) (?i) end | stop", False, True, "The end sign."),
+        ("Report END", r"(?#\))(?i)end", False, False, "Report "),
+        ("Report", r"(?#\))(?i)end", False, False, "Report"),
+        ("Report END", r"(?#\\)(?i)end", False, False, "Report "),
+        ("Report END", r"(?#\\\))(?i)end", False, False, "Report "),
+        ("Report END end", "(?x) # continued \\\n(?i) end", False, False, "Report END end"),
+        ("Report END", "(?x) # ends here \\\\\n(?i) end", False, False, "Report "),
     ],
 )
 def test_clean_postfix(text, pattern, ignore_case, strip, expected):
     assert core.clean_postfix(text, pattern, ignore_case, strip) == expected
+
+
+@pytest.mark.parametrize("text", ["keep DELETE here", "nothing to remove"])
+@pytest.mark.parametrize(
+    ("cleaner", "pattern"),
+    [(core.clean_prefix, r")|DELETE("), (core.clean_postfix, r"DELETE)|(")],
+)
+def test_clean_prefix_and_postfix_reject_malformed_patterns(cleaner, pattern, text):
+    with pytest.raises(re.error):
+        cleaner(text, pattern, strip=False)
+
+
+def test_malformed_pattern_leaves_text_element_unchanged():
+    from unstructured.documents.elements import Text
+
+    element = Text("keep DELETE here")
+    with pytest.raises(re.error):
+        element.apply(lambda s: core.clean_postfix(s, r"DELETE)|(", strip=False))
+    assert element.text == "keep DELETE here"
 
 
 def test_group_broken_paragraphs():
