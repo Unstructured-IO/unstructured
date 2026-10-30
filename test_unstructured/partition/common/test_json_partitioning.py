@@ -10,6 +10,7 @@ from unstructured.documents.elements import CheckBox
 from unstructured.partition.common.json_partitioning import (
     is_element_shaped_dict,
     loads_strict_json,
+    pretty_json_text,
 )
 from unstructured.partition.json import partition_json
 
@@ -98,3 +99,37 @@ def it_rejects_non_standard_json_constants(payload: str):
     # -- json.loads accepts these by default; loads_strict_json must reject them as malformed --
     with pytest.raises(json.JSONDecodeError):
         loads_strict_json(payload)
+
+
+# ================================================================================================
+# Describe `pretty_json_text()`
+# ================================================================================================
+
+
+def it_writes_non_ASCII_characters_as_themselves_rather_than_as_escapes():
+    value = {"title": "東京の天気", "city": "São Paulo", "mood": "🙂"}
+
+    assert pretty_json_text(value) == (
+        '{\n  "city": "São Paulo",\n  "mood": "🙂",\n  "title": "東京の天気"\n}'
+    )
+
+
+def but_it_keeps_a_lone_surrogate_escaped_so_the_text_can_be_encoded_as_UTF_8():
+    # -- a JSON escape can hold one half of a surrogate pair on its own; UTF-8 cannot encode that
+    # -- character, and element ids are hashed from the UTF-8 bytes of the text --
+    value = {"city": "São Paulo", "key": chr(0xD800)}
+
+    text = pretty_json_text(value)
+
+    assert text == '{\n  "city": "São Paulo",\n  "key": ' + json.dumps(chr(0xD800)) + "\n}"
+    assert text.encode("utf-8")
+    assert json.loads(text) == value
+
+
+def and_it_still_escapes_control_characters_and_DEL():
+    assert pretty_json_text({"key": "a\tb\nc"}) == '{\n  "key": "a\\tb\\nc"\n}'
+    # -- DEL is ASCII, but `json.dumps()` escapes it by default; keeping that escape leaves the text
+    # -- and element ids of all-ASCII content as they were --
+    value = {"key": "a" + chr(0x7F) + "b"}
+
+    assert pretty_json_text(value) == '{\n  "key": ' + json.dumps(value["key"]) + "\n}"

@@ -521,6 +521,43 @@ def and_it_preserves_that_text_when_reading_from_a_filename_too():
     assert elements[0].text == _ZWS_TEXT
 
 
+# -- non-ASCII text in arbitrary NDJSON ------------------------------------------------------------
+
+_NON_ASCII_RECORD = {"title": "東京の天気", "city": "São Paulo", "mood": "🙂"}
+_NON_ASCII_RECORD_TEXT = '{\n  "city": "São Paulo",\n  "mood": "🙂",\n  "title": "東京の天気"\n}'
+
+
+@pytest.mark.parametrize("ensure_ascii", [False, True])
+def it_keeps_non_ASCII_characters_in_the_text_of_arbitrary_lines(ensure_ascii: bool):
+    # -- the same text whether a line holds the UTF-8 characters or the escapes that
+    # -- `json.dumps()` writes by default --
+    line = json.dumps(_NON_ASCII_RECORD, ensure_ascii=ensure_ascii)
+
+    elements = partition_ndjson(file=io.BytesIO(f"{line}\n{line}\n".encode("utf-8")))
+
+    assert [e.text for e in elements] == [_NON_ASCII_RECORD_TEXT, _NON_ASCII_RECORD_TEXT]
+
+
+def and_it_keeps_them_when_reading_arbitrary_lines_from_a_filename(tmp_path: pathlib.Path):
+    path = tmp_path / "records.ndjson"
+    path.write_bytes(f"{json.dumps(_NON_ASCII_RECORD, ensure_ascii=False)}\n".encode("utf-8"))
+
+    elements = partition_ndjson(filename=str(path))
+
+    assert [e.text for e in elements] == [_NON_ASCII_RECORD_TEXT]
+
+
+def it_partitions_an_arbitrary_line_holding_a_lone_surrogate_escape():
+    # -- UTF-8 cannot encode a lone surrogate, so it stays escaped and the element id, hashed
+    # -- from the UTF-8 bytes of the text, can still be computed --
+    value = {"city": "São Paulo", "key": chr(0xD800)}
+
+    elements = partition_ndjson(text=f"{json.dumps(value)}\n")
+
+    assert len(elements) == 1
+    assert json.loads(elements[0].text) == value
+
+
 # -- the file-like contract ------------------------------------------------------------------------
 
 
