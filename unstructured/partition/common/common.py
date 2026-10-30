@@ -138,6 +138,16 @@ def layout_list_to_list_items(
     # NOTE(robinson) - this means there wasn't a match for the enumerated bullets
     if len(split_items) == 1:
         split_items = UNICODE_BULLETS_RE.split(text) if text else []
+    else:
+        # A single block can mix enumerated markers with bullet glyphs, for example
+        # "a. heading" followed by two U+2022 items. Splitting only on the enumerated
+        # markers leaves the glyph items glued to the last enumerated one, so every
+        # remaining segment is split again on the bullet glyphs. Both orders of the
+        # two marker families therefore produce one item per item.
+        mixed_items: list[str] = []
+        for segment in split_items:
+            mixed_items.extend(UNICODE_BULLETS_RE.split(segment))
+        split_items = mixed_items
 
     list_items: list[Element] = []
     for text_segment in split_items:

@@ -108,7 +108,20 @@ E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 REFERENCE_PATTERN = r"\[(?:[\d]+|[a-z]|[ivxlcdm])\]"
 REFERENCE_PATTERN_RE = re.compile(REFERENCE_PATTERN)
 
-ENUMERATED_BULLETS_RE = re.compile(r"(?:(?:\d{1,3}|[a-z][A-Z])\.?){1,3}")
+# NOTE - an enumerated bullet is a number ("1.", "1.2.", "1.2.3.") or a single letter
+# ("a.", "A.") at the start of a line. The letter form is matched only at the start of a
+# line and only when non-newline whitespace or the end of the text follows it, so that
+# abbreviations such as "e. g." or "i. e." are not mistaken for bullets. The trailing
+# guard rejects a second letter followed by a dot on the same line; without it the first
+# letter of an abbreviation is taken as a bullet and the rest of the sentence is lost.
+# Both the lookahead and the guard accept a run of same-line whitespace, because
+# extracted text uses repeated spaces or tabs between abbreviation letters as often as
+# a single space. Neither may cross a newline: a bullet sits on its own line.
+ENUMERATED_BULLETS_RE = re.compile(
+    r"(?:(?:\d{1,3})\.?){1,3}"
+    rf"|(?:(?:(?<=\n)|\A){NON_NEWLINE_WHITESPACE}[a-zA-Z]\."
+    rf"(?=[^\S\n\r]|$)(?![^\S\n\r]+[a-zA-Z]\.))",
+)
 
 EMAIL_HEAD_PATTERN = (
     r"(MIME-Version: 1.0(.*)?\n)?Date:.*\nMessage-ID:.*\nSubject:.*\nFrom:.*\nTo:.*"
