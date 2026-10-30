@@ -1042,7 +1042,7 @@ def and_it_classifies_a_BOM_prefixed_UTF8_sig_CSV_cut_inside_a_character(
     detect_mock.assert_not_called()
 
     ctx = _FileTypeDetectionContext(file=io.BytesIO(payload), encoding="utf-8-sig")
-    assert ctx.text_head == payload[:_BOM_PREFIXED_CSV_HEAD_BYTES - 1].decode("utf-8-sig")
+    assert ctx.text_head == payload[: _BOM_PREFIXED_CSV_HEAD_BYTES - 1].decode("utf-8-sig")
     assert "\xc3\xa9" not in ctx.text_head
 
 
@@ -1060,9 +1060,7 @@ def and_it_classifies_the_same_BOM_prefixed_UTF8_sig_CSV_from_a_path(
         warnings.catch_warnings(),
     ):
         warnings.simplefilter("error", EncodingDetectionWarning)
-        assert (
-            detect_filetype(file_path=str(csv_file), encoding="utf-8-sig") is FileType.CSV
-        )
+        assert detect_filetype(file_path=str(csv_file), encoding="utf-8-sig") is FileType.CSV
     detect_mock.assert_not_called()
 
 

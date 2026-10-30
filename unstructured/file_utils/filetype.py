@@ -260,7 +260,6 @@ def _decode_prefix(content: bytes, encoding: str) -> str | None:
     return None
 
 
-
 def _read_prefix(file: IO, limit: int) -> str | bytes:
     """Read up to `limit` objects from `file`, continuing past short reads.
 
