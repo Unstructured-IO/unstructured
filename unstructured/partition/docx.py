@@ -1283,8 +1283,10 @@ def _row_grid_width(row: _Row) -> int:
 def _paragraph_text(paragraph: Paragraph) -> str:
     """The text of `paragraph` that becomes element text: its runs, hyperlinks and inline runs.
 
-    The runs of an inline shape in a text box that `paragraph` anchors belong to the paragraph in
-    the text box instead.
+    The runs of an inline shape in a text box that `paragraph` anchors belong instead to the
+    paragraph of the text box that holds the shape in one of its runs. An inline shape no such
+    paragraph holds, in a table or a content control in the text box for example, stays part of
+    the text of `paragraph`.
     """
     p = paragraph._p
     return "".join(e.text for e in _PARAGRAPH_TEXT_XPATH(p, depth=_text_box_depth(p)))
@@ -1323,14 +1325,23 @@ def _text_box_depth(p: CT_P) -> int:
     return int(_TEXT_BOX_DEPTH_XPATH(p))
 
 
-# NOTE(tanishqbaweja): `$depth` is the number of text boxes the paragraph is nested in. Comparing it
-# with the text-box depth of a shape keeps each expression to the paragraph's own shapes; a shape in
-# one of its text boxes belongs to a paragraph in that text box. Word writes a text box as a
-# DrawingML shape in `mc:AlternateContent/mc:Choice` and again as a VML shape in `mc:Fallback`, for
-# readers that can't read DrawingML, so that copy is skipped.
+# NOTE(tanishqbaweja): `$depth` is the number of text boxes the paragraph is nested in, so a text
+# box at that depth is anchored in the paragraph itself, not in one of its text boxes.
+#
+# `_TEXT_BOXES` finds the text boxes whose paragraphs are partitioned on their own. It skips a text
+# box in an inline shape, whose runs are part of the paragraph text, and the VML copy of a text box
+# in `mc:Fallback`: Word writes a text box as a DrawingML shape in `mc:AlternateContent/mc:Choice`
+# and again as a VML shape in `mc:Fallback`, for readers that can't read DrawingML.
+#
+# `_PARAGRAPH_TEXT_XPATH` leaves out an inline shape in a run of a child paragraph of a text box at
+# that depth. Such a paragraph is partitioned on its own, with the shape, or is the VML copy of one
+# that is, or is in an inline shape, whose runs the paragraph text takes. Any other inline shape in
+# a text box, in a table, a content control or a hyperlink, stays in the text of the anchor
+# paragraph, as before text boxes were read, so its text is kept once.
 _PARAGRAPH_TEXT_XPATH = etree.XPath(
     "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing]"
-    "[count(ancestor::w:txbxContent) = $depth][1]//w:r",
+    "[not(ancestor::w:r/parent::w:p/parent::w:txbxContent"
+    "[count(ancestor::w:txbxContent) = $depth])][1]//w:r",
     namespaces=nsmap,
 )
 _TEXT_BOXES = (

@@ -2074,6 +2074,11 @@ def _table_xml(content_xml: str) -> str:
     return f"<w:tbl><w:tr><w:tc>{content_xml}</w:tc></w:tr></w:tbl>"
 
 
+def _content_control_xml(content_xml: str) -> str:
+    """XML of a block-level content control (`w:sdt`) holding the paragraphs in `content_xml`."""
+    return f"<w:sdt><w:sdtContent>{content_xml}</w:sdtContent></w:sdt>"
+
+
 @pytest.mark.parametrize(
     "text_box_xml",
     [
@@ -2316,6 +2321,61 @@ def test_partition_docx_partitions_each_paragraph_of_nested_text_boxes_once(
     elements = partition_docx(path)
 
     assert [e.text for e in elements] == ["Anchor.", *expected_box_texts, "After."]
+
+
+_INLINE_TEXT_BOX_XML = _drawingml_text_box_xml(_box_paragraph_xml("Inner."), placement="inline")
+
+
+@pytest.mark.parametrize(
+    ("box_content_xml", "expected_texts"),
+    [
+        pytest.param(
+            _table_xml(_box_paragraph_xml("Cell.", shape_xml=_INLINE_TEXT_BOX_XML)),
+            ["Anchor.Inner.", "In the box."],
+            id="in-a-table",
+        ),
+        pytest.param(
+            _content_control_xml(_box_paragraph_xml("Control.", shape_xml=_INLINE_TEXT_BOX_XML)),
+            ["Anchor.Inner.", "In the box."],
+            id="in-a-content-control",
+        ),
+        pytest.param(
+            '<w:p><w:hyperlink w:anchor="top">'
+            f"<w:r>{_INLINE_TEXT_BOX_XML}</w:r></w:hyperlink></w:p>",
+            ["Anchor.Inner.", "In the box."],
+            id="in-a-hyperlink",
+        ),
+        # -- the text box holding the shape is then anchored in a box paragraph, which gets it --
+        pytest.param(
+            _box_paragraph_xml(
+                "Outer.",
+                shape_xml=_text_box_xml(
+                    _table_xml(_box_paragraph_xml("Cell.", shape_xml=_INLINE_TEXT_BOX_XML))
+                ),
+            ),
+            ["Anchor.", "Outer.Inner.", "In the box."],
+            id="in-a-table-in-a-nested-text-box",
+        ),
+    ],
+)
+def test_partition_docx_keeps_the_text_of_an_inline_shape_text_box_paragraphs_do_not_reach(
+    box_content_xml: str, expected_texts: list[str], tmp_path: pathlib.Path
+):
+    document = docx.Document()
+    _add_shape_run(
+        document.add_paragraph("Anchor."),
+        _text_box_xml(box_content_xml + _box_paragraph_xml("In the box.")),
+    )
+    document.add_paragraph("After.")
+    path = str(tmp_path / "inline-shape-in-a-text-box.docx")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- the paragraphs of a table or a content control in a text box give no elements, and the
+    # -- runs of a hyperlink are not searched for shapes, so the text of an inline shape there
+    # -- stays in the text of the paragraph the text box is anchored in, once --
+    assert [e.text for e in elements] == [*expected_texts, "After."]
 
 
 def test_partition_docx_does_not_start_a_page_at_a_rendered_page_break_in_a_text_box(
