@@ -102,7 +102,8 @@ def partition_ndjson(
     if not values:
         return []
 
-    if all(is_element_shaped_dict(value) for value in values):
+    is_rehydration = all(is_element_shaped_dict(value) for value in values)
+    if is_rehydration:
         # -- Branch A: rehydrate serialized Unstructured elements --
         elements = rehydrate_elements(values)
     else:
@@ -110,6 +111,9 @@ def partition_ndjson(
         elements = [Text(text=pretty_json_text(value)) for value in values]
 
     for element in elements:
-        element.metadata.last_modified = metadata_last_modified or last_modified
+        if metadata_last_modified:
+            element.metadata.last_modified = metadata_last_modified
+        elif not is_rehydration:
+            element.metadata.last_modified = last_modified
 
     return elements
