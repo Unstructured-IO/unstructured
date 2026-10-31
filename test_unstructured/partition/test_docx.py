@@ -2248,17 +2248,35 @@ def test_partition_docx_keeps_a_list_restart_in_a_text_box_out_of_the_body(tmp_p
     assert [e.text for e in elements] == ["1. alpha", "5. beta", "5. gamma"]
 
 
+@pytest.mark.parametrize(
+    ("table_xml", "expected_texts"),
+    [
+        pytest.param(
+            _table_xml(_box_paragraph_xml("in the table", num_id=1)),
+            ["1. alpha", "1. beta", "3. gamma", "2. delta"],
+            id="in-a-table",
+        ),
+        # -- the numbered paragraph of a table nested in that table counts in the list of the text
+        # -- box too, not in the list of the body --
+        pytest.param(
+            _table_xml(
+                _table_xml(_box_paragraph_xml("in the inner table", num_id=1))
+                + _box_paragraph_xml("in the outer table", num_id=1)
+            ),
+            ["1. alpha", "1. beta", "4. gamma", "2. delta"],
+            id="in-a-table-in-a-table",
+        ),
+    ],
+)
 def test_partition_docx_counts_the_numbered_paragraphs_of_a_table_in_a_text_box(
-    tmp_path: pathlib.Path,
+    table_xml: str, expected_texts: list[str], tmp_path: pathlib.Path
 ):
     path = _numbered_docx(tmp_path, [("alpha", 1, 0)])
     document = docx.Document(path)
     _add_shape_run(
         document.add_paragraph(),
         _text_box_xml(
-            _box_paragraph_xml("beta", num_id=1)
-            + _table_xml(_box_paragraph_xml("in the table", num_id=1))
-            + _box_paragraph_xml("gamma", num_id=1)
+            _box_paragraph_xml("beta", num_id=1) + table_xml + _box_paragraph_xml("gamma", num_id=1)
         ),
     )
     _add_direct_num_pr(document.add_paragraph("delta"))
@@ -2266,9 +2284,9 @@ def test_partition_docx_counts_the_numbered_paragraphs_of_a_table_in_a_text_box(
 
     elements = partition_docx(path)
 
-    # -- a table in a text box gives no element, but its numbered paragraph counts in the list of
-    # -- the text box, as one in a table in the body counts in the list of the body --
-    assert [e.text for e in elements] == ["1. alpha", "1. beta", "3. gamma", "2. delta"]
+    # -- a table in a text box gives no element, but its numbered paragraphs count in the list of
+    # -- the text box, as those of a table in the body count in the list of the body --
+    assert [e.text for e in elements] == expected_texts
 
 
 def test_partition_docx_keeps_a_list_restart_in_a_table_in_a_text_box_in_that_text_box(
@@ -2449,6 +2467,21 @@ def test_partition_docx_does_not_start_a_page_at_a_rendered_page_break_in_a_text
                 ("Last page.", 3),
             ],
             id="anchored-after-a-hyperlink-with-two-page-breaks",
+        ),
+        # -- the same goes for two page-breaks in one run of a hyperlink --
+        pytest.param(
+            '<w:r><w:t>Page one.</w:t></w:r><w:hyperlink w:anchor="top">'
+            "<w:r><w:lastRenderedPageBreak/><w:t>Link</w:t><w:lastRenderedPageBreak/>"
+            "<w:t>text.</w:t></w:r></w:hyperlink>"
+            "<w:r>{text_box}</w:r><w:r><w:lastRenderedPageBreak/><w:t>Last page.</w:t></w:r>",
+            [
+                ("Page one.Linktext.", 1),
+                ("", None),
+                ("In the box.", 2),
+                ("", None),
+                ("Last page.", 3),
+            ],
+            id="anchored-after-a-hyperlink-run-with-two-page-breaks",
         ),
     ],
 )
