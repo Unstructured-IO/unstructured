@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import copy
 import itertools
 import logging
 import os
 import re
 import zipfile
 from functools import cached_property
-from typing import IO, Any, Iterator, Protocol, Type
+from typing import IO, Any, Iterable, Iterator, Protocol, Type
 
 import docx
 from docx.document import Document
@@ -792,7 +793,9 @@ class _DocxPartitioner:
         """Generate zero-or-more document elements for `paragraph`.
 
         The generated elements can be both textual elements and PageBreak elements. An empty
-        paragraph produces no elements.
+        paragraph produces no elements of its own. The elements of the paragraphs in a text box
+        anchored in `paragraph` follow those of the part of `paragraph` on the page of the run that
+        anchors the text box, see `._iter_text_box_elements()`.
         """
 
         def iter_paragraph_items(paragraph: Paragraph) -> Iterator[Paragraph | RenderedPageBreak]:
@@ -829,6 +832,9 @@ class _DocxPartitioner:
                 yield from iter_paragraph_items(following_paragraph_fragment)
 
         label = self._list_labels.label(paragraph)
+        # -- the text boxes anchored before the first rendered page-break, then those anchored
+        # -- between it and the next one, and so on --
+        text_boxes_by_page = iter(_text_boxes_by_page(paragraph._p))
         for item in iter_paragraph_items(paragraph):
             if isinstance(item, Paragraph):
                 yield from self._classify_paragraph_to_element(item, label)
@@ -836,7 +842,47 @@ class _DocxPartitioner:
                 if _paragraph_text(item).strip():
                     label = ""
             else:
+                yield from self._iter_text_box_elements(paragraph, next(text_boxes_by_page, ()))
                 yield from self._opts.increment_page_number()
+
+        yield from self._iter_text_box_elements(
+            paragraph, itertools.chain.from_iterable(text_boxes_by_page)
+        )
+
+    def _iter_text_box_elements(
+        self, paragraph: Paragraph, text_boxes: Iterable[etree._Element]
+    ) -> Iterator[Element]:
+        """Generate the elements of the paragraphs in `text_boxes`, anchored in `paragraph`.
+
+        The runs of an inline DrawingML shape are part of the text of the paragraph that holds it,
+        but any other text box, floating or VML, is only anchored in its paragraph. Each paragraph
+        in such a text box is classified like a body paragraph, in document order, and is followed
+        by the elements of any text box anchored in it.
+
+        A text box sits on the page of the run it is anchored in, so a rendered page-break in it
+        neither splits its paragraph nor starts a page. Its paragraphs are not sent to the picture
+        sub-partitioner, which already receives the paragraph the text box is anchored in.
+
+        A table in a text box gives no element, but the list counters of the text box advance
+        through it, like those of the body through a table in the body.
+        """
+        for text_box in text_boxes:
+            # NOTE(tanishqbaweja): Word numbers the list paragraphs of each text box on their own,
+            # apart from those of the body and of any other text box. [MS-DOC] 2.4.6.4 counts, for
+            # a numbered paragraph, only the list paragraphs in the same "valid selection", and
+            # 2.2.3 keeps a valid selection within one document part and, in the text-box part,
+            # within one text box. So each text box gets list counters of its own.
+            list_labels = self._list_labels.with_new_counters()
+            for block in text_box.iterchildren(qn("w:p"), qn("w:tbl")):
+                if isinstance(block, CT_Tbl):
+                    self._advance_table_numbering(DocxTable(block, paragraph._parent), list_labels)
+                    continue
+                text_box_paragraph = Paragraph(block, paragraph._parent)
+                label = list_labels.label(text_box_paragraph)
+                yield from self._classify_paragraph_to_element(text_box_paragraph, label)
+                yield from self._iter_text_box_elements(
+                    text_box_paragraph, _text_boxes(text_box_paragraph._p)
+                )
 
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
@@ -959,7 +1005,7 @@ class _DocxPartitioner:
 
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
-        self._advance_table_numbering(table)
+        self._advance_table_numbering(table, self._list_labels)
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table.
         html_table = (
@@ -981,10 +1027,11 @@ class _DocxPartitioner:
             ),
         )
 
-    def _advance_table_numbering(self, table: DocxTable) -> None:
-        """Advance the list counters for each numbered paragraph in `table`, in document order.
+    def _advance_table_numbering(self, table: DocxTable, list_labels: _ListLabels) -> None:
+        """Advance `list_labels` for each numbered paragraph in `table`, in document order.
 
         Table text is not labeled, but Word counts its numbered paragraphs like any other.
+        `list_labels` holds the counters of the body, or of the text box the table is in.
         """
         for row in table.rows:
             for tc in row._tr.tc_lst:
@@ -992,9 +1039,9 @@ class _DocxPartitioner:
                     continue
                 for block_item in _Cell(tc, table).iter_inner_content():
                     if isinstance(block_item, Paragraph):
-                        self._list_labels.label(block_item)
+                        list_labels.label(block_item)
                     else:
-                        self._advance_table_numbering(block_item)
+                        self._advance_table_numbering(block_item, list_labels)
 
     def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`.
@@ -1234,13 +1281,89 @@ def _row_grid_width(row: _Row) -> int:
 
 
 def _paragraph_text(paragraph: Paragraph) -> str:
-    """The text of `paragraph` that becomes element text: its runs, hyperlinks and inline runs."""
-    return "".join(
-        e.text
-        for e in paragraph._p.xpath(
-            "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
-        )
-    )
+    """The text of `paragraph` that becomes element text: its runs, hyperlinks and inline runs.
+
+    The runs of an inline shape in a text box that `paragraph` anchors belong instead to the
+    paragraph of the text box that holds the shape in one of its runs. An inline shape no such
+    paragraph holds, in a table or a content control in the text box for example, stays part of
+    the text of `paragraph`, and so does one in a text box that is only in `mc:Fallback`, which is
+    not read.
+    """
+    p = paragraph._p
+    return "".join(e.text for e in _PARAGRAPH_TEXT_XPATH(p, depth=_text_box_depth(p)))
+
+
+def _text_boxes(p: CT_P) -> list[etree._Element]:
+    """The `w:txbxContent` element of each text box anchored in `p`, in document order.
+
+    A text box in an inline DrawingML shape (`wp:inline`) is left out because its runs are part of
+    the text of `p`, and so is the VML copy of a text box in `mc:Fallback`. A text box nested in
+    another text box is left out too, since it is read with that one.
+    """
+    return _TEXT_BOXES_XPATH(p, depth=_text_box_depth(p))
+
+
+def _text_boxes_by_page(p: CT_P) -> list[list[etree._Element]]:
+    """The text boxes of `_text_boxes(p)`, grouped by the rendered page-breaks in `p` before them.
+
+    The first group holds the text boxes anchored before the first page-break python-docx splits
+    `p` at, the second those anchored between it and the next one, and so on, so there is one more
+    group than there are such page-breaks. python-docx splits `p` at each rendered page-break in
+    its runs, but only at the first one in a hyperlink, because the part of `p` before that break
+    holds the whole hyperlink.
+    """
+    text_boxes_by_page: list[list[etree._Element]] = [[]]
+    for e in _TEXT_BOXES_AND_PAGE_BREAKS_XPATH(p, depth=_text_box_depth(p)):
+        if e.tag == qn("w:lastRenderedPageBreak"):
+            text_boxes_by_page.append([])
+        else:
+            text_boxes_by_page[-1].append(e)
+    return text_boxes_by_page
+
+
+def _text_box_depth(p: CT_P) -> int:
+    """The number of text boxes `p` is nested in, 0 for a paragraph that is not in a text box."""
+    return int(_TEXT_BOX_DEPTH_XPATH(p))
+
+
+# NOTE(tanishqbaweja): `$depth` is the number of text boxes the paragraph is nested in, so a text
+# box at that depth is anchored in the paragraph itself, not in one of its text boxes.
+#
+# `_TEXT_BOXES` finds the text boxes whose paragraphs are partitioned on their own. It skips a text
+# box in an inline shape, whose runs are part of the paragraph text, and the VML copy of a text box
+# in `mc:Fallback`: Word writes a text box as a DrawingML shape in `mc:AlternateContent/mc:Choice`
+# and again as a VML shape in `mc:Fallback`, for readers that can't read DrawingML.
+#
+# `_PARAGRAPH_TEXT_XPATH` leaves out an inline shape in a run of a child paragraph of a text box at
+# that depth. Such a paragraph is partitioned on its own, with the shape, or is the VML copy of one
+# that is, or is in an inline shape, whose runs the paragraph text takes. Any other inline shape in
+# a text box stays in the text of the anchor paragraph, as before text boxes were read, so its text
+# is kept once: one in a table, a content control or a hyperlink in a text box, and one in a text
+# box in `mc:Fallback` whose `mc:Choice` holds no text box, since that text box is not read.
+_TEXT_BOX_NAMESPACES = {
+    **nsmap,
+    "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
+}
+_PARAGRAPH_TEXT_XPATH = etree.XPath(
+    "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing]"
+    "[not(ancestor::w:r/parent::w:p/parent::w:txbxContent"
+    "[count(ancestor::w:txbxContent) = $depth]"
+    "[not(ancestor::mc:Fallback) or ancestor::mc:AlternateContent[1]/mc:Choice//w:txbxContent])]"
+    "[1]//w:r",
+    namespaces=_TEXT_BOX_NAMESPACES,
+)
+_TEXT_BOXES = (
+    "w:r//w:txbxContent[count(ancestor::w:txbxContent) = $depth]"
+    "[not(ancestor::wp:inline | ancestor::mc:Fallback)]"
+)
+_TEXT_BOXES_XPATH = etree.XPath(_TEXT_BOXES, namespaces=_TEXT_BOX_NAMESPACES)
+_TEXT_BOXES_AND_PAGE_BREAKS_XPATH = etree.XPath(
+    f"{_TEXT_BOXES} | w:r/w:lastRenderedPageBreak | w:hyperlink/w:r/w:lastRenderedPageBreak"
+    "[not(preceding-sibling::w:lastRenderedPageBreak)]"
+    "[not(../preceding-sibling::w:r/w:lastRenderedPageBreak)]",
+    namespaces=_TEXT_BOX_NAMESPACES,
+)
+_TEXT_BOX_DEPTH_XPATH = etree.XPath("count(ancestor::w:txbxContent)", namespaces=nsmap)
 
 
 class _ListLabels:
@@ -1270,6 +1393,17 @@ class _ListLabels:
         self._counters: dict[str, list[int | None]] = {}
         self._restarted: set[tuple[str, int]] = set()
         self._style_num_prs: dict[str | None, tuple[str | None, int | None, str | None]] = {}
+
+    def with_new_counters(self) -> _ListLabels:
+        """A renderer for a separately numbered part of the document, such as a text box.
+
+        It shares the numbering definitions and the style lookups of this one, but every list in it
+        starts anew, and labeling its paragraphs leaves the counters of this one unchanged.
+        """
+        list_labels = copy.copy(self)
+        list_labels._counters = {}
+        list_labels._restarted = set()
+        return list_labels
 
     def style_of(self, paragraph: Paragraph) -> Any:
         """The style of `paragraph`, looked up once per style-id.
