@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import struct
+import zipfile
 from contextlib import contextmanager
 from functools import cached_property
 from typing import IO, Any, Iterator, Optional
@@ -33,6 +34,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.model import FileType
+from unstructured.logger import logger
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -252,6 +254,73 @@ def _reject_encrypted_workbook(file_bytes: bytes) -> None:
         raise UnprocessableEntityError("XLSX file is password protected.")
 
 
+# -- the most unevaluated formula cells one warning names before eliding the rest --
+_UNEVALUATED_FORMULA_CELLS_NAMED = 10
+
+
+def _warn_on_formula_cells_without_saved_results(file_bytes: bytes) -> None:
+    """Warn for each worksheet whose formula cells read as empty for lack of a saved result.
+
+    Files written by openpyxl, or by pandas and other generators that do not calculate, store
+    each formula without a computed value. Reading uses openpyxl's cached-value mode, where such
+    a cell is indistinguishable from an empty one, so its value silently disappears from the
+    partitioned output and its row can fall out of its table. Finding these cells takes a
+    formula-mode pass over the workbook; a scan of the worksheet XML for a formula tag gates
+    that pass, so a workbook without formulas only pays for the scan.
+    """
+    with zipfile.ZipFile(io.BytesIO(file_bytes)) as zip_file:
+        has_formula_tag = any(
+            b"<f" in zip_file.read(name)
+            for name in zip_file.namelist()
+            if name.startswith("xl/worksheets/") and name.endswith(".xml")
+        )
+    if not has_formula_tag:
+        return
+
+    formula_cells_by_sheet: dict[str, set[str]] = {}
+    workbook = openpyxl.load_workbook(io.BytesIO(file_bytes), read_only=True, data_only=False)
+    try:
+        for worksheet in workbook.worksheets:
+            formula_cells = {
+                cell.coordinate
+                for row in worksheet.iter_rows()
+                for cell in row
+                if cell.data_type == "f"
+            }
+            if formula_cells:
+                formula_cells_by_sheet[worksheet.title] = formula_cells
+    finally:
+        workbook.close()
+
+    if not formula_cells_by_sheet:
+        return
+
+    workbook = openpyxl.load_workbook(io.BytesIO(file_bytes), read_only=True, data_only=True)
+    try:
+        for worksheet in workbook.worksheets:
+            formula_cells = formula_cells_by_sheet.get(worksheet.title, set())
+            # -- row-major order; a gap row's EmptyCell has no coordinate, hence the getattr --
+            unevaluated = [
+                cell.coordinate
+                for row in worksheet.iter_rows()
+                for cell in row
+                if getattr(cell, "coordinate", None) in formula_cells and cell.value in (None, "")
+            ]
+            if not unevaluated:
+                continue
+            named = ", ".join(unevaluated[:_UNEVALUATED_FORMULA_CELLS_NAMED])
+            elided = len(unevaluated) - _UNEVALUATED_FORMULA_CELLS_NAMED
+            if elided > 0:
+                named += f" and {elided} more"
+            logger.warning(
+                f"worksheet '{worksheet.title}': {len(unevaluated)} formula cell(s) have no"
+                f" saved result and are read as empty: {named}. Recalculate and save the"
+                f" workbook to include the computed values."
+            )
+    finally:
+        workbook.close()
+
+
 class _XlsxPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
@@ -307,9 +376,12 @@ class _XlsxPartitionerOptions:
     def sheets(self) -> dict[str, pd.DataFrame]:
         """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
         with open_excel_workbook(self._file_bytes, compact_empty_rows=self.find_subtable) as reader:
-            return {
+            sheets = {
                 name: reader.parse(name, header=self.header_row_idx) for name in reader.sheet_names
             }
+        if self._excel_engine == "openpyxl":
+            _warn_on_formula_cells_without_saved_results(self._file_bytes)
+        return sheets
 
     @cached_property
     def _excel_engine(self) -> str:

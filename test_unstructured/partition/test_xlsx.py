@@ -5,8 +5,10 @@
 from __future__ import annotations
 
 import io
+import logging
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 from typing import Any
 
@@ -506,6 +508,64 @@ def test_partition_xlsx_keeps_cell_text_that_pandas_reads_as_missing_by_default(
 
     assert table.text == "Item Status Pear N/A Fig NA Plum null Kiwi None"
     assert "<td>N/A</td>" in table.metadata.text_as_html
+
+
+def _budget_workbook_file() -> io.BytesIO:
+    """A workbook whose last row totals the two above it with a SUM formula.
+
+    openpyxl stores the formula without a computed result, the way the issue-#4637 files are
+    written.
+    """
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    for row in (["Item", "Amount"], ["Rent", 1000], ["Power", 450], ["Total", "=SUM(B2:B3)"]):
+        worksheet.append(row)
+    file = io.BytesIO()
+    workbook.save(file)
+    file.seek(0)
+    return file
+
+
+def test_partition_xlsx_warns_when_a_formula_cell_has_no_saved_result(
+    caplog: pytest.LogCaptureFixture,
+):
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        elements = partition_xlsx(file=_budget_workbook_file())
+
+    # -- the cell still reads as empty, so its row still falls out of the table --
+    assert elements == [Table("Item Amount Rent 1000 Power 450"), Title("Total")]
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+    assert "B4" in caplog.text
+
+
+def test_partition_xlsx_does_not_warn_when_the_formula_result_is_saved(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- rewrite the workbook the way a calculating writer does, with the result in <v> --
+    source = zipfile.ZipFile(_budget_workbook_file())
+    file = io.BytesIO()
+    with zipfile.ZipFile(file, "w") as destination:
+        for item in source.infolist():
+            content = source.read(item.filename)
+            if item.filename == "xl/worksheets/sheet1.xml":
+                content = content.replace(b"<f>SUM(B2:B3)</f>", b"<f>SUM(B2:B3)</f><v>1450</v>")
+            destination.writestr(item, content)
+    file.seek(0)
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        (table,) = partition_xlsx(file=file)
+
+    assert table.text == "Item Amount Rent 1000 Power 450 Total 1450"
+    assert "formula cell" not in caplog.text
+
+
+def test_partition_xlsx_does_not_warn_when_the_workbook_has_no_formulas(
+    caplog: pytest.LogCaptureFixture,
+):
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(example_doc_path("stanley-cups.xlsx"))
+
+    assert "formula cell" not in caplog.text
 
 
 # ================================================================================================
