@@ -112,7 +112,7 @@ def partition_json(
 
     elif file is not None:
         file_text = read_json_text(file=file, encoding=encoding)
-        if file.seekable():
+        if not hasattr(file, "seekable") or file.seekable():
             file.seek(0)
 
     elif text is not None:
