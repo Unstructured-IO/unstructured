@@ -9,7 +9,7 @@ import os
 import re
 import zipfile
 from functools import cached_property
-from typing import IO, Any, Iterator, Protocol, Type
+from typing import IO, Any, Iterable, Iterator, Protocol, Type
 
 import docx
 from docx.document import Document
@@ -793,8 +793,9 @@ class _DocxPartitioner:
         """Generate zero-or-more document elements for `paragraph`.
 
         The generated elements can be both textual elements and PageBreak elements. An empty
-        paragraph produces no elements of its own. The elements of the paragraphs in the text boxes
-        anchored in `paragraph` follow its own, see `._iter_text_box_elements()`.
+        paragraph produces no elements of its own. The elements of the paragraphs in a text box
+        anchored in `paragraph` follow those of the part of `paragraph` on the page of the run that
+        anchors the text box, see `._iter_text_box_elements()`.
         """
 
         def iter_paragraph_items(paragraph: Paragraph) -> Iterator[Paragraph | RenderedPageBreak]:
@@ -831,6 +832,9 @@ class _DocxPartitioner:
                 yield from iter_paragraph_items(following_paragraph_fragment)
 
         label = self._list_labels.label(paragraph)
+        # -- the text boxes anchored before the first rendered page-break, then those anchored
+        # -- between it and the next one, and so on --
+        text_boxes_by_page = iter(_text_boxes_by_page(paragraph._p))
         for item in iter_paragraph_items(paragraph):
             if isinstance(item, Paragraph):
                 yield from self._classify_paragraph_to_element(item, label)
@@ -838,26 +842,31 @@ class _DocxPartitioner:
                 if _paragraph_text(item).strip():
                     label = ""
             else:
+                yield from self._iter_text_box_elements(paragraph, next(text_boxes_by_page, ()))
                 yield from self._opts.increment_page_number()
 
-        yield from self._iter_text_box_elements(paragraph)
+        yield from self._iter_text_box_elements(
+            paragraph, itertools.chain.from_iterable(text_boxes_by_page)
+        )
 
-    def _iter_text_box_elements(self, paragraph: Paragraph) -> Iterator[Element]:
-        """Generate the elements of the paragraphs in each text box anchored in `paragraph`.
+    def _iter_text_box_elements(
+        self, paragraph: Paragraph, text_boxes: Iterable[etree._Element]
+    ) -> Iterator[Element]:
+        """Generate the elements of the paragraphs in `text_boxes`, anchored in `paragraph`.
 
         The runs of an inline DrawingML shape are part of the text of the paragraph that holds it,
         but any other text box, floating or VML, is only anchored in its paragraph. Each paragraph
         in such a text box is classified like a body paragraph, in document order, and is followed
         by the elements of any text box anchored in it.
 
-        A text box sits on the page of the paragraph it is anchored in, so a rendered page-break in
-        it neither splits its paragraph nor starts a page. Its paragraphs are not sent to the
-        picture sub-partitioner, which already receives the paragraph the text box is anchored in.
+        A text box sits on the page of the run it is anchored in, so a rendered page-break in it
+        neither splits its paragraph nor starts a page. Its paragraphs are not sent to the picture
+        sub-partitioner, which already receives the paragraph the text box is anchored in.
 
         A table in a text box gives no element, but the list counters of the text box advance
         through it, like those of the body through a table in the body.
         """
-        for text_box in _text_boxes(paragraph._p):
+        for text_box in text_boxes:
             # NOTE(tanishqbaweja): Word numbers the list paragraphs of each text box on their own,
             # apart from those of the body and of any other text box. [MS-DOC] 2.4.6.4 counts, for
             # a numbered paragraph, only the list paragraphs in the same "valid selection", and
@@ -871,7 +880,9 @@ class _DocxPartitioner:
                 text_box_paragraph = Paragraph(block, paragraph._parent)
                 label = list_labels.label(text_box_paragraph)
                 yield from self._classify_paragraph_to_element(text_box_paragraph, label)
-                yield from self._iter_text_box_elements(text_box_paragraph)
+                yield from self._iter_text_box_elements(
+                    text_box_paragraph, _text_boxes(text_box_paragraph._p)
+                )
 
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
@@ -1289,6 +1300,24 @@ def _text_boxes(p: CT_P) -> list[etree._Element]:
     return _TEXT_BOXES_XPATH(p, depth=_text_box_depth(p))
 
 
+def _text_boxes_by_page(p: CT_P) -> list[list[etree._Element]]:
+    """The text boxes of `_text_boxes(p)`, grouped by the rendered page-breaks in `p` before them.
+
+    The first group holds the text boxes anchored before the first page-break python-docx splits
+    `p` at, the second those anchored between it and the next one, and so on, so there is one more
+    group than there are such page-breaks. python-docx splits `p` at each rendered page-break in
+    its runs, but only at the first one in a hyperlink, because the part of `p` before that break
+    holds the whole hyperlink.
+    """
+    text_boxes_by_page: list[list[etree._Element]] = [[]]
+    for e in _TEXT_BOXES_AND_PAGE_BREAKS_XPATH(p, depth=_text_box_depth(p)):
+        if e.tag == qn("w:lastRenderedPageBreak"):
+            text_boxes_by_page.append([])
+        else:
+            text_boxes_by_page[-1].append(e)
+    return text_boxes_by_page
+
+
 def _text_box_depth(p: CT_P) -> int:
     """The number of text boxes `p` is nested in, 0 for a paragraph that is not in a text box."""
     return int(_TEXT_BOX_DEPTH_XPATH(p))
@@ -1304,10 +1333,20 @@ _PARAGRAPH_TEXT_XPATH = etree.XPath(
     "[count(ancestor::w:txbxContent) = $depth][1]//w:r",
     namespaces=nsmap,
 )
-_TEXT_BOXES_XPATH = etree.XPath(
+_TEXT_BOXES = (
     "w:r//w:txbxContent[count(ancestor::w:txbxContent) = $depth]"
-    "[not(ancestor::wp:inline | ancestor::mc:Fallback)]",
-    namespaces={**nsmap, "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006"},
+    "[not(ancestor::wp:inline | ancestor::mc:Fallback)]"
+)
+_TEXT_BOX_NAMESPACES = {
+    **nsmap,
+    "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
+}
+_TEXT_BOXES_XPATH = etree.XPath(_TEXT_BOXES, namespaces=_TEXT_BOX_NAMESPACES)
+_TEXT_BOXES_AND_PAGE_BREAKS_XPATH = etree.XPath(
+    f"{_TEXT_BOXES} | w:r/w:lastRenderedPageBreak | w:hyperlink/w:r/w:lastRenderedPageBreak"
+    "[not(preceding-sibling::w:lastRenderedPageBreak)]"
+    "[not(../preceding-sibling::w:r/w:lastRenderedPageBreak)]",
+    namespaces=_TEXT_BOX_NAMESPACES,
 )
 _TEXT_BOX_DEPTH_XPATH = etree.XPath("count(ancestor::w:txbxContent)", namespaces=nsmap)
 

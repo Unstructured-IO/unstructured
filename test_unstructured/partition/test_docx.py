@@ -2350,28 +2350,64 @@ def test_partition_docx_does_not_start_a_page_at_a_rendered_page_break_in_a_text
     assert isinstance(elements[3], PageBreak)
 
 
-def test_partition_docx_partitions_a_text_box_after_the_last_part_of_its_anchor_paragraph(
-    tmp_path: pathlib.Path,
+@pytest.mark.parametrize(
+    ("runs_xml", "expected"),
+    [
+        pytest.param(
+            "<w:r><w:t>Page one.</w:t></w:r><w:r>{text_box}</w:r>"
+            "<w:r><w:lastRenderedPageBreak/><w:t>Page two.</w:t></w:r>",
+            [("Page one.", 1), ("In the box.", 1), ("", None), ("Page two.", 2)],
+            id="anchored-before-the-page-break",
+        ),
+        pytest.param(
+            "<w:r><w:t>Page one.</w:t></w:r>"
+            "<w:r><w:lastRenderedPageBreak/><w:t>Page two.</w:t></w:r><w:r>{text_box}</w:r>",
+            [("Page one.", 1), ("", None), ("Page two.", 2), ("In the box.", 2)],
+            id="anchored-after-the-page-break",
+        ),
+        # -- python-docx counts nothing before this page-break as content, since it doesn't check
+        # -- for `mc:AlternateContent`, the way Word writes a text box, so it gives no part of the
+        # -- paragraph before the break --
+        pytest.param(
+            "<w:r>{text_box}<w:lastRenderedPageBreak/><w:t>Page two.</w:t></w:r>",
+            [("In the box.", 1), ("", None), ("Page two.", 2)],
+            id="anchored-before-the-page-break-in-its-run",
+        ),
+        # -- python-docx splits a paragraph only at the first page-break in a hyperlink, and the
+        # -- part before that break holds the whole hyperlink, so the text box after the hyperlink
+        # -- is in the next part --
+        pytest.param(
+            '<w:r><w:t>Page one.</w:t></w:r><w:hyperlink w:anchor="top">'
+            "<w:r><w:lastRenderedPageBreak/><w:t>Link</w:t></w:r>"
+            "<w:r><w:lastRenderedPageBreak/><w:t>text.</w:t></w:r></w:hyperlink>"
+            "<w:r>{text_box}</w:r><w:r><w:lastRenderedPageBreak/><w:t>Last page.</w:t></w:r>",
+            [
+                ("Page one.Linktext.", 1),
+                ("", None),
+                ("In the box.", 2),
+                ("", None),
+                ("Last page.", 3),
+            ],
+            id="anchored-after-a-hyperlink-with-two-page-breaks",
+        ),
+    ],
+)
+def test_partition_docx_partitions_a_text_box_on_the_page_of_the_run_it_is_anchored_in(
+    runs_xml: str, expected: list[tuple[str, int | None]], tmp_path: pathlib.Path
 ):
     document = docx.Document()
-    paragraph = document.add_paragraph("Page one.")
-    _add_shape_run(paragraph, _text_box_xml(_box_paragraph_xml("In the box.")))
-    paragraph._p.append(
-        parse_xml(f"<w:r {_W_NS}><w:lastRenderedPageBreak/><w:t>Page two.</w:t></w:r>")
-    )
+    runs_xml = runs_xml.replace("{text_box}", _text_box_xml(_box_paragraph_xml("In the box.")))
+    paragraph = document.add_paragraph()
+    for r in list(parse_xml(f"<w:p {_SHAPE_NS}>{runs_xml}</w:p>")):
+        paragraph._p.append(r)
     path = str(tmp_path / "split-anchor.docx")
     document.save(path)
 
     elements = partition_docx(path)
 
-    # -- the elements of a text box follow those of the paragraph it is anchored in, so when a
-    # -- page-break splits that paragraph, they follow its last part and take that part's page --
-    assert [(e.text, e.metadata.page_number) for e in elements] == [
-        ("Page one.", 1),
-        ("", None),
-        ("Page two.", 2),
-        ("In the box.", 2),
-    ]
+    # -- a text box is on the page of the run it is anchored in, so its elements follow the part
+    # -- of that paragraph on that page, before the page-break, and take its page number --
+    assert [(e.text, e.metadata.page_number) for e in elements] == expected
 
 
 # -- image sub-partitioning behaviors ------------------------------------------------------------
