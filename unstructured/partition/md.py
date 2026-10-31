@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import IO, Any, Optional
 
-import markdown
-from markdown.extensions import Extension
+from markdown_it import MarkdownIt
 
 from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import read_txt_file
@@ -23,27 +22,50 @@ def optional_decode(contents: str | bytes) -> str:
 
 DETECTION_ORIGIN: str = "md"
 
+# NOTE: the entries below are the only supported ``extensions`` values. "tables"
+# toggles GFM-style table parsing; "fenced_code" is accepted for backward
+# compatibility but fenced code blocks are part of CommonMark and are always
+# parsed. Any other value raises ValueError (see _validate_markdown_extensions).
 _DEFAULT_MARKDOWN_EXTENSIONS: list[str] = ["tables", "fenced_code"]
 
+_SUPPORTED_MARKDOWN_EXTENSIONS: frozenset[str] = frozenset({"tables", "fenced_code"})
 
-def _validate_markdown_extensions(extensions: Any) -> list[Any]:
-    """Return ``extensions`` if it is a list of strings and/or ``Extension`` instances.
 
-    Python-Markdown accepts extension entry points as registered names (``str``) or configured
-    ``Extension`` instances; both are supported here. Any other shape raises ``ValueError``.
+def _validate_markdown_extensions(extensions: Any) -> list[str]:
+    """Return ``extensions`` if it is a list of supported extension names.
+
+    The Markdown converter is CommonMark (via ``markdown-it-py``), so the only
+    meaningful toggle is ``"tables"``. ``"fenced_code"`` is accepted but has no
+    effect because fenced code blocks are part of CommonMark. Python-Markdown
+    extension names and ``Extension`` instances are no longer supported.
     """
     if not isinstance(extensions, list):
         raise ValueError(
-            "'extensions' must be a list of extension names (str) and/or "
-            f"markdown.extensions.Extension instances, got {type(extensions).__name__!r}"
+            "'extensions' must be a list of extension names (str), "
+            f"got {type(extensions).__name__!r}"
         )
     for item in extensions:
-        if not isinstance(item, (str, Extension)):
+        if not isinstance(item, str) or item not in _SUPPORTED_MARKDOWN_EXTENSIONS:
             raise ValueError(
-                "Each entry in 'extensions' must be a str or markdown.extensions.Extension "
-                f"instance, got {type(item).__name__}: {item!r}"
+                "Each entry in 'extensions' must be one of the supported extension "
+                f"names {sorted(_SUPPORTED_MARKDOWN_EXTENSIONS)}, got {item!r}. "
+                "Python-Markdown extension names and Extension instances are not supported."
             )
     return extensions
+
+
+def _markdown_to_html(text: str, extensions: list[str]) -> str:
+    """Convert Markdown to HTML with CommonMark plus optional table parsing.
+
+    CommonMark (unlike the previous Python-Markdown converter) parses a list
+    block that directly follows an intro line, which fixes #3280: without a
+    blank line, "My list / - item 1 ..." no longer folds into a single
+    paragraph instead of a list.
+    """
+    parser = MarkdownIt("commonmark", {"html": True})
+    if "tables" in extensions:
+        parser.enable("table")
+    return parser.render(text)
 
 
 @partition_runtime_telemetry("md")
@@ -81,11 +103,14 @@ def partition_md(
         best-effort detection and URLs use the HTTP response's encoding. An explicit
         encoding is decoded strictly and is never replaced by an automatic guess.
 
-    Other keyword arguments are forwarded to ``partition_html``. In addition, ``extensions`` may be
-    passed to ``markdown.markdown()`` as a list of registered extension names (``str``) and/or
-    configured ``markdown.extensions.Extension`` instances. The default is
-    ``["tables", "fenced_code"]``. Pass e.g. ``extensions=["tables"]`` if you need the legacy
-    behavior where ``#`` inside unfenced content is parsed as a heading (see #4006).
+    Other keyword arguments are forwarded to ``partition_html``. Markdown is converted to HTML
+    with CommonMark (via ``markdown-it-py``), so a list block directly following an intro
+    line parses as a list (see #3280); the previous Python-Markdown converter required a
+    blank line there. ``extensions`` is a list of supported extension names (``str``). The
+    default is ``["tables", "fenced_code"]``: ``"tables"`` enables GFM-style table parsing,
+    and ``"fenced_code"`` is accepted but has no effect because fenced code blocks are part
+    of CommonMark and are always parsed. Any other value raises ``ValueError``;
+    Python-Markdown extension names and ``Extension`` instances are no longer supported.
     """
     # -- an empty document yields no elements, like the other text-based partitioners --
     if text == "" and file is None and filename is None and url is None:
@@ -123,7 +148,7 @@ def partition_md(
         kwargs.pop("extensions", _DEFAULT_MARKDOWN_EXTENSIONS)
     )
 
-    html = markdown.markdown(text, extensions=extensions)
+    html = _markdown_to_html(text, extensions)
 
     html_kwargs: dict[str, Any] = {
         "text": html,

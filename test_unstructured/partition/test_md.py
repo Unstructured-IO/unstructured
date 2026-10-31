@@ -4,7 +4,6 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-from markdown.extensions.fenced_code import FencedCodeExtension
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
@@ -371,7 +370,12 @@ def test_partition_fenced_code():
 
 
 def test_partition_md_custom_extensions_parameter():
-    """User can override markdown extensions via `extensions` kwarg (fixes #4006)."""
+    """User can override markdown extensions via `extensions` kwarg (fixes #4006).
+
+    Since the CommonMark switch for #3280, fenced code blocks are always parsed
+    as code: the old tables-only behavior (``#`` inside a fence becoming a Title)
+    no longer exists, so tables-only now matches the default for fenced code.
+    """
     text = """```bash
 # create the container
 docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/unstructured:latest
@@ -383,20 +387,17 @@ docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/uns
         "downloads.unstructured.io/unstructured-io/unstructured:latest"
     )
 
-    # Without fenced_code, ``#`` inside the fence is parsed as a heading (undesired).
-    elements_tables_only = partition_md(text=text, extensions=["tables"])
-    assert any(isinstance(el, Title) for el in elements_tables_only)
-
-    # Default and explicit fenced_code keep the block as one element (CodeSnippet from HTML).
+    # Default, explicit fenced_code, and tables-only all keep the block as one
+    # CodeSnippet element (fenced code is part of CommonMark, always parsed).
     assert len(partition_md(text=text)) == 1
     elements_fenced = partition_md(text=text, extensions=["fenced_code"])
     assert len(elements_fenced) == 1
     assert elements_fenced[0].category == ElementType.CODE_SNIPPET
     assert elements_fenced[0].text == expected_body
-
-    # Extension instances (normal Python-Markdown API) match string extension names.
-    elements_instance = partition_md(text=text, extensions=[FencedCodeExtension()])
-    assert elements_instance == elements_fenced
+    elements_tables_only = partition_md(text=text, extensions=["tables"])
+    assert len(elements_tables_only) == 1
+    assert elements_tables_only[0].category == ElementType.CODE_SNIPPET
+    assert elements_tables_only[0].text == expected_body
 
 
 def test_partition_md_extensions_not_list_raises():
@@ -409,12 +410,113 @@ def test_partition_md_extensions_invalid_item_raises():
         partition_md(text="# Hi", extensions=[42])  # type: ignore[list-item]
 
 
-def test_partition_md_tables_only_differs_from_default_for_code_fence():
-    """Without ``fenced_code``, ``#`` inside a fence can become a Title (see #4006)."""
+def test_partition_md_tables_only_matches_default_for_code_fence():
+    """Since the CommonMark switch for #3280, fenced code is always parsed, so
+    the old tables-only/``#``-becomes-Title behavior (see #4006) is gone."""
     text = """```bash
 # line
 ```"""
     default_el = partition_md(text=text)[0]
     tables_only_els = partition_md(text=text, extensions=["tables"])
     assert default_el.category == ElementType.CODE_SNIPPET
-    assert any(e.category == ElementType.TITLE for e in tables_only_els)
+    assert len(tables_only_els) == 1
+    assert tables_only_els[0].category == ElementType.CODE_SNIPPET
+
+
+# -- #3280: list block after an intro line ---------------------------------------
+
+
+def test_partition_md_list_after_intro_line_parses_as_list():
+    """Fixes #3280: a list block following an intro line must parse as a list,
+    not fold into one blob. The no-blank-line form must match the blank-line
+    form, which was already correct."""
+    text = (
+        "# header 1\n"
+        "## header 2\n"
+        "My list\n"
+        "- item 1\n"
+        "- item 2\n"
+        "- item 3\n"
+        "- item 4\n"
+        "- item 5\n"
+        "## header 3\n"
+    )
+    blank_text = text.replace("My list\n- item 1", "My list\n\n- item 1")
+    elements = partition_md(text=text, languages=[""])
+    blank_elements = partition_md(text=blank_text, languages=[""])
+    assert [e.category for e in elements] == [e.category for e in blank_elements]
+    assert [e.category for e in elements if e.text.startswith("item")] == ["ListItem"] * 5
+    assert not any("item" in e.text for e in elements if e.category == "Title")
+
+
+def test_partition_md_list_after_intro_line_chunks_with_its_header():
+    """Fixes #3280 downstream: with a tight character budget, the list items
+    must chunk with their header, not split away from it as a lone blob."""
+    text = "## header 2\nMy list\n- item 1\n- item 2\n- item 3\n- item 4\n- item 5\n## header 3\n"
+    elements = partition_md(text=text, languages=[""])
+    chunks = chunk_by_title(elements, max_characters=60)
+    header2_chunk = [c for c in chunks if "header 2" in c.text]
+    assert len(header2_chunk) == 1
+    assert "item 1" in header2_chunk[0].text
+    assert "item 5" in header2_chunk[0].text
+    assert "header 3" not in header2_chunk[0].text
+
+
+def test_partition_md_single_item_list_after_intro_line():
+    elements = partition_md(text="My list\n- only one\n", languages=[""])
+    assert [e.category for e in elements if e.text.startswith("only")] == ["ListItem"]
+
+
+def test_partition_md_ordered_list_after_intro_line():
+    elements = partition_md(text="Steps\n1. first\n2. second\n", languages=[""])
+    assert [e.category for e in elements if e.text in ("first", "second")] == [
+        "ListItem",
+        "ListItem",
+    ]
+
+
+def test_partition_md_wrapped_line_follows_commonmark_list_rule():
+    """CommonMark tradeoff, pinned not hidden: a wrapped line starting with '*'
+    interrupts the paragraph and becomes a list item. This is the parser rule
+    the maintainer endorsed for #3280, not the old blank-line-required rule.
+    (The first element is UncategorizedText by the same short-line rule that
+    gives 'My list' that category; the point pinned here is the list split.)"""
+    elements = partition_md(text="The computed value of 7\n* 3 equals 21.\n", languages=[""])
+    assert [e.category for e in elements] == ["UncategorizedText", "ListItem"]
+
+
+def test_partition_md_tables_extension_toggles_table_parsing():
+    text = "| A | B |\n|---|---|\n| 1 | 2 |\n"
+    assert any(e.category == "Table" for e in partition_md(text=text, languages=[""]))
+    assert not any(
+        e.category == "Table" for e in partition_md(text=text, extensions=[], languages=[""])
+    )
+
+
+def test_partition_md_unknown_extension_raises():
+    with pytest.raises(ValueError, match="not supported"):
+        partition_md(text="# Hi", extensions=["toc"])
+
+
+class _DummyExtension:
+    """Stand-in for a Python-Markdown Extension instance: any non-str entry
+    must be rejected now that the converter is CommonMark."""
+
+
+def test_partition_md_python_markdown_extension_instance_raises():
+    with pytest.raises(ValueError, match="not supported"):
+        partition_md(text="# Hi", extensions=[_DummyExtension()])
+
+
+def test_partition_md_commonmark_does_not_parse_strikethrough():
+    """Documents the parser choice: CommonMark has no strikethrough (a GFM
+    extension), so ~~text~~ stays literal. Pins CommonMark, not GFM."""
+    elements = partition_md(text="This is ~~not deleted~~ text.\n", languages=[""])
+    assert any("~~not deleted~~" in e.text for e in elements)
+
+
+def test_partition_md_commonmark_does_not_autolink_bare_urls():
+    """Documents the parser choice: CommonMark does not autolink bare URLs
+    (a GFM extension)."""
+    elements = partition_md(text="See https://example.com for details.\n", languages=[""])
+    assert any("https://example.com" in e.text for e in elements)
