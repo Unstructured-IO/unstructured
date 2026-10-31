@@ -1286,7 +1286,8 @@ def _paragraph_text(paragraph: Paragraph) -> str:
     The runs of an inline shape in a text box that `paragraph` anchors belong instead to the
     paragraph of the text box that holds the shape in one of its runs. An inline shape no such
     paragraph holds, in a table or a content control in the text box for example, stays part of
-    the text of `paragraph`.
+    the text of `paragraph`, and so does one in a text box that is only in `mc:Fallback`, which is
+    not read.
     """
     p = paragraph._p
     return "".join(e.text for e in _PARAGRAPH_TEXT_XPATH(p, depth=_text_box_depth(p)))
@@ -1336,22 +1337,25 @@ def _text_box_depth(p: CT_P) -> int:
 # `_PARAGRAPH_TEXT_XPATH` leaves out an inline shape in a run of a child paragraph of a text box at
 # that depth. Such a paragraph is partitioned on its own, with the shape, or is the VML copy of one
 # that is, or is in an inline shape, whose runs the paragraph text takes. Any other inline shape in
-# a text box, in a table, a content control or a hyperlink, stays in the text of the anchor
-# paragraph, as before text boxes were read, so its text is kept once.
+# a text box stays in the text of the anchor paragraph, as before text boxes were read, so its text
+# is kept once: one in a table, a content control or a hyperlink in a text box, and one in a text
+# box in `mc:Fallback` whose `mc:Choice` holds no text box, since that text box is not read.
+_TEXT_BOX_NAMESPACES = {
+    **nsmap,
+    "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
+}
 _PARAGRAPH_TEXT_XPATH = etree.XPath(
     "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing]"
     "[not(ancestor::w:r/parent::w:p/parent::w:txbxContent"
-    "[count(ancestor::w:txbxContent) = $depth])][1]//w:r",
-    namespaces=nsmap,
+    "[count(ancestor::w:txbxContent) = $depth]"
+    "[not(ancestor::mc:Fallback) or ancestor::mc:AlternateContent[1]/mc:Choice//w:txbxContent])]"
+    "[1]//w:r",
+    namespaces=_TEXT_BOX_NAMESPACES,
 )
 _TEXT_BOXES = (
     "w:r//w:txbxContent[count(ancestor::w:txbxContent) = $depth]"
     "[not(ancestor::wp:inline | ancestor::mc:Fallback)]"
 )
-_TEXT_BOX_NAMESPACES = {
-    **nsmap,
-    "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
-}
 _TEXT_BOXES_XPATH = etree.XPath(_TEXT_BOXES, namespaces=_TEXT_BOX_NAMESPACES)
 _TEXT_BOXES_AND_PAGE_BREAKS_XPATH = etree.XPath(
     f"{_TEXT_BOXES} | w:r/w:lastRenderedPageBreak | w:hyperlink/w:r/w:lastRenderedPageBreak"

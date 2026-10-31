@@ -2396,6 +2396,33 @@ def test_partition_docx_keeps_the_text_of_an_inline_shape_text_box_paragraphs_do
     assert [e.text for e in elements] == [*expected_texts, "After."]
 
 
+def test_partition_docx_keeps_the_text_of_an_inline_shape_in_a_fallback_only_text_box(
+    tmp_path: pathlib.Path,
+):
+    document = docx.Document()
+    # -- the DrawingML shape in `mc:Choice` holds no text box, so the only text box is the VML one
+    # -- in `mc:Fallback`, which is not read --
+    fallback_text_box_xml = _vml_text_box_xml(
+        _box_paragraph_xml("Para.", shape_xml=_INLINE_TEXT_BOX_XML)
+    )
+    _add_shape_run(
+        document.add_paragraph("Anchor."),
+        '<mc:AlternateContent><mc:Choice Requires="wps"><w:drawing><wp:anchor><a:graphic>'
+        '<a:graphicData uri="http://schemas.microsoft.com/office/word/2010/wordprocessingShape">'
+        "<wps:wsp><wps:bodyPr/></wps:wsp></a:graphicData></a:graphic></wp:anchor></w:drawing>"
+        f"</mc:Choice><mc:Fallback>{fallback_text_box_xml}</mc:Fallback></mc:AlternateContent>",
+    )
+    document.add_paragraph("After.")
+    path = str(tmp_path / "fallback-only-text-box.docx")
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- its paragraphs give no elements, so the text of the inline shape in it stays in the text
+    # -- of the paragraph the text box is anchored in --
+    assert [e.text for e in elements] == ["Anchor.Inner.", "After."]
+
+
 def test_partition_docx_does_not_start_a_page_at_a_rendered_page_break_in_a_text_box(
     tmp_path: pathlib.Path,
 ):
