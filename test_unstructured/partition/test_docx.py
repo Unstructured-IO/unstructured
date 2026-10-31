@@ -2069,6 +2069,11 @@ def _add_shape_run(paragraph: Paragraph, shape_xml: str) -> None:
     paragraph._p.append(parse_xml(f"<w:r {_SHAPE_NS}>{shape_xml}</w:r>"))
 
 
+def _table_xml(content_xml: str) -> str:
+    """XML of a `w:tbl` with one cell, which holds the paragraphs in `content_xml`."""
+    return f"<w:tbl><w:tr><w:tc>{content_xml}</w:tc></w:tr></w:tbl>"
+
+
 @pytest.mark.parametrize(
     "text_box_xml",
     [
@@ -2236,6 +2241,52 @@ def test_partition_docx_keeps_a_list_restart_in_a_text_box_out_of_the_body(tmp_p
 
     # -- the restart in the text box doesn't count as the first use of numId 3 in the body --
     assert [e.text for e in elements] == ["1. alpha", "5. beta", "5. gamma"]
+
+
+def test_partition_docx_counts_the_numbered_paragraphs_of_a_table_in_a_text_box(
+    tmp_path: pathlib.Path,
+):
+    path = _numbered_docx(tmp_path, [("alpha", 1, 0)])
+    document = docx.Document(path)
+    _add_shape_run(
+        document.add_paragraph(),
+        _text_box_xml(
+            _box_paragraph_xml("beta", num_id=1)
+            + _table_xml(_box_paragraph_xml("in the table", num_id=1))
+            + _box_paragraph_xml("gamma", num_id=1)
+        ),
+    )
+    _add_direct_num_pr(document.add_paragraph("delta"))
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- a table in a text box gives no element, but its numbered paragraph counts in the list of
+    # -- the text box, as one in a table in the body counts in the list of the body --
+    assert [e.text for e in elements] == ["1. alpha", "1. beta", "3. gamma", "2. delta"]
+
+
+def test_partition_docx_keeps_a_list_restart_in_a_table_in_a_text_box_in_that_text_box(
+    tmp_path: pathlib.Path,
+):
+    path = _numbered_docx(tmp_path, [("alpha", 1, 0)])
+    document = docx.Document(path)
+    # -- numId 3 continues the list of numId 1, but restarts it at 5 where it is first used --
+    _add_shape_run(
+        document.add_paragraph(),
+        _text_box_xml(
+            _table_xml(_box_paragraph_xml("in the table", num_id=3))
+            + _box_paragraph_xml("beta", num_id=3)
+        ),
+    )
+    _add_direct_num_pr(document.add_paragraph("gamma"), num_id=3)
+    document.save(path)
+
+    elements = partition_docx(path)
+
+    # -- the table holds the first use of numId 3 in the text box, so "beta" goes on from it, and
+    # -- the body still restarts the list where the body first uses numId 3 --
+    assert [e.text for e in elements] == ["1. alpha", "6. beta", "5. gamma"]
 
 
 @pytest.mark.parametrize(

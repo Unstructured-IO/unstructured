@@ -853,6 +853,9 @@ class _DocxPartitioner:
         A text box sits on the page of the paragraph it is anchored in, so a rendered page-break in
         it neither splits its paragraph nor starts a page. Its paragraphs are not sent to the
         picture sub-partitioner, which already receives the paragraph the text box is anchored in.
+
+        A table in a text box gives no element, but the list counters of the text box advance
+        through it, like those of the body through a table in the body.
         """
         for text_box in _text_boxes(paragraph._p):
             # NOTE(tanishqbaweja): Word numbers the list paragraphs of each text box on their own,
@@ -861,8 +864,11 @@ class _DocxPartitioner:
             # 2.2.3 keeps a valid selection within one document part and, in the text-box part,
             # within one text box. So each text box gets list counters of its own.
             list_labels = self._list_labels.with_new_counters()
-            for p in text_box.iterchildren(qn("w:p")):
-                text_box_paragraph = Paragraph(p, paragraph._parent)
+            for block in text_box.iterchildren(qn("w:p"), qn("w:tbl")):
+                if isinstance(block, CT_Tbl):
+                    self._advance_table_numbering(DocxTable(block, paragraph._parent), list_labels)
+                    continue
+                text_box_paragraph = Paragraph(block, paragraph._parent)
                 label = list_labels.label(text_box_paragraph)
                 yield from self._classify_paragraph_to_element(text_box_paragraph, label)
                 yield from self._iter_text_box_elements(text_box_paragraph)
@@ -988,7 +994,7 @@ class _DocxPartitioner:
 
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
-        self._advance_table_numbering(table)
+        self._advance_table_numbering(table, self._list_labels)
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table.
         html_table = (
@@ -1010,10 +1016,11 @@ class _DocxPartitioner:
             ),
         )
 
-    def _advance_table_numbering(self, table: DocxTable) -> None:
-        """Advance the list counters for each numbered paragraph in `table`, in document order.
+    def _advance_table_numbering(self, table: DocxTable, list_labels: _ListLabels) -> None:
+        """Advance `list_labels` for each numbered paragraph in `table`, in document order.
 
         Table text is not labeled, but Word counts its numbered paragraphs like any other.
+        `list_labels` holds the counters of the body, or of the text box the table is in.
         """
         for row in table.rows:
             for tc in row._tr.tc_lst:
@@ -1021,9 +1028,9 @@ class _DocxPartitioner:
                     continue
                 for block_item in _Cell(tc, table).iter_inner_content():
                     if isinstance(block_item, Paragraph):
-                        self._list_labels.label(block_item)
+                        list_labels.label(block_item)
                     else:
-                        self._advance_table_numbering(block_item)
+                        self._advance_table_numbering(block_item, list_labels)
 
     def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`.
