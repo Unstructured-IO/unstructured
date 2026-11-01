@@ -1,3 +1,7 @@
+import contextlib
+
+import pytest
+
 from unstructured.nlp import tokenize
 
 
@@ -153,3 +157,46 @@ def _count_pipeline_runs(monkeypatch) -> dict[str, int]:
 
     monkeypatch.setattr(tokenize, "_get_nlp", lambda: CountingNlp())
     return runs
+
+
+def _model_is_missing(*_args, **_kwargs):
+    """Stand-in for `spacy.load` when the pinned model is not installed."""
+    raise OSError("no such model")
+
+
+def _model_load_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Make `spacy.load` and the install lock cheap, so only the decision is under test."""
+    monkeypatch.setattr(tokenize, "spacy", type("FakeSpacy", (), {"load": _model_is_missing}))
+    monkeypatch.setattr(tokenize, "FileLock", lambda *args, **kwargs: contextlib.nullcontext())
+
+
+def test_auto_install_can_be_disabled(monkeypatch: pytest.MonkeyPatch):
+    """Air-gapped deployments must be able to fail instead of downloading at runtime."""
+    installs = []
+
+    _model_load_fails(monkeypatch)
+    monkeypatch.setenv("UNSTRUCTURED_SPACY_AUTO_INSTALL", "false")
+    monkeypatch.setattr(tokenize, "_install_spacy_model", lambda: installs.append("installed"))
+
+    with pytest.raises(RuntimeError, match="UNSTRUCTURED_SPACY_AUTO_INSTALL"):
+        tokenize._load_spacy_model()
+
+    assert installs == []
+
+
+def test_auto_install_stays_the_default(monkeypatch: pytest.MonkeyPatch):
+    """Without the variable the pinned model is still fetched, as it was before."""
+    installs = []
+
+    def record_and_fail() -> None:
+        installs.append(tokenize._SPACY_MODEL_URL)
+        raise RuntimeError("download failed")
+
+    _model_load_fails(monkeypatch)
+    monkeypatch.setattr(tokenize, "_install_spacy_model", record_and_fail)
+    monkeypatch.delenv("UNSTRUCTURED_SPACY_AUTO_INSTALL", raising=False)
+
+    with pytest.raises(RuntimeError, match="download failed"):
+        tokenize._load_spacy_model()
+
+    assert installs == [tokenize._SPACY_MODEL_URL]

@@ -16,6 +16,8 @@ from typing import Final, List, Tuple
 import spacy
 from filelock import FileLock
 
+from unstructured.partition.utils.config import env_config
+
 logger = logging.getLogger(__name__)
 
 CACHE_MAX_SIZE: Final[int] = 128
@@ -48,7 +50,8 @@ def _download_with_timeout(url: str, dest: str) -> None:
     except urllib.error.URLError as exc:
         raise RuntimeError(
             f"Failed to download spaCy model from {url}: {exc}. "
-            "Check your network connection and try again."
+            "Check your network connection and try again, or pre-install the model with: "
+            f"python -m spacy download {_SPACY_MODEL_NAME}"
         ) from exc
 
 
@@ -134,6 +137,12 @@ def _load_spacy_model() -> spacy.language.Language:
             return spacy.load(_SPACY_MODEL_NAME, exclude=_SPACY_EXCLUDE)
         except OSError:
             pass
+        if not env_config.UNSTRUCTURED_SPACY_AUTO_INSTALL:
+            raise RuntimeError(
+                f"spaCy model {_SPACY_MODEL_NAME} is not installed and runtime installation is "
+                "disabled by UNSTRUCTURED_SPACY_AUTO_INSTALL. Pre-install it with: "
+                f"python -m spacy download {_SPACY_MODEL_NAME}"
+            )
         _install_spacy_model()
         importlib.invalidate_caches()
         try:
