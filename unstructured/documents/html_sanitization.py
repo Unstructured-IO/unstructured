@@ -391,12 +391,25 @@ def _add_rel_to_blank_target_links(html_fragment: str) -> str:
     actually open a new browsing context and leave same-tab links untouched.
     """
 
+    _rel_value_re = re.compile(
+        r'rel\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s>]*))', flags=re.IGNORECASE
+    )
+
     def add_rel(match: re.Match[str]) -> str:
         tag = match.group(0)
-        if not _BLANK_TARGET_RE.search(tag) or _REL_ATTRIBUTE_RE.search(tag):
+        if not _BLANK_TARGET_RE.search(tag):
             return tag
-        rel = " ".join(sorted(_REQUIRED_BLANK_TARGET_REL_VALUES))
-        return f'{tag[:-1].rstrip()} rel="{rel}">'
+        required = sorted(_REQUIRED_BLANK_TARGET_REL_VALUES)
+        rel_match = _rel_value_re.search(tag)
+        if rel_match is None:
+            rel = " ".join(required)
+            return f'{tag[:-1].rstrip()} rel="{rel}">'
+        # The anchor already carries a rel attribute: append any required
+        # reverse-tabnabbing tokens that are missing so this path agrees with
+        # ``sanitize_attributes`` (which also backfills the required tokens).
+        existing = rel_match.group(1) or rel_match.group(2) or rel_match.group(3) or ""
+        new_rel = _link_rel_with_required_values(existing)
+        return tag[: rel_match.start()] + f'rel="{new_rel}"' + tag[rel_match.end():]
 
     return _ANCHOR_START_TAG_RE.sub(add_rel, html_fragment)
 
