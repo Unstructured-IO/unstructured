@@ -269,6 +269,17 @@ class DescribeSanitizeHtmlFragment:
         )
         assert cleaned.count("rel=") == 1
 
+    def it_appends_missing_rel_tokens_to_a_partial_rel(self):
+        # -- a blank-target anchor that already carries a partial rel must
+        #    still receive the required reverse-tabnabbing tokens, matching
+        #    the behavior of ``sanitize_attributes`` --
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank" rel="nofollow">x</a>'
+        )
+        assert "noopener" in cleaned
+        assert "noreferrer" in cleaned
+        assert cleaned.count("rel=") == 1
+
     def it_filters_inline_styles(self):
         cleaned = sanitize_html_fragment(
             '<p style="position:fixed;inset:0;z-index:9999;color:red">x</p>'
