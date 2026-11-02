@@ -117,18 +117,16 @@ def test_text_is_sorted(agent):
 
 def test_layout_covers_the_whole_image(agent):
     pytest.importorskip("unstructured_inference")
-    from unstructured.partition.pdf_image.inference_utils import (
-        build_text_region_from_coords,  # noqa: F401
-    )
 
     image = Image.new("RGB", (20, 10), "white")
     with patch(POST, return_value=_response("page text")):
         regions = agent.get_layout_from_image(image)
 
     assert len(regions) == 1
-    region = regions[0]
+    # TextRegions only supports slice indexing; single-element indexing raises.
+    region = regions.as_list()[0]
     assert region.text == "page text"
-    assert (region.x1, region.y1, region.x2, region.y2) == (0, 0, 20, 10)
+    assert (region.bbox.x1, region.bbox.y1, region.bbox.x2, region.bbox.y2) == (0, 0, 20, 10)
 
 
 def test_full_page_ocr_routes_multi_block_to_individual_crops(agent):
