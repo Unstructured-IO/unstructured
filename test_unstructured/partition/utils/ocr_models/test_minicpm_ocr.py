@@ -6,6 +6,7 @@ import pytest
 import requests
 from PIL import Image
 
+from unstructured.partition.utils.constants import OCR_AGENT_MINICPM
 from unstructured.partition.utils.ocr_models.minicpm_ocr import OCRAgentMiniCPM
 
 POST = "unstructured.partition.utils.ocr_models.minicpm_ocr.requests.post"
@@ -149,9 +150,61 @@ def test_full_page_ocr_routes_multi_block_to_individual_crops(agent):
         supplement_page_layout_with_ocr(
             page_layout=page_layout,
             image=Image.new("RGB", (100, 40), "white"),
-            ocr_agent="unstructured.partition.utils.ocr_models.minicpm_ocr.OCRAgentMiniCPM",
+            ocr_agent=OCR_AGENT_MINICPM,
             ocr_mode="entire_page",
         )
 
     assert page_layout.elements_array.texts == ["first block", "second block"]
     assert post.call_count == 2
+
+
+def test_block_ocr_reexamines_invalid_extracted_text(agent):
+    pytest.importorskip("unstructured_inference")
+    from unstructured.partition.pdf_image.ocr import supplement_page_layout_with_ocr
+    from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+
+    page_layout = MagicMock()
+    page_layout.elements_array.texts = ["already extracted", "(cid:42)", ""]
+    page_layout.elements_array.x1 = [0, 0, 50]
+    page_layout.elements_array.y1 = [0, 0, 0]
+    page_layout.elements_array.x2 = [50, 50, 100]
+    page_layout.elements_array.y2 = [30, 30, 30]
+
+    responses = [_response("recovered cid"), _response("recovered empty")]
+    with (
+        patch.object(OCRAgent, "get_instance", return_value=agent),
+        patch(POST, side_effect=responses) as post,
+    ):
+        supplement_page_layout_with_ocr(
+            page_layout=page_layout,
+            image=Image.new("RGB", (100, 40), "white"),
+            ocr_agent=OCR_AGENT_MINICPM,
+            ocr_mode="individual_blocks",
+        )
+
+    assert page_layout.elements_array.texts == [
+        "already extracted",
+        "recovered cid",
+        "recovered empty",
+    ]
+    assert post.call_count == 2
+
+
+def test_table_ocr_rejects_agent_without_spatial_regions(agent):
+    pytest.importorskip("unstructured_inference")
+    from unstructured.partition.pdf_image.ocr import supplement_page_layout_with_ocr
+    from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+
+    page_layout = MagicMock()
+    page_layout.elements_array.texts = []
+
+    with patch.object(OCRAgent, "get_instance", return_value=agent):
+        with pytest.raises(ValueError, match="cannot be used for table OCR"):
+            supplement_page_layout_with_ocr(
+                page_layout=page_layout,
+                image=Image.new("RGB", (20, 10), "white"),
+                ocr_agent=OCR_AGENT_MINICPM,
+                ocr_mode="individual_blocks",
+                infer_table_structure=True,
+                table_ocr_agent=OCR_AGENT_MINICPM,
+            )

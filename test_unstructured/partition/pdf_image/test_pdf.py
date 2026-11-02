@@ -50,6 +50,7 @@ from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
 from unstructured.partition.utils import config as partition_config
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_MINICPM,
     OCR_AGENT_PADDLE,
     OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
@@ -2249,6 +2250,23 @@ def test_partition_pdf_with_specified_ocr_agents(mock_ocr_get_instance, mocker):
     assert mock_ocr_get_instance.call_args_list[1][1] == {
         "language": "en",
         "ocr_agent_module": OCR_AGENT_PADDLE,
+    }
+
+
+def test_partition_pdf_hi_res_selects_minicpm_ocr_agent(mocker):
+    mock_get_instance = mocker.patch.object(
+        ocr.OCRAgent, "get_instance", return_value=mocker.MagicMock()
+    )
+
+    pdf.partition_pdf(
+        filename=example_doc_path("pdf/layout-parser-paper-with-table.pdf"),
+        strategy=PartitionStrategy.HI_RES,
+        ocr_agent=OCR_AGENT_MINICPM,
+    )
+
+    assert mock_get_instance.call_args_list[0][1] == {
+        "language": "eng",
+        "ocr_agent_module": OCR_AGENT_MINICPM,
     }
 
 

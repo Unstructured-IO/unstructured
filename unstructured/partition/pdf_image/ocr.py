@@ -250,7 +250,9 @@ def supplement_page_layout_with_ocr(
         # individual block mode still keeps using the list data structure for elements instead of
         # the vectorized page_layout.elements_array data structure
         for i, text in enumerate(page_layout.elements_array.texts):
-            if text:
+            # The full-page path replaces invalid extracted text (for example a non-empty
+            # "(cid:42)" run); do the same here instead of keeping it without OCR.
+            if text and valid_text(text):
                 continue
             padding = env_config.IMAGE_CROP_PAD
             cropped_image = image.crop(
@@ -280,6 +282,13 @@ def supplement_page_layout_with_ocr(
         _table_ocr_agent = OCRAgent.get_instance(
             ocr_agent_module=table_ocr_agent, language=language
         )
+        if not _table_ocr_agent.page_layout_supported:
+            raise ValueError(
+                f"OCR agent {table_ocr_agent} cannot be used for table OCR: it does not "
+                "return text regions with coordinates, so table tokens would lose the "
+                "locations needed to assign text to cells. Use a spatial OCR agent such "
+                "as tesseract or paddle for `table_ocr_agent`."
+            )
         from unstructured_inference.models import tables
 
         tables.load_agent()

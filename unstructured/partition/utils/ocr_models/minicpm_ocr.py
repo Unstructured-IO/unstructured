@@ -22,9 +22,16 @@ class OCRAgentMiniCPM(OCRAgent):
 
     MiniCPM-OCR is a block-level recognition model: the ``hi_res`` strategy crops
     each layout element and calls ``get_text_from_image`` on the crop, which is
-    the shape this service expects. Set ``OCR_AGENT`` to
-    ``unstructured.partition.utils.ocr_models.minicpm_ocr.OCRAgentMiniCPM`` and
-    ``MINICPM_OCR_BASE_URL`` to the service's OpenAI-compatible base URL.
+    the shape this service expects.
+
+    ``hi_res`` takes the agent explicitly, so the ``OCR_AGENT`` environment
+    variable alone does not select it:
+
+        partition_pdf(..., strategy="hi_res", ocr_agent=OCR_AGENT_MINICPM)
+
+    For the ``ocr_only`` strategy, set ``OCR_AGENT`` to the class path instead.
+    In both cases ``MINICPM_OCR_BASE_URL`` must point at the service's
+    OpenAI-compatible base URL.
     """
 
     page_layout_supported = False
