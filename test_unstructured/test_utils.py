@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import tempfile
 
 import pytest
 
@@ -114,6 +115,17 @@ def test_only_raises_when_len_more_than_1(iterator):
 def test_only_raises_if_empty(iterator):
     with pytest.raises(ValueError):
         utils.only(iterator)
+
+
+def test_a_box_nested_with_no_tolerance_is_inside_its_parent():
+    parent = (0, 0, 100, 100)
+    child = (10, 10, 20, 20)
+    assert utils.is_parent_box(parent, child) is True
+    assert utils.is_parent_box(parent, child, add=0) is True
+    assert utils.is_parent_box(parent, (15, 15)) is True
+    assert utils.is_parent_box(parent, (200, 200, 210, 210)) is False
+    assert utils.is_parent_box(parent, (-1, -1, 10, 10)) is False
+    assert utils.is_parent_box(parent, (-1, -1, 10, 10), add=1) is True
 
 
 @pytest.mark.parametrize(
@@ -470,3 +482,28 @@ class DescribeGroupElementsByParentId:
         assert list(result.keys()) == [None, "parent_A"]
         assert [e.text for e in result[None]] == ["First orphan"]
         assert [e.text for e in result["parent_A"]] == ["Title 1", "Orphan 2"]
+
+
+def _stub_temp_dir(monkeypatch: pytest.MonkeyPatch, tmp_path) -> str:
+    """Point the process temp dir at ``tmp_path`` and return it as a string."""
+    temp_dir = tmp_path / "tmp"
+    temp_dir.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(temp_dir))
+    return str(temp_dir)
+
+
+def test_is_temp_file_path_detects_a_file_inside_the_temp_dir(monkeypatch, tmp_path):
+    temp_dir = _stub_temp_dir(monkeypatch, tmp_path)
+    file_path = os.path.join(temp_dir, "page.csv")
+
+    assert utils.is_temp_file_path(file_path) is True
+
+
+def test_is_temp_file_path_is_not_a_name_prefix_test(monkeypatch, tmp_path):
+    """A sibling directory that merely starts with the temp-dir name is not temporary."""
+    temp_dir = _stub_temp_dir(monkeypatch, tmp_path)
+    sibling = temp_dir + "-exports"
+    os.mkdir(sibling)
+    file_path = os.path.join(sibling, "page.csv")
+
+    assert utils.is_temp_file_path(file_path) is False

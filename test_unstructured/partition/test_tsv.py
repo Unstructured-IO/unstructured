@@ -513,3 +513,15 @@ def test_partition_tsv_reads_each_cell_as_written(tmp_path: Path):
     element = partition_tsv(str(file_path), include_header=True)[0]
 
     assert element.text == "name qty status Pen 12 N/A Ink NULL"
+
+
+def test_partition_tsv_reads_a_line_break_in_a_quoted_cell_as_whitespace_not_an_escape():
+    data = b'name\tnote\nBob\t"line one\nline two"\n'
+
+    element = partition_tsv(file=io.BytesIO(data), include_header=True)[0]
+
+    assert element.text == "name note Bob line one line two"
+    assert element.metadata.text_as_html == (
+        "<table><tr><td>name</td><td>note</td></tr>"
+        "<tr><td>Bob</td><td>line one line two</td></tr></table>"
+    )

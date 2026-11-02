@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import logging
 import pathlib
 import re
 import tempfile
@@ -1263,6 +1264,25 @@ def test_partition_docx_counts_a_section_break_paragraph_that_holds_only_an_equa
     elements = partition_docx(path)
 
     assert [e.text for e in elements] == ["1. a", "3. c"]
+
+
+def test_partition_docx_exposes_the_paragraph_style_name(tmp_path):
+    path = tmp_path / "styles.docx"
+    document = docx.Document()
+    document.add_paragraph("Report title", style="Title")
+    document.add_heading("Chapter", level=1)
+    document.add_heading("Section", level=2)
+    document.add_paragraph("Some narrative text.")
+    document.save(path)
+
+    elements = partition_docx(str(path))
+
+    assert [(e.text, e.metadata.category_depth, e.metadata.style_name) for e in elements] == [
+        ("Report title", 0, "Title"),
+        ("Chapter", 0, "Heading 1"),
+        ("Section", 1, "Heading 2"),
+        ("Some narrative text.", 0, "Normal"),
+    ]
 
 
 def test_partition_docx_keeps_the_heading_depth_of_a_directly_numbered_heading(tmp_path):
@@ -2748,6 +2768,32 @@ class Describe_DocxPartitioner:
         )
 
         assert [element.text for element in elements] == ["Header", "Body", "Footer"]
+
+
+def test_partition_docx_skips_a_header_whose_relationship_is_missing(
+    caplog: pytest.LogCaptureFixture,
+):
+    """A dangling header `r:id` must not abort partitioning with a raw `KeyError`.
+
+    The body content is still returned and a warning records the dropped header.
+    """
+    document = docx.Document()
+    document.add_paragraph("Body")
+    sectPr = document.sections[0]._sectPr
+    headerReference = sectPr.makeelement(qn("w:headerReference"), {})
+    headerReference.set(qn("r:id"), "rIdDoesNotExist")
+    headerReference.set(qn("w:type"), "default")
+    sectPr.insert(0, headerReference)
+
+    file = io.BytesIO()
+    document.save(file)
+    file.seek(0)
+
+    with caplog.at_level(logging.WARNING):
+        elements = partition_docx(file=file)
+
+    assert [element.text for element in elements] == ["Body"]
+    assert "unresolved relationship id" in caplog.text
 
 
 def test_partition_docx_skips_malformed_row_cells():

@@ -30,7 +30,9 @@ jobs:
         with:
           fetch-depth: 2
       - name: Test version guard
-        run: bash scripts/test-check-new-release-version.sh
+        run: |
+          bash scripts/test-check-new-release-version.sh
+          bash scripts/test-post-release-dev-bump.sh
       - name: Check merge-result version
         env:
           QUEUE_BASE_SHA: ${{ github.event.merge_group.base_sha }}

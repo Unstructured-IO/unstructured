@@ -98,9 +98,9 @@ class ObjectDetectionEvalProcessor:
         """
         # TODO: Test after https://unstructured-ai.atlassian.net/browse/ML-92
         # is done.
-        with open(prediction_file_path) as f:
+        with open(prediction_file_path, encoding="utf-8") as f:
             predictions_data = json.load(f)
-        with open(ground_truth_file_path) as f:
+        with open(ground_truth_file_path, encoding="utf-8") as f:
             ground_truth_data = json.load(f)
 
         assert sorted(predictions_data["object_detection_classes"]) == sorted(

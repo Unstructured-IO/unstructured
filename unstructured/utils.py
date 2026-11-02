@@ -12,6 +12,7 @@ import tempfile
 import threading
 from functools import lru_cache, wraps
 from itertools import combinations
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -64,7 +65,10 @@ def is_temp_file_path(file_path: str) -> bool:
     The Python-defined temp directory is platform dependent (macOS != Linux != Windows)
     and can also be determined by an environment variable (TMPDIR, TEMP, or TMP).
     """
-    return file_path.startswith(tempfile.gettempdir())
+    # -- Compare path components, not a raw string prefix: `startswith()` also matches a
+    # -- path that merely begins with the temp-dir name, e.g. "/tmpdata/report.csv" when
+    # -- the temp dir is "/tmp", which would drop `filename`/`last_modified` metadata.
+    return Path(file_path).is_relative_to(tempfile.gettempdir())
 
 
 def save_as_jsonl(data: list[dict[str, Any]], filename: str) -> None:
@@ -295,9 +299,9 @@ def is_parent_box(parent_target: Box, child_target: Box, add: float = 0.0) -> bo
     """
     if len(parent_target) != 4:
         return False
-    parent_targets = [0, 0, 0, 0]
-    if add and len(parent_target) == 4:
-        parent_targets = list(parent_target)
+    # Zero tolerance is exact containment. Leave the parent coordinates in place.
+    parent_targets = list(parent_target)
+    if add:
         parent_targets[0] -= add
         parent_targets[1] -= add
         parent_targets[2] += add

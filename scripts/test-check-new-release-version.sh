@@ -111,4 +111,17 @@ fi
 EXPECT_MESSAGE="already tagged" check 1 'remote final tag prevents release' 0.27.36 0.27.36-dev
 git remote remove origin
 check 128 'tag lookup failure fails closed' 0.27.37-dev 0.27.36
+# The frozen changelog fails a PR whatever its version does.
+git checkout -q main
+printf 'history\n' >CHANGELOG.md
+git add CHANGELOG.md
+git commit -qm changelog
+changelog_base=$(git rev-parse HEAD)
+git checkout -qb changelog-pr
+printf 'new entry\n' >>CHANGELOG.md
+git commit -qam 'edit changelog'
+VERSION_BASE_REF=$changelog_base EXPECT_MESSAGE="CHANGELOG.md is frozen" check 1 'merge-group entry editing changelog fails'
+git checkout -q --detach "$changelog_base"
+git merge --no-ff -qm 'changelog PR merge result' changelog-pr
+VERSION_EVENT_NAME=pull_request EXPECT_MESSAGE="CHANGELOG.md is frozen" check 1 'PR merge result editing changelog fails'
 printf 'Passed %s version guard tests.\n' "$count"
