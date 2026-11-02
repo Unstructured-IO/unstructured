@@ -442,8 +442,9 @@ def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
 
 # Leading global inline flags such as `(?i)` must stay at the start of the expression, so they are
 # kept outside the group that anchors the rest of the pattern. Python also accepts `(?#...)`
-# comments before and between them, and whitespace and `#` comments once `(?x)` is on.
-_GLOBAL_FLAGS = re.compile(r"\(\?[aiLmsux]+\)")
+# comments before and between them, and whitespace and `#` comments once `(?x)` is on. `t` is
+# the TEMPLATE flag: Python 3.11 and 3.12 accept it, and 3.13 rejects it when the pattern compiles.
+_GLOBAL_FLAGS = re.compile(r"\(\?[aiLmstux]+\)")
 _VERBOSE_SPACE = frozenset(" \t\n\r\v\f")
 
 

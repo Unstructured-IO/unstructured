@@ -1,4 +1,5 @@
 import re
+import sys
 
 import pytest
 
@@ -237,6 +238,23 @@ def test_clean_prefix(text, pattern, ignore_case, strip, expected):
 )
 def test_clean_postfix(text, pattern, ignore_case, strip, expected):
     assert core.clean_postfix(text, pattern, ignore_case, strip) == expected
+
+
+@pytest.mark.parametrize(
+    ("cleaner", "text", "pattern", "expected"),
+    [
+        (core.clean_prefix, "END Report", r"(?t)END", " Report"),
+        (core.clean_prefix, "Report", r"(?t)END", "Report"),
+        (core.clean_postfix, "Report END", r"(?t)END", "Report "),
+        (core.clean_postfix, "Report", r"(?t)END", "Report"),
+    ],
+)
+def test_clean_prefix_and_postfix_keep_the_template_flag(cleaner, text, pattern, expected):
+    if sys.version_info >= (3, 13):
+        with pytest.raises(re.error):
+            cleaner(text, pattern, strip=False)
+    else:
+        assert cleaner(text, pattern, strip=False) == expected
 
 
 @pytest.mark.parametrize("text", ["keep DELETE here", "nothing to remove"])
