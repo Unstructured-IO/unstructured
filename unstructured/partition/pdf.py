@@ -984,6 +984,9 @@ def pdf_complexity(
     """
 
     original_pos: Optional[int] = None
+    # -- a vector-heavy page does not end the scan: every later page must still be checked
+    # -- against the decoding limits, which take precedence. --
+    vector_heavy = False
 
     try:
         # Preserve file cursor position for file-like inputs
@@ -1124,8 +1127,8 @@ def pdf_complexity(
                 # No copy: the regexes accept bytes and this is not mutated.
                 raw_data = chunk
 
-            # Skip pages with small content streams
-            if len(raw_data) < min_raw_stream_bytes:
+            # Skip operator counting for small streams, or once any page is vector-heavy
+            if vector_heavy or len(raw_data) < min_raw_stream_bytes:
                 continue
 
             # Count operators via finditer (not findall) to avoid allocating a match
@@ -1147,11 +1150,11 @@ def pdf_complexity(
                     f"ratio: {min_graphics_to_text_ratio}). "
                     "Flagging PDF as too complex for text extraction."
                 )
-                return PdfComplexity.VECTOR_HEAVY
+                vector_heavy = True
 
     except Exception as e:
         logger.debug(f"pdf_complexity check failed: {e}")
-        return None
+        return PdfComplexity.VECTOR_HEAVY if vector_heavy else None
 
     finally:
         # Restore original cursor position for file-like inputs
@@ -1163,7 +1166,7 @@ def pdf_complexity(
         ):
             file.seek(original_pos)
 
-    return None
+    return PdfComplexity.VECTOR_HEAVY if vector_heavy else None
 
 
 def is_pdf_too_complex(

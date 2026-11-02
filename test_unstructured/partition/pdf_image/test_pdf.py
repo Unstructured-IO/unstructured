@@ -2147,6 +2147,125 @@ def test_pdf_complexity_reports_exceeded_limits():
     )
 
 
+class _StubStream:
+    def __init__(self, data: bytes):
+        self.data = data
+
+    def get_data(self):
+        return self.data
+
+
+class _DecodeLimitStream:
+    def get_data(self):
+        raise LimitReachedError("Limit reached while decompressing.")
+
+
+_VECTOR_HEAVY_OPS = b"0 0 m 1 1 l S\n" * 4_000  # 12,000 graphics ops, no text ops, ~56 KB
+
+_LIMIT_KWARGS = {
+    "min_file_size_bytes": 1,
+    "min_raw_stream_bytes": 1,
+    "max_raw_stream_bytes": 100_000,
+    "max_content_stream_array_entries": 10,
+    "max_total_stream_bytes": 100_000,
+    "max_total_array_entries": 5,
+}
+
+
+@pytest.mark.parametrize(
+    "over_limit_contents",
+    [
+        pytest.param(lambda: _StubStream(b"\x00" * 200_000), id="page-bytes"),
+        pytest.param(lambda: ArrayObject([_StubStream(b"")] * 11), id="page-entries"),
+        pytest.param(lambda: _StubStream(b"\x00" * 60_000), id="total-bytes"),
+        pytest.param(lambda: ArrayObject([_StubStream(b"")] * 8), id="total-entries"),
+        pytest.param(_DecodeLimitStream, id="decode-limit-stream"),
+        pytest.param(lambda: ArrayObject([_DecodeLimitStream()]), id="decode-limit-array"),
+    ],
+)
+@pytest.mark.parametrize("vector_heavy_first", [True, False])
+def test_pdf_complexity_limits_take_precedence_over_vector_heavy_page(
+    over_limit_contents, vector_heavy_first
+):
+    pages = [{"/Contents": _StubStream(_VECTOR_HEAVY_OPS)}, {"/Contents": over_limit_contents()}]
+    reader = mock.Mock()
+    reader.pages = pages if vector_heavy_first else pages[::-1]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.pdf_complexity(file=b"x" * 20, **_LIMIT_KWARGS) is (
+            pdf.PdfComplexity.EXCEEDS_LIMITS
+        )
+
+
+def test_pdf_complexity_reports_vector_heavy_after_scanning_every_page():
+    get_data_calls = 0
+
+    class CountingStream(_StubStream):
+        def get_data(self):
+            nonlocal get_data_calls
+            get_data_calls += 1
+            return super().get_data()
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": CountingStream(_VECTOR_HEAVY_OPS)}] + [
+        {"/Contents": CountingStream(b"\x00" * 100)} for _ in range(3)
+    ]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.pdf_complexity(file=b"x" * 20, **_LIMIT_KWARGS) is (
+            pdf.PdfComplexity.VECTOR_HEAVY
+        )
+    assert get_data_calls == 4
+
+
+def test_pdf_complexity_keeps_vector_heavy_verdict_when_a_later_page_fails_to_load():
+    class FailingPages:
+        def __bool__(self):
+            return True
+
+        def __iter__(self):
+            yield {"/Contents": _StubStream(_VECTOR_HEAVY_OPS)}
+            raise IndexError("page tree is shorter than /Count")
+
+    reader = mock.Mock()
+    reader.pages = FailingPages()
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.pdf_complexity(file=b"x" * 20, **_LIMIT_KWARGS) is (
+            pdf.PdfComplexity.VECTOR_HEAVY
+        )
+
+
+def _two_page_pdf(first: bytes, second: bytes) -> bytes:
+    writer = PdfWriter()
+    for payload in (first, second):
+        stream = DecodedStreamObject()
+        stream[NameObject("/Filter")] = NameObject("/FlateDecode")
+        stream._data = zlib.compress(payload)
+        writer.add_blank_page(width=612, height=792)
+        writer.pages[-1][NameObject("/Contents")] = writer._add_object(stream)
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+@pytest.mark.parametrize("vector_heavy_first", [True, False])
+def test_partition_pdf_fast_rejects_over_limit_page_after_vector_heavy_page(
+    monkeypatch, vector_heavy_first
+):
+    vector_heavy = _VECTOR_HEAVY_OPS * 2  # over the default 100 KB scan threshold
+    over_limit = b"\x00" * (pdf.DEFAULT_MAX_RAW_STREAM_BYTES + 1)
+    pages = (vector_heavy, over_limit) if vector_heavy_first else (over_limit, vector_heavy)
+    data = _two_page_pdf(*pages)
+    extractable_elements = mock.Mock(return_value=[])
+    monkeypatch.setattr(pdf, "extractable_elements", extractable_elements)
+
+    with pytest.raises(UnprocessableEntityError, match="decoding limits"):
+        pdf.partition_pdf(file=io.BytesIO(data), strategy=PartitionStrategy.FAST)
+
+    extractable_elements.assert_not_called()
+
+
 def test_partition_pdf_fast_extracts_text_from_vector_heavy_pdf():
     data = _vector_heavy_pdf_with_text("Site plan")
 
