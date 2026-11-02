@@ -105,6 +105,9 @@ def test_clean_ligatures(text, expected):
         ("\x93A lovely quote!\x94", "“A lovely quote!”"),
         ("\x91A lovely quote!\x92", "‘A lovely quote!’"),
         ("Our dog&apos;s bowl.", "Our dog's bowl."),
+        # UTF-8 en dash (E2 80 93) and em dash (E2 80 94) decoded with the wrong codec
+        ("pages 10â\x80“12", "pages 10–12"),
+        ("wait â\x80” no", "wait — no"),
     ],
 )
 def test_replace_unicode_quotes(text, expected):
