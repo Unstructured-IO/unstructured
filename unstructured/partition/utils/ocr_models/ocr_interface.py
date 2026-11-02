@@ -24,6 +24,11 @@ if TYPE_CHECKING:
 class OCRAgent(ABC):
     """Defines the interface for an Optical Character Recognition (OCR) service."""
 
+    # Whether get_layout_from_image returns regions that can be matched to detected layout
+    # elements by coordinates. Agents that only recognize text from a supplied crop set this to
+    # False; the PDF pipeline then uses individual-block OCR instead of full-page OCR.
+    page_layout_supported: bool = True
+
     @classmethod
     def get_agent(cls, language: str) -> OCRAgent:
         """Get the configured OCRAgent instance.

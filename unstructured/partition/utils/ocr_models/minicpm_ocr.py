@@ -27,6 +27,8 @@ class OCRAgentMiniCPM(OCRAgent):
     ``MINICPM_OCR_BASE_URL`` to the service's OpenAI-compatible base URL.
     """
 
+    page_layout_supported = False
+
     def __init__(self, language: Optional[str] = None) -> None:
         self.language = language
         self.base_url = env_config.MINICPM_OCR_BASE_URL.rstrip("/")
@@ -79,9 +81,16 @@ class OCRAgentMiniCPM(OCRAgent):
             raise RuntimeError(f"MiniCPM OCR request failed: {exc}") from exc
 
         try:
-            content = body["choices"][0]["message"]["content"]
+            choice = body["choices"][0]
+            content = choice["message"]["content"]
         except (KeyError, IndexError, TypeError) as exc:
             raise RuntimeError(f"MiniCPM OCR returned an unexpected response: {body!r}") from exc
+
+        finish_reason = choice.get("finish_reason")
+        if finish_reason not in (None, "", "stop"):
+            raise RuntimeError(
+                f"MiniCPM OCR returned an incomplete response (finish_reason={finish_reason!r})"
+            )
         return (content or "").strip()
 
     def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:

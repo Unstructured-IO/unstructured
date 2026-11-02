@@ -12,6 +12,7 @@ from PIL import Image as PILImage
 from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
+from unstructured.logger import logger
 from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.common.common import copy_file_to_stream
 from unstructured.partition.common.lang import tesseract_to_paddle_language
@@ -230,6 +231,12 @@ def supplement_page_layout_with_ocr(
     if ocr_agent == OCR_AGENT_PADDLE:
         language = tesseract_to_paddle_language(ocr_languages)
     _ocr_agent = OCRAgent.get_instance(ocr_agent_module=ocr_agent, language=language)
+    if ocr_mode == OCRMode.FULL_PAGE.value and not _ocr_agent.page_layout_supported:
+        logger.warning(
+            "OCR agent %s does not return page layout; using individual-block OCR",
+            ocr_agent,
+        )
+        ocr_mode = OCRMode.INDIVIDUAL_BLOCKS.value
     if ocr_mode == OCRMode.FULL_PAGE.value:
         mark_partition_ocr_used()
         ocr_layout = _ocr_agent.get_layout_from_image(image)

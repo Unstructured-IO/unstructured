@@ -11,9 +11,12 @@ from unstructured.partition.utils.ocr_models.minicpm_ocr import OCRAgentMiniCPM
 POST = "unstructured.partition.utils.ocr_models.minicpm_ocr.requests.post"
 
 
-def _response(content: str = "") -> MagicMock:
+def _response(content: str = "", finish_reason: str | None = "stop") -> MagicMock:
+    choice: dict = {"message": {"content": content}}
+    if finish_reason is not None:
+        choice["finish_reason"] = finish_reason
     response = MagicMock()
-    response.json.return_value = {"choices": [{"message": {"content": content}}]}
+    response.json.return_value = {"choices": [choice]}
     response.raise_for_status.return_value = None
     return response
 
@@ -88,6 +91,16 @@ def test_http_error_is_wrapped(agent):
             agent.get_text_from_image(Image.new("RGB", (2, 2), "white"))
 
 
+def test_truncated_completion_is_rejected(agent):
+    with patch(POST, return_value=_response("partial text", finish_reason="length")):
+        with pytest.raises(RuntimeError, match="incomplete response"):
+            agent.get_text_from_image(Image.new("RGB", (2, 2), "white"))
+
+
+def test_page_layout_is_not_supported(agent):
+    assert agent.page_layout_supported is False
+
+
 def test_unexpected_response_is_wrapped(agent):
     response = MagicMock()
     response.json.return_value = {"choices": []}
@@ -116,3 +129,31 @@ def test_layout_covers_the_whole_image(agent):
     region = regions[0]
     assert region.text == "page text"
     assert (region.x1, region.y1, region.x2, region.y2) == (0, 0, 20, 10)
+
+
+def test_full_page_ocr_routes_multi_block_to_individual_crops(agent):
+    pytest.importorskip("unstructured_inference")
+    from unstructured.partition.pdf_image.ocr import supplement_page_layout_with_ocr
+    from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+
+    page_layout = MagicMock()
+    page_layout.elements_array.texts = ["", ""]
+    page_layout.elements_array.x1 = [0, 60]
+    page_layout.elements_array.y1 = [0, 0]
+    page_layout.elements_array.x2 = [50, 100]
+    page_layout.elements_array.y2 = [30, 30]
+
+    responses = [_response("first block"), _response("second block")]
+    with (
+        patch.object(OCRAgent, "get_instance", return_value=agent),
+        patch(POST, side_effect=responses) as post,
+    ):
+        supplement_page_layout_with_ocr(
+            page_layout=page_layout,
+            image=Image.new("RGB", (100, 40), "white"),
+            ocr_agent="unstructured.partition.utils.ocr_models.minicpm_ocr.OCRAgentMiniCPM",
+            ocr_mode="entire_page",
+        )
+
+    assert page_layout.elements_array.texts == ["first block", "second block"]
+    assert post.call_count == 2
