@@ -1,4 +1,7 @@
 import contextlib
+import os
+import subprocess
+import sys
 import sysconfig
 from pathlib import Path
 
@@ -255,3 +258,104 @@ def test_auto_install_stays_the_default(monkeypatch: pytest.MonkeyPatch):
         tokenize._load_spacy_model()
 
     assert installs == [tokenize._SPACY_MODEL_URL]
+
+
+_WORKER_SCRIPT = """
+import json
+import os
+import sys
+import sysconfig
+import time
+from pathlib import Path
+
+sys.path.insert(0, os.environ["WORKER_REPO"])
+
+from unstructured.nlp import tokenize  # noqa: E402
+
+cache = Path(os.environ["WORKER_CACHE"])
+log = Path(os.environ["WORKER_LOG"])
+real_paths = sysconfig.get_paths
+
+
+def shared_paths(*args, **kwargs):
+    # -- every worker resolves the installation destination to the same directory --
+    paths = dict(real_paths(*args, **kwargs))
+    paths["purelib"] = os.environ["WORKER_SITE"]
+    paths["platlib"] = os.environ["WORKER_SITE"]
+    return paths
+
+
+tokenize.sysconfig.get_paths = shared_paths
+
+
+def load(name, **kwargs):
+    if (cache / "installed").exists():
+        return "model"
+    raise OSError("model is not installed")
+
+
+def install():
+    started = time.time()
+    (cache / "installing").write_text(os.environ["WORKER_NAME"])
+    time.sleep(0.5)
+    if (cache / "installing").read_text() != os.environ["WORKER_NAME"]:
+        raise AssertionError("two workers installed at the same time")
+    (cache / "installed").write_text("1")
+    log.write_text(json.dumps({"started": started, "finished": time.time()}))
+
+
+tokenize.spacy = type("FakeSpacy", (), {"load": staticmethod(load)})
+tokenize._install_spacy_model = install
+assert tokenize._load_spacy_model() == "model"
+"""
+
+
+def _start_worker(name: str, tmp_path: Path, site: Path, cache: Path, logs: Path):
+    """Start one worker with its own process group and its own temporary directory."""
+    workdir = tmp_path / f"tmp-{name}"
+    workdir.mkdir(exist_ok=True)
+    env = dict(os.environ)
+    env.pop("UNSTRUCTURED_SPACY_AUTO_INSTALL", None)
+    env["TMPDIR"] = str(workdir)
+    env["TEMP"] = str(workdir)
+    env["TMP"] = str(workdir)
+    env["WORKER_NAME"] = name
+    env["WORKER_SITE"] = str(site)
+    env["WORKER_CACHE"] = str(cache)
+    env["WORKER_LOG"] = str(logs / f"{name}.json")
+    env["WORKER_REPO"] = str(Path(__file__).resolve().parents[2])
+    if os.name == "nt":
+        kwargs = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+    else:
+        kwargs = {"start_new_session": True}
+    return subprocess.Popen(
+        [sys.executable, "-c", _WORKER_SCRIPT],
+        env=env,
+        cwd=env["WORKER_REPO"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        **kwargs,
+    )
+
+
+def test_the_install_lock_serializes_separate_process_groups(tmp_path: Path):
+    """Two workers with different temporary directories install the model once.
+
+    `GLOBAL_WORKING_DIR_ENABLED` gives every process group its own `tempfile` directory, so a
+    lock derived from the temporary directory is a different file in every worker while they all
+    install into the same site-packages. The second worker has to wait for the first one and then
+    load the installed model instead of installing again.
+    """
+    site = tmp_path / "site-packages"
+    site.mkdir()
+    cache = tmp_path / "installation"
+    cache.mkdir()
+    logs = tmp_path / "logs"
+    logs.mkdir()
+
+    workers = [_start_worker(name, tmp_path, site, cache, logs) for name in ("first", "second")]
+    output = [worker.communicate(timeout=180)[0].decode() for worker in workers]
+
+    assert [worker.returncode for worker in workers] == [0, 0], output
+    installs = list(logs.iterdir())
+    assert len(installs) == 1, "exactly one worker may install, got " + repr(output)
