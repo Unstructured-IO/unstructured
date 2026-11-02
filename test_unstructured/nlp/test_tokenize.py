@@ -1,4 +1,6 @@
 import contextlib
+import sysconfig
+from pathlib import Path
 
 import pytest
 
@@ -182,6 +184,59 @@ def test_auto_install_can_be_disabled(monkeypatch: pytest.MonkeyPatch):
         tokenize._load_spacy_model()
 
     assert installs == []
+
+
+def test_the_install_lock_sits_beside_the_model_it_guards():
+    """The lock has to be found by every worker that writes this destination."""
+    lock = Path(tokenize._install_lock_path())
+
+    assert lock.parent == Path(sysconfig.get_paths()["purelib"])
+    assert lock.name == f"{tokenize._SPACY_MODEL_NAME}.install.lock"
+
+
+@pytest.mark.parametrize("temp_dir", ["tmp/4321", "tmp/8765"])
+def test_the_install_lock_does_not_follow_the_process_temp_dir(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, temp_dir: str
+):
+    """`GLOBAL_WORKING_DIR_ENABLED` gives each process group its own `tempfile` directory.
+
+    A lock derived from `tempfile.gettempdir()` would then be a different file in every worker
+    while they all install into the same site-packages, so two workers could replace the model
+    directory under each other. Whatever the running configuration did to `tempfile` -- and
+    whether the configuration module was imported before or after this one -- the lock has to
+    resolve to one path. This is the import-order half of the regression: the path is a function
+    of the destination alone, so there is no order to get wrong.
+    """
+    fake_tempdir = str(tmp_path / temp_dir)
+    monkeypatch.setattr(tokenize.tempfile, "tempdir", fake_tempdir, raising=False)
+    monkeypatch.setattr(tokenize.tempfile, "gettempdir", lambda: fake_tempdir, raising=False)
+    assert tokenize.tempfile.gettempdir() == fake_tempdir
+
+    assert tokenize._install_lock_path() == str(
+        Path(sysconfig.get_paths()["purelib"]) / f"{tokenize._SPACY_MODEL_NAME}.install.lock"
+    )
+
+
+def test_auto_install_disabled_never_takes_the_install_lock(monkeypatch: pytest.MonkeyPatch):
+    """Nothing is installed, so the opt-out must not queue behind other installers.
+
+    It also keeps a read-only site-packages from turning the opt-out into a permission error,
+    since taking the lock creates the file next to the model.
+    """
+    locks = []
+
+    _model_load_fails(monkeypatch)
+    monkeypatch.setattr(
+        tokenize,
+        "FileLock",
+        lambda *args, **kwargs: locks.append(args[0]) or contextlib.nullcontext(),
+    )
+    monkeypatch.setenv("UNSTRUCTURED_SPACY_AUTO_INSTALL", "false")
+
+    with pytest.raises(RuntimeError, match="UNSTRUCTURED_SPACY_AUTO_INSTALL"):
+        tokenize._load_spacy_model()
+
+    assert locks == []
 
 
 def test_auto_install_stays_the_default(monkeypatch: pytest.MonkeyPatch):

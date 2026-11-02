@@ -36,9 +36,19 @@ _SPACY_MODEL_SHA256: Final[str] = "1932429db727d4bff3deed6b34cfc05df17794f4a52ee
 
 
 _DOWNLOAD_TIMEOUT_SECONDS: Final[int] = 120
-_INSTALL_LOCK_PATH: Final[str] = os.path.join(
-    tempfile.gettempdir(), f"{_SPACY_MODEL_NAME}.install.lock"
-)
+
+
+def _install_lock_path() -> str:
+    """Path of the lock that serializes every process installing this model.
+
+    The identity of the lock is the installation destination. A lock derived from
+    `tempfile.gettempdir()` is not shared: when `GLOBAL_WORKING_DIR_ENABLED` is set, the
+    configuration points `tempfile` at a directory that is unique per process group, so two
+    workers installing into the same site-packages would take two different locks and could
+    replace the model directory under each other.
+    """
+    site_packages = sysconfig.get_paths()["purelib"]
+    return os.path.join(site_packages, f"{_SPACY_MODEL_NAME}.install.lock")
 
 
 def _download_with_timeout(url: str, dest: str) -> None:
@@ -91,7 +101,7 @@ def _install_spacy_model() -> None:
             install(source=source, destination=destination, additional_metadata={})
 
         # Move installed packages from staging into real site-packages.
-        # The caller holds _INSTALL_LOCK_PATH so no other process races here.
+        # The caller holds the install lock so no other process races here.
         # Any dst that already exists is a remnant of a previous failed install
         # (spacy.load() just failed), so remove it before moving to avoid
         # shutil.move placing src *inside* an existing directory.
@@ -127,22 +137,25 @@ def _load_spacy_model() -> spacy.language.Language:
     except OSError:
         pass
 
-    # Serialize model installation across processes with an exclusive file lock.
-    # A well-known path in the system temp dir is visible to all processes
-    # regardless of their working directory.
-    with FileLock(_INSTALL_LOCK_PATH, timeout=-1):
+    if not env_config.UNSTRUCTURED_SPACY_AUTO_INSTALL:
+        # -- Fail before taking the lock: nobody installs in this configuration, and a
+        # -- read-only site-packages would turn the opt-out into a permission error. --
+        raise RuntimeError(
+            f"spaCy model {_SPACY_MODEL_NAME} is not installed and runtime installation is "
+            "disabled by UNSTRUCTURED_SPACY_AUTO_INSTALL. Pre-install it with: "
+            f"python -m spacy download {_SPACY_MODEL_NAME}"
+        )
+
+    # -- Serialize installation across every process that writes this destination. The lock sits
+    # -- beside the destination, so all of them derive the same path whatever temporary
+    # -- directory the running configuration installed into `tempfile`. --
+    with FileLock(_install_lock_path(), timeout=-1):
         # Double-check: another process may have installed while we waited.
         importlib.invalidate_caches()
         try:
             return spacy.load(_SPACY_MODEL_NAME, exclude=_SPACY_EXCLUDE)
         except OSError:
             pass
-        if not env_config.UNSTRUCTURED_SPACY_AUTO_INSTALL:
-            raise RuntimeError(
-                f"spaCy model {_SPACY_MODEL_NAME} is not installed and runtime installation is "
-                "disabled by UNSTRUCTURED_SPACY_AUTO_INSTALL. Pre-install it with: "
-                f"python -m spacy download {_SPACY_MODEL_NAME}"
-            )
         _install_spacy_model()
         importlib.invalidate_caches()
         try:
