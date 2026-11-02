@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import posixpath
 import struct
 import zipfile
 from contextlib import contextmanager
@@ -13,8 +14,10 @@ import numpy as np
 import openpyxl
 import pandas as pd
 import xlrd
+from lxml import etree
 from msoffcrypto import OfficeFile
 from msoffcrypto.exceptions import FileFormatError
+from openpyxl.utils.cell import column_index_from_string, get_column_letter
 from pandas.io.excel._openpyxl import OpenpyxlReader
 from pandas.io.formats.format import DataFrameFormatter
 from pandas.io.formats.html import HTMLFormatter
@@ -262,63 +265,107 @@ def _warn_on_formula_cells_without_saved_results(file_bytes: bytes) -> None:
     """Warn for each worksheet whose formula cells read as empty for lack of a saved result.
 
     Files written by openpyxl, or by pandas and other generators that do not calculate, store
-    each formula without a computed value. Reading uses openpyxl's cached-value mode, where such
-    a cell is indistinguishable from an empty one, so its value silently disappears from the
-    partitioned output and its row can fall out of its table. Finding these cells takes a
-    formula-mode pass over the workbook; a scan of the worksheet XML for a formula tag gates
-    that pass, so a workbook without formulas only pays for the scan.
+    each formula without a computed value. Reading uses cached-value mode, where such a cell is
+    indistinguishable from an empty one, so its value silently disappears from the partitioned
+    output and its row can fall out of its table. Each worksheet's XML is scanned for a formula
+    tag and, only when one is present, streamed through a parse that visits populated cells
+    only, keeps a bounded sample of coordinates, and loads no other workbook parts.
     """
-    with zipfile.ZipFile(io.BytesIO(file_bytes)) as zip_file:
-        has_formula_tag = any(
-            b"<f" in zip_file.read(name)
-            for name in zip_file.namelist()
-            if name.startswith("xl/worksheets/") and name.endswith(".xml")
-        )
-    if not has_formula_tag:
-        return
-
-    formula_cells_by_sheet: dict[str, set[str]] = {}
-    workbook = openpyxl.load_workbook(io.BytesIO(file_bytes), read_only=True, data_only=False)
     try:
-        for worksheet in workbook.worksheets:
-            formula_cells = {
-                cell.coordinate
-                for row in worksheet.iter_rows()
-                for cell in row
-                if cell.data_type == "f"
-            }
-            if formula_cells:
-                formula_cells_by_sheet[worksheet.title] = formula_cells
-    finally:
-        workbook.close()
+        with zipfile.ZipFile(io.BytesIO(file_bytes)) as zip_file:
+            for sheet_title, member_name in _iter_worksheet_members(zip_file):
+                if not _zip_member_contains_formula_tag(zip_file, member_name):
+                    continue
+                count, named_cells = _find_unevaluated_formula_cells(zip_file, member_name)
+                if not count:
+                    continue
+                named = ", ".join(named_cells)
+                if count > len(named_cells):
+                    named += f" and {count - len(named_cells)} more"
+                logger.warning(
+                    f"worksheet '{sheet_title}': {count} formula cell(s) have no saved"
+                    f" result and are read as empty: {named}. Recalculate and save the"
+                    f" workbook to include the computed values."
+                )
+    except Exception:  # -- a diagnostic never fails the partitioning that ran it --
+        logger.debug("formula-cell diagnostic failed", exc_info=True)
 
-    if not formula_cells_by_sheet:
-        return
 
-    workbook = openpyxl.load_workbook(io.BytesIO(file_bytes), read_only=True, data_only=True)
-    try:
-        for worksheet in workbook.worksheets:
-            formula_cells = formula_cells_by_sheet.get(worksheet.title, set())
-            # -- row-major order; a gap row's EmptyCell has no coordinate, hence the getattr --
-            unevaluated = [
-                cell.coordinate
-                for row in worksheet.iter_rows()
-                for cell in row
-                if getattr(cell, "coordinate", None) in formula_cells and cell.value in (None, "")
-            ]
-            if not unevaluated:
-                continue
-            named = ", ".join(unevaluated[:_UNEVALUATED_FORMULA_CELLS_NAMED])
-            elided = len(unevaluated) - _UNEVALUATED_FORMULA_CELLS_NAMED
-            if elided > 0:
-                named += f" and {elided} more"
-            logger.warning(
-                f"worksheet '{worksheet.title}': {len(unevaluated)} formula cell(s) have no"
-                f" saved result and are read as empty: {named}. Recalculate and save the"
-                f" workbook to include the computed values."
-            )
-    finally:
-        workbook.close()
+def _iter_worksheet_members(zip_file: zipfile.ZipFile) -> Iterator[tuple[str, str]]:
+    """Generate `(title, zip-member name)` for each worksheet, in workbook order.
+
+    The mapping comes from the workbook part and its relationships alone, so no shared-string,
+    style, or external-link parts are read.
+    """
+    relationships = etree.fromstring(zip_file.read("xl/_rels/workbook.xml.rels"))
+    members_by_rel_id: dict[str, str] = {}
+    for relationship in relationships.iter("{*}Relationship"):
+        if relationship.get("TargetMode") == "External":
+            continue
+        target = relationship.get("Target") or ""
+        member = target[1:] if target.startswith("/") else posixpath.normpath(f"xl/{target}")
+        members_by_rel_id[relationship.get("Id") or ""] = member
+
+    member_names = set(zip_file.namelist())
+    workbook = etree.fromstring(zip_file.read("xl/workbook.xml"))
+    for sheet in workbook.iter("{*}sheet"):
+        rel_id = next((v for k, v in sheet.attrib.items() if k.endswith("}id")), "")
+        member = members_by_rel_id.get(rel_id, "")
+        if "worksheets/" in member and member in member_names:
+            yield sheet.get("name") or "", member
+
+
+def _zip_member_contains_formula_tag(zip_file: zipfile.ZipFile, member_name: str) -> bool:
+    """True when the worksheet XML holds a formula (`<f>`) tag, read in fixed-size chunks."""
+    overlap = b""
+    with zip_file.open(member_name) as stream:
+        while chunk := stream.read(1 << 16):
+            if b"<f" in overlap + chunk:
+                return True
+            overlap = chunk[-1:]
+    return False
+
+
+def _find_unevaluated_formula_cells(
+    zip_file: zipfile.ZipFile, member_name: str
+) -> tuple[int, list[str]]:
+    """Count the worksheet's formula cells holding no saved result, naming the first few.
+
+    The XML streams through the parser one row at a time and each row is released once read,
+    so only cells present in the file are visited and memory stays bounded by the largest row,
+    not by worksheet dimensions or formula count. A cell or row without a stored reference
+    takes the position implied by its predecessor, as consumers read it.
+    """
+    count, named_cells = 0, []
+    row_num = 0
+    with zip_file.open(member_name) as stream:
+        for _, row in etree.iterparse(stream, events=("end",), tag="{*}row"):
+            row_num = int(row.get("r") or row_num + 1)
+            column_idx = 0
+            for cell in row:
+                if cell.tag.rpartition("}")[2] != "c":
+                    continue
+                reference = cell.get("r")
+                if reference:
+                    column_idx = column_index_from_string(reference.rstrip("0123456789"))
+                else:
+                    column_idx += 1
+                    reference = f"{get_column_letter(column_idx)}{row_num}"
+                has_formula = has_saved_result = False
+                for child in cell:
+                    child_name = child.tag.rpartition("}")[2]
+                    if child_name == "f":
+                        has_formula = True
+                    elif child_name == "v":
+                        has_saved_result = child.text not in (None, "")
+                if has_formula and not has_saved_result:
+                    count += 1
+                    if len(named_cells) < _UNEVALUATED_FORMULA_CELLS_NAMED:
+                        named_cells.append(reference)
+            row.clear()
+            while row.getprevious() is not None:
+                del row.getparent()[0]
+    return count, named_cells
 
 
 class _XlsxPartitionerOptions:

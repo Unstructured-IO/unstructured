@@ -548,7 +548,9 @@ def test_partition_xlsx_does_not_warn_when_the_formula_result_is_saved(
         for item in source.infolist():
             content = source.read(item.filename)
             if item.filename == "xl/worksheets/sheet1.xml":
-                content = content.replace(b"<f>SUM(B2:B3)</f>", b"<f>SUM(B2:B3)</f><v>1450</v>")
+                content = content.replace(
+                    b"<f>SUM(B2:B3)</f><v></v>", b"<f>SUM(B2:B3)</f><v>1450</v>"
+                )
             destination.writestr(item, content)
     file.seek(0)
 
@@ -566,6 +568,120 @@ def test_partition_xlsx_does_not_warn_when_the_workbook_has_no_formulas(
         partition_xlsx(example_doc_path("stanley-cups.xlsx"))
 
     assert "formula cell" not in caplog.text
+
+
+def test_partition_xlsx_formula_warning_scans_sparse_sheets_by_their_cells_not_dimensions(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- a value in the last grid cell stretches the sheet's dimensions to 16,384 columns by
+    # -- 1,048,576 rows; a dimensions-driven scan visits billions of empty cells before
+    # -- returning, a cell-driven one only the nine populated ones. A formula on another
+    # -- worksheet gets its own warning.
+    workbook = openpyxl.Workbook()
+    sheet_one = workbook.active
+    for row in (["Item", "Amount"], ["Rent", 1000], ["Power", 450], ["Total", "=SUM(B2:B3)"]):
+        sheet_one.append(row)
+    sheet_one["XFD1048576"] = "far"
+    sheet_two = workbook.create_sheet("Rates")
+    sheet_two["A1"] = "=1+1"
+    file = io.BytesIO()
+    workbook.save(file)
+    file.seek(0)
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        elements = partition_xlsx(file=file)
+
+    assert any(isinstance(e, Table) for e in elements)
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+    assert "B4" in caplog.text
+    assert "worksheet 'Rates': 1 formula cell(s) have no saved result" in caplog.text
+    assert "A1" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_names_a_bounded_sample_of_a_large_formula_count(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- a template holding many formulas without results extracts almost nothing; the warning
+    # -- carries the full count but names only the first ten cells --
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.append(["Metric"])
+    for row_num in range(2, 202):
+        worksheet.cell(row=row_num, column=1, value=f"=A{row_num - 1}+1")
+    file = io.BytesIO()
+    workbook.save(file)
+    file.seek(0)
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=file)
+
+    assert "worksheet 'Sheet': 200 formula cell(s) have no saved result" in caplog.text
+    assert "A2, A3, A4, A5, A6, A7, A8, A9, A10, A11 and 190 more" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_skips_styled_blank_cells(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- styled blanks are stored as value-less cells; they are neither formulas nor results --
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.append(["Item", "Amount"])
+    worksheet.append(["Rent", "=1000+0"])
+    bold = openpyxl.styles.Font(bold=True)
+    for row_num in range(3, 103):
+        for col_num in range(1, 21):
+            worksheet.cell(row=row_num, column=col_num).font = bold
+    file = io.BytesIO()
+    workbook.save(file)
+    file.seek(0)
+    source = zipfile.ZipFile(file)
+    with_result = io.BytesIO()
+    with zipfile.ZipFile(with_result, "w") as destination:
+        for item in source.infolist():
+            content = source.read(item.filename)
+            if item.filename == "xl/worksheets/sheet1.xml":
+                content = content.replace(b"<f>1000+0</f><v></v>", b"<f>1000+0</f><v>1000</v>")
+            destination.writestr(item, content)
+    with_result.seek(0)
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=with_result)
+
+    assert "formula cell" not in caplog.text
+
+
+def test_partition_xlsx_formula_warning_reads_no_external_link_parts(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- an external-link relationship whose part is missing from the package: loading links
+    # -- would fail or buy an unbounded cache, so the diagnostic must not touch them --
+    source = zipfile.ZipFile(_budget_workbook_file())
+    file = io.BytesIO()
+    with zipfile.ZipFile(file, "w") as destination:
+        for item in source.infolist():
+            content = source.read(item.filename)
+            if item.filename == "xl/workbook.xml":
+                content = content.replace(
+                    b"</workbook>",
+                    b"<externalReferences><externalReference"
+                    b' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/'
+                    b'relationships" r:id="rId99"/></externalReferences></workbook>',
+                )
+            if item.filename == "xl/_rels/workbook.xml.rels":
+                content = content.replace(
+                    b"</Relationships>",
+                    b'<Relationship Id="rId99" Type="http://schemas.openxmlformats.org/'
+                    b'officeDocument/2006/relationships/externalLink"'
+                    b' Target="externalLinks/externalLink1.xml"/></Relationships>',
+                )
+            destination.writestr(item, content)
+    file.seek(0)
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        elements = partition_xlsx(file=file)
+
+    assert elements == [Table("Item Amount Rent 1000 Power 450"), Title("Total")]
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
 
 
 # ================================================================================================
