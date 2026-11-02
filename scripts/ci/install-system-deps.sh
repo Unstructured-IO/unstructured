@@ -31,8 +31,9 @@ install_packages() {
 }
 
 # GitHub's Azure mirror can stall large LibreOffice downloads. Use Ubuntu's
-# primary HTTPS mirror for both legacy and deb822 source files.
-for source_file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
+# primary HTTPS mirror for legacy and deb822 source files, and for the
+# mirrorlist those sources reference through mirror+file:.
+for source_file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources /etc/apt/apt-mirrors.txt; do
   if [[ -f "$source_file" ]]; then
     sudo sed -i -E 's|https?://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' "$source_file"
   fi

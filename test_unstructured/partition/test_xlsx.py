@@ -488,6 +488,26 @@ def test_partition_xlsx_applies_the_cell_limit_to_xls_files(
         assert partition_xlsx(example_doc_path("tests-example.xls"))
 
 
+def test_partition_xlsx_keeps_cell_text_that_pandas_reads_as_missing_by_default():
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    for row in (
+        ["Item", "Status"],
+        ["Pear", "N/A"],
+        ["Fig", "NA"],
+        ["Plum", "null"],
+        ["Kiwi", "None"],
+    ):
+        worksheet.append(row)
+    file = io.BytesIO()
+    workbook.save(file)
+
+    (table,) = partition_xlsx(file=file)
+
+    assert table.text == "Item Status Pear N/A Fig NA Plum null Kiwi None"
+    assert "<td>N/A</td>" in table.metadata.text_as_html
+
+
 # ================================================================================================
 # OTHER ARGS
 # ================================================================================================
