@@ -2236,6 +2236,70 @@ def test_pdf_complexity_keeps_vector_heavy_verdict_when_a_later_page_fails_to_lo
         )
 
 
+def _flate_stream(payload: bytes, filter_name: str = "/FlateDecode") -> DecodedStreamObject:
+    stream = DecodedStreamObject()
+    stream[NameObject("/Filter")] = NameObject(filter_name)
+    stream._data = zlib.compress(payload)
+    return stream
+
+
+def _pdf_with_vector_heavy_page_and_shared_contents(
+    shared_items: list[DecodedStreamObject], n_shared_pages: int, vector_heavy_first: bool
+) -> bytes:
+    """A vector-heavy page plus `n_shared_pages` pages that all reference one `/Contents` array."""
+    writer = PdfWriter()
+    vector_heavy_ref = writer._add_object(_flate_stream(_VECTOR_HEAVY_OPS))
+    shared_ref = writer._add_object(ArrayObject([writer._add_object(i) for i in shared_items]))
+    contents = [shared_ref] * n_shared_pages
+    contents.insert(0 if vector_heavy_first else len(contents), vector_heavy_ref)
+    for page_contents in contents:
+        writer.add_blank_page(width=200, height=200)
+        writer.pages[-1][NameObject("/Contents")] = page_contents
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+@pytest.mark.parametrize("vector_heavy_first", [True, False])
+def test_pdf_complexity_charges_shared_contents_after_vector_heavy_page(vector_heavy_first):
+    # -- 56 KB vector-heavy page plus ten pages sharing one 40 KB stream: 456 KB decoded --
+    data = _pdf_with_vector_heavy_page_and_shared_contents(
+        [_flate_stream(b"\x00" * 40_000)], n_shared_pages=10, vector_heavy_first=vector_heavy_first
+    )
+
+    assert (
+        pdf.pdf_complexity(
+            file=data,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_total_stream_bytes=250_000,
+        )
+        is pdf.PdfComplexity.EXCEEDS_LIMITS
+    )
+
+
+@pytest.mark.parametrize("vector_heavy_first", [True, False])
+def test_pdf_complexity_charges_streams_beside_decode_errors_after_vector_heavy_page(
+    vector_heavy_first,
+):
+    # -- each shared array holds a valid 90 KB stream and one whose filter fails to decode --
+    data = _pdf_with_vector_heavy_page_and_shared_contents(
+        [_flate_stream(b"\x00" * 90_000), _flate_stream(b"garbage", "/UnknownBogusFilter")],
+        n_shared_pages=2,
+        vector_heavy_first=vector_heavy_first,
+    )
+
+    assert (
+        pdf.pdf_complexity(
+            file=data,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_total_stream_bytes=200_000,
+        )
+        is pdf.PdfComplexity.EXCEEDS_LIMITS
+    )
+
+
 def _two_page_pdf(first: bytes, second: bytes) -> bytes:
     writer = PdfWriter()
     for payload in (first, second):
