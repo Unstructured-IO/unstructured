@@ -126,7 +126,10 @@ class OCRAgentMiniCPM(OCRAgent):
         )
 
         ocr_regions = self.get_layout_from_image(image)
-        ocr_text = self.get_text_from_image(image)
+        # build_layout_elements_from_ocr_regions only consumes ocr_text when
+        # group_by_ocr_text is True; reuse the recognized region texts instead of
+        # sending a second identical request for the same page.
+        ocr_text = "\n".join(text for text in ocr_regions.texts if text)
         return build_layout_elements_from_ocr_regions(
             ocr_regions=ocr_regions,
             ocr_text=ocr_text,

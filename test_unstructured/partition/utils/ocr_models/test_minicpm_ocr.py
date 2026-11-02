@@ -130,6 +130,16 @@ def test_layout_covers_the_whole_image(agent):
     assert (region.bbox.x1, region.bbox.y1, region.bbox.x2, region.bbox.y2) == (0, 0, 20, 10)
 
 
+def test_layout_elements_make_a_single_request(agent):
+    pytest.importorskip("unstructured_inference")
+
+    with patch(POST, return_value=_response("page text")) as post:
+        elements = agent.get_layout_elements_from_image(Image.new("RGB", (20, 10), "white"))
+
+    assert post.call_count == 1
+    assert elements.texts.tolist() == ["page text"]
+
+
 def test_full_page_ocr_routes_multi_block_to_individual_crops(agent):
     pytest.importorskip("unstructured_inference")
     from unstructured.partition.pdf_image.ocr import supplement_page_layout_with_ocr
