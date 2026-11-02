@@ -553,6 +553,35 @@ class DescribeSanitizeHtmlFragment:
         assert attributes["data-x"] == "a\u00a0b"
         assert attributes["rel"] == "noopener noreferrer"
 
+    @pytest.mark.parametrize("separator", ["\u00a0", "\x0b", "\u2028", "\u3000"])
+    def it_drops_a_style_name_the_parser_split_out_of_a_data_attribute(self, separator: str):
+        # -- the split can promote an inert value into any name the tag allows, so the guard
+        # -- cannot be limited to event handlers; a recovered ``style`` would survive nh3 --
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank"'
+            f' data-x{separator}style="position:fixed">x</a>'
+        )
+        attributes = _html5_anchor_attributes(cleaned)
+        assert "style" not in attributes, cleaned
+        assert attributes["rel"] == "noopener noreferrer"
+
+    def it_keeps_a_non_ascii_name_on_a_rebuilt_blank_link(self):
+        # -- a name the source really wrote survives the rebuild even when it is not an XML name,
+        # -- because the guard filters by what HTML5 reads from the start tag rather than by what
+        # -- this module happens to consider well formed --
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank" data-café="record-123">x</a>'
+        )
+        attributes = _html5_anchor_attributes(cleaned)
+        assert attributes["data-café"] == "record-123", cleaned
+        assert attributes["rel"] == "noopener noreferrer"
+
+    def it_keeps_a_non_ascii_attribute_name_when_serializing_attributes_directly(self):
+        # -- the emitter calls this with names it built itself, so the HTML5 name rule applies
+        # -- and a caller-supplied mapping keeps the attribute nh3 would also have allowed --
+        safe = sanitize_attributes({"href": "https://example.com", "data-café": "1"}, tag_name="a")
+        assert safe == {"href": "https://example.com", "data-café": "1"}
+
     def it_preserves_legitimate_table_formatting(self):
         cleaned = sanitize_html_fragment(
             '<table><tr><td colspan="2" style="border: 1px solid black;">A</td></tr></table>'

@@ -33,6 +33,7 @@ import re
 from html import escape
 from html.parser import HTMLParser
 
+import html5lib
 import nh3
 
 # -- Tags the ontology / convert paths legitimately emit. Anything outside this
@@ -197,6 +198,13 @@ ALLOWED_URL_SCHEMES: frozenset[str] = frozenset({"http", "https", "mailto", "tel
 # -- Valid HTML/XML attribute name (prevents attribute-name breakout on emit). --
 _ATTRIBUTE_NAME_RE = re.compile(r"^[a-zA-Z_:][-a-zA-Z0-9_:.]*$")
 
+# -- Characters that end an attribute name in the HTML5 tokenizer: ASCII whitespace,
+# -- NUL, ``/``, ``>`` and ``=`` -- but not the non-ASCII whitespace that
+# -- :class:`html.parser.HTMLParser` also stops at. Names such as ``data-café`` are
+# -- valid markup but not XML names, so a name taken from a document is checked with
+# -- this rule instead of :data:`_ATTRIBUTE_NAME_RE`. --
+_HTML5_NAME_PATTERN = re.compile(r"^[^\x00\t\n\f\r /=>\x27\x22]+$")
+
 # -- Matches a leading ``scheme:`` ignoring surrounding whitespace and embedded
 # -- control chars that browsers strip (e.g. ``java\tscript:``). --
 _SCHEME_RE = re.compile(r"^([a-zA-Z][a-zA-Z0-9+.\-]*):")
@@ -329,6 +337,7 @@ def sanitize_attributes(
     attributes whose value uses an unsafe scheme. Values are returned unchanged;
     the emitter is responsible for ``html.escape``-ing them so escaping happens
     exactly once.
+
     """
     safe: dict[str, object] = {}
     for key, value in attributes.items():
@@ -336,7 +345,7 @@ def sanitize_attributes(
         lowered = name.lower()
         if is_event_handler_attribute(lowered):
             continue
-        if not _ATTRIBUTE_NAME_RE.match(name):
+        if not _HTML5_NAME_PATTERN.match(name):
             continue
         if not _is_allowed_attribute_for_tag(name, tag_name):
             continue
@@ -414,11 +423,14 @@ class _RelCompletingParser(HTMLParser):
         # -- HTMLParser ends an attribute name at any Unicode whitespace, while HTML5 ends it only
         # -- at ASCII whitespace, so a source name such as "data-x\u00a0onmouseover" arrives here
         # -- as two attributes. Emitting them back with a plain space separator would promote an
-        # -- inert value into a real event handler *after* nh3 has already run, so every piece is
-        # -- put through the attribute policy before it is written: a name this parser invented
-        # -- is dropped instead of being joined into the output. --
+        # -- inert value into a real event handler *after* nh3 has already run. The names HTML5
+        # -- itself reads from this start tag are the only ones the source really carried, so
+        # -- anything else this parser produced is dropped rather than joined into the output. --
+        source_names = _html5_attribute_names(self.get_starttag_text() or "")
         parsed: dict[str, object] = {}
         for name, value in attrs:
+            if name.lower() not in source_names:
+                continue
             if name not in parsed:
                 # -- HTML5 keeps the first of a repeated attribute, so a later value does not win --
                 parsed[name] = value
@@ -475,6 +487,23 @@ class _RelCompletingParser(HTMLParser):
     def unknown_decl(self, data: str) -> None:
         """Copy a declaration the parser does not recognise."""
         self.output.append(f"<![{data}]>")
+
+
+def _html5_attribute_names(start_tag: str) -> set[str]:
+    """Return the lower-cased attribute names an HTML5 tokenizer reads from ``start_tag``.
+
+    :class:`html.parser.HTMLParser` ends an attribute name at any Unicode whitespace, so a
+    source name such as ``data-x\u00a0onmouseover`` reaches it as ``data-x`` followed by
+    ``onmouseover``. Both are well-formed names, so nothing downstream can tell the second one
+    was never written. Re-tokenizing the start tag the way a browser does tells the two apart:
+    HTML5 stops a name only at ASCII whitespace, ``/``, ``>`` and ``=``, so the source name
+    stays a single name and neither half matches it.
+    """
+    for element in html5lib.parseFragment(start_tag, treebuilder="etree").iter():
+        if not isinstance(element.tag, str) or element.tag.endswith("DOCUMENT_FRAGMENT"):
+            continue
+        return {str(name).lower() for name in element.attrib}
+    return set()
 
 
 def _add_rel_to_blank_target_links(html_fragment: str) -> str:
