@@ -66,6 +66,8 @@ def save_analysis_artifiacts(
     draw_caption: bool = True,
     resize: Optional[float] = None,
     format: str = "png",
+    pdf_image_dpi: Optional[int] = None,
+    password: Optional[str] = None,
 ):
     """Save the analysis artifacts for a given file. Loads some settings from
     the environment configuration.
@@ -82,6 +84,10 @@ def save_analysis_artifiacts(
         draw_caption: Flag for drawing the caption above the analyzed page (for e.g. layout source)
         resize: Output image resize value. If not provided, the image will not be resized.
         format: The format for analyzed pages with bboxes drawn on them. Default is 'png'.
+        pdf_image_dpi: The dpi the pdf pages were rendered at for partitioning. The pages are
+            rendered at the same dpi for drawing the bboxes, so they match the layout coordinates.
+            If not provided, the `PDF_RENDER_DPI` environment setting is used.
+        password: The password of the analyzed pdf file, if it is encrypted.
     """
     if not filename:
         filename = _generate_filename(is_image)
@@ -109,6 +115,8 @@ def save_analysis_artifiacts(
             draw_caption=draw_caption,
             resize=resize,
             format=format,
+            pdf_image_dpi=pdf_image_dpi,
+            password=password,
         )
 
         for layout_dumper in layout_dumpers:
@@ -125,6 +133,8 @@ def render_bboxes_for_file(
     draw_caption: bool = True,
     resize: Optional[float] = None,
     format: str = "png",
+    pdf_image_dpi: Optional[int] = None,
+    password: Optional[str] = None,
 ):
     """Render the bounding boxes for a given layout dimp file.
     To be used for analysis after the partition is performed for
@@ -144,6 +154,10 @@ def render_bboxes_for_file(
         draw_caption: Flag for drawing the caption above the analyzed page (for e.g. layout source)
         resize: Output image resize value. If not provided, the image will not be resized.
         format: The format for analyzed pages with bboxes drawn on them. Default is 'png'.
+        pdf_image_dpi: The dpi to render the pdf pages at. It has to be the `pdf_image_dpi` the
+            file was partitioned with, otherwise the bboxes do not match the rendered pages.
+            If not provided, the `PDF_RENDER_DPI` environment setting is used.
+        password: The password of the analyzed pdf file, if it is encrypted.
     """
     filename_stem = Path(filename).stem
     is_image = not Path(filename).suffix.endswith("pdf")
@@ -183,6 +197,8 @@ def render_bboxes_for_file(
             draw_caption=draw_caption,
             resize=resize,
             format=format,
+            pdf_image_dpi=pdf_image_dpi,
+            password=password,
         )
 
         for drawer in layout_drawers:

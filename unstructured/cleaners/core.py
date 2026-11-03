@@ -18,6 +18,7 @@ from unstructured.nlp.patterns import (
     LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
+    UNAMBIGUOUS_BULLETS_RE,
     UNICODE_BULLETS_RE,
 )
 
@@ -134,6 +135,70 @@ def group_bullet_paragraph(paragraph: str) -> list:
     return clean_paragraphs
 
 
+# -- the glyphs that start the items of a list after its lead-in line; "-", "*" and "·" are not
+#    among them because a line can also start with them as a sign, emphasis or an operator --
+_LEAD_IN_LIST_BULLETS = ("\u2022", "\u25cf", "\u25cb")
+
+
+def _split_off_bullet_lists(paragraph: str) -> list[str]:
+    """Split a paragraph into its bulleted lists and the lines around them.
+
+    A list can follow its lead-in line without a blank line, such as "Shopping list:" followed
+    by "• milk" and "• bread" on the next lines. As one paragraph, its bullets were split off
+    from their items when the lines were short, and its items were joined into the lead-in line
+    when they were long. Each part is now grouped as if a blank line separated it from the next.
+
+    Only lists whose items start with "•", "●" or "○" are split off. A list starts at such a
+    line after a line that ends with ":", and after an item only another item or the lead-in of
+    the next list may follow. Any other shape keeps the paragraph whole: a paragraph that starts
+    with a bullet, a line that starts with "e " (an OCR bullet) or with another bullet glyph, a
+    bullet glyph inside a line ("10 N·m", "*really*", "3 · 4", "• milk • eggs"), a bullet
+    line without a lead-in, or a line after an item, which can continue that item.
+    """
+    stripped = paragraph.strip()
+    if UNICODE_BULLETS_RE.match(stripped) or E_BULLET_PATTERN.search(stripped):
+        return [paragraph]
+
+    lines = paragraph.split("\n")
+    for line in lines:
+        text = line.strip()
+        is_item = text.startswith(_LEAD_IN_LIST_BULLETS)
+        body = text[1:] if is_item else text
+        # -- the bullet splitters downstream also cut at a glyph inside a line, such as the "·"
+        #    in "10 N·m" or the "*" of "*really*", so such a paragraph is grouped as before --
+        if UNAMBIGUOUS_BULLETS_RE.search(body):
+            return [paragraph]
+        # -- a line is an item exactly when the bullet matcher downstream reads one there, which
+        #    it does not for another glyph right after the bullet, as in "•- 5 °C" --
+        if is_item != bool(UNICODE_BULLETS_RE.match(text)):
+            return [paragraph]
+
+    parts: list[str] = []
+    start = 0
+    in_list = False
+    for idx, line in enumerate(lines):
+        text = line.strip()
+        if text.startswith(_LEAD_IN_LIST_BULLETS):
+            if not (in_list or lines[idx - 1].strip().endswith(":")):
+                return [paragraph]
+            if not in_list:
+                parts.append("\n".join(lines[start:idx]))
+                start, in_list = idx, True
+            continue
+        if not in_list or not text:
+            continue
+        if not (
+            text.endswith(":")
+            and idx + 1 < len(lines)
+            and lines[idx + 1].strip().startswith(_LEAD_IN_LIST_BULLETS)
+        ):
+            return [paragraph]
+        parts.append("\n".join(lines[start:idx]))
+        start, in_list = idx, False
+    parts.append("\n".join(lines[start:]))
+    return parts
+
+
 def group_broken_paragraphs(
     text: str,
     line_split: re.Pattern[str] = PARAGRAPH_PATTERN_RE,
@@ -159,7 +224,16 @@ def group_broken_paragraphs(
         else re.compile(PARAGRAPH_PATTERN)
     )
 
-    paragraphs = paragraph_split.split(text)
+    # -- a caller that passes its own `line_split` keeps its paragraphs whole --
+    paragraphs = [
+        part
+        for paragraph in paragraph_split.split(text)
+        for part in (
+            _split_off_bullet_lists(paragraph)
+            if line_split is PARAGRAPH_PATTERN_RE
+            else [paragraph]
+        )
+    ]
     clean_paragraphs = []
     for paragraph in paragraphs:
         stripped_par = paragraph.strip()

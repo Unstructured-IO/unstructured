@@ -215,6 +215,10 @@ class ElementMetadata:
     sent_to: Optional[list[str]]
     subject: Optional[str]
     signature: Optional[str]
+    # -- name of the paragraph-style in the source document, e.g. "Title" or "Heading 1".
+    # -- DOCX only for now, where `category_depth` alone cannot tell a document title from a
+    # -- first-level heading (both are 0). See `partition.docx` and issue #4557. --
+    style_name: Optional[str]
 
     # -- used for Table elements to capture rows/col structure --
     text_as_html: Optional[str]
@@ -291,6 +295,7 @@ class ElementMetadata:
         url: Optional[str] = None,
         segment_end_seconds: Optional[float] = None,
         segment_start_seconds: Optional[float] = None,
+        style_name: Optional[str] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
         self.bcc_recipient = bcc_recipient
@@ -345,6 +350,7 @@ class ElementMetadata:
         self.url = url
         self.segment_end_seconds = segment_end_seconds
         self.segment_start_seconds = segment_start_seconds
+        self.style_name = style_name
 
     def __eq__(self, other: object) -> bool:
         """Implments equivalence, like meta == other_meta.
@@ -577,6 +583,7 @@ class ConsolidationStrategy(enum.Enum):
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
+            "style_name": cls.DROP,  # -- DROP like category_depth: a chunk spans mixed styles --
             "subject": cls.FIRST,
             "text_as_html": cls.STRING_CONCATENATE,
             "table_as_cells": cls.FIRST,  # -- only occurs in Table --

@@ -16,7 +16,11 @@ from unstructured.partition.common.common import (
     rewind_if_spooled,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.partition.csv import check_cell_count, read_delimited_text
+from unstructured.partition.csv import (
+    check_cell_count,
+    dataframe_to_html,
+    read_delimited_text,
+)
 from unstructured.telemetry import partition_runtime_telemetry
 
 DETECTION_ORIGIN: str = "tsv"
@@ -30,6 +34,7 @@ def partition_tsv(
     *,
     file: Optional[IO[bytes]] = None,
     include_header: bool = False,
+    infer_table_structure: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions TSV files into document elements.
@@ -42,6 +47,12 @@ def partition_tsv(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html.
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     """
     exactly_one(filename=filename, file=file)
 
@@ -65,14 +76,12 @@ def partition_tsv(
             f.seek(start)
             dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
 
-    html_table = HtmlTable.from_html_text(
-        dataframe.to_html(index=False, header=include_header, na_rep="")
-    )
+    html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
 
     metadata = ElementMetadata(
         filename=filename,
         last_modified=get_last_modified_date(filename) if filename else None,
-        text_as_html=html_table.html,
+        text_as_html=html_table.html if infer_table_structure else None,
     )
     metadata.detection_origin = DETECTION_ORIGIN
 

@@ -20,6 +20,30 @@ env:
   DO_NOT_TRACK: "1"
 
 jobs:
+  check-version:
+    # Pushes have already landed; enforce ordering before merge, including the queue.
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    runs-on: ubuntu-latest
+    steps:
+      # Keep the default PR merge ref: a stale head can contain an old version.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Test version guard
+        run: |
+          bash scripts/test-check-new-release-version.sh
+          bash scripts/test-post-release-dev-bump.sh
+      - name: Check merge-result version
+        env:
+          QUEUE_BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          VERSION_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [[ "$VERSION_EVENT_NAME" == merge_group ]]; then
+            git fetch --no-tags --depth=1 origin "$QUEUE_BASE_SHA"
+            export VERSION_BASE_REF="$QUEUE_BASE_SHA"
+          fi
+          bash scripts/check-new-release-version.sh
+
   setup:
     strategy:
       matrix:
@@ -289,22 +313,6 @@ jobs:
       run: |
         sudo apt-get install diffstat
         uv run --no-sync ./test_unstructured_ingest/check-diff-expected-output-markdown.sh
-
-  changelog:
-    runs-on: ubuntu-latest
-    steps:
-    # need to checkout otherwise paths-filter will fail on merge-queue trigger
-    - uses: actions/checkout@v4
-    - if: github.ref != 'refs/heads/main'
-      uses: dorny/paths-filter@v3
-      id: changes
-      with:
-        filters: |
-          src:
-            - 'unstructured/**'
-
-    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
-      uses: dangoslen/changelog-enforcer@v3
 
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)

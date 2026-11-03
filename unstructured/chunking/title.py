@@ -240,6 +240,19 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         - Is reduced to `new_after_n_chars` when it exceeds that value.
         """
         # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified --
+        combine_text_under_n_chars = self.requested_combine_text_under_n_chars
+
+        # -- `new_after_n_chars` (the soft-max) is the effective ceiling; combining up to a
+        # -- larger value would only produce chunks larger than the caller asked for --
+        return min(combine_text_under_n_chars, self.soft_max)
+
+    @cached_property
+    def requested_combine_text_under_n_chars(self) -> int:
+        """The value the caller specified, before it is capped at `new_after_n_chars`.
+
+        This is the value validated against `max_characters`, and the one used to report an
+        invalid request, so the caller sees the number they passed rather than the capped value.
+        """
         arg_value = self._kwargs.get("combine_text_under_n_chars")
         return self.hard_max if arg_value is None else arg_value
 
@@ -256,18 +269,18 @@ class _ByTitleChunkingOptions(ChunkingOptions):
 
         # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
         # -- but a negative value is not
-        if self.combine_text_under_n_chars < 0:
+        if self.requested_combine_text_under_n_chars < 0:
             raise ValueError(
                 f"'combine_text_under_n_chars' argument must be >= 0,"
-                f" got {self.combine_text_under_n_chars}"
+                f" got {self.requested_combine_text_under_n_chars}"
             )
 
         # -- `combine_text_under_n_chars` > `max_characters` can produce behavior confusing to
         # -- users. The chunking behavior would be no different than when
         # -- `combine_text_under_n_chars == max_characters`, but if `max_characters` is left to
         # -- default (500) then it can look like chunk-combining isn't working.
-        if self.combine_text_under_n_chars > self.hard_max:
+        if self.requested_combine_text_under_n_chars > self.hard_max:
             raise ValueError(
                 f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
-                f" value, got {self.combine_text_under_n_chars} > {self.hard_max}"
+                f" value, got {self.requested_combine_text_under_n_chars} > {self.hard_max}"
             )
