@@ -199,6 +199,16 @@ def _split_off_bullet_lists(paragraph: str) -> list[str]:
     return parts
 
 
+def _coerce_pattern(pattern: re.Pattern[str] | str) -> re.Pattern[str]:
+    """Compile `pattern` when it arrives as a string, otherwise pass it through.
+
+    These parameters are annotated as compiled patterns, but the constants in
+    `unstructured.nlp.patterns` are plain strings, so a caller passing one of
+    them made `pattern.split(text)` split the *pattern itself* and return the
+    regex source as the "clean" text.
+    """
+    return re.compile(pattern) if isinstance(pattern, str) else pattern
+
 def group_broken_paragraphs(
     text: str,
     line_split: re.Pattern[str] = PARAGRAPH_PATTERN_RE,
@@ -218,6 +228,9 @@ def group_broken_paragraphs(
     '''The big red fox is walking down the lane.
     At the end of the land the fox met a bear.'''
     """
+    line_split = _coerce_pattern(line_split)
+    paragraph_split = _coerce_pattern(paragraph_split)
+
     paragraph_pattern_re = (
         PARAGRAPH_PATTERN
         if isinstance(PARAGRAPH_PATTERN, re.Pattern)
@@ -275,6 +288,7 @@ def new_line_grouper(
 
     Iwan Roberts\n\nRoberts celebrating after scoring a goal for Norwich City\n\nin 2004
     """
+    paragraph_split = _coerce_pattern(paragraph_split)
     paragraphs = paragraph_split.split(text)
     clean_paragraphs = []
     for paragraph in paragraphs:
@@ -322,6 +336,7 @@ def auto_paragraph_grouper(
     the document is considered a blank-line grouping type
     and passed on to blank_line_grouper function
     """
+    line_split = _coerce_pattern(line_split)
     lines = line_split.split(text)
     max_line_count = min(len(lines), max_line_count)
     line_count, empty_line_count = 0, 0
