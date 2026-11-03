@@ -130,6 +130,16 @@ def test_partition_xml_does_not_apply_byte_encoding_to_text():
     assert [element.text for element in elements] == ["Café 中文"]
 
 
+@pytest.mark.parametrize("xml_path", [None, ".//item"])
+@pytest.mark.parametrize("declaration", ["ISO-8859-1", "windows-1252", "UTF-16", "UTF-8"])
+def test_partition_xml_ignores_declared_encoding_of_text(declaration: str, xml_path: str | None):
+    text = f'<?xml version="1.0" encoding="{declaration}"?><root><item>Café crème</item></root>'
+
+    elements = partition_xml(text=text, xml_path=xml_path, languages=["eng"])
+
+    assert [element.text for element in elements] == ["Café crème"]
+
+
 @pytest.mark.parametrize("filename", ["factbook.xml", "factbook-utf-16.xml"])
 def test_partition_xml_from_filename(filename: str):
     file_path = example_doc_path(filename)
