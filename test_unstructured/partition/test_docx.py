@@ -352,6 +352,205 @@ def test_partition_docx_detects_lists():
 _W_NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
 
 
+_SEQ_COMPLEX = (
+    '<w:r><w:fldChar w:fldCharType="begin"/></w:r>'
+    '<w:r><w:instrText xml:space="preserve"> SEQ Table \\* ARABIC </w:instrText></w:r>'
+    '<w:r><w:fldChar w:fldCharType="separate"/></w:r>'
+    "<w:r><w:t>2</w:t></w:r>"
+    '<w:r><w:fldChar w:fldCharType="end"/></w:r>'
+)
+_SEQ_SIMPLE = '<w:fldSimple w:instr=" SEQ Table \\* ARABIC "><w:r><w:t>2</w:t></w:r></w:fldSimple>'
+
+
+@pytest.mark.parametrize(
+    "wrapped",
+    [
+        _SEQ_SIMPLE,
+        _SEQ_COMPLEX,
+        f'<w:ins w:id="1" w:author="a">{_SEQ_SIMPLE}</w:ins>',
+        f'<w:ins w:id="1" w:author="a">{_SEQ_COMPLEX}</w:ins>',
+        f'<w:smartTag w:uri="u" w:element="e">{_SEQ_COMPLEX}</w:smartTag>',
+        f"<w:sdt><w:sdtContent>{_SEQ_COMPLEX}</w:sdtContent></w:sdt>",
+        f'<w:hyperlink w:anchor="t2">{_SEQ_SIMPLE}</w:hyperlink>',
+    ],
+)
+def test_partition_docx_keeps_the_number_of_a_caption_field_however_it_is_wrapped(
+    tmp_path, wrapped: str
+):
+    path = str(tmp_path / "caption.docx")
+    document = docx.Document()
+    paragraph = document.add_paragraph()
+    for child in parse_xml(
+        f'<w:p {_W_NS}><w:r><w:t xml:space="preserve">Table </w:t></w:r>{wrapped}'
+        "<w:r><w:t>: Puppy Naps</w:t></w:r></w:p>"
+    ):
+        paragraph._p.append(child)
+    document.save(path)
+
+    (element,) = partition_docx(path)
+
+    assert element.text == "Table 2: Puppy Naps"
+
+
+def test_partition_docx_does_not_include_text_from_a_text_box_in_the_paragraph_text(tmp_path):
+    path = str(tmp_path / "text_box.docx")
+    document = docx.Document()
+    paragraph = document.add_paragraph("Fetch ")
+    paragraph._p.append(
+        parse_xml(
+            f"<w:r {_W_NS}><w:pict><w:txbxContent><w:p><w:r><w:t>squirrel</w:t></w:r></w:p>"
+            "</w:txbxContent></w:pict></w:r>"
+        )
+    )
+    paragraph.add_run("stick")
+    document.save(path)
+
+    (element,) = partition_docx(path)
+
+    assert element.text == "Fetch stick"
+
+
+def _docx_with_body_xml(tmp_path, *body_xml: str) -> str:
+    path = str(tmp_path / "nested.docx")
+    document = docx.Document()
+    for xml in body_xml:
+        document.element.body.insert(len(document.element.body) - 1, parse_xml(xml))
+    document.save(path)
+    return path
+
+
+def _p(inner: str) -> str:
+    return f"<w:p {_W_NS}>{inner}</w:p>"
+
+
+def _r(text: str) -> str:
+    return f"<w:r><w:t>{text}</w:t></w:r>"
+
+
+@pytest.mark.parametrize(
+    ("body_xml", "expected"),
+    [
+        (
+            f"<w:sdt {_W_NS}><w:sdtContent>{_p(_r('puppy in a box'))}</w:sdtContent></w:sdt>",
+            "puppy in a box",
+        ),
+        (
+            f'<w:customXml {_W_NS} w:element="e">{_p(_r("puppy in custom xml"))}</w:customXml>',
+            "puppy in custom xml",
+        ),
+        (
+            _p(f'{_r("wag")}<w:ins w:id="1" w:author="x">{_r("wiggle")}</w:ins>{_r("woof")}'),
+            "wagwigglewoof",
+        ),
+        (
+            _p(
+                f'{_r("wag")}<w:moveTo w:id="1" w:author="x">{_r("wiggle")}</w:moveTo>'
+                f'<w:moveFrom w:id="2" w:author="x"><w:r><w:delText>wiggle</w:delText></w:r>'
+                f"</w:moveFrom>{_r('woof')}"
+            ),
+            "wagwigglewoof",
+        ),
+        (
+            _p(f'{_r("wag")}<w:smartTag w:uri="u" w:element="e">{_r("wiggle")}</w:smartTag>'),
+            "wagwiggle",
+        ),
+        (
+            _p(
+                f'{_r("wag")}<w:customXml w:element="e"><w:customXmlPr/>'
+                f"{_r('wiggle')}</w:customXml>"
+            ),
+            "wagwiggle",
+        ),
+        (_p(f'{_r("wag")}<w:bdo w:val="ltr">{_r("wiggle")}</w:bdo>{_r("woof")}'), "wagwigglewoof"),
+    ],
+)
+def test_partition_docx_reads_content_wrapped_in_elements_python_docx_skips(
+    tmp_path, body_xml: str, expected: str
+):
+    (element,) = partition_docx(_docx_with_body_xml(tmp_path, body_xml))
+
+    assert element.text == expected
+
+
+def test_partition_docx_leaves_out_deleted_text_including_a_deleted_tab_or_line_break(tmp_path):
+    path = _docx_with_body_xml(
+        tmp_path,
+        _p(
+            f'{_r("wag")}<w:del w:id="1" w:author="x"><w:r><w:tab/><w:br/>'
+            f"<w:delText>chewed slipper</w:delText></w:r></w:del>{_r('wiggle')}"
+        ),
+    )
+
+    (element,) = partition_docx(path)
+
+    assert element.text == "wagwiggle"
+
+
+def test_partition_docx_leaves_out_a_content_control_that_only_shows_its_placeholder(tmp_path):
+    path = _docx_with_body_xml(
+        tmp_path,
+        _p(
+            f"{_r('Puppy name: ')}<w:sdt><w:sdtPr><w:showingPlcHdr/></w:sdtPr><w:sdtContent>"
+            f"{_r('Type a puppy name here')}</w:sdtContent></w:sdt>"
+        ),
+    )
+
+    (element,) = partition_docx(path)
+
+    assert element.text == "Puppy name: "
+
+
+def test_partition_docx_leaves_the_automatic_table_of_contents_unread(tmp_path):
+    toc = (
+        f'<w:sdt {_W_NS}><w:sdtPr><w:docPartObj><w:docPartGallery w:val="Table of Contents"/>'
+        f"</w:docPartObj></w:sdtPr><w:sdtContent>{_p(_r('1. Treats ..... 3'))}</w:sdtContent>"
+        "</w:sdt>"
+    )
+    path = _docx_with_body_xml(tmp_path, toc, _p(_r("Good dog")))
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["Good dog"]
+
+
+def test_partition_docx_reads_a_table_whose_row_and_cell_are_wrapped_in_content_controls(
+    tmp_path,
+):
+    cell = f"<w:sdt><w:sdtContent><w:tc>{_p(_r('Fido'))}</w:tc></w:sdtContent></w:sdt>"
+    row = f"<w:tr><w:tc>{_p(_r('Rex'))}</w:tc>{cell}</w:tr>"
+    path = _docx_with_body_xml(
+        tmp_path,
+        f"<w:tbl {_W_NS}><w:tblPr/><w:tblGrid><w:gridCol/><w:gridCol/></w:tblGrid>"
+        f"<w:sdt><w:sdtContent>{row}</w:sdtContent></w:sdt></w:tbl>",
+    )
+
+    (table,) = partition_docx(path)
+
+    assert isinstance(table, Table)
+    assert table.text == "Rex Fido"
+    assert "<td>Fido</td>" in (table.metadata.text_as_html or "")
+
+
+def test_partition_docx_reads_a_content_control_in_a_header_and_a_footer(tmp_path):
+    path = str(tmp_path / "hf.docx")
+    document = docx.Document()
+    document.add_paragraph("Good dog")
+    section = document.sections[0]
+    for part, text in ((section.header, "zoomies"), (section.footer, "treats")):
+        paragraph = part.paragraphs[0]
+        paragraph._p.append(
+            parse_xml(
+                f"<w:sdt {_W_NS}><w:sdtContent><w:r><w:t>{text}</w:t></w:r></w:sdtContent></w:sdt>"
+            )
+        )
+    document.save(path)
+
+    texts = [e.text for e in partition_docx(path)]
+
+    assert "zoomies" in texts
+    assert "treats" in texts
+
+
 def _lvl_xml(ilvl: int, fmt: str, text: str, start: int = 1) -> str:
     return (
         f'<w:lvl w:ilvl="{ilvl}"><w:start w:val="{start}"/><w:numFmt w:val="{fmt}"/>'
@@ -1243,7 +1442,7 @@ def test_partition_docx_counts_a_section_break_paragraph_whose_text_is_in_a_cont
 
     elements = partition_docx(path)
 
-    assert [e.text for e in elements] == ["1. a", "3. c", "a) c1"]
+    assert [e.text for e in elements] == ["1. a", "2. b", "3. c", "a) c1"]
 
 
 def test_partition_docx_counts_a_section_break_paragraph_that_holds_only_an_equation(tmp_path):
