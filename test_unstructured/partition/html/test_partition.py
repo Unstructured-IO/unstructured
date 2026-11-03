@@ -554,7 +554,7 @@ def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_ht
     assert elements[0].metadata.text_as_html == expected_text_as_html
 
 
-def test_partition_html_preserves_table_structure_in_source_order_without_attributes():
+def test_partition_html_preserves_table_structure_in_source_order_without_other_attributes():
     html_text = (
         '<table class="source-table">'
         '<tfoot id="foot"><tr><th scope="row">F</th></tr></tfoot>'
@@ -572,8 +572,8 @@ def test_partition_html_preserves_table_structure_in_source_order_without_attrib
         "<table>"
         "<tfoot><tr><th>F</th></tr></tfoot>"
         "<tr><td>D &amp; &lt;x&gt;</td></tr>"
-        "<tbody><tr><td>B1</td></tr></tbody>"
-        "<tbody><tr><th>B2</th></tr></tbody>"
+        '<tbody><tr><td colspan="2">B1</td></tr></tbody>'
+        '<tbody><tr><th rowspan="2">B2</th></tr></tbody>'
         "<thead><tr><td>H</td></tr></thead>"
         "</table>"
     )
@@ -595,7 +595,29 @@ def test_partition_html_preserves_table_structure_in_source_order_without_attrib
         "tr",
         "td",
     ]
-    assert all(not node.attrib for node in reconstructed.iter())
+    assert all(set(node.attrib) <= {"colspan", "rowspan"} for node in reconstructed.iter())
+
+
+def test_partition_html_keeps_colspan_and_rowspan_of_merged_cells_in_text_as_html():
+    html_text = (
+        "<table>"
+        '<tr><th colspan="2">Name</th><th rowspan=" 2 ">Total</th></tr>'
+        "<tr><th>First</th><th>Last</th></tr>"
+        '<tr><td colspan="1">Ada</td><td rowspan="0">Lovelace</td><td colspan="x">10</td></tr>'
+        '<tr><td colspan="-3">Alan</td><td colspan="99999">20</td></tr>'
+        "</table>"
+    )
+
+    (element,) = partition_html(text=html_text)
+
+    assert element.metadata.text_as_html == (
+        "<table>"
+        '<tr><th colspan="2">Name</th><th rowspan="2">Total</th></tr>'
+        "<tr><th>First</th><th>Last</th></tr>"
+        '<tr><td>Ada</td><td rowspan="0">Lovelace</td><td>10</td></tr>'
+        '<tr><td>Alan</td><td colspan="1000">20</td></tr>'
+        "</table>"
+    )
 
 
 def test_partition_html_reduces_a_nested_table_to_its_text_placed_in_the_cell_that_contains_it():
