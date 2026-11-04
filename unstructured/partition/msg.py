@@ -161,7 +161,9 @@ class MsgPartitionerOptions:
         #   - might be able to distinguish based on PID_MESSAGE_CLASS = 'IPM.Note.Signed'
         #   - Content-Type header might include "application/pkcs7-mime" for Microsoft S/MIME
         #     encryption.
-        return "encrypted" in self.msg.message_headers.get("Content-Type", "")
+        # -- header names are case-insensitive, so match on a lowered name --
+        headers = {name.lower(): value for name, value in self.msg.message_headers.items()}
+        return "encrypted" in headers.get("content-type", "")
 
     @cached_property
     def metadata_file_path(self) -> str | None:
