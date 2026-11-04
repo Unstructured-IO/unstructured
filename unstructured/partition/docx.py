@@ -1241,6 +1241,8 @@ def _row_grid_width(row: _Row) -> int:
 
 _W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 
+_OFF_VALUES = frozenset(("0", "false", "off"))
+
 _UNWRAPPED_TAGS = frozenset(
     _W + tag for tag in ("ins", "moveTo", "customXml", "smartTag", "fldSimple", "dir", "bdo")
 )
@@ -1281,10 +1283,15 @@ def _unwrap_nested_content(root: BaseOxmlElement) -> None:
 
 
 def _content_control_children(sdt: BaseOxmlElement) -> list[BaseOxmlElement] | None:
-    """The elements to put in place of content control `sdt`, or None to leave it as it is."""
+    """The elements to put in place of content control `sdt`, or None to leave it as it is.
+
+    `w:showingPlcHdr` is an on/off flag: present without a value, or with any value but "0",
+    "false" or "off", it is on.
+    """
     properties = sdt.find(_W + "sdtPr")
     if properties is not None:
-        if properties.find(_W + "showingPlcHdr") is not None:
+        placeholder_flag = properties.find(_W + "showingPlcHdr")
+        if placeholder_flag is not None and placeholder_flag.get(_W + "val") not in _OFF_VALUES:
             return []
         gallery = properties.find(f"{_W}docPartObj/{_W}docPartGallery")
         if gallery is not None and gallery.get(_W + "val") == "Table of Contents":

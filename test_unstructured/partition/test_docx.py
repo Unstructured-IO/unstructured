@@ -500,6 +500,34 @@ def test_partition_docx_leaves_out_a_content_control_that_only_shows_its_placeho
     assert element.text == "Puppy name: "
 
 
+@pytest.mark.parametrize(
+    ("flag", "expected"),
+    [
+        ("<w:showingPlcHdr/>", "Puppy name: "),
+        ('<w:showingPlcHdr w:val="1"/>', "Puppy name: "),
+        ('<w:showingPlcHdr w:val="true"/>', "Puppy name: "),
+        ('<w:showingPlcHdr w:val="on"/>', "Puppy name: "),
+        ('<w:showingPlcHdr w:val="0"/>', "Puppy name: Rex"),
+        ('<w:showingPlcHdr w:val="false"/>', "Puppy name: Rex"),
+        ('<w:showingPlcHdr w:val="off"/>', "Puppy name: Rex"),
+    ],
+)
+def test_partition_docx_drops_a_content_control_only_when_its_placeholder_flag_is_on(
+    tmp_path, flag: str, expected: str
+):
+    path = _docx_with_body_xml(
+        tmp_path,
+        _p(
+            f"{_r('Puppy name: ')}<w:sdt><w:sdtPr>{flag}</w:sdtPr><w:sdtContent>{_r('Rex')}"
+            "</w:sdtContent></w:sdt>"
+        ),
+    )
+
+    (element,) = partition_docx(path)
+
+    assert element.text == expected
+
+
 def test_partition_docx_leaves_the_automatic_table_of_contents_unread(tmp_path):
     toc = (
         f'<w:sdt {_W_NS}><w:sdtPr><w:docPartObj><w:docPartGallery w:val="Table of Contents"/>'
