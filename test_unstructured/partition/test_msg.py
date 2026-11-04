@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -539,6 +540,26 @@ class DescribeMsgPartitionerOptions:
         opts = MsgPartitionerOptions(**opts_args)
 
         assert opts.is_encrypted is expected_value
+
+    def and_it_recognizes_an_encrypted_msg_whose_header_name_is_lowercase(
+        self, tmp_path: Path, opts_args: dict[str, Any]
+    ):
+        # -- a header name is case-insensitive, so `content-type:` names the same header as
+        # -- `Content-Type:`. Missing it partitions the ciphertext into elements instead of
+        # -- warning and returning nothing.
+        # -- the transport headers are stored as UTF-16LE in the MSG property stream, so the
+        # -- replacement keeps the file byte-for-byte the same apart from the header name --
+        lowered = (
+            Path(example_doc_path("fake-encrypted.msg"))
+            .read_bytes()
+            .replace("Content-Type".encode("utf-16-le"), "content-type".encode("utf-16-le"))
+        )
+        msg_path = tmp_path / "lowercase-content-type.msg"
+        msg_path.write_bytes(lowered)
+        opts_args["file_path"] = str(msg_path)
+        opts = MsgPartitionerOptions(**opts_args)
+
+        assert opts.is_encrypted is True
 
     # -- .metadata_file_path ---------------------
 
