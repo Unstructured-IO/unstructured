@@ -383,7 +383,10 @@ class Flow(etree.ElementBase):
         q: deque[Flow | Phrasing] = deque(self)
 
         yield from self._element_from_text_or_tail(self.text or "", q, self._ElementCls)
+        yield from self._iter_block_items(q)
 
+    def _iter_block_items(self, q: deque[Flow | Phrasing]) -> Iterator[Element]:
+        """Generate elements for each block in `q`, along with its tail and contiguous phrasing."""
         while q:
             assert not q[0].is_phrasing
             block_item = cast(Flow, q.popleft())
@@ -496,26 +499,89 @@ class ListItemBlock(Flow):
     _ElementCls = ListItem
 
     def iter_elements(self) -> Iterator[Element]:
-        """Adopt a sole text block, as produced by Markdown loose lists."""
-        if len(self) == 1 and not (self.text or "").strip():
-            child = self[0]
-            # Only unwrap ordinary text blocks, not tables, images, headings, or code.
-            # Multiple paragraphs (including those nested inside inline markup) retain
-            # normal traversal rather than being collapsed into a single list item.
-            if (
-                type(child) in (Flow, BlockItem)
-                and not (child.tail or "").strip()
-                and all(node.is_phrasing for node in child.iterdescendants())
-            ):
-                # Use the list item's accumulator to retain its list-nesting depth.
-                for element in self._element_from_text_or_tail(
-                    child.text or "", deque(child), ListItem
-                ):
-                    element.metadata.page_number = child._page_number
-                    yield element
+        """Generate a `ListItem` for leading text, then the item's other blocks as its children.
+
+        Blocks other than the leading text, like a continuation paragraph or an image, keep their
+        own type and are linked to the `ListItem` using `parent_id`. The hierarchy rules can't form
+        this link because they have no way to distinguish a block inside this list item from one
+        that follows the list.
+
+        An item led by anything other than text, like a heading or an image, has no `ListItem` to
+        link to and gets the normal traversal.
+        """
+        elements = self._iter_from_leading_text(self)
+
+        list_item = next(elements, None)
+        if list_item is None:
+            yield from super().iter_elements()
+            return
+
+        yield list_item
+        for element in elements:
+            # -- a heading starts a section, the hierarchy rules link it and what follows it --
+            if isinstance(element, Title):
+                yield element
+                yield from elements
+                return
+            # -- a block inside a nested list item is already linked to that item --
+            if element.metadata.parent_id is None:
+                element.metadata.parent_id = list_item.id
+            yield element
+
+    def _iter_from_leading_text(self, block: Flow) -> Iterator[Element]:
+        """Generate elements of `block` when it starts with text, `ListItem` for that text first.
+
+        Generates nothing when `block` contains no text or something else comes before its text.
+        Only blocks that produce no elements (empty paragraphs, removed blocks) can be skipped to
+        reach the leading text. Wrappers like `<div>` are searched recursively.
+        """
+        q: deque[Flow | Phrasing] = deque(block)
+        text = block.text or ""
+
+        while True:
+            # -- a block nested in phrasing is not valid HTML; it can't be told apart from the text
+            # -- around it here, so such an item gets the normal traversal.
+            if self._starts_with_block_in_phrasing(q):
                 return
 
-        yield from super().iter_elements()
+            # -- use the accumulator of this list item to retain its list-nesting depth --
+            list_item = next(self._element_from_text_or_tail(text, q, ListItem), None)
+            if list_item is not None:
+                list_item.metadata.page_number = block._page_number
+                yield list_item
+                yield from block._iter_block_items(q)
+                return
+
+            if not q:
+                return
+
+            child = cast(Flow, q.popleft())
+
+            # -- only an ordinary text block can provide the leading text, not a table, image,
+            # -- heading, code block, or nested list --
+            if type(child) in (Flow, BlockItem):
+                child_elements = self._iter_from_leading_text(child)
+                if (list_item := next(child_elements, None)) is not None:
+                    yield list_item
+                    yield from child_elements
+                    yield from block._element_from_text_or_tail(child.tail or "", q)
+                    yield from block._iter_block_items(q)
+                    return
+
+            if next(child.iter_elements(), None) is not None:
+                return
+
+            text = child.tail or ""
+
+    @staticmethod
+    def _starts_with_block_in_phrasing(q: deque[Flow | Phrasing]) -> bool:
+        """True when a phrasing element at the start of `q` contains a block element."""
+        for node in q:
+            if not node.is_phrasing:
+                return False
+            if not all(descendant.is_phrasing for descendant in node.iterdescendants()):
+                return True
+        return False
 
 
 class Pre(BlockItem):

@@ -1207,6 +1207,113 @@ def test_partition_html_records_hierarchy_metadata():
     assert e.metadata.parent_id == elements[1].id
 
 
+def test_partition_html_keeps_a_multi_block_list_item_as_a_list_item_with_children():
+    first, continuation, second = partition_html(
+        text="<ul><li><p>First item.</p><p>Continuation.</p></li><li>Second item.</li></ul>",
+        languages=[""],
+    )
+
+    assert first.category == second.category == "ListItem"
+    assert continuation.category != "ListItem"
+    assert continuation.metadata.parent_id == first.id
+    assert second.metadata.parent_id is None
+
+
+@pytest.mark.parametrize("unique_element_ids", [True, False])
+def test_partition_html_links_list_item_children_with_both_kinds_of_element_id(
+    unique_element_ids: bool,
+):
+    # -- repeated text checks each link resolves to the right element, not one with the same text --
+    elements = partition_html(
+        text=(
+            "<ul>"
+            "<li><p>Same item text.</p><p>Same child text.</p></li>"
+            "<li><p>Same item text.</p><p>Same child text.</p></li>"
+            "</ul>"
+        ),
+        unique_element_ids=unique_element_ids,
+    )
+
+    assert [e.category for e in elements[::2]] == ["ListItem", "ListItem"]
+    assert len({e.id for e in elements}) == 4
+    assert elements[1].metadata.parent_id == elements[0].id
+    assert elements[3].metadata.parent_id == elements[2].id
+
+
+def test_partition_html_produces_the_same_list_item_links_on_each_run():
+    html = "<ul><li><p>First item.</p><p>Continuation.</p></li></ul>"
+
+    first_run = partition_html(text=html)
+    second_run = partition_html(text=html)
+
+    assert [e.id for e in first_run] == [e.id for e in second_run]
+    assert first_run[1].metadata.parent_id == second_run[1].metadata.parent_id == first_run[0].id
+
+
+def test_partition_html_list_item_children_round_trip_through_JSON():
+    elements = partition_html(
+        text=(
+            "<ul><li><p>First item.</p><p>Continuation.</p>"
+            "<table><tr><td>cell text</td></tr></table>"
+            '<img src="https://example.com/image.png" alt="picture"></li></ul>'
+        )
+    )
+
+    assert [e.metadata.parent_id for e in elements[1:]] == [elements[0].id] * 3
+    assert_round_trips_through_JSON(elements)
+
+
+def test_partition_html_keeps_the_image_payload_of_a_list_item_child():
+    item, image = partition_html(
+        text=(
+            "<ul><li><p>First item.</p>"
+            '<img src="data:image/png;base64,iVBORw0KGgo=" alt="picture"></li></ul>'
+        ),
+        extract_image_block_to_payload=True,
+        extract_image_block_types=["Image"],
+    )
+
+    assert image.category == ElementType.IMAGE
+    assert image.metadata.image_base64 == "iVBORw0KGgo="
+    assert image.metadata.image_mime_type == "image/png"
+    assert image.metadata.parent_id == item.id
+
+
+def test_partition_html_combines_list_item_links_with_heading_hierarchy():
+    heading, item, continuation, nested, nested_continuation, after_list = partition_html(
+        text=(
+            "<h1>Heading</h1>"
+            "<ul><li><p>Outer item.</p><p>Outer continuation.</p>"
+            "<ul><li><p>Nested item.</p><p>Nested continuation.</p></li></ul>"
+            "</li></ul>"
+            "<p>Text after the list is not part of the last list item.</p>"
+        ),
+        languages=[""],
+    )
+
+    assert heading.category == "Title"
+    assert item.metadata.parent_id == heading.id
+    assert continuation.metadata.parent_id == item.id
+    assert nested.metadata.parent_id == item.id
+    assert nested_continuation.metadata.parent_id == nested.id
+    assert after_list.metadata.parent_id == heading.id
+
+
+def test_partition_html_retains_the_section_of_a_heading_inside_a_list_item():
+    item, continuation, heading, section_text = partition_html(
+        text=(
+            "<ul><li><p>First item.</p><p>Continuation.</p>"
+            "<h2>Heading</h2><p>Section text.</p></li></ul>"
+        ),
+        languages=[""],
+    )
+
+    assert continuation.metadata.parent_id == item.id
+    assert heading.category == "Title"
+    assert heading.metadata.parent_id is None
+    assert section_text.metadata.parent_id == heading.id
+
+
 # -- .metadata.emphasis --------------------------------------------------------------------------
 
 
