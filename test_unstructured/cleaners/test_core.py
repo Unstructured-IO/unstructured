@@ -108,6 +108,9 @@ def test_clean_ligatures(text, expected):
         # UTF-8 en dash (E2 80 93) and em dash (E2 80 94) decoded with the wrong codec
         ("pages 10â\x80“12", "pages 10–12"),
         ("wait â\x80” no", "wait — no"),
+        # The same dashes as they arrive: UTF-8 bytes decoded as Latin-1
+        ("pages 10–12".encode().decode("latin-1"), "pages 10–12"),
+        ("wait — no".encode().decode("latin-1"), "wait — no"),
     ],
 )
 def test_replace_unicode_quotes(text, expected):
