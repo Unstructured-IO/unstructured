@@ -108,4 +108,3 @@ def test_translate_translates_each_chunk_of_text_longer_than_the_attention_windo
 
     assert model.inputs == sentences
     assert translated_text == text.upper()
-
