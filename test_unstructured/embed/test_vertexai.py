@@ -17,3 +17,9 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
     assert len(elements) == 2
     assert elements[0].to_dict()["text"] == "This is sentence 1"
     assert elements[1].to_dict()["text"] == "This is sentence 2"
+
+
+def test_default_model_is_not_the_retired_gecko():
+    # textembedding-gecko@001 was retired by Google (2025-04-21) and now fails on every call.
+    config = VertexAIEmbeddingConfig(api_key="api_key")
+    assert config.model_name == "gemini-embedding-001"
