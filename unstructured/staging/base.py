@@ -581,10 +581,12 @@ def create_file_from_elements(
                 f.write(content)
         return content
     else:
-        # text: delegate write to elements_to_text when filename is set
+        # text: write the already-converted text; a second conversion would find `elements`
+        # exhausted when it is an iterator, leaving the file empty
         content = convert_to_text(elements)
         if filename is not None:
-            elements_to_text(elements, filename=filename, encoding=encoding)
+            with open(filename, "w", encoding=encoding) as f:
+                f.write(content)
         return content
 
 
