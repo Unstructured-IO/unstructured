@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import io
+import posixpath
 import struct
+import zipfile
 from contextlib import contextmanager
 from functools import cached_property
 from typing import IO, Any, Iterator, Optional
@@ -12,8 +14,10 @@ import numpy as np
 import openpyxl
 import pandas as pd
 import xlrd
+from lxml import etree
 from msoffcrypto import OfficeFile
 from msoffcrypto.exceptions import FileFormatError
+from openpyxl.utils.cell import column_index_from_string, get_column_letter
 from pandas.io.excel._openpyxl import OpenpyxlReader
 from pandas.io.formats.format import DataFrameFormatter
 from pandas.io.formats.html import HTMLFormatter
@@ -33,6 +37,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.model import FileType
+from unstructured.logger import logger
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -252,6 +257,199 @@ def _reject_encrypted_workbook(file_bytes: bytes) -> None:
         raise UnprocessableEntityError("XLSX file is password protected.")
 
 
+# -- the most unevaluated formula cells one warning names before eliding the rest --
+_UNEVALUATED_FORMULA_CELLS_NAMED = 10
+
+# -- cell types whose cached result is a string, where an empty `<v>` is a blank result and not
+# -- a missing one --
+_STRING_RESULT_CELL_TYPES = frozenset({"str", "s", "inlineStr"})
+
+
+def _warn_on_formula_cells_without_saved_results(file_bytes: bytes) -> None:
+    """Warn for each worksheet whose formula cells read as empty for lack of a saved result.
+
+    Files written by openpyxl, or by pandas and other generators that do not calculate, store
+    each formula without a computed value. Reading uses cached-value mode, where such a cell is
+    indistinguishable from an empty one, so its value silently disappears from the partitioned
+    output and its row can fall out of its table. Each worksheet's XML is byte-scanned for a
+    formula tag and, only when one may be present, parsed into a target that holds no document
+    tree, keeps a bounded sample of coordinates, and loads no other workbook parts.
+    """
+    try:
+        with zipfile.ZipFile(io.BytesIO(file_bytes)) as zip_file:
+            for sheet_title, member_name in _iter_worksheet_members(zip_file):
+                try:
+                    if _worksheet_holds_no_formula_tag(zip_file, member_name):
+                        continue
+                    count, named_cells = _find_unevaluated_formula_cells(zip_file, member_name)
+                except Exception:
+                    # -- one unreadable worksheet leaves the others diagnosed --
+                    logger.debug(
+                        f"formula-cell diagnostic failed on worksheet '{sheet_title}'",
+                        exc_info=True,
+                    )
+                    continue
+                if not count:
+                    continue
+                named = ", ".join(named_cells)
+                if count > len(named_cells):
+                    named += f" and {count - len(named_cells)} more"
+                logger.warning(
+                    f"worksheet '{sheet_title}': {count} formula cell(s) have no saved"
+                    f" result and are read as empty: {named}. Recalculate and save the"
+                    f" workbook to include the computed values."
+                )
+    except Exception:  # -- a diagnostic never fails the partitioning that ran it --
+        logger.debug("formula-cell diagnostic failed", exc_info=True)
+
+
+def _iter_worksheet_members(zip_file: zipfile.ZipFile) -> Iterator[tuple[str, str]]:
+    """Generate `(title, zip-member name)` for each worksheet, in workbook order.
+
+    The mapping comes from the workbook part and its relationships alone, so no shared-string,
+    style, or external-link parts are read. A worksheet is recognized by its relationship type
+    rather than by the directory its part happens to sit in, and its target is resolved against
+    the workbook part, as a reader resolves it.
+    """
+    relationships = etree.fromstring(zip_file.read("xl/_rels/workbook.xml.rels"))
+    members_by_rel_id: dict[str, str] = {}
+    for relationship in relationships.iter("{*}Relationship"):
+        if relationship.get("TargetMode") == "External":
+            continue
+        if not (relationship.get("Type") or "").endswith("/worksheet"):
+            continue
+        target = relationship.get("Target") or ""
+        member = target[1:] if target.startswith("/") else posixpath.normpath(f"xl/{target}")
+        members_by_rel_id[relationship.get("Id") or ""] = member
+
+    member_names = set(zip_file.namelist())
+    workbook = etree.fromstring(zip_file.read("xl/workbook.xml"))
+    for sheet in workbook.iter("{*}sheet"):
+        rel_id = next((v for k, v in sheet.attrib.items() if k.endswith("}id")), "")
+        member = members_by_rel_id.get(rel_id, "")
+        if member in member_names:
+            yield sheet.get("name") or "", member
+
+
+def _worksheet_holds_no_formula_tag(zip_file: zipfile.ZipFile, member_name: str) -> bool:
+    """True only when the worksheet XML provably holds no formula (`<f>`) tag.
+
+    The search is for the bytes of a formula tag, read in fixed-size chunks, with and without a
+    namespace prefix. A multi-byte encoding interleaves those bytes with padding, so finding
+    nothing proves nothing there and the worksheet is parsed instead of skipped.
+    """
+    with zip_file.open(member_name) as stream:
+        overlap = b""
+        first_chunk = True
+        while chunk := stream.read(1 << 16):
+            if first_chunk:
+                if b"\x00" in chunk[:64]:  # -- UTF-16 or UTF-32, with or without a BOM --
+                    return False
+                first_chunk = False
+            window = overlap + chunk
+            if b"<f" in window or b":f" in window:
+                return False
+            overlap = chunk[-1:]
+    return True
+
+
+class _UnevaluatedFormulaCellFinder:
+    """Parse target counting a worksheet's formula cells that hold no saved result.
+
+    A parse target receives the document as events and builds no tree, so nothing is retained
+    whatever the worksheet holds outside its rows, and comments and processing instructions are
+    dropped rather than read as elements. Only populated cells carry events, so the cost follows
+    the cells in the file and not the sheet's declared dimensions. A cell or row without a
+    stored reference takes the position implied by its predecessor, as consumers read it.
+    """
+
+    def __init__(self) -> None:
+        self.count = 0
+        self.named_cells: list[str] = []
+        self._in_sheet_data = False
+        self._row_num = 0
+        self._column_idx = 0
+        self._reference = ""
+        self._cell_type = ""
+        self._in_cell = False
+        self._has_formula = False
+        self._value_seen = False
+        self._in_value = False
+        self._value_text = ""
+
+    def start(self, tag: str, attrib: dict[str, str]) -> None:
+        name = tag.rpartition("}")[2]
+        if name == "sheetData":
+            self._in_sheet_data = True
+        elif not self._in_sheet_data:
+            return
+        elif name == "row":
+            self._row_num = int(attrib.get("r") or self._row_num + 1)
+            self._column_idx = 0
+        elif name == "c":
+            reference = attrib.get("r")
+            if reference:
+                self._column_idx = column_index_from_string(reference.rstrip("0123456789"))
+            else:
+                self._column_idx += 1
+                reference = f"{get_column_letter(self._column_idx)}{self._row_num}"
+            self._reference = reference
+            self._cell_type = attrib.get("t") or ""
+            self._in_cell = True
+            self._has_formula = self._value_seen = False
+        elif not self._in_cell:
+            return
+        elif name == "f":
+            self._has_formula = True
+        elif name == "v":
+            self._value_seen = self._in_value = True
+            self._value_text = ""
+
+    def data(self, text: str) -> None:
+        if self._in_value:
+            self._value_text += text
+
+    def end(self, tag: str) -> None:
+        name = tag.rpartition("}")[2]
+        if name == "sheetData":
+            self._in_sheet_data = False
+        elif name == "v":
+            self._in_value = False
+        elif name == "c" and self._in_cell:
+            self._in_cell = False
+            if self._has_formula and not self._holds_a_saved_result():
+                self.count += 1
+                if len(self.named_cells) < _UNEVALUATED_FORMULA_CELLS_NAMED:
+                    self.named_cells.append(self._reference)
+
+    def close(self) -> tuple[int, list[str]]:
+        return self.count, self.named_cells
+
+    def _holds_a_saved_result(self) -> bool:
+        """True when the cell carries a cached value, blank results included.
+
+        A writer that does not calculate omits the value or stores it empty, and such a cell
+        reads as empty for want of a result. A calculating writer can legitimately cache the
+        empty string a formula returned, which the cell's string type tells apart from the
+        other two: that value is the result, so no recalculation would recover anything.
+        """
+        if not self._value_seen:
+            return False
+        return bool(self._value_text) or self._cell_type in _STRING_RESULT_CELL_TYPES
+
+
+def _find_unevaluated_formula_cells(
+    zip_file: zipfile.ZipFile, member_name: str
+) -> tuple[int, list[str]]:
+    """Count the worksheet's formula cells holding no saved result, naming the first few."""
+    finder = _UnevaluatedFormulaCellFinder()
+    parser = etree.XMLParser(target=finder)
+    with zip_file.open(member_name) as stream:
+        while chunk := stream.read(1 << 16):
+            parser.feed(chunk)
+    return parser.close()
+
+
 class _XlsxPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
@@ -307,9 +505,12 @@ class _XlsxPartitionerOptions:
     def sheets(self) -> dict[str, pd.DataFrame]:
         """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
         with open_excel_workbook(self._file_bytes, compact_empty_rows=self.find_subtable) as reader:
-            return {
+            sheets = {
                 name: reader.parse(name, header=self.header_row_idx) for name in reader.sheet_names
             }
+        if self._excel_engine == "openpyxl":
+            _warn_on_formula_cells_without_saved_results(self._file_bytes)
+        return sheets
 
     @cached_property
     def _excel_engine(self) -> str:
