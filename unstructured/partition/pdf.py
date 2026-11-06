@@ -1693,6 +1693,8 @@ def _partition_pdf_or_image_with_ocr_from_image(
         common_metadata=metadata,
     )
 
+    # -- sorting may return a new list (basic sorting does), so the page break has to be appended
+    # -- to the list the caller actually returns --
     sorted_page_elements = page_elements
     if sort_mode != SORT_MODE_DONT:
         sorted_page_elements = sort_page_elements(page_elements, sort_mode)
@@ -1700,7 +1702,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
     if include_page_breaks:
         sorted_page_elements.append(PageBreak(text=""))
 
-    return page_elements
+    return sorted_page_elements
 
 
 def _process_uncategorized_text_elements(elements: list[Element]):
