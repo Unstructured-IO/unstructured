@@ -20,6 +20,7 @@ from unstructured.documents.elements import (
     ElementMetadata,
     Formula,
     Image,
+    ListItem,
     Table,
     TableChunk,
     Title,
@@ -437,6 +438,8 @@ def element_to_md(
     match element:
         case Title(text=text):
             return f"# {text}"
+        case ListItem(text=text):
+            return f"- {text}"
         case Formula(text=text):
             return _emit_formula_markdown(
                 text,
@@ -488,17 +491,24 @@ def elements_to_md(
     Returns:
         The markdown content as a string
     """
-    markdown_content = "\n".join(
-        [
+    parts: list[str] = []
+    previous_is_list_item: Optional[bool] = None
+    for el in elements:
+        is_list_item = isinstance(el, ListItem)
+        # -- A list needs a blank line before it (or it joins the preceding paragraph) and after
+        # -- it (or the next line continues the last item). --
+        if previous_is_list_item is not None:
+            parts.append("\n\n" if is_list_item != previous_is_list_item else "\n")
+        parts.append(
             element_to_md(
                 el,
                 exclude_binary_image_data=exclude_binary_image_data,
                 normalize_formula=normalize_formula,
                 formula_markdown_style=formula_markdown_style,
             )
-            for el in elements
-        ]
-    )
+        )
+        previous_is_list_item = is_list_item
+    markdown_content = "".join(parts)
 
     if filename is not None:
         with open(filename, "w", encoding=encoding) as f:

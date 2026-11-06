@@ -596,6 +596,7 @@ def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str
     [
         (Title("Test Title"), "# Test Title", False),
         (NarrativeText("This is some narrative text."), "This is some narrative text.", False),
+        (ListItem("First item"), "- First item", False),
         (Formula(r"\int_a^b x^2 dx"), "$$\n\\int_a^b x^2 dx\n$$", False),
         (
             Image(
@@ -674,6 +675,27 @@ def test_element_to_md_formula_preserves_unicode_square_root():
     assert base.element_to_md(Formula("√2")) == "$$\n√2\n$$"
     assert base.element_to_md(Formula("√(x+1)")) == "$$\n√(x+1)\n$$"
     assert base.element_to_md(Formula("√2 ≤ x")) == "$$\n√2 \\leq{} x\n$$"
+
+
+def test_elements_to_md_separates_list_items_from_paragraphs():
+    """A list needs a blank line before and after it, or it merges with the adjacent paragraphs."""
+    elements = [
+        Title("Steps"),
+        NarrativeText("Before you start:"),
+        ListItem("Install the package."),
+        ListItem("Set the API key."),
+        NarrativeText("Then run the script."),
+    ]
+
+    assert base.elements_to_md(elements) == (
+        "# Steps\n"
+        "Before you start:\n"
+        "\n"
+        "- Install the package.\n"
+        "- Set the API key.\n"
+        "\n"
+        "Then run the script."
+    )
 
 
 def test_elements_to_md_positional_encoding_backward_compat():
