@@ -25,6 +25,7 @@ from unstructured.partition.html.parser import (
     Annotation,
     DefaultElement,
     Flow,
+    ListItemBlock,
     Math,
     Phrasing,
     RemovedPhrasing,
@@ -438,6 +439,10 @@ class DescribeListItemBlock:
             '<img src="https://example.com/image.png" alt="picture"><p>following paragraph</p>',
             '<div><img src="https://example.com/image.png" alt="picture"></div><p>following</p>',
             "<div><h2>heading text</h2><p>inside wrapper</p></div><p>following paragraph</p>",
+            "<div><span><p>inside span</p></span></div><p>following paragraph</p>",
+            '<div><span><p></p></span><math alttext="x+y"></math></div><p>following paragraph</p>',
+            '<img src=""><p>following paragraph</p>',
+            "<ul></ul><p>following paragraph</p>",
             "<figure>ignored text</figure>",
             "<p> </p>",
             "plain list item",
@@ -475,7 +480,8 @@ class DescribeListItemBlock:
             ("<div> </div><p>lead</p><p>second</p>", "lead", ["second"]),
             ("<figure>ignored</figure><p>lead</p><p>second</p>", "lead", ["second"]),
             ("<figure>ignored</figure>lead<p>second</p>", "lead", ["second"]),
-            ('<img src=""><p>lead</p><p>second</p>', "lead", ["second"]),
+            ("<div><p> </p></div><p>lead</p><p>second</p>", "lead", ["second"]),
+            ("<p><span> </span><br></p><p>lead</p><p>second</p>", "lead", ["second"]),
             ("<p>A</p><p>second</p>", "A", ["second"]),
             ("<p>* lead</p><p>second</p>", "* lead", ["second"]),
         ],
@@ -605,6 +611,41 @@ class DescribeListItemBlock:
         assert second.metadata.parent_id == item.id
         assert after_list.metadata.parent_id is None
         assert following.metadata.parent_id is None
+
+    @pytest.mark.parametrize(
+        ("opening", "closing"),
+        [
+            # -- no text at any level, each item falls back to the normal traversal --
+            ("<ul><li>", "</li></ul>"),
+            ("<ul><li><div>", "</div></li></ul>"),
+            ("<ul><li><p> </p>", "</li></ul>"),
+            ("<ul><li><figure>ignored</figure>", "</li></ul>"),
+            # -- text at each level --
+            ("<ul><li>text", "</li></ul>"),
+            ("<ul><li><p>text</p>", "</li></ul>"),
+        ],
+    )
+    @pytest.mark.parametrize(
+        "leaf", ['<img src="https://example.com/image.png" alt="picture">', "leaf text", ""]
+    )
+    def it_visits_each_list_item_once_however_deeply_lists_are_nested(
+        self, monkeypatch: pytest.MonkeyPatch, opening: str, closing: str, leaf: str
+    ):
+        # -- deep enough to expose repeated traversal, shallow enough to fail fast if it happens --
+        depth = 10
+        root = etree.fromstring(opening * depth + leaf + closing * depth, html_parser)
+        iter_elements = ListItemBlock.iter_elements
+        visits: list[ListItemBlock] = []
+
+        def counting_iter_elements(self: ListItemBlock):
+            visits.append(self)
+            return iter_elements(self)
+
+        monkeypatch.setattr(ListItemBlock, "iter_elements", counting_iter_elements)
+
+        list(root.find("body").iter_elements())
+
+        assert len(visits) == depth
 
     def it_generates_the_same_elements_on_repeated_traversal(self):
         root = etree.fromstring("<ul><li><p>lead</p>tail<p>second</p></li></ul>", html_parser)

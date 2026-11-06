@@ -11,6 +11,7 @@ import tempfile
 from typing import Any, Optional
 
 import pytest
+from bs4 import BeautifulSoup
 from lxml import etree
 
 from test_unstructured.unit_utils import (
@@ -1312,6 +1313,89 @@ def test_partition_html_retains_the_section_of_a_heading_inside_a_list_item():
     assert heading.category == "Title"
     assert heading.metadata.parent_id is None
     assert section_text.metadata.parent_id == heading.id
+
+
+def test_a_list_item_child_on_a_later_page_is_kept_when_exporting_to_html():
+    elements = partition_html(
+        text=(
+            '<ul><li data-page-number="1"><p>Item on page one.</p>'
+            '<p data-page-number="2">Child on page two.</p>'
+            '<table data-page-number="2"><tr><td>Table on page two</td></tr></table>'
+            "</li></ul>"
+        ),
+        languages=[""],
+    )
+    assert [e.metadata.parent_id for e in elements[1:]] == [elements[0].id] * 2
+
+    soup = BeautifulSoup(elements_to_html(elements), "html.parser")
+
+    page_one, page_two = soup.find_all("div", attrs={"data-page_number": True})
+    assert "Item on page one." in page_one.text
+    assert "Child on page two." in page_two.text
+    assert "Table on page two" in page_two.text
+
+
+def test_a_list_item_child_on_the_same_page_is_exported_inside_its_list_item():
+    elements = partition_html(
+        text=(
+            '<ul><li data-page-number="1"><p>First item.</p><p>Continuation.</p></li>'
+            "<li>Second item.</li></ul>"
+        ),
+        languages=[""],
+    )
+
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    item = next(
+        li for li in BeautifulSoup(html, "html.parser").find_all("li") if "First" in li.text
+    )
+    assert "Continuation." in item.text
+    assert "Second item." not in item.text
+
+
+@pytest.mark.parametrize("include_orig_elements", [True, False])
+@pytest.mark.parametrize("unique_element_ids", [True, False])
+def test_a_list_item_table_passed_through_chunking_has_no_dangling_parent_id(
+    unique_element_ids: bool, include_orig_elements: bool
+):
+    def partition():
+        return partition_html(
+            text=(
+                "<ul><li><p>First item.</p><table><tr><td>cell text</td></tr></table>"
+                "<p>Continuation.</p></li></ul>"
+            ),
+            chunking_strategy="basic",
+            skip_table_chunking=True,
+            unique_element_ids=unique_element_ids,
+            include_orig_elements=include_orig_elements,
+            languages=[""],
+        )
+
+    chunks = partition()
+
+    table = next(c for c in chunks if isinstance(c, Table))
+    assert table.metadata.parent_id is None
+    assert "cell text" in elements_to_html(chunks, no_group_by_page=True)
+    assert_round_trips_through_JSON(chunks)
+    if not unique_element_ids:
+        assert [c.id for c in partition()] == [c.id for c in chunks]
+
+
+@pytest.mark.parametrize("unique_element_ids", [True, False])
+def test_list_item_links_resolve_within_the_orig_elements_of_chunks(unique_element_ids: bool):
+    chunks = partition_html(
+        text="<ul><li><p>First item.</p><table><tr><td>cell</td></tr></table></li></ul>",
+        chunking_strategy="basic",
+        include_orig_elements=True,
+        unique_element_ids=unique_element_ids,
+        languages=[""],
+    )
+
+    item = chunks[0].metadata.orig_elements[0]
+    table = chunks[1].metadata.orig_elements[0]
+    assert isinstance(item, ListItem)
+    assert isinstance(table, Table)
+    assert table.metadata.parent_id == item.id
 
 
 # -- .metadata.emphasis --------------------------------------------------------------------------

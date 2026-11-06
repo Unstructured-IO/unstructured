@@ -532,8 +532,12 @@ class ListItemBlock(Flow):
         """Generate elements of `block` when it starts with text, `ListItem` for that text first.
 
         Generates nothing when `block` contains no text or something else comes before its text.
-        Only blocks that produce no elements (empty paragraphs, removed blocks) can be skipped to
-        reach the leading text. Wrappers like `<div>` are searched recursively.
+        Only removed blocks and blank blocks like an empty paragraph can be skipped to reach the
+        leading text. Wrappers like `<div>` are searched recursively.
+
+        What leads is decided from the HTML tree, without generating the elements of a child that
+        doesn't lead. The caller falls back to the normal traversal when there's no leading text, so
+        generating them here would double the work at each level of list nesting.
         """
         q: deque[Flow | Phrasing] = deque(block)
         text = block.text or ""
@@ -567,11 +571,28 @@ class ListItemBlock(Flow):
                     yield from block._element_from_text_or_tail(child.tail or "", q)
                     yield from block._iter_block_items(q)
                     return
-
-            if next(child.iter_elements(), None) is not None:
+                if not self._is_blank(child):
+                    return
+            elif not isinstance(child, RemovedBlock):
                 return
 
             text = child.tail or ""
+
+    @staticmethod
+    def _is_blank(block: Flow) -> bool:
+        """True when `block` can be skipped because it has no content, False when it might have.
+
+        A false negative only means the item gets the normal traversal, while a false positive would
+        lose the content of `block`, so anything uncertain is not blank.
+        """
+        return (
+            all(
+                type(node) in (Flow, BlockItem, RemovedBlock)
+                or (node.is_phrasing and not isinstance(node, Math))
+                for node in block.iterdescendants()
+            )
+            and not "".join(block.itertext(with_tail=False)).strip()
+        )
 
     @staticmethod
     def _starts_with_block_in_phrasing(q: deque[Flow | Phrasing]) -> bool:
