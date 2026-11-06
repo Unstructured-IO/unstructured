@@ -10,7 +10,7 @@ import sys
 import tempfile
 import zipfile
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import networkx as nx
 import numpy as np
@@ -679,6 +679,202 @@ def test_partition_xlsx_formula_warning_reads_no_external_link_parts(
 
     with caplog.at_level(logging.WARNING, logger="unstructured"):
         elements = partition_xlsx(file=file)
+
+    assert elements == [Table("Item Amount Rent 1000 Power 450"), Title("Total")]
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+
+
+def _repackaged(
+    file: io.BytesIO, rewrites: dict[str, Callable[[bytes], tuple[str, bytes]]]
+) -> io.BytesIO:
+    """The workbook in `file` with each named member passed through its rewrite.
+
+    A rewrite returns the member's new name and content, so a part can be moved as well as
+    rewritten.
+    """
+    source = zipfile.ZipFile(file)
+    repackaged = io.BytesIO()
+    with zipfile.ZipFile(repackaged, "w") as destination:
+        for item in source.infolist():
+            name, content = item.filename, source.read(item.filename)
+            if name in rewrites:
+                name, content = rewrites[name](content)
+            destination.writestr(name, content)
+    repackaged.seek(0)
+    return repackaged
+
+
+def test_partition_xlsx_formula_warning_survives_a_comment_and_diagnoses_later_sheets(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- a comment or processing instruction is not an element, so reading one as a cell took
+    # -- down the diagnostic for the rest of the workbook, not just the sheet holding it --
+    workbook = openpyxl.Workbook()
+    sheet_one = workbook.active
+    sheet_one.append(["Item", "Amount"])
+    sheet_one.append(["Total", "=SUM(B1:B1)"])
+    workbook.create_sheet("Rates")["A1"] = "=1+1"
+    file = io.BytesIO()
+    workbook.save(file)
+    file.seek(0)
+
+    annotated = _repackaged(
+        file,
+        {
+            "xl/worksheets/sheet1.xml": lambda content: (
+                "xl/worksheets/sheet1.xml",
+                content.replace(b'<row r="1">', b'<row r="1"><!-- totals below --><?calc off?>'),
+            )
+        },
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=annotated)
+
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+    assert "worksheet 'Rates': 1 formula cell(s) have no saved result" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_reads_a_namespace_prefixed_worksheet(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- the same worksheet spelled with an explicit prefix holds no literal "<f" bytes, so a
+    # -- byte search that finds none of them has proved nothing --
+    def with_prefixed_tags(content: bytes) -> tuple[str, bytes]:
+        content = content.replace(
+            b'<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"',
+            b'<x:worksheet xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"',
+        )
+        for tag in (b"worksheet", b"sheetData", b"row", b"c", b"f", b"v", b"is", b"t"):
+            for opening, closing in (
+                (b"<" + tag + b">", b"<x:" + tag + b">"),
+                (b"<" + tag + b" ", b"<x:" + tag + b" "),
+                (b"</" + tag + b">", b"</x:" + tag + b">"),
+            ):
+                content = content.replace(opening, closing)
+        return "xl/worksheets/sheet1.xml", content
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(
+            file=_repackaged(
+                _budget_workbook_file(), {"xl/worksheets/sheet1.xml": with_prefixed_tags}
+            )
+        )
+
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+    assert "B4" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_reads_a_utf_16_encoded_worksheet(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- UTF-16 pads every character, so the formula tag's bytes never appear next to each other
+    def as_utf_16(content: bytes) -> tuple[str, bytes]:
+        declared = content.decode("utf-8").replace('encoding="UTF-8"', 'encoding="UTF-16"')
+        return "xl/worksheets/sheet1.xml", declared.encode("utf-16")
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(
+            file=_repackaged(_budget_workbook_file(), {"xl/worksheets/sheet1.xml": as_utf_16})
+        )
+
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+    assert "B4" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_follows_a_worksheet_outside_the_usual_directory(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- readers follow the relationship wherever it points, so recognizing a worksheet by the
+    # -- directory in its name left this workbook undiagnosed although it partitions normally --
+    relocated = _repackaged(
+        _budget_workbook_file(),
+        {
+            "xl/worksheets/sheet1.xml": lambda content: ("xl/sheets/sheet1.xml", content),
+            "xl/_rels/workbook.xml.rels": lambda content: (
+                "xl/_rels/workbook.xml.rels",
+                content.replace(
+                    b'Target="/xl/worksheets/sheet1.xml"', b'Target="sheets/sheet1.xml"'
+                ),
+            ),
+        },
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        elements = partition_xlsx(file=relocated)
+
+    assert elements == [Table("Item Amount Rent 1000 Power 450"), Title("Total")]
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_keeps_quiet_about_a_cached_empty_string(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- a string formula can compute the empty string, and a calculating writer caches it as an
+    # -- empty <v> under a string cell type; recalculating would not recover anything --
+    cached_blank = _repackaged(
+        _budget_workbook_file(),
+        {
+            "xl/worksheets/sheet1.xml": lambda content: (
+                "xl/worksheets/sheet1.xml",
+                content.replace(
+                    b'<c r="B4"><f>SUM(B2:B3)</f><v></v></c>',
+                    b'<c r="B4" t="str"><f>IF(B2=0,"",B2)</f><v></v></c>',
+                ),
+            )
+        },
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=cached_blank)
+
+    assert "formula cell" not in caplog.text
+
+
+def test_partition_xlsx_formula_warning_keeps_quiet_about_a_cached_zero(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- zero is a result like any other; only an absent or empty numeric cache is missing one --
+    cached_zero = _repackaged(
+        _budget_workbook_file(),
+        {
+            "xl/worksheets/sheet1.xml": lambda content: (
+                "xl/worksheets/sheet1.xml",
+                content.replace(b"<f>SUM(B2:B3)</f><v></v>", b"<f>SUM(B2:B3)</f><v>0</v>"),
+            )
+        },
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        (table,) = partition_xlsx(file=cached_zero)
+
+    assert table.text == "Item Amount Rent 1000 Power 450 Total 0"
+    assert "formula cell" not in caplog.text
+
+
+def test_partition_xlsx_formula_warning_retains_no_worksheet_xml_outside_the_rows(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- a sheet can carry megabytes of merge, formatting or extension XML around a handful of
+    # -- populated rows; the diagnostic parses into a target that builds no tree, so none of it
+    # -- is retained while the DataFrames are already resident --
+    padded = _repackaged(
+        _budget_workbook_file(),
+        {
+            "xl/worksheets/sheet1.xml": lambda content: (
+                "xl/worksheets/sheet1.xml",
+                content.replace(
+                    b"</sheetData>",
+                    b"</sheetData><mergeCells>"
+                    + b'<mergeCell ref="Z1:Z2"/>' * 50_000
+                    + b"</mergeCells>",
+                ),
+            )
+        },
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        elements = partition_xlsx(file=padded)
 
     assert elements == [Table("Item Amount Rent 1000 Power 450"), Title("Total")]
     assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
