@@ -49,6 +49,7 @@ from typing_extensions import ParamSpec
 from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.file_utils.model import FileType
+from unstructured.file_utils.ndjson import split_lines
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
@@ -335,7 +336,7 @@ class _FileTypeDetector:
             # -- pretty-printed JSON still classifies JSON -- its first line `{` or `[` does not
             # -- parse) --
             file_text = file_text.rpartition("\n")[0]
-            lines = [line for line in file_text.splitlines() if line.strip()]
+            lines = [line for line in split_lines(file_text) if line.strip()]
             if lines and self._all_lines_are_json_values(lines):
                 return FileType.NDJSON
             return FileType.JSON
@@ -348,7 +349,7 @@ class _FileTypeDetector:
             pass
 
         # -- two or more newline-delimited JSON values indicate NDJSON --
-        lines = [line for line in file_text.splitlines() if line.strip()]
+        lines = [line for line in split_lines(file_text) if line.strip()]
         if len(lines) >= 2 and self._all_lines_are_json_values(lines):
             return FileType.NDJSON
 
@@ -367,7 +368,7 @@ class _FileTypeDetector:
 
     def _is_ndjson_shaped(self, file_text: str) -> bool:
         """True when `file_text` is at least one non-blank line, each a valid JSON value."""
-        lines = [line for line in file_text.splitlines() if line.strip()]
+        lines = [line for line in split_lines(file_text) if line.strip()]
         return bool(lines) and self._all_lines_are_json_values(lines)
 
     @staticmethod
