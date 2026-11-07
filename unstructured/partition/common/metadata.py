@@ -91,7 +91,10 @@ HEADING_TAGS = tuple(_HEADING_DEPTH)
 
 
 def category_depth_from_html_tag(
-    ElementCls: type[Element], tag: str | None, list_ancestor_count: int = 0
+    ElementCls: type[Element],
+    tag: str | None,
+    list_ancestor_count: int = 0,
+    details_ancestor_count: int = 0,
 ) -> int | None:
     """Compute `category_depth` from an element's HTML heading level (not DOM-nesting depth).
 
@@ -101,6 +104,10 @@ def category_depth_from_html_tag(
     - `Title` (which includes ontology Title/Subtitle/Heading, i.e. ``<h1>``-``<h6>``): the heading
       level, zero-indexed -- ``h1`` -> 0, ``h2`` -> 1, ... ``h6`` -> 5. A `Title` whose tag is not a
       heading (e.g. a styled paragraph) is treated as a top-level heading (0).
+    - `Title` from a ``<summary>`` label: one level below ``h6``, plus one for each ``<details>``
+      it is nested in beyond its own (``details_ancestor_count``, passed in by the caller). The
+      label has no heading level of its own, so this places it under whatever heading precedes it
+      and keeps the next heading of any level from nesting under it.
     - `ListItem`: the number of enclosing list containers (``ol``/``ul``/``dl``), passed in by the
       caller (the v1 HTML parser, which computes it from list nesting). The v2 converter serializes
       a whole ``ol``/``ul``/``dl`` as one element and never emits a standalone ``ListItem``, so it
@@ -113,6 +120,8 @@ def category_depth_from_html_tag(
         return list_ancestor_count
 
     if ElementCls is Title:
+        if tag == "summary":
+            return len(_HEADING_DEPTH) + max(details_ancestor_count - 1, 0)
         return _HEADING_DEPTH.get(tag, 0)
 
     return None
