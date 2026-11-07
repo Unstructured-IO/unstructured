@@ -10,6 +10,7 @@ import json
 import os
 import shutil
 import tempfile
+import warnings
 from pathlib import Path
 
 import pytest
@@ -24,7 +25,11 @@ from test_unstructured.unit_utils import (
     property_mock,
 )
 from unstructured.errors import UnprocessableEntityError
+from unstructured.file_utils.encoding import EncodingDetectionWarning
 from unstructured.file_utils.filetype import (
+    _JSON_DISAMBIGUATION_MAX_CHARS,
+    _decode_head_bytes,
+    _decode_prefix,
     _FileTypeDetectionContext,
     _OleFileDetector,
     _TextFileDifferentiator,
@@ -770,6 +775,293 @@ def it_classifies_multiple_json_object_lines_as_NDJSON():
 
 def and_it_classifies_an_arbitrary_ndjson_file_as_NDJSON():
     assert detect_filetype(example_doc_path("arbitrary-records.ndjson")) == FileType.NDJSON
+
+
+def and_it_classifies_a_non_UTF8_ndjson_file_like_object_as_NDJSON():
+    """Regression for #4434: a non-UTF-8 payload must not be decoded with `errors="ignore"`.
+
+    Disambiguation decoded its read using the declared encoding with `errors="ignore"`, which
+    silently stripped every byte UTF-8 could not decode. A UTF-16 payload -- such as NDJSON
+    written by Windows tooling and uploaded to S3/GCS -- was mangled into text whose lines no
+    longer parsed, so a multi-record payload classified as JSON instead of NDJSON.
+    """
+    records = [{"sku": "GRD-8842", "name": "café münchen"}, {"sku": "GRD-1290", "name": "büro"}]
+    ndjson_text = "\n".join(json.dumps(record, ensure_ascii=False) for record in records)
+    payload = ndjson_text.encode("utf-16")
+
+    file_type = detect_filetype(file=io.BytesIO(payload), content_type=FileType.JSON.mime_type)
+
+    assert file_type == FileType.NDJSON
+
+
+def and_it_classifies_a_non_UTF8_json_file_as_NDJSON(tmp_path):
+    # -- a file path is read as bytes for disambiguation just like a file-like object, so it
+    # -- decodes through the same fallback and is no longer misclassified either --
+    records = [{"sku": "GRD-8842"}, {"sku": "GRD-1290"}]
+    payload = "\n".join(json.dumps(record) for record in records).encode("utf-16")
+    json_file = tmp_path / "records.json"
+    json_file.write_bytes(payload)
+
+    file_type = detect_filetype(file_path=str(json_file), content_type=FileType.JSON.mime_type)
+
+    assert file_type == FileType.NDJSON
+
+
+def and_it_decodes_a_non_UTF8_head_without_stripping_its_characters():
+    # -- characters of a non-UTF-8 payload survive the decode used for classification instead
+    # -- of being dropped as undecodable --
+    text = '{"name": "café münchen"}'
+
+    assert _decode_head_bytes(text.encode("cp1252"), encoding="utf-8", eof_reached=True) == text
+
+
+_ABOVE_BOUND_RECORD = '{"x":1}\n'
+
+_BOM_BY_ENCODING = {"utf-16": codecs.BOM_UTF16_LE, "utf-32": codecs.BOM_UTF32_LE}
+
+
+def _above_bound_bom_less_ndjson(encoding: str) -> bytes:
+    """Native-endian NDJSON, no BOM, larger than the disambiguation read bound."""
+
+    record_count = (_JSON_DISAMBIGUATION_MAX_CHARS // len(_ABOVE_BOUND_RECORD)) + 4096
+    payload = (_ABOVE_BOUND_RECORD * record_count).encode(encoding)
+    return payload[len(_BOM_BY_ENCODING[encoding]) :]
+
+
+class _ShortReadStream(io.BytesIO):
+    """A seekable stream whose `read(n)` returns at most `chunk_size` bytes.
+
+    A raw stream or adapter may return fewer bytes than requested while more data remains, so
+    a single short read does not establish EOF. Every read is recorded as
+    `(position, requested size, returned length)`.
+    """
+
+    def __init__(self, payload: bytes, chunk_size: int):
+        super().__init__(payload)
+        self._chunk_size = chunk_size
+        self.reads: list[tuple[int, int, int]] = []
+
+    def read(self, size: int = -1) -> bytes:
+        position = self.tell()
+        chunk = super().read(size) if size < 0 else super().read(min(size, self._chunk_size))
+        self.reads.append((position, size, len(chunk)))
+        return chunk
+
+    def prefix_reads(self) -> list[tuple[int, int, int]]:
+        """The reads spent accumulating the disambiguation prefix, in order."""
+
+        start = next(
+            index
+            for index, (_, size, _) in enumerate(self.reads)
+            if size == _JSON_DISAMBIGUATION_MAX_CHARS + 1
+        )
+        return self.reads[start:]
+
+
+@pytest.mark.parametrize("encoding", ["utf-16", "utf-32"])
+def and_it_decodes_a_BOM_less_prefix_cut_inside_a_code_unit(encoding):
+    # -- `codecs.getincrementaldecoder()` re-runs BOM detection over the prefix and refuses
+    # -- BOM-less native-endian UTF-16/32, so the decode of a prefix that crossed the read bound
+    # -- inside a code unit used to fall through to character-set inference
+    payload = _above_bound_bom_less_ndjson(encoding)
+    cut_prefix = payload[: _JSON_DISAMBIGUATION_MAX_CHARS + 1]
+    complete_prefix = cut_prefix[:_JSON_DISAMBIGUATION_MAX_CHARS]
+
+    with patch("unstructured.file_utils.filetype.detect_file_encoding") as detect_mock:
+        assert _decode_head_bytes(cut_prefix, encoding=encoding, eof_reached=False) == (
+            complete_prefix.decode(encoding)
+        )
+    detect_mock.assert_not_called()
+
+
+def and_it_still_fails_a_prefix_whose_tail_is_missing_at_EOF():
+    # -- a character cut by the end of the document is a real defect, not a boundary split, so
+    # -- withholding trailing bytes applies only while more content follows --
+    payload = (_ABOVE_BOUND_RECORD * 100).encode("utf-16")
+
+    whole_text = payload.decode("utf-16")
+
+    with pytest.raises(UnprocessableEntityError):
+        _decode_head_bytes(payload[:-1], encoding="utf-16", eof_reached=True)
+
+    assert _decode_head_bytes(payload[:-1], encoding="utf-16", eof_reached=False) == whole_text[:-1]
+
+
+@pytest.mark.parametrize("encoding", ["utf-16", "utf-32"])
+def and_it_classifies_above_bound_BOM_less_UTF16_and_UTF32_payloads_as_NDJSON(encoding, tmp_path):
+    # -- the asserted encoding decides the byte order for a payload larger than the read bound,
+    # -- whether it arrives as a file path or as a byte stream, so no inference warning fires --
+    payload = _above_bound_bom_less_ndjson(encoding)
+    json_file = tmp_path / "records.json"
+    json_file.write_bytes(payload)
+
+    with (
+        patch("unstructured.file_utils.filetype.detect_file_encoding") as detect_mock,
+        warnings.catch_warnings(),
+    ):
+        warnings.simplefilter("error", EncodingDetectionWarning)
+        assert (
+            detect_filetype(
+                file=io.BytesIO(payload), encoding=encoding, content_type=FileType.JSON.mime_type
+            )
+            == FileType.NDJSON
+        )
+        assert (
+            detect_filetype(
+                file_path=str(json_file), encoding=encoding, content_type=FileType.JSON.mime_type
+            )
+            == FileType.NDJSON
+        )
+    detect_mock.assert_not_called()
+
+
+def and_it_reads_past_a_short_read_until_the_budget_or_EOF():
+    # -- a short read is not EOF: the prefix has to be accumulated until the budget is spent or
+    # -- an empty read proves the end, or a character cut by the short read is taken for a
+    # -- malformed document --
+    payload = _ABOVE_BOUND_RECORD.encode() * ((_JSON_DISAMBIGUATION_MAX_CHARS // 8) + 4096)
+    stream = _ShortReadStream(payload, 4095)
+
+    assert detect_filetype(file=stream, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+
+    prefix_reads = stream.prefix_reads()
+    returned_lengths = [returned for _, _, returned in prefix_reads]
+    assert prefix_reads[0][0] == 0
+    assert max(returned_lengths[:-1]) == 4095
+    assert sum(returned_lengths[:-1]) == _JSON_DISAMBIGUATION_MAX_CHARS + 1
+    assert prefix_reads[-1] == (_JSON_DISAMBIGUATION_MAX_CHARS + 1, 1, 1)
+    assert all(size <= _JSON_DISAMBIGUATION_MAX_CHARS + 1 for _, size, _ in stream.reads)
+
+    assert stream.tell() == 0
+    assert not stream.closed
+    assert stream.read(4) == payload[:4]
+
+    short_payload = _ABOVE_BOUND_RECORD.encode() * 3
+    short_stream = _ShortReadStream(short_payload, 4)
+
+    assert (
+        detect_filetype(file=short_stream, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+    )
+    short_prefix_reads = short_stream.prefix_reads()
+    assert sum(returned for _, _, returned in short_prefix_reads) == len(short_payload)
+
+
+# -- a byte sequence the declared codec REJECTS and a character the read boundary CUT look the
+# -- same to a decoder that only retries shorter prefixes: both decode once the tail is gone. The
+# -- difference is what the tail means. `é` is a complete character followed by a delimiter, so
+# -- dropping it deletes real content and the fallback never runs; `\xc3` on its own is an
+# -- unfinished character whose completion is simply not in this read.
+
+
+@pytest.mark.parametrize(
+    ("content", "encoding", "expected_value"),
+    [
+        # -- an unfinished character: withhold it, keep everything that did decode --
+        (b'{"a":1}\n{"a":2}\n' + b"\xc3", "utf-8", '{"a":1}\n{"a":2}\n'),
+        (b"ab\xe2\x82", "utf-8", "ab"),
+        (b"a\x00b", "utf-16-le", "a"),
+        ("\u65e5\u672c".encode("shift_jis") + b"\x93", "shift_jis", "\u65e5\u672c"),
+        # -- a complete character the codec rejects outright: not a boundary split --
+        (b"a,b\n" + b"a" * 4089 + b"\xc3\xa9,", "ascii", None),
+        (b"ab\xff", "ascii", None),
+        # -- a wrong encoding rather than a split character, so nothing is withheld --
+        (b"\xff" + b"ab" * 100, "ascii", None),
+        # -- a whole read that is one unfinished character has nothing to classify --
+        (b"\xc3", "utf-8", None),
+    ],
+)
+def it_decodes_a_cut_character_without_dropping_a_rejected_one(content, encoding, expected_value):
+    assert _decode_prefix(content, encoding) == expected_value
+
+
+def and_it_keeps_a_complete_character_at_the_read_boundary_in_the_text_it_classifies(
+    ctx_mime_type_: Mock,
+):
+    # -- an ASCII-asserted CSV whose 4096-byte read ends on a complete UTF-8 `é` and the comma
+    # -- after it: withholding bytes until ASCII accepted the remainder deleted both, so the
+    # -- second row lost its delimiter, `_is_csv` rejected it, and the file classified as TXT
+    ctx_mime_type_.return_value = "text/plain"
+    payload = b"a,b\n" + b"a" * 4089 + "é,".encode() + b"rest\n"
+    head = payload[:4096]
+    assert head.endswith("é,".encode())
+    assert len(head) == 4096
+
+    assert detect_filetype(file=io.BytesIO(payload), encoding="ascii") is FileType.CSV
+
+    ctx = _FileTypeDetectionContext(file=io.BytesIO(payload), encoding="ascii")
+    assert ctx.text_head.endswith("é,")
+
+
+# -- a BOM-prefixed CSV whose 4,096-byte read ends inside `é`, one byte short of the second
+# -- row's delimiter-adjacent multibyte character. `utf-8-sig` strips the three BOM bytes before
+# -- reporting a decode offset, so applying that offset to the original buffer removed three
+# -- valid bytes ahead of the cut: the row delimiter and the two characters before it. All
+# -- complete characters and the delimiter have to survive for `_is_csv` to see two columns.
+_BOM_PREFIXED_CSV_CUT_INSIDE_A_CHARACTER = (
+    codecs.BOM_UTF8 + b"a,b\n" + b"a" * 4087 + b",\xc3\xa9rest\n"
+)
+_BOM_PREFIXED_CSV_HEAD_BYTES = 4096
+
+
+def and_it_withholds_only_the_cut_character_when_UTF8_sig_carries_a_BOM():
+    head = _BOM_PREFIXED_CSV_CUT_INSIDE_A_CHARACTER[:_BOM_PREFIXED_CSV_HEAD_BYTES]
+    assert head.endswith(b",\xc3")
+
+    text = _decode_prefix(head, "utf-8-sig")
+
+    assert text == head[:-1].decode("utf-8-sig")
+    assert text.endswith(",")
+
+
+def and_it_keeps_a_multibyte_character_that_sits_ahead_of_the_cut_character():
+    # -- the byte offset `utf-8-sig` reports is relative to the buffer after the BOM, so a cut
+    # -- taken from it landed inside the complete `e-acute` before the unfinished character and
+    # -- the retry raised UnicodeDecodeError on a valid read
+    payload = codecs.BOM_UTF8 + b"a,b\n" + b"a" * 4084 + "\u00e9".encode() + b"aa" + b"\xc3"
+    head = payload[:4096]
+    assert head.endswith("\u00e9aa".encode() + b"\xc3")
+    assert head[4091:4093] == "\u00e9".encode()
+
+    assert _decode_prefix(head, "utf-8-sig") == head[:-1].decode("utf-8-sig")
+
+
+def and_it_classifies_a_BOM_prefixed_UTF8_sig_CSV_cut_inside_a_character(
+    ctx_mime_type_: Mock,
+):
+    # -- the reported regression, end to end on a byte stream: the cut character is withheld, the
+    # -- delimiter before it survives, the CSV is still a CSV, and no inference runs --
+    ctx_mime_type_.return_value = "text/plain"
+    payload = _BOM_PREFIXED_CSV_CUT_INSIDE_A_CHARACTER
+
+    with (
+        patch("unstructured.file_utils.filetype.detect_file_encoding") as detect_mock,
+        warnings.catch_warnings(),
+    ):
+        warnings.simplefilter("error", EncodingDetectionWarning)
+        assert detect_filetype(file=io.BytesIO(payload), encoding="utf-8-sig") is FileType.CSV
+    detect_mock.assert_not_called()
+
+    ctx = _FileTypeDetectionContext(file=io.BytesIO(payload), encoding="utf-8-sig")
+    assert ctx.text_head == payload[: _BOM_PREFIXED_CSV_HEAD_BYTES - 1].decode("utf-8-sig")
+    assert "\xc3\xa9" not in ctx.text_head
+
+
+def and_it_classifies_the_same_BOM_prefixed_UTF8_sig_CSV_from_a_path(
+    ctx_mime_type_: Mock, tmp_path
+):
+    # -- the path branch reads text through the codec, so it never splits a character; the same
+    # -- payload has to classify identically from disk --
+    ctx_mime_type_.return_value = "text/plain"
+    csv_file = tmp_path / "records"
+    csv_file.write_bytes(_BOM_PREFIXED_CSV_CUT_INSIDE_A_CHARACTER)
+
+    with (
+        patch("unstructured.file_utils.filetype.detect_file_encoding") as detect_mock,
+        warnings.catch_warnings(),
+    ):
+        warnings.simplefilter("error", EncodingDetectionWarning)
+        assert detect_filetype(file_path=str(csv_file), encoding="utf-8-sig") is FileType.CSV
+    detect_mock.assert_not_called()
 
 
 def it_routes_not_unstructured_payload_json_away_from_ndjson_via_detect_filetype():
