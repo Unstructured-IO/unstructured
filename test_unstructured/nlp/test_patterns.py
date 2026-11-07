@@ -30,6 +30,16 @@ BULLET = "\u2022"
         ),
         (BULLET + " first\na. heading\nb. other", ["first", "heading", "other"]),
         ("1. first\n" + BULLET + " second", ["first", "second"]),
+        # a glyph inside an item is text, not a marker
+        (
+            "1. Fields marked * are required.\n2. Send the form.",
+            ["Fields marked * are required.", "Send the form."],
+        ),
+        (
+            "1. Fields marked \u00b7 are required.\n2. Send the form.",
+            ["Fields marked \u00b7 are required.", "Send the form."],
+        ),
+        ("1. a * b\n2. c * d", ["a * b", "c * d"]),
         # abbreviations and prose are not bullets
         ("e. g. spaced example", ["e. g. spaced example"]),
         ("e.  g. spaced example", ["e.  g. spaced example"]),

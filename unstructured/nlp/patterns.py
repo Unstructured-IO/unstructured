@@ -102,6 +102,15 @@ BULLET_SPLIT_RE_0W = re.compile(
     f"|(?:(?:(?<=\\n)|\\A){NON_NEWLINE_WHITESPACE}(?={QUALIFIED_AMBIGUOUS_BULLET}))",
 )
 UNAMBIGUOUS_BULLETS_RE = re.compile(UNAMBIGUOUS_BULLETS_PATTERN)
+# A glyph is also ordinary text inside an item ("Fields marked * are required.",
+# "3 · 4"). When a block that mixes enumerated markers with glyphs is split a second
+# time on the glyphs, an unanchored split would cut those items apart, so this one only
+# matches a glyph that introduces a line.
+LINE_START_BULLETS_RE = re.compile(
+    f"(?:(?:(?<=\n)|\\A){NON_NEWLINE_WHITESPACE}(?:{UNAMBIGUOUS_BULLETS_PATTERN})"
+    f"|(?:(?<=\n)|\\A){QUALIFIED_AMBIGUOUS_BULLET})"
+    f"(?!{BULLETS_PATTERN})",
+)
 E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 
 # NOTE(klaijan) - Captures reference of format [1] or [i] or [a] at any point in the line.
