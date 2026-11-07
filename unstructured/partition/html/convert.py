@@ -298,7 +298,8 @@ def _elements_to_html_tags_by_page(
     soup = BeautifulSoup("", HTML_PARSER)
     pages_tags: list[Tag] = []
     grouped_elements = group_elements_by_page(elements)
-    for page, g_elements in enumerate(grouped_elements, start=1):
+    for g_elements in grouped_elements:
+        page = g_elements[0].metadata.page_number
         page_html = soup.new_tag(name="div", attrs={"data-page_number": page})
         elements_html = _elements_to_html_tags(g_elements, exclude_binary_image_data)
         for element_html in elements_html:
