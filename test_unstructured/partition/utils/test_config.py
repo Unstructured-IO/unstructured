@@ -44,6 +44,19 @@ def test_use_langdetect_rs(monkeypatch: pytest.MonkeyPatch, value: str | None, e
     assert env_config.UNSTRUCTURED_USE_LANGDETECT_RS is expected
 
 
+@pytest.mark.parametrize(
+    ("value", "expected"), [(None, True), ("", True), ("0", False), ("1", True), ("false", False)]
+)
+def test_spacy_auto_install(monkeypatch: pytest.MonkeyPatch, value: str | None, expected: bool):
+    if value is None:
+        monkeypatch.delenv("UNSTRUCTURED_SPACY_AUTO_INSTALL", raising=False)
+    else:
+        monkeypatch.setenv("UNSTRUCTURED_SPACY_AUTO_INSTALL", value)
+    from unstructured.partition.utils.config import env_config
+
+    assert env_config.UNSTRUCTURED_SPACY_AUTO_INSTALL is expected
+
+
 def test_global_working_dir_defaults_to_the_user_cache(monkeypatch: pytest.MonkeyPatch):
     """The default location, asserted with the feature disabled so nothing is created."""
     monkeypatch.delenv("GLOBAL_WORKING_DIR", raising=False)

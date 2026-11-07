@@ -357,5 +357,15 @@ class ENVConfig:
         """
         return self._get_bool("UNSTRUCTURED_USE_LANGDETECT_RS", False)
 
+    @property
+    def UNSTRUCTURED_SPACY_AUTO_INSTALL(self) -> bool:
+        """Install the pinned spaCy model at runtime when `spacy.load()` cannot find it
+
+        Defaults to `True` so a missing model self-heals as before. Set it to `False` in
+        air-gapped or read-only containers, where the model has to be pre-installed instead of
+        downloaded into site-packages on first use.
+        """
+        return self._get_bool("UNSTRUCTURED_SPACY_AUTO_INSTALL", True)
+
 
 env_config = ENVConfig()
