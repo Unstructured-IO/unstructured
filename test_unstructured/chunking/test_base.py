@@ -978,6 +978,35 @@ class DescribePreChunkBuilder:
 
         assert not builder.will_fit(Text("In rhoncus ipsum."))
 
+    def and_not_when_it_has_just_reached_the_soft_maxlen(self):
+        """A pre-chunk of exactly `new_after_n_chars` is full, like one past it.
+
+        `new_after_n_chars` documents a chunk "of this length or greater" as not being extended.
+        """
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100, new_after_n_chars=50))
+        builder.add_element(Text("a" * 50))
+
+        assert builder._text_length == 50
+        assert not builder.will_fit(Text("b" * 10))
+
+    def and_it_does_not_extend_a_chunk_that_has_reached_the_soft_maxlen(self):
+        """Elements totalling exactly `new_after_n_chars` stay in a chunk of that size.
+
+        The 24 + 2 (separator) + 24 == 50 first chunk already reaches the soft max, so the 10-char
+        third element must start a chunk of its own instead of padding the first one out to 62
+        characters.
+        """
+        elements = [Text("a" * 24), Text("b" * 24), Text("c" * 10)]
+
+        chunks = chunk_elements(
+            elements,
+            max_characters=200,
+            new_after_n_chars=50,
+            include_orig_elements=False,
+        )
+
+        assert [len(chunk.text) for chunk in chunks] == [50, 10]
+
     def and_it_will_not_fit_an_element_when_that_would_cause_it_to_exceed_the_hard_maxlen(self):
         builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100))
         builder.add_element(
