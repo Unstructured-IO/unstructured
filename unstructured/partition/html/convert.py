@@ -273,10 +273,11 @@ def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[Elemen
         grouped_children = _group_element_children(children)
         parent = elements_by_id.get(parent_id)
         if parent is None:
-            logger.warning(f"Parent element with id {parent_id} not found. Skipping.")
             continue
         parent.set_children(grouped_children)
-    return [el for el in elements if el.element.metadata.parent_id is None]
+    # -- a parent can be absent, like when it's on an earlier page and elements are grouped by page.
+    # -- Its child must still appear, so an element is nested only when its parent is present.
+    return [el for el in elements if el.element.metadata.parent_id not in elements_by_id]
 
 
 def _elements_to_html_tags(

@@ -203,6 +203,29 @@ def test_skip_table_chunking_passes_oversized_table_through_unchanged():
     assert chunks[1].text == table_text.strip()
 
 
+def test_skip_table_chunking_clears_the_parent_id_it_cannot_preserve_without_mutating_the_input():
+    title = Title("A heading")
+    table = Table("cell text", element_id="table-id")
+    table.metadata.parent_id = title.id
+
+    chunks = chunk_elements([title, table], skip_table_chunking=True)
+
+    assert isinstance(chunks[1], Table)
+    assert chunks[1].text == "cell text"
+    assert chunks[1].id == table.id
+    assert chunks[1].metadata.parent_id is None
+    # -- the input elements belong to the caller --
+    assert table.metadata.parent_id == title.id
+
+
+def test_skip_table_chunking_passes_a_table_with_no_parent_through_as_the_same_element():
+    table = Table("cell text")
+
+    chunks = chunk_elements([Text("Hello world"), table], skip_table_chunking=True)
+
+    assert chunks[1] is table
+
+
 def test_skip_table_chunking_does_not_affect_text_element_chunking():
     long_text = Text("word " * 200)
     table = Table("small table")
