@@ -29,6 +29,7 @@ additionally runs the assembled document through :func:`sanitize_html_fragment`
 
 from __future__ import annotations
 
+import html
 import re
 
 import nh3
@@ -201,13 +202,34 @@ _SCHEME_RE = re.compile(r"^([a-zA-Z][a-zA-Z0-9+.\-]*):")
 
 _REQUIRED_BLANK_TARGET_REL_VALUES: frozenset[str] = frozenset({"noopener", "noreferrer"})
 
-# -- Match an anchor start tag and detect `target="_blank"` / an existing `rel`
-# -- so we can add reverse-tabnabbing protection to new-tab links only. nh3's
-# -- output is well-formed (attribute values are escaped, so `>` never appears
-# -- inside one), which makes matching whole start tags with a regex safe. --
-_ANCHOR_START_TAG_RE = re.compile(r"<a\b[^>]*>", flags=re.IGNORECASE)
-_BLANK_TARGET_RE = re.compile(r"""\btarget\s*=\s*["']?_blank\b""", flags=re.IGNORECASE)
-_REL_ATTRIBUTE_RE = re.compile(r"""\brel\s*=""", flags=re.IGNORECASE)
+# -- Match an anchor start tag (tolerating `>` inside quoted attribute values)
+# -- and parse its attributes. Rewriting `rel` must only ever touch the real
+# -- `rel` attribute: a `rel=` substring inside another attribute's value is
+# -- inert text, and treating it as an attribute can break out of the quoted
+# -- value and inject event handlers into the exported HTML. --
+_ANCHOR_START_TAG_RE = re.compile(
+    r"""
+    <a\b
+    (?:[^>"']|"[^"]*"|'[^']*')*
+    >
+    """,
+    flags=re.IGNORECASE | re.VERBOSE,
+)
+_ANCHOR_ATTRIBUTE_RE = re.compile(
+    r"""
+    \s+
+    (?P<name>[^\s=/>]+)
+    (?:
+        \s*=\s*
+        (?:
+            "(?P<double>[^"]*)"
+          | '(?P<single>[^']*)'
+          | (?P<bare>[^\s>]*)
+        )
+    )?
+    """,
+    flags=re.VERBOSE,
+)
 
 _CSS_COMMENT_RE = re.compile(r"/\*.*?\*/", flags=re.DOTALL)
 _CSS_UNSAFE_VALUE_RE = re.compile(
@@ -393,10 +415,40 @@ def _add_rel_to_blank_target_links(html_fragment: str) -> str:
 
     def add_rel(match: re.Match[str]) -> str:
         tag = match.group(0)
-        if not _BLANK_TARGET_RE.search(tag) or _REL_ATTRIBUTE_RE.search(tag):
+        target: str | None = None
+        rel_attr: re.Match[str] | None = None
+        rel_value = ""
+        # -- Parse the start tag into attributes instead of searching the raw
+        #    text: quoted values are consumed whole, so a `rel=` inside
+        #    ``href``/``title``/``data-*`` can never be mistaken for the real
+        #    ``rel`` attribute. --
+        for attr in _ANCHOR_ATTRIBUTE_RE.finditer(tag, 2, len(tag) - 1):
+            name = attr.group("name").lower()
+            value = (
+                attr.group("double")
+                if attr.group("double") is not None
+                else attr.group("single")
+                if attr.group("single") is not None
+                else attr.group("bare")
+            ) or ""
+            if name == "target":
+                target = value
+            elif name == "rel":
+                rel_attr, rel_value = attr, value
+
+        if (target or "").strip().lower() != "_blank":
             return tag
-        rel = " ".join(sorted(_REQUIRED_BLANK_TARGET_REL_VALUES))
-        return f'{tag[:-1].rstrip()} rel="{rel}">'
+
+        closing = "/>" if tag.endswith("/>") else ">"
+        if rel_attr is None:
+            rel = " ".join(sorted(_REQUIRED_BLANK_TARGET_REL_VALUES))
+            return f'{tag[: -len(closing)].rstrip()} rel="{rel}"{closing}'
+
+        # -- Backfill missing tokens on an existing `rel`, matching
+        #    ``sanitize_attributes``. Escape the serialized value so tokens
+        #    taken from untrusted input cannot close the quoted attribute. --
+        new_rel = html.escape(_link_rel_with_required_values(rel_value), quote=True)
+        return tag[: rel_attr.start()] + f' rel="{new_rel}"' + tag[rel_attr.end() :]
 
     return _ANCHOR_START_TAG_RE.sub(add_rel, html_fragment)
 
