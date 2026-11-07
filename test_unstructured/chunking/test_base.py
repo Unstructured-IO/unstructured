@@ -5898,6 +5898,18 @@ class Describe_TextSplitter:
         assert s == "Lorem ipsum dolor amet consectetur adipiscing."
         assert remainder == "ipiscing. In rhoncus ipsum sed lectus."
 
+    def but_it_does_not_split_off_a_fragment_no_longer_than_the_overlap(self):
+        # -- an inter-chunk overlap prefix (overlap_all) is joined to the next element by a blank
+        # -- line; splitting on that blank line would emit a chunk holding only the overlap --
+        opts = ChunkingOptions(max_characters=50, overlap=10)
+        split = _TextSplitter(opts)
+        text = "nsectetur.\n\nIn rhoncus ipsum sed lectus porta volutpat, ut aliquet magna."
+
+        s, remainder = split(text)
+
+        assert s == "nsectetur.\n\nIn rhoncus ipsum sed lectus porta"
+        assert remainder == "tus porta volutpat, ut aliquet magna."
+
 
 class Describe_CellAccumulator:
     """Unit-test suite for `unstructured.chunking.base._CellAccumulator`."""

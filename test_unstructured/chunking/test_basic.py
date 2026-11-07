@@ -221,6 +221,22 @@ def test_skip_table_chunking_does_not_affect_text_element_chunking():
     assert table_chunks[0].text == "small table"
 
 
+def test_it_does_not_emit_a_chunk_holding_only_the_overlap_when_overlap_all_splits_an_element():
+    elements = [
+        Text("Lorem ipsum dolor sit amet, consectetur."),
+        Text("In rhoncus ipsum sed lectus porta volutpat, ut aliquet magna."),
+    ]
+
+    chunks = chunk_elements(elements, max_characters=50, overlap=10, overlap_all=True)
+
+    assert [c.text for c in chunks] == [
+        "Lorem ipsum dolor sit amet, consectetur.",
+        # -- the overlap prefix shares a chunk with the start of the split element --
+        "nsectetur.\n\nIn rhoncus ipsum sed lectus porta",
+        "tus porta volutpat, ut aliquet magna.",
+    ]
+
+
 # ------------------------------------------------------------------------------------------------
 # UNIT TESTS
 # ------------------------------------------------------------------------------------------------
