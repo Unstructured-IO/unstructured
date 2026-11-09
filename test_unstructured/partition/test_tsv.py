@@ -21,7 +21,6 @@ from test_unstructured.partition.test_constants import (
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.base import TokenCounter
 from unstructured.chunking.title import chunk_by_title
-from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Table
 from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.auto import partition
@@ -287,7 +286,7 @@ def test_partition_tsv_counts_every_implicit_index_column_before_pandas_reads(
     read_csv_.assert_not_called()
 
 
-def test_partition_tsv_with_implicit_index_columns_matches_pandas_within_the_limit(
+def test_partition_tsv_keeps_data_rows_wider_than_the_header_within_the_limit(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
     monkeypatch.delenv("CSV_MAX_CELLS", raising=False)
@@ -296,10 +295,8 @@ def test_partition_tsv_with_implicit_index_columns_matches_pandas_within_the_lim
 
     (table,) = partition_tsv(str(file_path), include_header=True)
 
-    expected = pd.read_csv(file_path, sep="\t", header=0).to_html(
-        index=False, header=True, na_rep=""
-    )
-    assert table.text == HtmlTable.from_html_text(expected).text
+    # -- Pandas alone makes "x" and "y" index names and each "a" a row index, leaving "h z" --
+    assert table.text == "h Unnamed: 1 Unnamed: 2 x y z a a a"
 
 
 # -- `infer_table_structure` ---------------------------------------------------------------------
@@ -537,3 +534,13 @@ def test_partition_tsv_reads_a_line_break_in_a_quoted_cell_as_whitespace_not_an_
         "<table><tr><td>name</td><td>note</td></tr>"
         "<tr><td>Bob</td><td>line one line two</td></tr></table>"
     )
+
+
+@pytest.mark.parametrize("include_header", [False, True])
+def test_partition_tsv_keeps_every_field_of_a_record_wider_than_the_first(include_header: bool):
+    data = b"name\tqty\napple\t3\t\npear\t5\tred\n"
+
+    element = partition_tsv(file=io.BytesIO(data), include_header=include_header)[0]
+
+    header_text = "name qty Unnamed: 2" if include_header else "name qty"
+    assert element.text == f"{header_text} apple 3 pear 5 red"
