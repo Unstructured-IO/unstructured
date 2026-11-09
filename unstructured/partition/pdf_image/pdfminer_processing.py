@@ -901,12 +901,16 @@ def remove_duplicate_elements(
 
 
 def _aggregated_iou(box1s, box2):
-    intersection = 0.0
-    sum_areas = calculate_bbox_area(box2)
+    x1, y1, x2, y2 = box1s[:, 0], box1s[:, 1], box1s[:, 2], box1s[:, 3]
+    inter_w = np.minimum(x2, box2[2]) - np.maximum(x1, box2[0])
+    inter_h = np.minimum(y2, box2[3]) - np.maximum(y1, box2[1])
+    inter_areas = np.where((inter_w > 0) & (inter_h > 0), inter_w * inter_h, 0.0)
+    areas = (x2 - x1) * (y2 - y1)
 
-    for i in range(box1s.shape[0]):
-        intersection += calculate_intersection_area(box1s[i, :], box2)
-        sum_areas += calculate_bbox_area(box1s[i, :])
+    # -- cumsum accumulates left to right like the scalar loop this replaced, so the float
+    # -- result is bit-identical (np.sum's pairwise summation would not be). --
+    intersection = np.cumsum(np.concatenate(([0.0], inter_areas)))[-1]
+    sum_areas = np.cumsum(np.concatenate(([calculate_bbox_area(box2)], areas)))[-1]
 
     union = sum_areas - intersection
 
@@ -937,16 +941,14 @@ def aggregate_embedded_text_by_block(
         .astype(bool)
     )
 
-    text = " ".join([text for text in source_regions.slice(mask).texts if text])
+    selected = source_regions.slice(mask)
+    text = " ".join([text for text in selected.texts if text])
 
-    if sum(mask):
-        source_bboxes = source_regions.slice(mask).element_coords
-        target_bboxes = target_region.element_coords
-
-        iou = _aggregated_iou(source_bboxes, target_bboxes[0, :])
+    if mask.any():
+        iou = _aggregated_iou(selected.element_coords, target_region.element_coords[0, :])
 
         fully_filled = (
-            all(flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array)
+            all(flag == IsExtracted.TRUE for flag in selected.is_extracted_array)
             and iou > text_coverage_threshold
         )
         is_extracted = IsExtracted.TRUE if fully_filled else IsExtracted.PARTIAL
