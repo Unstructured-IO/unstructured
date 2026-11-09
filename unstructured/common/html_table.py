@@ -327,11 +327,16 @@ class HtmlRow:
 
         A cell that is empty or contains only whitespace does not generate a string.
         """
-        for td in self._tr:
-            text = normalize_html_cell_text(td)
-            if not text:
-                continue
-            yield text
+        return iter(self._cell_texts)
+
+    @cached_property
+    def _cell_texts(self) -> tuple[str, ...]:
+        """Normalized text of each non-empty cell in this row.
+
+        Computed once because chunking reads a row's cell texts several times: to see whether the
+        row fits, to add it, and to form the chunk text.
+        """
+        return tuple(text for td in self._tr if (text := normalize_html_cell_text(td)))
 
     @cached_property
     def text_len(self) -> int:
