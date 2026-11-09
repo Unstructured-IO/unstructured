@@ -366,8 +366,11 @@ class _PptxPartitioner:
                 else:
                     yield shape
 
-        def sort_key(shape: BaseShape) -> tuple[int, int]:
-            return shape.top or 0, shape.left or 0
+        def sort_key(shape: BaseShape) -> tuple[float, float]:
+            # -- a grouped shape is positioned in its group's child coordinates, so order it by
+            # -- where the group transform puts it on the slide --
+            left, top, _, _ = self._shape_slide_box(cast(Shape, shape))
+            return top or 0, left or 0
 
         return slide.shapes.title, sorted(iter_shapes(slide.shapes), key=sort_key)
 
