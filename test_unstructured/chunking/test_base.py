@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import html as html_stdlib
 import io
+import json
 import logging
 import random
 from typing import Any, Sequence
@@ -52,6 +53,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.partition.json import partition_json
 
 # ================================================================================================
 # CHUNKING OPTIONS
@@ -1805,6 +1807,43 @@ class Describe_TableChunker:
         "Bob Williams   Data Scientist\n"
         "Charlie Brown  Product Manager"
     )
+
+    @pytest.mark.parametrize("max_characters", [60, 500])
+    @pytest.mark.parametrize("from_json", [False, True])
+    @pytest.mark.parametrize(
+        ("cell_html", "cell_text"),
+        [
+            ("alpha <b>beta</b>", "alpha beta"),
+            ("<b>alpha</b> <i>beta</i>", "alpha beta"),
+            ("<b>alpha </b>beta", "alpha beta"),
+            ("<span>alpha</span>\n <span>beta</span>", "alpha beta"),
+            ("alpha<b>beta</b>", "alphabeta"),
+            ("<span>alpha</span><span>beta</span>", "alphabeta"),
+        ],
+    )
+    def it_preserves_inline_word_boundaries_in_public_table_chunks(
+        self, max_characters: int, from_json: bool, cell_html: str, cell_text: str
+    ):
+        table_text = f"{cell_text} gamma delta epsilon zeta eta theta"
+        table_html = (
+            f"<table><tr><td>{cell_html}</td><td>gamma delta</td></tr>"
+            "<tr><td>epsilon zeta</td><td>eta theta</td></tr></table>"
+        )
+        table = Table(table_text, metadata=ElementMetadata(text_as_html=table_html))
+
+        if from_json:
+            chunks = partition_json(
+                text=json.dumps([table.to_dict()]),
+                chunking_strategy="basic",
+                max_characters=max_characters,
+            )
+        else:
+            chunks = chunk_elements([table], max_characters=max_characters)
+
+        assert all(isinstance(c, TableChunk if max_characters == 60 else Table) for c in chunks)
+        assert " ".join(c.text for c in chunks) == table_text
+        first_cell = fragment_fromstring(chunks[0].metadata.text_as_html).xpath("./tr/td")[0]
+        assert " ".join(first_cell.text_content().split()) == cell_text
 
     @staticmethod
     def _table_chunks(
