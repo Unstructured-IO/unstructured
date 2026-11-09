@@ -906,6 +906,32 @@ def test_partition_pptx_grabs_tables():
     assert elements[1].metadata.filename == "fake-power-point-table.pptx"
 
 
+def test_partition_pptx_preserves_merged_table_cells(tmp_path: pathlib.Path):
+    filename = str(tmp_path / "merged-table.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+    table = slide.shapes.add_table(3, 3, Inches(1), Inches(1), Inches(6), Inches(2)).table
+    table.cell(0, 0).merge(table.cell(0, 1))
+    table.cell(0, 0).text = "horizontal"
+    table.cell(0, 2).text = "right"
+    table.cell(1, 0).merge(table.cell(2, 0))
+    table.cell(1, 0).text = "vertical"
+    table.cell(1, 1).text = "middle"
+    table.cell(1, 2).text = "r1"
+    table.cell(2, 1).text = "bottom"
+    table.cell(2, 2).text = "r2"
+    presentation.save(filename)
+
+    (element,) = partition_pptx(filename)
+
+    assert element.text == "horizontal right vertical middle r1 bottom r2"
+    assert element.metadata.text_as_html == (
+        '<table><tr><td colspan="2">horizontal</td><td>right</td></tr>'
+        '<tr><td rowspan="2">vertical</td><td>middle</td><td>r1</td></tr>'
+        "<tr><td>bottom</td><td>r2</td></tr></table>"
+    )
+
+
 @pytest.mark.parametrize("infer_table_structure", [True, False])
 def test_partition_pptx_infer_table_structure(infer_table_structure: bool):
     elements = partition_pptx(

@@ -23,7 +23,7 @@ from pptx.slide import Slide
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.common.html_table import HtmlTable, htmlify_matrix_of_cell_texts
+from unstructured.common.html_table import HtmlTable, htmlify_matrix_of_spanned_cell_texts
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -304,8 +304,19 @@ class _PptxPartitioner:
         if not (rows := list(graphfrm.table.rows)):
             return
 
-        html_text = htmlify_matrix_of_cell_texts(
-            [[cell.text for cell in row.cells] for row in rows]
+        html_text = htmlify_matrix_of_spanned_cell_texts(
+            [
+                [
+                    (
+                        cell.text,
+                        cell.span_width if cell.is_merge_origin else 1,
+                        cell.span_height if cell.is_merge_origin else 1,
+                    )
+                    for cell in row.cells
+                    if not cell.is_spanned
+                ]
+                for row in rows
+            ]
         )
         html_table = HtmlTable.from_html_text(html_text)
 
