@@ -84,10 +84,14 @@ def partition_text(
     elif text is not None:
         file_text = str(text)
 
-    # A lone CR is a line break. The splitters only recognize LF, so a CR-only
-    # file stayed one element and kept the CR characters in the text. Convert
-    # CRLF first so that pair remains a single break.
-    file_text = file_text.replace("\r\n", "\n").replace("\r", "\n")
+    # The splitters recognize LF only. A CR-only file (classic Mac text, and
+    # some exporters) stayed one element and kept the CR characters. Convert
+    # those CRs once, before grouping. LF and CRLF are left alone: CRLF already
+    # breaks once, and a CR in text that also contains LF stays in the element.
+    # A caller-supplied paragraph_grouper, including a custom line_split, still
+    # sees the original characters.
+    if (paragraph_grouper is None or paragraph_grouper is False) and "\n" not in file_text:
+        file_text = file_text.replace("\r", "\n")
 
     if paragraph_grouper is False:
         pass
