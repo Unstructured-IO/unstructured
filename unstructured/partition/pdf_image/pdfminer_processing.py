@@ -501,9 +501,10 @@ def process_page_layout_from_pdfminer(
                 page_number,
                 annotation_threshold,
             )
-            _, words = get_words_from_obj(obj, page_height)
-            for annot in annotations_within_element:
-                urls_metadata.append(map_bbox_and_index(words, annot))
+            if annotations_within_element:
+                _, words = get_words_from_obj(obj, page_height)
+                for annot in annotations_within_element:
+                    urls_metadata.append(map_bbox_and_index(words, annot))
 
         if hasattr(obj, "get_text"):
             inner_text_objects = extract_text_objects(obj)
