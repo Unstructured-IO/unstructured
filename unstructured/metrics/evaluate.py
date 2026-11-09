@@ -533,13 +533,13 @@ def get_mean_grouping(
 
     if eval_name == "text_extraction":
         agg_fields = ["cct-accuracy", "cct-%missing"]
-        agg_name = "cct"
+        agg_name = agg_name or "cct"
     elif eval_name == "element_type":
         agg_fields = ["element-type-accuracy"]
-        agg_name = "element-type"
+        agg_name = agg_name or "element-type"
     elif eval_name == "object_detection":
         agg_fields = ["f1_score", "m_ap"]
-        agg_name = "object-detection"
+        agg_name = agg_name or "object-detection"
     else:
         raise ValueError(
             f"Unknown metric for eval {eval_name}. "
