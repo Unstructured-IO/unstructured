@@ -84,6 +84,11 @@ def partition_text(
     elif text is not None:
         file_text = str(text)
 
+    # A lone CR is a line break. The splitters only recognize LF, so a CR-only
+    # file stayed one element and kept the CR characters in the text. Convert
+    # CRLF first so that pair remains a single break.
+    file_text = file_text.replace("\r\n", "\n").replace("\r", "\n")
+
     if paragraph_grouper is False:
         pass
     elif paragraph_grouper is not None:

@@ -195,6 +195,19 @@ def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(
     assert partition_text(text=text) == expected
 
 
+def test_partition_text_treats_a_lone_carriage_return_as_a_line_break():
+    """A CR that is not part of CRLF splits paragraphs the same way LF does."""
+    lf_paragraphs = "Hello world.\n\nSecond paragraph.\n"
+    lf_lines = "one\ntwo\nthree\n"
+    crlf_paragraphs = "Hello world.\r\n\r\nSecond paragraph.\r\n"
+
+    lone_cr = partition_text(text="Hello world.\r\rSecond paragraph.\r")
+    assert lone_cr == partition_text(text=lf_paragraphs)
+    assert all("\r" not in element.text for element in lone_cr)
+    assert partition_text(text="one\rtwo\rthree\r") == partition_text(text=lf_lines)
+    assert partition_text(text=crlf_paragraphs) == partition_text(text=lf_paragraphs)
+
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
