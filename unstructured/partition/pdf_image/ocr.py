@@ -24,6 +24,11 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT, OCRMode
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+from unstructured.partition.utils.progress import (
+    STAGE_OCR,
+    ProgressCallback,
+    report_page_progress,
+)
 from unstructured.telemetry import mark_partition_ocr_used, mark_partition_table_extraction
 from unstructured.utils import requires_dependencies
 
@@ -47,6 +52,8 @@ def process_data_with_ocr(
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
     password: Optional[str] = None,
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    progress_callback: Optional[ProgressCallback] = None,
+    show_progress: bool = False,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given data and supplement the output DocumentLayout
@@ -75,6 +82,12 @@ def process_data_with_ocr(
 
     - ocr_layout_dumper (OCRLayoutDumper, optional): The OCR layout dumper to save the OCR layout.
 
+    - progress_callback (ProgressCallback, optional): Called with a `PartitionProgress` after
+      each page is OCR'd. Defaults to None.
+
+    - show_progress (bool, optional): If True, draw a tqdm progress bar while pages are OCR'd.
+      Defaults to False.
+
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
@@ -96,6 +109,8 @@ def process_data_with_ocr(
             ocr_layout_dumper=ocr_layout_dumper,
             password=password,
             table_ocr_agent=table_ocr_agent,
+            progress_callback=progress_callback,
+            show_progress=show_progress,
         )
 
     return merged_layouts
@@ -115,6 +130,8 @@ def process_file_with_ocr(
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
     password: Optional[str] = None,
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    progress_callback: Optional[ProgressCallback] = None,
+    show_progress: bool = False,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
@@ -143,6 +160,12 @@ def process_file_with_ocr(
     - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to
       env_config.PDF_RENDER_DPI.
 
+    - progress_callback (ProgressCallback, optional): Called with a `PartitionProgress` after
+      each page is OCR'd. Defaults to None.
+
+    - show_progress (bool, optional): If True, draw a tqdm progress bar while pages are OCR'd.
+      Defaults to False.
+
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
@@ -152,7 +175,12 @@ def process_file_with_ocr(
     merged_page_layouts: list[PageLayout] = []
     try:
         if is_image:
-            with PILImage.open(filename) as images:
+            with (
+                PILImage.open(filename) as images,
+                report_page_progress(
+                    STAGE_OCR, getattr(images, "n_frames", 1), progress_callback, show_progress
+                ) as reporter,
+            ):
                 image_format = images.format
                 for i, image in enumerate(ImageSequence.Iterator(images)):
                     image = image.convert("RGB")
@@ -170,6 +198,8 @@ def process_file_with_ocr(
                         table_ocr_agent=table_ocr_agent,
                     )
                     merged_page_layouts.append(merged_page_layout)
+                    if reporter:
+                        reporter.page_done()
                 return DocumentLayout.from_pages(merged_page_layouts)
         else:
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -182,21 +212,28 @@ def process_file_with_ocr(
                 )
                 image_paths = cast(List[str], _image_paths)
 
-                for i, image_path in enumerate(image_paths):
-                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
-                    with PILImage.open(image_path) as image:
-                        merged_page_layout = supplement_page_layout_with_ocr(
-                            page_layout=out_layout.pages[i],
-                            image=image,
-                            infer_table_structure=infer_table_structure,
-                            ocr_agent=ocr_agent,
-                            ocr_languages=ocr_languages,
-                            ocr_mode=ocr_mode,
-                            extracted_regions=extracted_regions,
-                            ocr_layout_dumper=ocr_layout_dumper,
-                            table_ocr_agent=table_ocr_agent,
+                with report_page_progress(
+                    STAGE_OCR, len(image_paths), progress_callback, show_progress
+                ) as reporter:
+                    for i, image_path in enumerate(image_paths):
+                        extracted_regions = (
+                            extracted_layout[i] if i < len(extracted_layout) else None
                         )
-                        merged_page_layouts.append(merged_page_layout)
+                        with PILImage.open(image_path) as image:
+                            merged_page_layout = supplement_page_layout_with_ocr(
+                                page_layout=out_layout.pages[i],
+                                image=image,
+                                infer_table_structure=infer_table_structure,
+                                ocr_agent=ocr_agent,
+                                ocr_languages=ocr_languages,
+                                ocr_mode=ocr_mode,
+                                extracted_regions=extracted_regions,
+                                ocr_layout_dumper=ocr_layout_dumper,
+                                table_ocr_agent=table_ocr_agent,
+                            )
+                            merged_page_layouts.append(merged_page_layout)
+                        if reporter:
+                            reporter.page_done()
 
                 return DocumentLayout.from_pages(merged_page_layouts)
     except Exception as e:
