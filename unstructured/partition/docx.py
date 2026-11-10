@@ -581,6 +581,12 @@ class _DocxPartitioner:
         # -- text once --
         cell_texts: dict[Any, str] = {}
 
+        # -- The origin `tc` of the vertical span covering each grid column, tracked while rows
+        # -- are visited top-down. This resolves `vMerge="continue"` without `row.cells`, which
+        # -- recurses to the cell above once per merged row and raises RecursionError on a long
+        # -- merge (the recursion is inside python-docx, so it can't be raised on its behalf). --
+        vmerge_origins: dict[int, Any] = {}
+
         def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
             """Generate the text of each paragraph or table in `cell` as a separate string.
 
@@ -619,10 +625,27 @@ class _DocxPartitioner:
                 yield "", None
 
             try:
-                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
-                # -- table has merged or malformed cells. always wrap in try/except.
-                for cell in row.cells:
-                    yield cell_text(cell), cell
+                # -- Walk the row's own `tc` elements and expand their grid spans by hand rather
+                # -- than via `row.cells`: a `vMerge="continue"` tc is resolved to the origin
+                # -- tracked for its grid column (the same underlying `tc` python-docx would
+                # -- find by recursing upward), so no recursion runs however long the merge is.
+                # -- A malformed row can still raise (e.g. `ValueError` from a tc wider than the
+                # -- grid accounts for); that still skips the rest of the row, as before.
+                offset = row.grid_cols_before
+                for tc in row._tr.tc_lst:
+                    span = max(tc.grid_span, 1)
+                    if tc.vMerge == "continue":
+                        # -- fall back to the tc itself when no origin was tracked for this
+                        # -- column (a malformed document), rather than losing the position --
+                        origin = vmerge_origins.get(offset, tc)
+                    else:
+                        origin = tc
+                        for col in range(offset, offset + span):
+                            vmerge_origins[col] = tc
+                    origin_cell = _Cell(origin, table)
+                    for _ in range(span):
+                        yield cell_text(origin_cell), origin_cell
+                    offset += span
             except Exception as e:
                 logging.warning(f"Skipping cell in _convert_table_to_html due to: {e}")
                 yield "", None
