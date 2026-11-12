@@ -83,6 +83,18 @@ def test_partition_tsv_from_file_with_metadata_filename():
     assert all(element.metadata.filename == "test" for element in elements)
 
 
+def test_partition_tsv_from_an_empty_file_produces_no_elements():
+    elements = partition_tsv(file=io.BytesIO(b""))
+
+    assert elements == []
+
+
+def test_partition_tsv_from_a_file_of_only_blank_lines_produces_no_elements():
+    elements = partition_tsv(file=io.BytesIO(b"\n\n  \n"))
+
+    assert elements == []
+
+
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 

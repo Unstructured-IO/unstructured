@@ -73,6 +73,10 @@ def partition_csv(
             file, sep=ctx.delimiter, header=ctx.header, encoding=ctx.encoding
         )
 
+    if not len(dataframe.columns):
+        # -- an empty file holds no table --
+        return []
+
     html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
 
     metadata = ElementMetadata(
@@ -119,11 +123,16 @@ def read_delimited_text(
     # -- "N/A", "NULL" or "None", turns a column of whole numbers with one empty cell into floats
     # -- (12 reads "12.0") and drops the leading zeros of a code such as "007" --
     cells_as_written = {"dtype": str, "keep_default_na": False}
-    if sep is None:
-        sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
-        # -- the C engine does not sniff, so keep the Python engine this path has always used --
-        return pd.read_csv(reader, sep=sep, header=header, engine="python", **cells_as_written)
-    return pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
+    try:
+        if sep is None:
+            sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
+            # -- the C engine does not sniff, so keep the Python engine this path has always used --
+            return pd.read_csv(reader, sep=sep, header=header, engine="python", **cells_as_written)
+        return pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
+    except pd.errors.EmptyDataError:
+        # -- an empty file, or one of only blank lines, has no columns; the partitioners turn that
+        # -- into no elements, the same as partitioning an empty text, markdown or HTML file --
+        return pd.DataFrame()
 
 
 def check_cell_count(
