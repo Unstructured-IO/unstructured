@@ -103,6 +103,9 @@ class ObjectDetectionEvalProcessor:
         with open(ground_truth_file_path, encoding="utf-8") as f:
             ground_truth_data = json.load(f)
 
+        for data in (predictions_data, ground_truth_data):
+            data["pages"].sort(key=lambda page: page["number"])
+
         assert sorted(predictions_data["object_detection_classes"]) == sorted(
             ground_truth_data["object_detection_classes"]
         ), "Classes in predictions and ground truth do not match."
@@ -110,8 +113,8 @@ class ObjectDetectionEvalProcessor:
             "Pages number in predictions and ground truth do not match."
         )
         for pred_page, gt_page in zip(
-            sorted(predictions_data["pages"], key=lambda p: p["number"]),
-            sorted(ground_truth_data["pages"], key=lambda p: p["number"]),
+            predictions_data["pages"],
+            ground_truth_data["pages"],
         ):
             assert pred_page["number"] == gt_page["number"], (
                 f"Page numbers in predictions {prediction_file_path.name} "
