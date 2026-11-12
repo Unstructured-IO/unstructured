@@ -3055,7 +3055,7 @@ def test_partition_docx_very_long_vertical_merge_keeps_every_row(tmp_path):
         vmerge = parse_xml(
             f'<w:vMerge {nsdecls("w")} w:val="restart"/>'
             if i == 0
-            else f'<w:vMerge {nsdecls("w")}/>'
+            else f"<w:vMerge {nsdecls('w')}/>"
         )
         tc.get_or_add_tcPr().append(vmerge)
 
