@@ -56,6 +56,11 @@ def shrink_bbox(bbox: tuple[int, int, int, int], shrink_factor) -> tuple[int, in
 
     new_right = right - dw
     new_bottom = bottom - dh
+    # A positive scaled extent must occupy at least one pixel in the projection grid.
+    if new_width > 0:
+        new_right = max(int(left) + 1, new_right)
+    if new_height > 0:
+        new_bottom = max(int(top) + 1, new_bottom)
     return int(left), int(top), int(new_right), int(new_bottom)
 
 
