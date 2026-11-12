@@ -484,7 +484,7 @@ class ObjectDetectionEvalProcessor:
         preds_to_ignore[preds_idx_to_use] = False
 
         if len(targets) > 0:  # or len(crowd_targets) > 0:
-            self._change_bbox_bounds_for_image_size(preds, (height, width))
+            preds_box = self._change_bbox_bounds_for_image_size(preds_box.clone(), (height, width))
 
             preds_matched = self._compute_targets(
                 preds_box,
