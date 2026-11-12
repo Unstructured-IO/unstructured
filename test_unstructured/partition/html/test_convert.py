@@ -488,6 +488,26 @@ def test_elements_to_html_tags_by_parent(
     assert result[3].children[2].element.id == "test-element-10"
 
 
+def test_elements_to_html_tags_by_parent_keeps_an_element_whose_parent_is_absent() -> None:
+    child = TextElementHtml(Element(metadata=ElementMetadata(parent_id="not-in-these-elements")))
+    root = TextElementHtml(Element())
+
+    assert _elements_to_html_tags_by_parent([root, child]) == [root, child]
+
+
+def test_elements_to_html_keeps_a_heading_child_on_a_later_page() -> None:
+    elements = partition_html(
+        text=(
+            '<h1 data-page-number="1">Heading on page one</h1>'
+            '<p data-page-number="2">Paragraph on page two.</p>'
+        ),
+        languages=[""],
+    )
+    assert elements[1].metadata.parent_id == elements[0].id
+
+    assert "Paragraph on page two." in elements_to_html(elements)
+
+
 def test_elements_to_html_tags(mocker: MockerFixture, elements: list[Element]) -> None:
     def _mock_get_html_element(self: ElementHtml, **kwargs: Any):
         return BeautifulSoup(f"<div>{self.element.id}</div>", HTML_PARSER).find()

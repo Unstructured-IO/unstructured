@@ -850,7 +850,13 @@ class PreChunk:
         # -- quite specialized.
         if len(self._elements) == 1 and isinstance(self._elements[0], Table):
             if self._opts.skip_table_chunking:
-                yield self._elements[0]
+                table = self._elements[0]
+                # -- chunking replaces the table's parent so `parent_id` can no longer resolve, like
+                # -- `_TableChunker` drops it. Use a copy because this `Table` doesn't belong to us.
+                if table.metadata.parent_id is not None:
+                    table = copy.deepcopy(table)
+                    table.metadata.parent_id = None
+                yield table
             else:
                 yield from _TableChunker.iter_chunks(
                     self._elements[0], self._overlap_prefix, self._opts
