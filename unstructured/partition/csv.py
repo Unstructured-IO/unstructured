@@ -122,8 +122,16 @@ def read_delimited_text(
     if sep is None:
         sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
         # -- the C engine does not sniff, so keep the Python engine this path has always used --
-        return pd.read_csv(reader, sep=sep, header=header, engine="python", **cells_as_written)
-    return pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
+        dataframe = pd.read_csv(reader, sep=sep, header=header, engine="python", **cells_as_written)
+    else:
+        dataframe = pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
+
+    # -- a row that stops short of the last column has no field there. The Python engine hands that
+    # -- field back as `None` (the C engine reads it as the empty string), and Pandas writes a
+    # -- `None` cell as the literal text "None" -- no formatter and no `na_rep` is consulted first.
+    # -- Read it as the empty text the file holds there, so it does not become a "None" word in the
+    # -- element text and its `text_as_html`.
+    return dataframe.fillna("")
 
 
 def check_cell_count(
