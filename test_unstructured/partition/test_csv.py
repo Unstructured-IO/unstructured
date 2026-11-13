@@ -489,6 +489,19 @@ class Describe_CsvPartitioningContext:
         with pytest.raises(ValueError, match="either file-path or file-like object must be prov"):
             _CsvPartitioningContext()._validate()
 
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "https://example.com/documents/stanley-cups.csv",
+            "s3://unstructured-test/csv/stanley-cups.csv",
+        ],
+    )
+    def and_it_raises_when_the_file_path_is_a_URL(self, url: str):
+        # -- pandas `get_handle()` would fetch a URL on each read, bypassing the scheme,
+        # -- redirect, and private-address checks applied to `partition(url=...)` --
+        with pytest.raises(ValueError, match="filename must be a local file path"):
+            _CsvPartitioningContext(file_path=url)._validate()
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
@@ -958,3 +971,11 @@ def test_partition_csv_headerless_sniffed_read_does_not_hold_the_first_record(
     assert read_kwargs.get("engine") == "python"
     assert held_during_the_read == []
     assert element.text == "x" * 4096 + " y z a b c"
+
+
+def test_partition_csv_rejects_a_URL_filename_without_fetching_it() -> None:
+    # -- port 1 has no listener, so an unguarded call would surface a network error from the
+    # -- fetch attempt rather than this ValueError; a remote document goes through
+    # -- `partition(url=...)`, whose fetch applies the safe-HTTP checks --
+    with pytest.raises(ValueError, match="use partition"):
+        partition_csv("http://127.0.0.1:1/documents/stanley-cups.csv")

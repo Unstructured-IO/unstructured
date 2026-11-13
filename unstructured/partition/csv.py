@@ -9,6 +9,7 @@ import itertools
 import re
 from functools import cached_property, partial
 from typing import IO, Any, Callable, Iterator, NoReturn, cast
+from urllib.parse import urlparse
 
 import pandas as pd
 from pandas.io.common import get_handle
@@ -869,4 +870,14 @@ class _CsvPartitioningContext:
         """Raise on invalid argument values."""
         if self._file_path is None and self._file is None:
             raise ValueError("either file-path or file-like object must be provided")
+        if self._file_path and urlparse(self._file_path).scheme and "://" in self._file_path:
+            # -- a URL is not a filename: `get_handle()` would fetch it separately for the
+            # -- delimiter sniff, the cell-count check, and the read, with none of the scheme,
+            # -- redirect, and private-address checks applied to a `partition(url=...)` fetch;
+            # -- the `"://"` test keeps a Windows drive-letter path (e.g. "C:\\dir\\f.csv")
+            # -- out, since urlparse() reports a drive letter as its scheme --
+            raise ValueError(
+                f"filename must be a local file path, got URL {self._file_path!r};"
+                " use partition(url=...) to partition a remote document"
+            )
         return self
