@@ -62,9 +62,11 @@ def partition_tsv(
         # -- like `pd.read_csv(filename)`, decompress a file named e.g. "x.tsv.gz"; the size check
         # -- and the read each get their own decompressing handle on the same content --
         with _open_decompressed(filename) as f:
-            check_cell_count(f, "\t", None, header=include_header)
+            n_columns = check_cell_count(f, "\t", None)
         with _open_decompressed(filename) as f:
-            dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
+            dataframe = read_delimited_text(
+                f, sep="\t", header=header, encoding=None, n_columns=n_columns
+            )
     else:
         assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
@@ -72,9 +74,11 @@ def partition_tsv(
         f = rewind_if_spooled(file)
         with _rereadable(f) as f:
             start = f.tell()
-            check_cell_count(f, "\t", None, header=include_header)
+            n_columns = check_cell_count(f, "\t", None)
             f.seek(start)
-            dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
+            dataframe = read_delimited_text(
+                f, sep="\t", header=header, encoding=None, n_columns=n_columns
+            )
 
     if not len(dataframe.columns):
         # -- an empty file holds no table --

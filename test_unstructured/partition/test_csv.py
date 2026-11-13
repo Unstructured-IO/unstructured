@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import random
 from pathlib import Path
 
 import pandas as pd
@@ -534,7 +535,7 @@ def test_peek_first_non_blank_line_replays_the_original_chunks():
 def test_partition_csv_counts_the_implicit_index_column_of_a_header(
     monkeypatch: pytest.MonkeyPatch,
 ):
-    # -- data rows one field wider than the header: Pandas uses the extra field as the index --
+    # -- data rows one field wider than the header make the table 3 columns wide --
     data = b"a,b\n1,2,3\n4,5,6\n"
     monkeypatch.setenv("CSV_MAX_CELLS", str(3 * 3))
     assert len(partition_csv(file=io.BytesIO(data), include_header=True)) == 1
@@ -650,3 +651,159 @@ def test_partition_csv_reads_a_line_break_in_a_quoted_cell_as_whitespace_not_an_
         "<tr><td>Alice</td><td>1 Main St Springfield</td></tr>"
         "<tr><td>Bob</td><td>x&lt;y &amp; z</td></tr></table>"
     )
+
+
+# -- records wider than the first ----------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("data", "include_header", "expected_text", "expected_html"),
+    [
+        # -- a trailing delimiter on one data row, as many exporters write --
+        (
+            b"name,qty\napple,3,\npear,5\n",
+            False,
+            "name qty apple 3 pear 5",
+            "<table><tr><td>name</td><td>qty</td><td/></tr>"
+            "<tr><td>apple</td><td>3</td><td/></tr>"
+            "<tr><td>pear</td><td>5</td><td/></tr></table>",
+        ),
+        # -- a closing notes row two fields wider than the rows above it --
+        (
+            b"name,qty\napple,3\nTotal,3,see note,checked\n",
+            False,
+            "name qty apple 3 Total 3 see note checked",
+            "<table><tr><td>name</td><td>qty</td><td/><td/></tr>"
+            "<tr><td>apple</td><td>3</td><td/><td/></tr>"
+            "<tr><td>Total</td><td>3</td><td>see note</td><td>checked</td></tr></table>",
+        ),
+        # -- with a header, the first field of each data row is kept, not made the row index; the
+        # -- header has no cell over the extra column, which is labeled like an empty header cell --
+        (
+            b"a,b\n1,2,3\n4,5,6\n",
+            True,
+            "a b Unnamed: 2 1 2 3 4 5 6",
+            "<table><tr><td>a</td><td>b</td><td>Unnamed: 2</td></tr>"
+            "<tr><td>1</td><td>2</td><td>3</td></tr>"
+            "<tr><td>4</td><td>5</td><td>6</td></tr></table>",
+        ),
+    ],
+)
+def test_partition_csv_keeps_every_field_of_a_record_wider_than_the_first(
+    data: bytes, include_header: bool, expected_text: str, expected_html: str
+):
+    element = partition_csv(file=io.BytesIO(data), include_header=include_header)[0]
+
+    assert element.text == expected_text
+    assert element.metadata.text_as_html == expected_html
+
+
+def test_partition_csv_keeps_the_data_row_the_python_engine_made_index_names():
+    # -- tab-delimited, so read by Pandas' Python engine; the second data row is as wide as the
+    # -- first plus the header, which made the first data row the index names --
+    data = b"a\tb\nidx\ni\t1\t2\nj\t3\t4\n"
+
+    element = partition_csv(file=io.BytesIO(data), include_header=True)[0]
+
+    assert element.text == "a b Unnamed: 2 idx i 1 2 j 3 4"
+    assert element.metadata.text_as_html == (
+        "<table><tr><td>a</td><td>b</td><td>Unnamed: 2</td></tr>"
+        "<tr><td>idx</td><td/><td/></tr>"
+        "<tr><td>i</td><td>1</td><td>2</td></tr>"
+        "<tr><td>j</td><td>3</td><td>4</td></tr></table>"
+    )
+
+
+def test_partition_csv_counts_the_cells_of_a_wide_record_after_the_first(
+    mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    # -- the last record is 1,000 fields wide, so the table is 10 rows x 1,000 columns --
+    data = b"a,b\n" + b"1,2\n" * 8 + b"x" + b"," * 999 + b"\n"
+
+    monkeypatch.setenv("CSV_MAX_CELLS", str(10 * 1000))
+    element = partition_csv(file=io.BytesIO(data))[0]
+    assert element.metadata.text_as_html is not None
+    assert element.metadata.text_as_html.count("<td") == 10 * 1000
+
+    monkeypatch.setenv("CSV_MAX_CELLS", str(10 * 1000 - 1))
+    read_csv_ = mocker.patch.object(pd, "read_csv")
+    with pytest.raises(UnprocessableEntityError, match="1,000 columns"):
+        partition_csv(file=io.BytesIO(data))
+    read_csv_.assert_not_called()
+
+
+def _random_csv(rng: random.Random) -> tuple[bytes, list[list[str]]]:
+    """A CSV file of random records, and the cells Pandas reads from each record.
+
+    Fields mix plain and quoted text, quoted delimiters, line breaks and doubled quotes, a quote
+    inside an unquoted field, and text after the closing quote; records are separated by "\n" or
+    "\r\n", with blank lines between them and sometimes a byte-order mark first.
+    """
+    fields: list[tuple[str, str]] = [  # -- (as written, as read) --
+        ("plain", "plain"),
+        ("", ""),
+        ('"a,b"', "a,b"),
+        ('"line\nbreak"', "line\nbreak"),
+        ('"say ""hi"""', 'say "hi"'),
+        ('x"y', 'x"y'),
+        ('"ab"cd', "abcd"),
+        ('""', ""),
+    ]
+    newline = rng.choice(["\n", "\r\n"])
+    lines: list[str] = []
+    records: list[list[str]] = []
+    for _ in range(rng.randint(1, 12)):
+        record = [rng.choice(fields) for _ in range(rng.randint(1, 6))]
+        if len(record) == 1 and record[0][0] in ("", '""'):
+            record = [fields[0]]  # -- a lone empty field is a blank line, which Pandas skips --
+        lines.append(",".join(written for written, _ in record))
+        records.append([read for _, read in record])
+        if rng.random() < 0.2:
+            lines.append("")
+    text = newline.join(lines) + rng.choice(["", newline])
+    return (("﻿" if rng.random() < 0.2 else "") + text).encode(), records
+
+
+@pytest.mark.parametrize("chunk_size", [1, 3, 1 << 16])
+@pytest.mark.parametrize("seed", range(25))
+def test_check_cell_count_measures_the_widest_record_pandas_reads(
+    seed: int, chunk_size: int, monkeypatch: pytest.MonkeyPatch
+):
+    data, records = _random_csv(random.Random(seed))
+    widest = max(map(len, records))
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", chunk_size)
+
+    n_columns = check_cell_count(io.BytesIO(data), ",", None)
+    frame = read_delimited_text(
+        io.BytesIO(data), sep=",", header=None, encoding=None, n_columns=n_columns
+    )
+
+    assert n_columns == widest
+    assert frame.values.tolist() == [
+        [cell.replace("\r\n", "\n") for cell in record] + [""] * (widest - len(record))
+        for record in records
+    ]
+
+
+@pytest.mark.parametrize("sep", [",", None])
+@pytest.mark.parametrize(
+    "data",
+    [
+        b"a,a,b,a\n1,2,3,4\n",  # -- a repeated label gets a ".1", ".2" suffix --
+        b",x,,\n1,2,3,4\n",  # -- an empty header cell is labeled "Unnamed: <i>" --
+        b'"a,b","say ""hi""","line\nbreak"\n1,2,3\n',  # -- quoted delimiter, quote and newline --
+        b" a , b \n1,2\n",  # -- spaces around a label are kept --
+        b"a,a.1,a\n1,2,3\n",  # -- a label that looks like a renamed repeat --
+        b"a,b,c\n",  # -- a header and no data rows --
+    ],
+)
+def test_read_delimited_text_labels_a_header_the_way_pandas_does(data: bytes, sep: str | None):
+    expected = read_delimited_text(io.BytesIO(data), sep=sep, header=0, encoding=None)
+    n_columns = check_cell_count(io.BytesIO(data), sep, None)
+
+    frame = read_delimited_text(
+        io.BytesIO(data), sep=sep, header=0, encoding=None, n_columns=n_columns
+    )
+
+    assert list(frame.columns) == list(expected.columns)
+    assert frame.values.tolist() == expected.values.tolist()
