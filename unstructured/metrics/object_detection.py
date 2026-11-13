@@ -641,9 +641,6 @@ class ObjectDetectionEvalProcessor:
             rolling_tps + rolling_fps + torch.finfo(torch.float64).eps
         )
 
-        # Reversed cummax to only have decreasing values
-        rolling_precisions = rolling_precisions.flip(0).cummax(0).values.flip(0)
-
         # ==================
         # RECALL & PRECISION
 
@@ -669,6 +666,9 @@ class ObjectDetectionEvalProcessor:
 
         # ==================
         # AVERAGE PRECISION
+
+        # Reversed cummax is the interpolated precision envelope for AP only.
+        rolling_precisions = rolling_precisions.flip(0).cummax(0).values.flip(0)
 
         # shape = (nb_iou_thrs, n_recall_thresholds)
         recall_thresholds = recall_thresholds.view(1, -1).repeat(nb_iou_thrs, 1)

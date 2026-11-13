@@ -434,6 +434,7 @@ def detect_languages(
     """
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
+    An empty language list uses automatic detection, like the default None.
 
     For short ASCII text (fewer than 5 words), language detection is unreliable. By
     default such text is assigned English (["eng"]). Use ``language_fallback`` to
@@ -447,7 +448,7 @@ def detect_languages(
     caller passes explicit languages, those are returned for short text too, and
     ``language_fallback`` is not called.
     """
-    if languages is None:
+    if languages is None or languages == []:
         languages = ["auto"]
     if not isinstance(languages, list):
         raise TypeError(
