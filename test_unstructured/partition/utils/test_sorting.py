@@ -49,7 +49,86 @@ def test_coord_invalid_point_structure():
 @pytest.mark.parametrize("sort_mode", ["xy-cut", "basic"])
 def test_sort_page_elements_without_coordinates(sort_mode):
     elements = [Element(str(idx)) for idx in range(5)]
-    assert sort_page_elements(elements) == elements
+    assert sort_page_elements(elements, sort_mode=sort_mode) == elements
+
+
+@pytest.mark.parametrize(
+    "missing_coordinates",
+    [None, CoordinatesMetadata([], PixelSpace)],
+)
+def test_sort_basic_pushes_elements_without_coordinates_to_the_end(missing_coordinates):
+    # -- the docstring of `sort_page_elements()` promises that SORT_MODE_BASIC sorts by
+    # -- coordinates and pushes elements without them to the end --
+    elements = []
+    for text, top in [("c", 300), ("a", 100), ("b", 200)]:
+        element = Text(text)
+        element.metadata.coordinates = CoordinatesMetadata(
+            [(0, top), (10, top), (10, top + 5), (0, top + 5)],
+            PixelSpace,
+        )
+        elements.append(element)
+
+    coordinate_less = Text("no coordinates")
+    coordinate_less.metadata.coordinates = missing_coordinates
+    elements.insert(1, coordinate_less)
+
+    sorted_page_elements = sort_page_elements(elements, sort_mode=SORT_MODE_BASIC)
+
+    assert [element.text for element in sorted_page_elements] == [
+        "a",
+        "b",
+        "c",
+        "no coordinates",
+    ]
+
+
+@pytest.mark.parametrize(
+    "unusable_points",
+    [
+        [(0,), (0, 10), (10, 10), (10, 0)],
+        [("x", 0), (10, 10), (10, 0), (0, 0)],
+    ],
+)
+@pytest.mark.parametrize(
+    "missing_points",
+    [None, ()],
+    ids=["no-coordinate-metadata", "empty-points"],
+)
+@pytest.mark.parametrize("unusable_first", [True, False])
+def test_sort_basic_keeps_pages_with_mixed_unusable_coordinates(
+    unusable_points, missing_points, unusable_first
+):
+    # -- basic sorting promises not to drop or fail on an element it cannot place: a page that
+    # -- mixes a missing coordinate with a malformed one must still sort and keep everything --
+    elements = []
+    for text, top in [("a", 100), ("b", 200)]:
+        element = Text(text)
+        element.metadata.coordinates = CoordinatesMetadata(
+            [(0, top), (10, top), (10, top + 5), (0, top + 5)],
+            PixelSpace,
+        )
+        elements.append(element)
+
+    unusable = Text("unusable")
+    unusable.metadata.coordinates = CoordinatesMetadata(unusable_points, PixelSpace)
+    elements.append(unusable)
+
+    coordinate_less = Text("no coordinates")
+    # -- both ways an element arrives without a usable position: no coordinate metadata at all,
+    # -- and coordinate metadata that carries no points --
+    coordinate_less.metadata.coordinates = (
+        None if missing_points is None else CoordinatesMetadata(missing_points, PixelSpace)
+    )
+    elements[-1:-1] = [coordinate_less] if unusable_first else []
+    if not unusable_first:
+        elements.append(coordinate_less)
+
+    sorted_page_elements = sort_page_elements(elements, sort_mode=SORT_MODE_BASIC)
+
+    # -- the two usable elements come first in top-to-bottom order; the unusable ones are kept
+    # -- and pushed to the end, where their relative order is not part of the contract --
+    assert [element.text for element in sorted_page_elements][:2] == ["a", "b"]
+    assert {element.text for element in sorted_page_elements[2:]} == {"unusable", "no coordinates"}
 
 
 def test_sort_xycut_neg_coordinates():

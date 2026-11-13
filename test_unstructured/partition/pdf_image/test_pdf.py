@@ -47,6 +47,7 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
+    PageBreak,
     Text,
     Title,
 )
@@ -2778,3 +2779,163 @@ def test_partition_pdf_hi_res_matches_a_failed_full_pass_when_a_later_page_fails
         elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
 
     assert [e.to_dict() for e in elements] == [e.to_dict() for e in expected]
+
+
+_PLACED = {
+    "bottom": (5, 80, 30, 95),
+    "top": (5, 5, 30, 20),
+    "middle": (5, 40, 30, 55),
+}
+
+
+def _ocr_layout_element(text, bbox=None):
+    # -- the shape LayoutElement.to_dict() hands to ocr_data_to_elements(); bbox is
+    # -- (x1, y1, x2, y2) in pixels and is left off for an element the layout model cannot place --
+    layout_element = {"text": text, "type": "NarrativeText"}
+    if bbox is not None:
+        x1, y1, x2, y2 = bbox
+        layout_element["coordinates"] = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+    return layout_element
+
+
+class _UnsortedOCRAgent:
+    """An OCR agent that reports the layout of each page in the order it found the elements in."""
+
+    def __init__(self, *page_layouts):
+        self._page_layouts = list(page_layouts)
+        self._layout_elements = []
+
+    def get_layout_elements_from_image(self, image):
+        self._layout_elements = self._page_layouts.pop(0)
+        return self
+
+    def as_list(self):
+        return self._layout_elements
+
+    def is_text_sorted(self):
+        return False
+
+
+def _use_ocr_agent(monkeypatch, *page_layouts):
+    """Resolve OCR agents to a stub reporting one unsorted layout per page."""
+    from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+
+    agent = _UnsortedOCRAgent(*page_layouts)
+    monkeypatch.setattr(OCRAgent, "get_agent", classmethod(lambda cls, language=None: agent))
+
+
+def _keep_elements_without_coordinates(monkeypatch):
+    """Keep layout elements that have no coordinates instead of failing on them.
+
+    normalize_layout_element() cannot build an element without a coordinate system, so an element
+    the layout model could not place is put back once its neighbours are converted.
+    """
+    ocr_data_to_elements = pdf.ocr_data_to_elements
+
+    def _with_unplaced_elements(ocr_data, *args, **kwargs):
+        placed = [item for item in ocr_data if "coordinates" in item]
+        unplaced = [item for item in ocr_data if "coordinates" not in item]
+        return [
+            *ocr_data_to_elements(placed, *args, **kwargs),
+            *(Text(item["text"]) for item in unplaced),
+        ]
+
+    monkeypatch.setattr(pdf, "ocr_data_to_elements", _with_unplaced_elements)
+
+
+def _partition_an_ocr_page(monkeypatch, layout_elements, **kwargs):
+    _use_ocr_agent(monkeypatch, layout_elements)
+    _keep_elements_without_coordinates(monkeypatch)
+    return pdf._partition_pdf_or_image_with_ocr_from_image(
+        image=Image.new("RGB", (100, 100)),
+        **kwargs,
+    )
+
+
+@pytest.mark.parametrize(
+    "unplaced_element",
+    [
+        None,
+        _ocr_layout_element("unplaceable"),
+        _ocr_layout_element("unplaceable")
+        | {"coordinates": (("x", 0), (0, 10), (10, 10), (10, 0))},
+    ],
+    ids=["all-placed", "missing-coordinates", "malformed-coordinates"],
+)
+def test_ocr_page_returns_the_sorted_elements_and_the_page_break(monkeypatch, unplaced_element):
+    # -- basic sorting returns a new list, so the page break has to be appended to that list and
+    # -- the caller has to return it: otherwise the page loses its order and its break --
+    layout_elements = [_ocr_layout_element(text, bbox) for text, bbox in _PLACED.items()]
+    if unplaced_element is not None:
+        layout_elements.insert(1, unplaced_element)
+
+    elements = _partition_an_ocr_page(
+        monkeypatch,
+        layout_elements,
+        sort_mode=SORT_MODE_BASIC,
+        include_page_breaks=True,
+    )
+
+    expected = ["top", "middle", "bottom"]
+    if unplaced_element is not None:
+        expected.append("unplaceable")
+    assert [element.text for element in elements] == [*expected, ""]
+    assert isinstance(elements[-1], PageBreak)
+
+
+def test_ocr_page_sorts_without_a_page_break_when_none_was_requested(monkeypatch):
+    # -- the sorted list itself is what the caller gets back, with or without a page break --
+    layout_elements = [_ocr_layout_element(text, bbox) for text, bbox in _PLACED.items()]
+
+    elements = _partition_an_ocr_page(monkeypatch, layout_elements, sort_mode=SORT_MODE_BASIC)
+
+    assert [element.text for element in elements] == ["top", "middle", "bottom"]
+
+
+def test_ocr_partition_keeps_the_order_and_the_page_break_of_every_page(monkeypatch):
+    # -- the caller over pages appends what each page returns, so a page whose elements were
+    # -- reordered has to hand back the reordered list, break included, or it loses both --
+    from unstructured.partition.pdf_image import pdf_image_utils
+
+    first_page = [
+        _ocr_layout_element("page one bottom", bbox=(5, 80, 30, 95)),
+        _ocr_layout_element("page one top", bbox=(5, 5, 30, 20)),
+    ]
+    # -- the second page mixes placed elements with one the layout model cannot place --
+    second_page = [
+        _ocr_layout_element("page two bottom", bbox=(5, 80, 30, 95)),
+        _ocr_layout_element("page two unplaceable"),
+        _ocr_layout_element("page two top", bbox=(5, 5, 30, 20)),
+    ]
+    _use_ocr_agent(monkeypatch, first_page, second_page)
+    _keep_elements_without_coordinates(monkeypatch)
+    monkeypatch.setattr(
+        pdf_image_utils,
+        "convert_pdf_to_images",
+        lambda *args, **kwargs: [Image.new("RGB", (100, 100)), Image.new("RGB", (100, 100))],
+    )
+
+    elements = pdf._partition_pdf_or_image_with_ocr(
+        filename="two-pages.pdf",
+        sort_mode=SORT_MODE_BASIC,
+        include_page_breaks=True,
+    )
+
+    assert [element.text for element in elements] == [
+        "page one top",
+        "page one bottom",
+        "",
+        "page two top",
+        "page two bottom",
+        "page two unplaceable",
+        "",
+    ]
+    assert [type(element) for element in elements] == [
+        NarrativeText,
+        NarrativeText,
+        PageBreak,
+        NarrativeText,
+        NarrativeText,
+        Text,
+        PageBreak,
+    ]
