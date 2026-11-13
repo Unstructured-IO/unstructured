@@ -124,6 +124,18 @@ def test_partition_csv_from_file_with_metadata_filename():
     assert elements[0].metadata.filename == "test"
 
 
+def test_partition_csv_from_an_empty_file_produces_no_elements():
+    elements = partition_csv(file=io.BytesIO(b""))
+
+    assert elements == []
+
+
+def test_partition_csv_from_a_file_of_only_blank_lines_produces_no_elements():
+    elements = partition_csv(file=io.BytesIO(b"\n\n  \n"))
+
+    assert elements == []
+
+
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
