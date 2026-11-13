@@ -12,7 +12,13 @@ import pytest
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import example_doc_path
-from unstructured.documents.elements import CompositeElement, TableChunk, Text, Title
+from unstructured.documents.elements import (
+    CompositeElement,
+    ElementMetadata,
+    TableChunk,
+    Text,
+    Title,
+)
 from unstructured.file_utils.model import FileType
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
@@ -240,16 +246,55 @@ def test_partition_ndjson_raises_with_too_many_specified():
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_ndjson_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
+@pytest.mark.parametrize("source_last_modified", ["2001-02-03T04:05:06", None])
+@pytest.mark.parametrize("metadata_last_modified", [None, "2020-07-05T09:24:28"])
+def test_partition_ndjson_from_serialized_file_preserves_source_timestamp_unless_overridden(
+    tmp_path: pathlib.Path,
+    mocker: MockFixture,
+    source_last_modified,
+    metadata_last_modified,
+):
+    """Rehydration preserves stored or absent timestamps unless explicitly overridden."""
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
         "unstructured.partition.ndjson.get_last_modified_date",
         return_value=filesystem_last_modified,
     )
+    path = str(tmp_path / "serialized.ndjson")
+    originals = [
+        Text(text, metadata=ElementMetadata(last_modified=source_last_modified))
+        for text in ("First source paragraph", "Second source paragraph")
+    ]
+    elements_to_ndjson(originals, filename=path)
 
-    elements = partition_ndjson(example_doc_path("spring-weather.html.ndjson"))
+    elements = partition_ndjson(filename=path, metadata_last_modified=metadata_last_modified)
 
-    assert all(e.metadata.last_modified == filesystem_last_modified for e in elements)
+    assert [e.text for e in elements] == [e.text for e in originals]
+    expected = metadata_last_modified or source_last_modified
+    assert all(e.metadata.last_modified == expected for e in elements)
+
+
+@pytest.mark.parametrize("metadata_last_modified", [None, "2020-07-05T09:24:28"])
+def test_partition_ndjson_from_arbitrary_file_uses_filesystem_timestamp_unless_overridden(
+    tmp_path: pathlib.Path, mocker: MockFixture, metadata_last_modified
+):
+    """Ordinary records receive the container timestamp or an explicit override."""
+    filesystem_last_modified = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.ndjson.get_last_modified_date",
+        return_value=filesystem_last_modified,
+    )
+    path = tmp_path / "records.ndjson"
+    path.write_text('{"customer": "first"}\n{"customer": "second"}\n', encoding="utf-8")
+
+    elements = partition_ndjson(filename=str(path), metadata_last_modified=metadata_last_modified)
+
+    assert [json.loads(e.text) for e in elements] == [
+        {"customer": "first"},
+        {"customer": "second"},
+    ]
+    expected = metadata_last_modified or filesystem_last_modified
+    assert all(e.metadata.last_modified == expected for e in elements)
 
 
 def test_partition_ndjson_from_file_gets_last_modified_None():
