@@ -57,11 +57,12 @@ def build_layout_elements_from_ocr_regions(
         for text_section in text_sections:
             regions = []
             words = text_section.replace("\n", " ").split()
+            remaining_indices = indices[mask]
             for i, text in enumerate(ocr_regions.texts[mask]):
                 if not words:
                     break
                 if text in words:
-                    regions.append(indices[mask][i])
+                    regions.append(remaining_indices[i])
                     words.remove(text)
 
             if not regions:
