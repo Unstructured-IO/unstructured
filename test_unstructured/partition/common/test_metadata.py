@@ -18,8 +18,10 @@ from unstructured.documents.elements import (
     ElementMetadata,
     FigureCaption,
     Header,
+    Image,
     ListItem,
     NarrativeText,
+    PageBreak,
     Text,
     Title,
 )
@@ -170,6 +172,32 @@ class Describe_set_element_hierarchy:
             "ListItem should be child of Title 2"
         )
         assert elements[11].metadata.parent_id == elements[8].id, "Text should be child of Title 2"
+
+    @pytest.mark.parametrize("ElementCls", [Image, PageBreak])
+    def it_keeps_the_section_parent_across_a_non_text_element(self, ElementCls: type[Text]):
+        elements = [
+            Title(element_id="0", text="Intro"),
+            NarrativeText(element_id="1", text="First paragraph."),
+            ElementCls(element_id="2", text=""),
+            NarrativeText(element_id="3", text="Second paragraph."),
+            Title(element_id="4", text="Next"),
+            NarrativeText(element_id="5", text="Third paragraph."),
+        ]
+
+        result = set_element_hierarchy(elements)
+
+        assert [e.metadata.parent_id for e in result] == [None, "0", "0", "0", None, "4"]
+
+    def it_keeps_the_section_parent_across_an_image_under_a_header(self):
+        elements = [
+            Header(element_id="0", text="Header"),
+            Image(element_id="1", text=""),
+            Text(element_id="2", text="Text"),
+        ]
+
+        result = set_element_hierarchy(elements)
+
+        assert [e.metadata.parent_id for e in result] == [None, "0", "0"]
 
     def it_applies_custom_rule_set(self):
         elements_to_set = [
