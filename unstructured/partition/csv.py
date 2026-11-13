@@ -155,9 +155,10 @@ def _restore_repeated_header_labels(
     """Give `dataframe` the header labels the file holds where Pandas has renamed a repeated one.
 
     Pandas makes a repeated label unique as it reads the header record, writing "name.1" for a
-    second "name", and renames a column genuinely named "name.1" to "name.2". Each label the
-    file holds is restored to its column; an empty header cell keeps the "Unnamed: n" label
-    Pandas gives it, which is what `partition_csv()` and `partition_tsv()` have always emitted.
+    second "name". When a genuine "name.1" label is also present, Pandas names the repeated
+    "name" column "name.2". Each label the file holds is restored to its column; an empty
+    header cell keeps the "Unnamed: n" label Pandas gives it, which is what `partition_csv()`
+    and `partition_tsv()` have always emitted.
 
     The header record is parsed from `first_line`, the first line the read itself would not
     skip, peeked by `_peek_header_line()`. The labels are left as Pandas wrote them when that
@@ -410,15 +411,24 @@ class _LoneCarriageReturnReader(io.TextIOBase):
 
         A line counts as blank according to `line_is_blank`, by default when it is empty or
         holds only whitespace. The peek gives up once reading on would take it past
-        `max_peek_chunks` chunks, returning "" and leaving what it read queued, so a long
-        blank prefix ahead of the line does not hold the file in memory whole.
+        `max_peek_chunks` new fills or that many chunks' worth of inspected characters,
+        including text already queued by an earlier peek. It checks before slicing the text
+        and returns "", leaving queued input unchanged, when either budget is exceeded.
         """
 
         class _TooFarToPeek(Exception):
             """Raised internally when a bounded peek reads more chunks than it may."""
 
         is_blank = line_is_blank or _is_blank_whitespace
-        n_filled = 0
+        n_filled = n_peeked = 0
+
+        def append_segment(parts: list[str], chunk: str, start: int, end: int) -> None:
+            """Charge queued text to the peek budget before slicing or retaining it."""
+            nonlocal n_peeked
+            n_peeked += end - start
+            if max_peek_chunks is not None and n_peeked > max_peek_chunks * _CSV_CHUNK_CHARS:
+                raise _TooFarToPeek
+            parts.append(self._slice(chunk, start, end))
 
         def fill() -> bool:
             """`self._fill()`, counting the fills and failing the peek past its chunk budget."""
@@ -441,7 +451,7 @@ class _LoneCarriageReturnReader(io.TextIOBase):
                     continue
                 chunk = self._chunks[idx]
                 end = chunk.find("\n", start) + 1 or len(chunk)
-                line_parts.append(self._slice(chunk, start, end))
+                append_segment(line_parts, chunk, start, end)
                 if not is_blank(line_parts[-1]):
                     # -- not blank; complete the line, then return it --
                     while not line_parts[-1].endswith("\n"):
@@ -452,7 +462,7 @@ class _LoneCarriageReturnReader(io.TextIOBase):
                                 return self._join(line_parts)
                         chunk = self._chunks[idx]
                         end = chunk.find("\n") + 1 or len(chunk)
-                        line_parts.append(self._slice(chunk, 0, end))
+                        append_segment(line_parts, chunk, 0, end)
                     return self._join(line_parts)
                 if line_parts[-1].endswith("\n"):
                     line_parts = []

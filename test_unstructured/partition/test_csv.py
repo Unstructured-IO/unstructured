@@ -755,3 +755,60 @@ def test_a_bounded_header_peek_reads_no_more_than_its_chunk_budget(
 
     # -- an unbounded peek still finds the line, and the chunks stay queued for the read --
     assert reader.peek_first_non_blank_line() == "name\tname\n"
+
+
+@pytest.mark.parametrize(("prefix", "field_length"), [("", 80), ("\n" * 80, 1), ("\n" * 80, 80)])
+@pytest.mark.parametrize("suffix", ["", "\n"])
+def test_a_bounded_header_peek_counts_prefilled_text(
+    monkeypatch: pytest.MonkeyPatch, prefix: str, suffix: str, field_length: int
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 32)
+    monkeypatch.setattr(csv_module, "_HEADER_PEEK_MAX_CHUNKS", 2)
+    text = prefix + "name\tname\t" + "\u00e9" * field_length + suffix
+    reader = csv_module._LoneCarriageReturnReader(io.BytesIO(text.encode()), None)
+    assert reader.peek_first_non_blank_line() == text[len(prefix) :]
+    queued = tuple(reader._chunks)
+    copied = reader._chars_copied
+
+    assert csv_module._peek_header_line(reader, "\t") == ""
+    assert reader._chars_copied - copied <= 64
+    assert tuple(reader._chunks) == queued
+    assert reader.read() == text
+
+
+@pytest.mark.parametrize("prefill", [False, True])
+@pytest.mark.parametrize("length", [63, 64, 65])
+def test_a_bounded_header_peek_applies_the_same_text_boundary_to_prefilled_input(
+    monkeypatch: pytest.MonkeyPatch, prefill: bool, length: int
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 32)
+    monkeypatch.setattr(csv_module, "_HEADER_PEEK_MAX_CHUNKS", 2)
+    text = "name\tname\t" + "x" * (length - len("name\tname\t") - 1) + "\n"
+    reader = csv_module._LoneCarriageReturnReader(io.BytesIO(text.encode()), None)
+    if prefill:
+        assert reader.peek_first_non_blank_line() == text
+
+    assert csv_module._peek_header_line(reader, "\t") == (text if length <= 64 else "")
+    assert reader.read() == text
+
+
+@pytest.mark.parametrize("duplicate", [False, True])
+def test_partition_csv_does_not_split_an_oversized_sniffed_header(
+    monkeypatch: pytest.MonkeyPatch, mocker: MockFixture, duplicate: bool
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 32)
+    monkeypatch.setattr(csv_module, "_HEADER_PEEK_MAX_CHUNKS", 2)
+    second_label = "name" if duplicate else "other"
+    long_label = "\u00e9" * 80
+    text = f"name\t{second_label}\t{long_label}\nA\tB\tC\n"
+    sniff = mocker.spy(csv_module, "_sniff_delimiter")
+    split = mocker.spy(csv_module, "_split_header_record")
+
+    element = partition_csv(file=io.BytesIO(text.encode()), include_header=True)[0]
+
+    assert sniff.call_count == 2
+    assert all(call.args[0].startswith("name\t") for call in sniff.call_args_list)
+    split.assert_not_called()
+    expected_second = "name.1" if duplicate else "other"
+    assert element.text == f"name {expected_second} {long_label} A B C"
+    assert f"<td>{expected_second}</td>" in element.metadata.text_as_html
