@@ -28,10 +28,24 @@ def test_thin_boxes_remain_in_the_sorted_permutation(direction, size, order):
 
 
 @pytest.mark.parametrize("direction", ["x", "y"])
-@pytest.mark.parametrize("size", [(1, 10), (10, 1), (1, 1)])
-def test_sorting_real_page_elements_keeps_thin_text(direction, size):
-    width, height = size
-    boxes = [(0, 0, 10, 10), (20, 20, 20 + width, 20 + height), (40, 40, 50, 50)]
+@pytest.mark.parametrize(
+    ("box", "expected_indexes"),
+    [
+        ((20, 30, 21, 40), [0, 1, 2]),
+        ((20, 30, 30, 31), [0, 1, 2]),
+        ((20, 30, 21, 31), [0, 1, 2]),
+        ((20.2, 30.2, 20.8, 40.2), [0, 1, 2]),
+        ((20.2, 30.2, 30.2, 30.8), [0, 1, 2]),
+        ((20.2, 30.2, 20.8, 30.8), [0, 1, 2]),
+        ((20.2, 30.2, 20.2, 40.2), [0, 2]),
+        ((20.2, 30.2, 30.2, 30.2), [0, 2]),
+        ((20.2, 30.2, 20.2, 30.2), [0, 2]),
+    ],
+)
+def test_sorting_real_page_elements_preserves_positive_extents_only(
+    direction, box, expected_indexes
+):
+    boxes = [(0, 0, 10, 10), box, (40, 50, 50, 60)]
     elements = []
     for index, (left, top, right, bottom) in enumerate(boxes):
         element = Text(text=f"part {index}")
@@ -46,8 +60,8 @@ def test_sorting_real_page_elements_keeps_thin_text(direction, size):
         [elements[2], elements[0], elements[1]], xy_cut_primary_direction=direction
     )
 
-    assert [element.text for element in result] == ["part 0", "part 1", "part 2"]
-    assert all(actual is expected for actual, expected in zip(result, elements))
+    assert [element.text for element in result] == [f"part {index}" for index in expected_indexes]
+    assert all(actual is elements[index] for actual, index in zip(result, expected_indexes))
     assert [element.metadata.coordinates.to_dict() for element in elements] == coordinates
 
 
