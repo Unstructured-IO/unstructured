@@ -24,6 +24,14 @@ _P = ParamSpec("_P")
 # -- marker (e.g. `partition(file=f)` with no `metadata_filename`).
 _ATTACHMENT_ELEMENT_ATTR = "_produced_by_attachment_partitioning"
 
+# Internal marker for content that must not participate in heading hierarchy.
+_SKIP_HIERARCHY_ATTR = "_skip_heading_hierarchy"
+
+
+def mark_as_hierarchy_independent(element: Element) -> None:
+    """Keep `element` unparented without changing the surrounding heading stack."""
+    setattr(element, _SKIP_HIERARCHY_ATTR, True)
+
 
 def mark_as_attachment_element(element: Element) -> None:
     """Record that `element` was produced by partitioning an attachment.
@@ -143,6 +151,8 @@ def set_element_hierarchy(
     """
     stack: list[Element] = []
     for element in elements:
+        if getattr(element, _SKIP_HIERARCHY_ATTR, False):
+            continue
         if element.metadata.parent_id is not None:
             continue
         parent_id = None

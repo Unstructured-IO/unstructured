@@ -37,7 +37,11 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import rewind_if_spooled
-from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
+from unstructured.partition.common.metadata import (
+    apply_metadata,
+    get_last_modified_date,
+    mark_as_hierarchy_independent,
+)
 from unstructured.partition.text_type import (
     is_email_address,
     is_possible_narrative_text,
@@ -256,9 +260,12 @@ class _PptxPartitioner:
         if not notes_text:
             return
 
-        yield NarrativeText(
+        notes = NarrativeText(
             text=notes_text, metadata=self._opts.text_metadata(), detection_origin=DETECTION_ORIGIN
         )
+        # Notes precede this slide's title, so the current heading may belong to a prior slide.
+        mark_as_hierarchy_independent(notes)
+        yield notes
 
     def _iter_picture_elements(self, picture: Picture) -> Iterator[Element]:
         """Generate elements derived from the image in `picture`."""

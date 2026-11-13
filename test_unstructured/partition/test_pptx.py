@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
 import pathlib
 import tempfile
 from typing import Any, Iterator, cast
@@ -38,6 +39,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.partition.json import partition_json
 from unstructured.partition.pptx import (
     PptxPartitionerOptions,
     _PptxPartitioner,
@@ -1069,6 +1071,68 @@ def test_partition_pptx_reads_line_breaks_as_newlines(tmp_path: pathlib.Path):
         "Quarterly\nresults",
         "First line\nsecond line",
     ]
+
+
+@pytest.mark.parametrize("include_page_breaks", [True, False])
+@pytest.mark.parametrize("unique_element_ids", [True, False])
+def test_slide_notes_do_not_inherit_prior_slide_heading(
+    tmp_path: pathlib.Path, include_page_breaks: bool, unique_element_ids: bool
+):
+    """Notes stay unparented; ordinary content may continue the preceding slide's section."""
+    filename = str(tmp_path / "slide-notes.pptx")
+    prs = pptx.Presentation()
+    for title, notes in (
+        ("First heading", "First notes"),
+        ("Second heading", "Second notes"),
+        (None, "Third notes"),
+    ):
+        slide = prs.slides.add_slide(prs.slide_layouts[5])
+        if title:
+            slide.shapes.title.text = title
+        slide.notes_slide.notes_text_frame.text = notes
+        if title is None:
+            slide.shapes.add_textbox(Inches(1), Inches(2), Inches(5), Inches(1)).text = (
+                "This paragraph continues the previous section on the next slide."
+            )
+    prs.save(filename)
+
+    elements = partition_pptx(
+        filename,
+        include_slide_notes=True,
+        include_page_breaks=include_page_breaks,
+        unique_element_ids=unique_element_ids,
+    )
+    by_text = {element.text: element for element in elements if element.text}
+    for page, text in enumerate(("First notes", "Second notes", "Third notes"), start=1):
+        note = by_text[text]
+        assert note.metadata.page_number == page
+        assert note.metadata.parent_id is None
+        assert "parent_id" not in note.to_dict()["metadata"]
+    body = by_text["This paragraph continues the previous section on the next slide."]
+    assert body.metadata.parent_id == by_text["Second heading"].id
+    assert_round_trips_through_JSON(elements)
+
+    # Serialized partition output can be rehydrated without reassigning note parents.
+    rehydrated = partition_json(text=json.dumps([element.to_dict() for element in elements]))
+    restored = {element.text: element for element in rehydrated if element.text}
+    for text in ("First notes", "Second notes", "Third notes"):
+        assert restored[text].metadata.parent_id is None
+    assert restored[body.text].metadata.parent_id == restored["Second heading"].id
+    for chunks in (
+        chunk_by_title(rehydrated, include_orig_elements=True),
+        partition_pptx(
+            filename,
+            include_slide_notes=True,
+            include_page_breaks=include_page_breaks,
+            unique_element_ids=unique_element_ids,
+            chunking_strategy="by_title",
+            include_orig_elements=True,
+        ),
+    ):
+        originals = [e for chunk in chunks for e in (chunk.metadata.orig_elements or [])]
+        notes = [e for e in originals if e.text in {"First notes", "Second notes", "Third notes"}]
+        assert len(notes) == 3
+        assert all(note.metadata.parent_id is None for note in notes)
 
 
 def test_partition_pptx_title_shape_detection(tmp_path: pathlib.Path):
