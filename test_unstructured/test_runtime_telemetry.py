@@ -390,7 +390,7 @@ def test_nested_strategy_marker_cannot_change_strategyless_root(captured_events)
 
 @pytest.mark.parametrize(
     ("detected_type", "expected_strategy"),
-    [("eml", "not_applicable"), ("pdf", "ocr_only")],
+    [("eml", "not_applicable"), ("pdf", "ocr_only"), ("webp", "ocr_only")],
 )
 def test_auto_root_accepts_strategy_only_for_pdf_or_image(
     detected_type, expected_strategy, captured_events

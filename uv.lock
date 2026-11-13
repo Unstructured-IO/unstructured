@@ -749,11 +749,11 @@ wheels = [
 
 [[package]]
 name = "certifi"
-version = "2026.2.25"
+version = "2026.10.19"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/af/2d/7bf41579a8986e348fa033a31cdd0e4121114f6bce2457e8876010b092dd/certifi-2026.2.25.tar.gz", hash = "sha256:e887ab5cee78ea814d3472169153c2d12cd43b14bd03329a39a9c6e2e80bfba7", size = 155029, upload-time = "2026-02-25T02:54:17.342Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a6/bd/1436c50cc46699de0230fbaacc1d1de7bfec413176099949e9d5112e88f2/certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae", size = 137598, upload-time = "2026-10-20T02:24:16.604Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl", hash = "sha256:027692e4402ad994f1c42e52a4997a9763c646b73e4096e4d5d6db8af1d6f0fa", size = 153684, upload-time = "2026-02-25T02:54:15.766Z" },
+    { url = "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b", size = 136464, upload-time = "2026-10-20T02:24:15.072Z" },
 ]
 
 [[package]]
@@ -1392,11 +1392,11 @@ wheels = [
 
 [[package]]
 name = "distlib"
-version = "0.4.0"
+version = "0.4.4"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/96/8e/709914eb2b5749865801041647dc7f4e6d00b549cfe88b65ca192995f07c/distlib-0.4.0.tar.gz", hash = "sha256:feec40075be03a04501a973d81f633735b4b69f98b05450592310c0f401a4e0d", size = 614605, upload-time = "2025-07-17T16:52:00.465Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/68/bc/d36966de7304047a1001a7559fbf266c464bb5d8cc85464536ef8c9bcc32/distlib-0.4.4.tar.gz", hash = "sha256:ca4175b4ac7f71223cc30ed7248c45d2b38c2439d8ee6e498ab67ed63cf3508d", size = 621304, upload-time = "2026-10-16T13:56:34.203Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/33/6b/e0547afaf41bf2c42e52430072fa5658766e3d65bd4b03a563d1b6336f57/distlib-0.4.0-py2.py3-none-any.whl", hash = "sha256:9659f7d87e46584a30b5780e43ac7a2143098441670ff0a49d5f9034c54a6c16", size = 469047, upload-time = "2025-07-17T16:51:58.613Z" },
+    { url = "https://files.pythonhosted.org/packages/c1/2b/238f02a4927fa2e27aa995371d240a468b52e42eae44a678434aff736b38/distlib-0.4.4-py2.py3-none-any.whl", hash = "sha256:cf09d55b1e85a89576b036aeb71550bfd68320f3f21761ca329eadadad918638", size = 472099, upload-time = "2026-10-16T13:56:32.053Z" },
 ]
 
 [[package]]
@@ -1590,11 +1590,11 @@ wheels = [
 
 [[package]]
 name = "filelock"
-version = "3.25.2"
+version = "4.2.4"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/94/b8/00651a0f559862f3bb7d6f7477b192afe3f583cc5e26403b44e59a55ab34/filelock-3.25.2.tar.gz", hash = "sha256:b64ece2b38f4ca29dd3e810287aa8c48182bbecd1ae6e9ae126c9b35f1382694", size = 40480, upload-time = "2026-03-11T20:45:38.487Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d8/28/3893324bcadf8f89b1616637468d766af3f625008c0735bf704fdfa86617/filelock-4.2.4.tar.gz", hash = "sha256:c6d8663535e1650ee430507b4ffbac7b464dd64b7647ea0112a9f406499d163d", size = 652444, upload-time = "2026-10-19T01:57:51.001Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/a5/842ae8f0c08b61d6484b52f99a03510a3a72d23141942d216ebe81fefbce/filelock-3.25.2-py3-none-any.whl", hash = "sha256:ca8afb0da15f229774c9ad1b455ed96e85a81373065fb10446672f64444ddf70", size = 26759, upload-time = "2026-03-11T20:45:37.437Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/1b/5e74289a1878e666bb4b65fe5805a04cafcac2aa5f519ef1ead67ef91c56/filelock-4.2.4-py3-none-any.whl", hash = "sha256:301241438c57936ef93f4243a94f2559022268bfcf9b375a9a72eb0f8db8358e", size = 162475, upload-time = "2026-10-19T01:57:49.419Z" },
 ]
 
 [[package]]
@@ -2899,6 +2899,21 @@ dependencies = [
     { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0e/72/a3add0e4eec4eb9e2569554f7c70f4a3c27712f40e3284d483e88094cc0e/langdetect-1.0.9.tar.gz", hash = "sha256:cbc1fef89f8d062739774bd51eda3da3274006b3661d199c2655f6b3f6d605a0", size = 981474, upload-time = "2021-05-07T07:54:13.562Z" }
+
+[[package]]
+name = "langdetect-rs"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/25/11/4291720d53c301379dcc4d8befc85bde3c7fa5a3e3400d1b837b1de3ac80/langdetect_rs-0.1.0.tar.gz", hash = "sha256:965c9a18c58868f7947e1a670753f8fcd7f78f665c7d01f15f607b98fbb7d208", size = 1094983, upload-time = "2026-10-11T17:51:07.437Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f7/41/5351883ff1055ec8bd89214684dca36799e304d74acc0a7059344fe9ece8/langdetect_rs-0.1.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:9c4ccdac6d4fe65f0a2aff7c361d7c8687ac3019719a4949b1329d00dbdb8ae2", size = 1693719, upload-time = "2026-10-11T17:50:57.021Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/82/b333976c1e42861e38c0fdc1b8f042c931a25ebf061bda327d2c82ff0c4a/langdetect_rs-0.1.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:500d73771e3e5c16d80953940f3fed4ec79a81bc958440a33f7f03e83f50511b", size = 1658358, upload-time = "2026-10-11T17:50:58.527Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/0c/077e9237c746284eeaeff43e29efa6a8320158da730b4bad0c4b248c1137/langdetect_rs-0.1.0-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ffcd5443886e925537fee48518807a2f95b361ad3423995e309f381c423903ee", size = 1720738, upload-time = "2026-10-11T17:50:59.917Z" },
+    { url = "https://files.pythonhosted.org/packages/d0/75/bced3d52dca8e8e57f5f2605095ce97683837bb8773d863bf4f4f7c9eaf7/langdetect_rs-0.1.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4b76f6b176ef5e6b8d2fd8a82d2b420c619ee76121200ce52a6edf2485cedfc8", size = 1757807, upload-time = "2026-10-11T17:51:01.604Z" },
+    { url = "https://files.pythonhosted.org/packages/68/59/3ab707864fbe081c373b236e272ecd580a169104bbca9d076207a4df6a11/langdetect_rs-0.1.0-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:c7ceaa90f0c6b195b7344cbc1e56d9f08c39f2c5aa96eccab88a7b81fa11fa0c", size = 1898261, upload-time = "2026-10-11T17:51:03.111Z" },
+    { url = "https://files.pythonhosted.org/packages/fb/7d/ace5fc32c8815db090dc1a6441bb5002e1f3724f2900b74ae3e5dc6d775f/langdetect_rs-0.1.0-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:25f9a29a49b4411b5325df22b3774063d7aa9ee16ea80ace68184f01d997585a", size = 1974701, upload-time = "2026-10-11T17:51:04.494Z" },
+    { url = "https://files.pythonhosted.org/packages/48/94/fc91c8b9dad525132510394b9e945f641c499e7f26533f696dd1ba5e6bb0/langdetect_rs-0.1.0-cp39-abi3-win_amd64.whl", hash = "sha256:aaec3223ae1aadd498eb1cad988f86916928b6b3b13740a0e843e3c8216f091f", size = 1605044, upload-time = "2026-10-11T17:51:06.001Z" },
+]
 
 [[package]]
 name = "langsmith"
@@ -5536,15 +5551,14 @@ wheels = [
 
 [[package]]
 name = "python-discovery"
-version = "1.2.2"
+version = "1.6.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
-    { name = "platformdirs" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/de/ef/3bae0e537cfe91e8431efcba4434463d2c5a65f5a89edd47c6cf2f03c55f/python_discovery-1.2.2.tar.gz", hash = "sha256:876e9c57139eb757cb5878cbdd9ae5379e5d96266c99ef731119e04fffe533bb", size = 58872, upload-time = "2026-04-07T17:28:49.249Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/0b/908da9ef8a14b600fc188eee8d63ede071996114613721153f6fc9ea3cd5/python_discovery-1.6.7.tar.gz", hash = "sha256:7f7c28568c8ec3d988d8bddbdbec8e65f08e8767e52f734e18b8b498549b9b70", size = 117807, upload-time = "2026-10-28T06:24:21.878Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/db/795879cc3ddfe338599bddea6388cc5100b088db0a4caf6e6c1af1c27e04/python_discovery-1.2.2-py3-none-any.whl", hash = "sha256:e1ae95d9af875e78f15e19aed0c6137ab1bb49c200f21f5061786490c9585c7a", size = 31894, upload-time = "2026-04-07T17:28:48.09Z" },
+    { url = "https://files.pythonhosted.org/packages/57/e4/1c7c388e874222c28afb92fe3ebfeebe55555276523ba7aab0a82a10b2b5/python_discovery-1.6.7-py3-none-any.whl", hash = "sha256:5422f67e5f533bb02d7b73de1c422ed74037536fd869e05156c07565926ec68e", size = 39156, upload-time = "2026-10-28T06:24:20.462Z" },
 ]
 
 [[package]]
@@ -7218,6 +7232,7 @@ name = "unstructured"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
+    { name = "certifi" },
     { name = "charset-normalizer" },
     { name = "emoji" },
     { name = "filelock" },
@@ -7248,7 +7263,6 @@ all-docs = [
     { name = "google-cloud-vision" },
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
-    { name = "networkx" },
     { name = "openai-whisper" },
     { name = "openpyxl" },
     { name = "pandas" },
@@ -7304,7 +7318,6 @@ local-inference = [
     { name = "google-cloud-vision" },
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
-    { name = "networkx" },
     { name = "openai-whisper" },
     { name = "openpyxl" },
     { name = "pandas" },
@@ -7361,7 +7374,6 @@ tsv = [
 ]
 xlsx = [
     { name = "msoffcrypto-tool" },
-    { name = "networkx" },
     { name = "openpyxl" },
     { name = "pandas" },
     { name = "xlrd" },
@@ -7381,7 +7393,9 @@ test = [
     { name = "coverage" },
     { name = "freezegun" },
     { name = "grpcio" },
+    { name = "langdetect-rs" },
     { name = "mypy" },
+    { name = "networkx" },
     { name = "pip-licenses" },
     { name = "pydantic" },
     { name = "pytest" },
@@ -7400,9 +7414,10 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.14.3,<5.0.0" },
+    { name = "certifi", specifier = ">=2026.10.19" },
     { name = "charset-normalizer", specifier = ">=3.4.4,<4.0.0" },
     { name = "emoji", specifier = ">=2.15.0,<3.0.0" },
-    { name = "filelock", specifier = ">=3.12.0,<4.0.0" },
+    { name = "filelock", specifier = ">=4.2.1,<5.0.0" },
     { name = "filetype", specifier = ">=1.2.0,<2.0.0" },
     { name = "google-cloud-vision", marker = "extra == 'all-docs'", specifier = ">=3.12.1,<4.0.0" },
     { name = "google-cloud-vision", marker = "extra == 'image'", specifier = ">=3.12.1,<4.0.0" },
@@ -7418,9 +7433,6 @@ requires-dist = [
     { name = "msoffcrypto-tool", marker = "extra == 'all-docs'", specifier = ">=6.0.0,<7.0.0" },
     { name = "msoffcrypto-tool", marker = "extra == 'local-inference'", specifier = ">=6.0.0,<7.0.0" },
     { name = "msoffcrypto-tool", marker = "extra == 'xlsx'", specifier = ">=6.0.0,<7.0.0" },
-    { name = "networkx", marker = "extra == 'all-docs'", specifier = ">=3.2.0,<4.0.0" },
-    { name = "networkx", marker = "extra == 'local-inference'", specifier = ">=3.2.0,<4.0.0" },
-    { name = "networkx", marker = "extra == 'xlsx'", specifier = ">=3.2.0,<4.0.0" },
     { name = "nh3", specifier = ">=0.3.0,<1.0.0" },
     { name = "numba", specifier = ">=0.60.0,<1.0.0" },
     { name = "numpy", specifier = ">=1.26.0,<3.0.0" },
@@ -7526,7 +7538,9 @@ test = [
     { name = "coverage", specifier = ">=7.13.3,<8.0.0" },
     { name = "freezegun", specifier = ">=1.5.5,<2.0.0" },
     { name = "grpcio", specifier = ">=1.78.0,<2.0.0" },
+    { name = "langdetect-rs", specifier = "==0.1.0" },
     { name = "mypy", specifier = ">=1.19.1,<2.0.0" },
+    { name = "networkx", specifier = ">=3.2.0,<4.0.0" },
     { name = "pip-licenses", specifier = ">=5.0.0,<6.0.0" },
     { name = "pydantic", specifier = ">=2.12.5,<3.0.0" },
     { name = "pytest", specifier = ">=9.0.2,<10.0.0" },
@@ -7969,17 +7983,18 @@ wheels = [
 
 [[package]]
 name = "virtualenv"
-version = "21.2.1"
+version = "21.15.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "distlib" },
     { name = "filelock" },
+    { name = "packaging" },
     { name = "platformdirs" },
     { name = "python-discovery" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/97/c5/aff062c66b42e2183201a7ace10c6b2e959a9a16525c8e8ca8e59410d27a/virtualenv-21.2.1.tar.gz", hash = "sha256:b66ffe81301766c0d5e2208fc3576652c59d44e7b731fc5f5ed701c9b537fa78", size = 5844770, upload-time = "2026-04-09T18:47:11.482Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b2/24/20282bc8e69ff8dee680dc2b95e9dc81fa7e7894b14c1a8d06330e97fef7/virtualenv-21.15.1.tar.gz", hash = "sha256:e79c90b8f601701599c25905e02839924fede2c798d52325670d24fbdaab74ee", size = 5517048, upload-time = "2026-10-28T01:12:50.919Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/20/0e/f083a76cb590e60dff3868779558eefefb8dfb7c9ed020babc7aa014ccbf/virtualenv-21.2.1-py3-none-any.whl", hash = "sha256:bd16b49c53562b28cf1a3ad2f36edb805ad71301dee70ddc449e5c88a9f919a2", size = 5828326, upload-time = "2026-04-09T18:47:09.331Z" },
+    { url = "https://files.pythonhosted.org/packages/ce/23/cdab19d3a9da42ca0938081e163e25f81e610141800ead743ba1ee881f0e/virtualenv-21.15.1-py3-none-any.whl", hash = "sha256:0d14a991689c67600316880eadc0a37b7690cb632e3b4ac67e2bc05b2b2e24a4", size = 5558848, upload-time = "2026-10-28T01:12:48.605Z" },
 ]
 
 [[package]]

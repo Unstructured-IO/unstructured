@@ -312,12 +312,12 @@ def is_us_city_state_zip(text: str) -> bool:
     Doylestown, Pennsylvania, 18901
     DOYLESTOWN, PENNSYLVANIA 18901
     """
-    return US_CITY_STATE_ZIP_RE.match(text.strip()) is not None
+    return US_CITY_STATE_ZIP_RE.fullmatch(text.strip()) is not None
 
 
 def is_email_address(text: str) -> bool:
     """Check if the given text is the email address"""
-    return EMAIL_ADDRESS_PATTERN_RE.match(text.strip()) is not None
+    return EMAIL_ADDRESS_PATTERN_RE.fullmatch(text.strip()) is not None
 
 
 def is_possible_numbered_list(text: str) -> bool:
