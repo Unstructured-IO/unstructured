@@ -40,10 +40,12 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
     def initialize(self):
         pass
 
+    @property
     def num_of_dimensions(self):
         exemplary_embedding = self.get_exemplary_embedding()
         return np.shape(exemplary_embedding)
 
+    @property
     def is_unit_vector(self):
         exemplary_embedding = self.get_exemplary_embedding()
         return np.isclose(np.linalg.norm(exemplary_embedding), 1.0)
