@@ -192,9 +192,9 @@ def extract_and_convert_tables_from_prediction(
 
     extract_cells_fn = source_type_to_extraction_strategies[source_type]
     fallback_extract_cells_fn = (
-        extract_cells_from_table_as_cells
+        extract_cells_from_text_as_html
         if source_type == "cells"
-        else extract_cells_from_text_as_html
+        else extract_cells_from_table_as_cells
     )
 
     predicted_table_data = []
