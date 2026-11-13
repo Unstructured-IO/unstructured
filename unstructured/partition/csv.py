@@ -7,7 +7,7 @@ import csv
 import io
 import itertools
 import re
-from functools import cached_property
+from functools import cached_property, partial
 from typing import IO, Any, Callable, Iterator, NoReturn
 
 import pandas as pd
@@ -123,16 +123,179 @@ def read_delimited_text(
     # -- "N/A", "NULL" or "None", turns a column of whole numbers with one empty cell into floats
     # -- (12 reads "12.0") and drops the leading zeros of a code such as "007" --
     cells_as_written = {"dtype": str, "keep_default_na": False}
+    # -- the first non-blank line is peeked once for the sniff, the way it always has been: the
+    # -- sample the sniff joins is a whole record of any size, so it is passed as a temporary
+    # -- rather than held through the read. A repeated header label is restored from the first
+    # -- line the read itself would not skip --
+    first_line = ""
     try:
         if sep is None:
             sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
+            if header == 0:
+                # -- a line the sniff skipped can hold the header record: re-peek with the
+                # -- sniffed delimiter, now that it is known --
+                first_line = _peek_header_line(reader, sep)
             # -- the C engine does not sniff, so keep the Python engine this path has always used --
-            return pd.read_csv(reader, sep=sep, header=header, engine="python", **cells_as_written)
-        return pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
+            dataframe = pd.read_csv(
+                reader, sep=sep, header=header, engine="python", **cells_as_written
+            )
+        else:
+            if header == 0:
+                first_line = _peek_header_line(reader, sep)
+            dataframe = pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
     except pd.errors.EmptyDataError:
         # -- an empty file, or one of only blank lines, has no columns; the partitioners turn that
         # -- into no elements, the same as partitioning an empty text, markdown or HTML file --
         return pd.DataFrame()
+    return _restore_repeated_header_labels(dataframe, first_line=first_line, sep=sep, header=header)
+
+
+def _restore_repeated_header_labels(
+    dataframe: pd.DataFrame, *, first_line: str, sep: str, header: int | None
+) -> pd.DataFrame:
+    """Give `dataframe` the header labels the file holds where Pandas has renamed a repeated one.
+
+    Pandas makes a repeated label unique as it reads the header record, writing "name.1" for a
+    second "name". When a genuine "name.1" label is also present, Pandas names the repeated
+    "name" column "name.2". Each label the file holds is restored to its column; an empty
+    header cell keeps the "Unnamed: n" label Pandas gives it, which is what `partition_csv()`
+    and `partition_tsv()` have always emitted.
+
+    The header record is parsed from `first_line`, the first line the read itself would not
+    skip, peeked by `_peek_header_line()`. The labels are left as Pandas wrote them when that
+    line does not hold a whole record, or when the peek gave up and returned "". The record is
+    split by `_split_header_record()`, which does not consult the csv module's process-wide
+    field-size limit, so the labels do not depend on what an earlier partition set it to.
+    """
+    if header != 0 or len(sep) != 1 or not first_line:
+        return dataframe
+    if not _record_is_complete(first_line, sep):
+        return dataframe
+    fields = _split_header_record(first_line, sep)
+    labels = [field for field in fields if field != ""]
+    if len(labels) == len(set(labels)) or len(fields) != len(dataframe.columns):
+        return dataframe
+    dataframe.columns = [
+        field if field != "" else label for field, label in zip(fields, dataframe.columns)
+    ]
+    return dataframe
+
+
+# -- the most chunks a header peek fills looking for the header line, bounding what it retains
+# -- in memory to about a mebibyte of the file whatever the blank prefix ahead of that line --
+_HEADER_PEEK_MAX_CHUNKS = 16
+
+
+def _peek_header_line(reader: _LoneCarriageReturnReader, delimiter: str) -> str:
+    """The first line the delimited read itself would not skip, or "" if it is too far in to peek.
+
+    The blank lines a read skips are only those that hold no delimiter, no quote and nothing
+    but spaces and tabs, so a line of only tabs ahead of a tab-delimited header is that header
+    record of empty cells, not a blank line, and is the line returned. On a sniffed read, whose
+    Python engine skips more kinds of line than that, the lines they differ over are skipped
+    here rather than read, so the labels are left alone instead of read from a skipped line.
+
+    The peek gives up (returning "", leaving what it read queued) once finding the line would
+    take more than `_HEADER_PEEK_MAX_CHUNKS` chunks, so the file is not held in memory whole to
+    restore a label; a header behind a longer blank prefix keeps the labels Pandas wrote.
+    """
+    return reader.peek_first_non_blank_line(
+        line_is_blank=partial(_is_skippable_blank_line, delimiter=delimiter),
+        max_peek_chunks=_HEADER_PEEK_MAX_CHUNKS,
+    )
+
+
+def _is_skippable_blank_line(line: str, *, delimiter: str) -> bool:
+    """Whether the delimited read skips `line` as a blank line ahead of the header record.
+
+    A line is skipped only when it holds no delimiter and no quote and nothing but spaces and
+    tabs: a line of only tabs is a record of empty tab-separated cells, and a quoted cell of
+    only whitespace is a record the read keeps, so neither may be skipped here.
+    """
+    return delimiter not in line and '"' not in line and not line.strip(" \t\n\r")
+
+
+def _record_is_complete(line: str, sep: str) -> bool:
+    """Whether `line` holds a whole delimited record, with no quoted field left open in it.
+
+    A quoted header cell holding a line break spans physical lines, so the first line alone
+    does not hold the whole record. The record is whole only when the line ends outside a
+    quoted field and not just after a quote inside one, which may yet be escaped or closing.
+    """
+    in_quotes = quote_pending = False
+    at_field_start = True
+    for char in line:
+        if in_quotes:
+            if quote_pending:
+                quote_pending = False
+                if char == '"':
+                    continue  # -- `""` inside a quoted field is a literal quote --
+                in_quotes = False  # -- the quote closed the field; `char` follows it --
+            elif char == '"':
+                quote_pending = True
+                continue
+            else:
+                continue
+        if at_field_start and char == '"':
+            in_quotes, at_field_start = True, False
+        elif char == sep:
+            at_field_start = True
+        else:
+            at_field_start = False
+    return not in_quotes and not quote_pending
+
+
+def _split_header_record(line: str, sep: str) -> list[str]:
+    """The fields of `line`, split the way the csv module would split them, without its limit.
+
+    The record is whole within the line, as `_record_is_complete()` has checked, so no field
+    spans lines and the only line ending is the one the line ends with, which is not field text.
+    A field is opened by a quote only at its start, a pair of quotes inside a quoted field is one
+    literal quote, and a character after the quote closing a field is literal text of it.
+
+    Splitting the record here rather than through the csv module keeps the restored labels the
+    same whatever the process-wide field-size limit happens to be: `csv.reader` raises on a
+    field past that limit, `partition_csv()` raises the limit to 10 MiB while `partition_tsv()`
+    leaves it as it stood, so the labels of a file whose Pandas read succeeded would otherwise
+    depend on whether a CSV was partitioned first in the process.
+    """
+    if line.endswith("\n"):
+        line = line[:-1]
+    if line.endswith("\r"):
+        line = line[:-1]
+    if not line:
+        return []
+    fields: list[str] = []
+    field: list[str] = []
+    in_quotes = False
+    quote_pending = False  # -- the char before was a quote inside a quoted field --
+    at_field_start = True
+    for char in line:
+        if in_quotes:
+            if quote_pending:
+                quote_pending = False
+                if char == '"':
+                    field.append('"')  # -- `""` inside a quoted field is one literal quote --
+                    continue
+                in_quotes = False  # -- the quote closed the field; `char` follows it --
+            elif char == '"':
+                quote_pending = True
+                continue
+            else:
+                field.append(char)
+                continue
+        if at_field_start and char == '"':
+            in_quotes, at_field_start = True, False
+            continue
+        if char == sep:
+            fields.append("".join(field))
+            field = []
+            at_field_start = True
+            continue
+        field.append(char)  # -- a quote outside a quoted field is literal text --
+        at_field_start = False
+    fields.append("".join(field))
+    return fields
 
 
 def check_cell_count(
@@ -220,8 +383,10 @@ class _LoneCarriageReturnReader(io.TextIOBase):
     """Text stream of `file`, decoded in chunks, with each "\r" not followed by "\n" made a "\n".
 
     A "\r" ending a chunk is held back until the next chunk shows whether it starts a "\r\n". The
-    file is never held in memory whole: decoded chunks wait in a queue until they are read, and
-    only the lines `.peek_first_non_blank_line()` looks past stay queued after it returns.
+    file is read in chunks: decoded chunks wait in a queue until they are read, and the lines
+    `.peek_first_non_blank_line()` looks past stay queued after it returns. A peek given a chunk
+    budget gives up past it rather than queue more, so a bounded peek holds no more of the file
+    than that budget, however long the blank lines ahead of the line it looks for.
 
     Each character is copied a bounded number of times however the text is read, so reading is
     linear in the size of the file; `._chars_copied` counts the copies.
@@ -237,37 +402,77 @@ class _LoneCarriageReturnReader(io.TextIOBase):
         self._eof = False
         self._chars_copied = 0
 
-    def peek_first_non_blank_line(self) -> str:
-        """The first line that is not blank, or "" if there is none, without consuming it."""
-        line_parts: list[str] = []  # -- the current line, kept only until it proves blank --
-        idx, start = 0, self._offset
-        while True:
-            if idx == len(self._chunks):
-                if not self._fill():
-                    line = self._join(line_parts)
-                    return line if line.strip() else ""
-                continue
-            chunk = self._chunks[idx]
-            end = chunk.find("\n", start) + 1 or len(chunk)
-            line_parts.append(self._slice(chunk, start, end))
-            if not line_parts[-1].isspace() and line_parts[-1]:
-                # -- not blank; complete the line, then return it --
-                while not line_parts[-1].endswith("\n"):
+    def peek_first_non_blank_line(
+        self,
+        *,
+        line_is_blank: Callable[[str], bool] | None = None,
+        max_peek_chunks: int | None = None,
+    ) -> str:
+        """The first line that is not blank, or "" if there is none, without consuming it.
+
+        A line counts as blank according to `line_is_blank`, by default when it is empty or
+        holds only whitespace. The peek gives up once reading on would take it past
+        `max_peek_chunks` new fills or that many chunks' worth of inspected characters,
+        including text already queued by an earlier peek. It checks before slicing the text
+        and returns "", leaving queued input unchanged, when either budget is exceeded.
+        """
+
+        class _TooFarToPeek(Exception):
+            """Raised internally when a bounded peek reads more chunks than it may."""
+
+        is_blank = line_is_blank or _is_blank_whitespace
+        n_filled = n_peeked = 0
+
+        def append_segment(parts: list[str], chunk: str, start: int, end: int) -> None:
+            """Charge queued text to the peek budget before slicing or retaining it."""
+            nonlocal n_peeked
+            n_peeked += end - start
+            if max_peek_chunks is not None and n_peeked > max_peek_chunks * _CSV_CHUNK_CHARS:
+                raise _TooFarToPeek
+            parts.append(self._slice(chunk, start, end))
+
+        def fill() -> bool:
+            """`self._fill()`, counting the fills and failing the peek past its chunk budget."""
+            nonlocal n_filled
+            if not self._fill():
+                return False
+            n_filled += 1
+            if max_peek_chunks is not None and n_filled > max_peek_chunks:
+                raise _TooFarToPeek
+            return True
+
+        try:
+            line_parts: list[str] = []  # -- the current line, kept only until it proves blank --
+            idx, start = 0, self._offset
+            while True:
+                if idx == len(self._chunks):
+                    if not fill():
+                        line = self._join(line_parts)
+                        return "" if is_blank(line) else line
+                    continue
+                chunk = self._chunks[idx]
+                end = chunk.find("\n", start) + 1 or len(chunk)
+                append_segment(line_parts, chunk, start, end)
+                if not is_blank(line_parts[-1]):
+                    # -- not blank; complete the line, then return it --
+                    while not line_parts[-1].endswith("\n"):
+                        idx, start = idx + 1, 0
+                        # -- a fill can queue nothing, e.g. a chunk of only a held-back "\r" --
+                        while idx == len(self._chunks):
+                            if not fill():
+                                return self._join(line_parts)
+                        chunk = self._chunks[idx]
+                        end = chunk.find("\n") + 1 or len(chunk)
+                        append_segment(line_parts, chunk, 0, end)
+                    return self._join(line_parts)
+                if line_parts[-1].endswith("\n"):
+                    line_parts = []
+                if end == len(chunk):
                     idx, start = idx + 1, 0
-                    # -- a fill can queue nothing (e.g. a chunk holding only a held-back "\r") --
-                    while idx == len(self._chunks):
-                        if not self._fill():
-                            return self._join(line_parts)
-                    chunk = self._chunks[idx]
-                    end = chunk.find("\n") + 1 or len(chunk)
-                    line_parts.append(self._slice(chunk, 0, end))
-                return self._join(line_parts)
-            if line_parts[-1].endswith("\n"):
-                line_parts = []
-            if end == len(chunk):
-                idx, start = idx + 1, 0
-            else:
-                start = end
+                else:
+                    start = end
+        except _TooFarToPeek:
+            return ""
 
     def read(self, size: int | None = -1) -> str:
         parts: list[str] = []
@@ -344,6 +549,11 @@ class _LoneCarriageReturnReader(io.TextIOBase):
 
 
 _LONE_CARRIAGE_RETURN = re.compile("\r(?!\n)")
+
+
+def _is_blank_whitespace(line: str) -> bool:
+    """Whether `line` is empty or holds only whitespace characters."""
+    return not line or line.isspace()
 
 
 def _python_encoding(encoding: str | None) -> str:
