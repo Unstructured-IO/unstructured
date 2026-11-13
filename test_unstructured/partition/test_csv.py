@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import bz2
 import csv
+import gzip
 import io
 import itertools
+import lzma
 import sys
 from pathlib import Path
 
@@ -38,6 +41,7 @@ from unstructured.partition import csv as csv_module
 from unstructured.partition.csv import (
     _CsvPartitioningContext,
     _first_record_width,
+    _read_whole_lines,
     check_cell_count,
     partition_csv,
     read_delimited_text,
@@ -485,6 +489,19 @@ class Describe_CsvPartitioningContext:
         with pytest.raises(ValueError, match="either file-path or file-like object must be prov"):
             _CsvPartitioningContext()._validate()
 
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "https://example.com/documents/stanley-cups.csv",
+            "s3://unstructured-test/csv/stanley-cups.csv",
+        ],
+    )
+    def and_it_raises_when_the_file_path_is_a_URL(self, url: str):
+        # -- pandas `get_handle()` would fetch a URL on each read, bypassing the scheme,
+        # -- redirect, and private-address checks applied to `partition(url=...)` --
+        with pytest.raises(ValueError, match="filename must be a local file path"):
+            _CsvPartitioningContext(file_path=url)._validate()
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
@@ -653,6 +670,116 @@ def test_partition_csv_reads_a_line_break_in_a_quoted_cell_as_whitespace_not_an_
         "<tr><td>Alice</td><td>1 Main St Springfield</td></tr>"
         "<tr><td>Bob</td><td>x&lt;y &amp; z</td></tr></table>"
     )
+
+
+def test_partition_csv_decompresses_a_compressed_filename(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = tmp_path / "table.csv.gz"
+    with gzip.open(file_path, "wb") as f:
+        f.write(b"a,b\n1,2\n")
+
+    (table,) = partition_csv(str(file_path))
+
+    assert table.text == "a b 1 2"
+
+    # -- the size check measures the decompressed content --
+    monkeypatch.setenv("CSV_MAX_CELLS", "3")
+    with pytest.raises(UnprocessableEntityError, match="CSV_MAX_CELLS"):
+        partition_csv(str(file_path))
+
+
+@pytest.mark.parametrize(
+    ("suffix", "open_compressed"),
+    [(".gz", gzip.open), (".bz2", bz2.open), (".xz", lzma.open)],
+)
+def test_partition_csv_decompresses_a_filename_named_for_its_compression(
+    tmp_path: Path, suffix: str, open_compressed
+):
+    file_path = tmp_path / f"table.csv{suffix}"
+    with open_compressed(file_path, "wb") as f:
+        f.write(b"a,b\n1,2\n")
+
+    assert partition_csv(str(file_path))[0].text == "a b 1 2"
+
+
+def test_partition_csv_produces_no_elements_for_an_empty_compressed_file(tmp_path: Path):
+    file_path = tmp_path / "table.csv.gz"
+    with gzip.open(file_path, "wb"):
+        pass
+
+    assert partition_csv(str(file_path)) == []
+
+
+def test_partition_csv_decompresses_a_zstandard_filename(tmp_path: Path):
+    zstandard = pytest.importorskip("zstandard")
+
+    file_path = tmp_path / "table.csv.zst"
+    with zstandard.open(file_path, "wb") as f:
+        f.write(b"a,b\n1,2\n")
+
+    (table,) = partition_csv(str(file_path))
+
+    assert table.text == "a b 1 2"
+
+
+def test_partition_csv_produces_no_elements_for_an_empty_zstandard_file(tmp_path: Path):
+    zstandard = pytest.importorskip("zstandard")
+
+    file_path = tmp_path / "table.csv.zst"
+    with zstandard.open(file_path, "wb"):
+        pass
+
+    assert partition_csv(str(file_path)) == []
+
+
+class _UnsupportedLineReads:
+    """A binary reader with chunk reads only, like a zstd decompression stream."""
+
+    def __init__(self, data: bytes):
+        self._data = io.BytesIO(data)
+
+    def readlines(self, limit: int) -> list[bytes]:
+        raise io.UnsupportedOperation
+
+    def read(self, size: int = -1) -> bytes:
+        return self._data.read(size)
+
+
+@pytest.mark.parametrize(
+    ("data", "limit"),
+    [
+        (b"a,b\n1,2\n3,4\n", 65536),  # -- an ordinary sample within a single chunk --
+        (b"\na,b\n", 65536),  # -- an empty first line: a line break at offset zero --
+        (b"a" * 300_000 + b"\n1,2\n", 65536),  # -- a wide first row spans several chunks --
+        (b"a,b\r1,2\r3,4\r", 65536),  # -- lone carriage returns: one whole line at EOF --
+        (b"", 65536),  # -- an empty stream --
+        (b"a,b\n", 65536),  # -- a terminator exactly at the end: no trailing fragment --
+        (b"ab\n", 2),  # -- a sample that stops only past the limit, not at it --
+        (b"ab\ncd\n", 4),  # -- a sample that keeps the line that passes the limit --
+    ],
+)
+def test_read_whole_lines_chunk_fallback_matches_readlines(data: bytes, limit: int):
+    expect = io.BytesIO(data).readlines(limit)
+
+    assert _read_whole_lines(_UnsupportedLineReads(data), limit) == expect
+
+
+def test_read_whole_lines_chunk_fallback_reassembles_lines_across_chunk_reads(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 7)
+
+    data = b"a,b\r1,2\r,3\n4,5\n"
+    expect = io.BytesIO(data).readlines(65536)
+
+    assert _read_whole_lines(_UnsupportedLineReads(data), 65536) == expect
+
+
+def test_read_whole_lines_chunk_fallback_stops_only_past_the_limit():
+    # -- the sample keeps every whole line up to and past the limit, so an exact
+    # -- boundary keeps one more line than io.BytesIO.readlines(3) --
+    assert _read_whole_lines(_UnsupportedLineReads(b"ab\ncd\n"), 3) == [b"ab\n", b"cd\n"]
 
 
 def test_partition_csv_reads_a_repeated_header_label_as_written(tmp_path: Path):
@@ -844,3 +971,11 @@ def test_partition_csv_headerless_sniffed_read_does_not_hold_the_first_record(
     assert read_kwargs.get("engine") == "python"
     assert held_during_the_read == []
     assert element.text == "x" * 4096 + " y z a b c"
+
+
+def test_partition_csv_rejects_a_URL_filename_without_fetching_it() -> None:
+    # -- port 1 has no listener, so an unguarded call would surface a network error from the
+    # -- fetch attempt rather than this ValueError; a remote document goes through
+    # -- `partition(url=...)`, whose fetch applies the safe-HTTP checks --
+    with pytest.raises(ValueError, match="use partition"):
+        partition_csv("http://127.0.0.1:1/documents/stanley-cups.csv")
