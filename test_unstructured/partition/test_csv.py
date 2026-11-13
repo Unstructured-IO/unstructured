@@ -38,6 +38,7 @@ from unstructured.partition import csv as csv_module
 from unstructured.partition.csv import (
     _CsvPartitioningContext,
     _first_record_width,
+    _read_whole_lines,
     check_cell_count,
     partition_csv,
     read_delimited_text,
@@ -714,3 +715,52 @@ def test_partition_csv_produces_no_elements_for_an_empty_zstandard_file(tmp_path
         pass
 
     assert partition_csv(str(file_path)) == []
+
+
+class _UnsupportedLineReads:
+    """A binary reader with chunk reads only, like a zstd decompression stream."""
+
+    def __init__(self, data: bytes):
+        self._data = io.BytesIO(data)
+
+    def readlines(self, limit: int) -> list[bytes]:
+        raise io.UnsupportedOperation
+
+    def read(self, size: int = -1) -> bytes:
+        return self._data.read(size)
+
+
+@pytest.mark.parametrize(
+    ("data", "limit"),
+    [
+        (b"a,b\n1,2\n3,4\n", 65536),  # -- an ordinary sample within a single chunk --
+        (b"\na,b\n", 65536),  # -- an empty first line: a line break at offset zero --
+        (b"a" * 300_000 + b"\n1,2\n", 65536),  # -- a wide first row spans several chunks --
+        (b"a,b\r1,2\r3,4\r", 65536),  # -- lone carriage returns: one whole line at EOF --
+        (b"", 65536),  # -- an empty stream --
+        (b"a,b\n", 65536),  # -- a terminator exactly at the end: no trailing fragment --
+        (b"ab\n", 2),  # -- a sample that stops only past the limit, not at it --
+        (b"ab\ncd\n", 4),  # -- a sample that keeps the line that passes the limit --
+    ],
+)
+def test_read_whole_lines_chunk_fallback_matches_readlines(data: bytes, limit: int):
+    expect = io.BytesIO(data).readlines(limit)
+
+    assert _read_whole_lines(_UnsupportedLineReads(data), limit) == expect
+
+
+def test_read_whole_lines_chunk_fallback_reassembles_lines_across_chunk_reads(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 7)
+
+    data = b"a,b\r1,2\r,3\n4,5\n"
+    expect = io.BytesIO(data).readlines(65536)
+
+    assert _read_whole_lines(_UnsupportedLineReads(data), 65536) == expect
+
+
+def test_read_whole_lines_chunk_fallback_stops_only_past_the_limit():
+    # -- the sample keeps every whole line up to and past the limit, so an exact
+    # -- boundary keeps one more line than io.BytesIO.readlines(3) --
+    assert _read_whole_lines(_UnsupportedLineReads(b"ab\ncd\n"), 3) == [b"ab\n", b"cd\n"]
