@@ -295,45 +295,37 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
             _fp_mask = df.total_tables.eq(0) & df.total_predicted_tables.gt(0)
             df.loc[_fp_mask, "_table_weights"] = 1
 
-        # filter down to only those with actual and/or predicted tables
-        has_tables_df = df[df["_table_weights"] > 0]
-
         if not self.weighted_average:
             # for all non zero elements assign them value 1
             df["_table_weights"] = df["_table_weights"].apply(
                 lambda table_weight: 1 if table_weight != 0 else 0
             )
 
-        if has_tables_df.empty:
-            agg_df = pd.DataFrame(
-                [[metric, None, None, None, 0] for metric in self.supported_metric_names]
-            ).reset_index()
-        else:
-            element_metrics_results = {}
-            for metric in self.supported_metric_names:
-                metric_df = has_tables_df[has_tables_df[metric].notnull()]
-                agg_metric = metric_df[metric].agg([_stdev, _pstdev, _count]).transpose()
-                if metric.startswith("total_tables"):
-                    agg_metric["_mean"] = metric_df[metric].mean()
-                elif metric.startswith("table_level_acc"):
-                    agg_metric["_mean"] = np.round(
-                        np.average(metric_df[metric], weights=metric_df["_table_weights"]),
-                        3,
-                    )
-                else:
-                    # false positive tables do not contribute to table structure and content
-                    # extraction metrics
-                    agg_metric["_mean"] = np.round(
-                        np.average(metric_df[metric], weights=metric_df["total_tables"]),
-                        3,
-                    )
-                if agg_metric.empty:
-                    element_metrics_results[metric] = pd.Series(
-                        data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
-                    )
-                else:
-                    element_metrics_results[metric] = agg_metric
-            agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
+        # filter after applying the averaging policy so the copy has the selected weights
+        has_tables_df = df[df["_table_weights"] > 0]
+        element_metrics_results = {}
+        for metric in self.supported_metric_names:
+            metric_df = has_tables_df[has_tables_df[metric].notnull()]
+            if metric not in ("total_tables", "table_level_acc"):
+                # False positives do not contribute to these metrics, including their
+                # sample counts and deviations. Exclude them before choosing the weights.
+                metric_df = metric_df[metric_df["total_tables"] > 0]
+            if metric_df.empty:
+                element_metrics_results[metric] = pd.Series(
+                    data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
+                )
+                continue
+
+            agg_metric = metric_df[metric].agg([_stdev, _pstdev, _count]).transpose()
+            if metric == "total_tables":
+                agg_metric["_mean"] = metric_df[metric].mean()
+            else:
+                agg_metric["_mean"] = np.round(
+                    np.average(metric_df[metric], weights=metric_df["_table_weights"]),
+                    3,
+                )
+            element_metrics_results[metric] = agg_metric
+        agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
         agg_df = agg_df.rename(columns=AGG_HEADERS_MAPPING)
         return df, agg_df
 
