@@ -19,7 +19,7 @@ from unstructured.partition.html import partition_html
 from unstructured.partition.ndjson import partition_ndjson
 from unstructured.partition.text import partition_text
 from unstructured.partition.xml import partition_xml
-from unstructured.staging.base import elements_to_ndjson
+from unstructured.staging.base import elements_to_dicts, elements_to_ndjson
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -519,6 +519,76 @@ def and_it_preserves_that_text_when_reading_from_a_filename_too():
         elements = partition_ndjson(filename=path)
 
     assert elements[0].text == _ZWS_TEXT
+
+
+# -- non-ASCII text in arbitrary NDJSON ------------------------------------------------------------
+
+_NON_ASCII_RECORD = {"title": "東京の天気", "city": "São Paulo", "mood": "🙂"}
+_NON_ASCII_RECORD_TEXT = '{\n  "city": "São Paulo",\n  "mood": "🙂",\n  "title": "東京の天気"\n}'
+
+
+@pytest.mark.parametrize("ensure_ascii", [False, True])
+def it_keeps_non_ASCII_characters_in_the_text_of_arbitrary_lines(ensure_ascii: bool):
+    # -- the same text whether a line holds the UTF-8 characters or the escapes that
+    # -- `json.dumps()` writes by default --
+    line = json.dumps(_NON_ASCII_RECORD, ensure_ascii=ensure_ascii)
+
+    elements = partition_ndjson(file=io.BytesIO(f"{line}\n{line}\n".encode("utf-8")))
+
+    assert [e.text for e in elements] == [_NON_ASCII_RECORD_TEXT, _NON_ASCII_RECORD_TEXT]
+
+
+def and_it_keeps_them_when_reading_arbitrary_lines_from_a_filename(tmp_path: pathlib.Path):
+    path = tmp_path / "records.ndjson"
+    path.write_bytes(f"{json.dumps(_NON_ASCII_RECORD, ensure_ascii=False)}\n".encode("utf-8"))
+
+    elements = partition_ndjson(filename=str(path))
+
+    assert [e.text for e in elements] == [_NON_ASCII_RECORD_TEXT]
+
+
+def it_partitions_an_arbitrary_line_holding_a_lone_surrogate_escape():
+    # -- UTF-8 cannot encode a lone surrogate, so it stays escaped and the element id, hashed
+    # -- from the UTF-8 bytes of the text, can still be computed --
+    value = {"city": "São Paulo", "key": chr(0xD800)}
+
+    elements = partition_ndjson(text=f"{json.dumps(value)}\n")
+
+    assert len(elements) == 1
+    assert json.loads(elements[0].text) == value
+
+
+# -- Unicode line separators inside JSON strings --------------------------------------------------
+
+# -- JSON allows U+0085, U+2028 and U+2029 unescaped inside a string, so they don't end a line --
+_UNICODE_LINE_SEPARATORS = [chr(0x85), chr(0x2028), chr(0x2029)]
+
+
+@pytest.mark.parametrize("separator", _UNICODE_LINE_SEPARATORS)
+def it_keeps_a_line_whole_when_a_string_in_it_holds_a_Unicode_line_separator(separator: str):
+    lines = [json.dumps({"key": f"a{separator}b"}, ensure_ascii=False), json.dumps({"key": "c"})]
+
+    elements = partition_ndjson(text="\n".join(lines))
+
+    assert [json.loads(e.text) for e in elements] == [{"key": f"a{separator}b"}, {"key": "c"}]
+
+
+@pytest.mark.parametrize("separator", _UNICODE_LINE_SEPARATORS)
+def and_its_elements_round_trip_through_NDJSON_written_without_escapes(separator: str):
+    elements = partition_ndjson(text=json.dumps({"key": f"a{separator}b"}))
+    ndjson = "\n".join(
+        json.dumps(element_dict, ensure_ascii=False) for element_dict in elements_to_dicts(elements)
+    )
+
+    rehydrated = partition_ndjson(text=ndjson)
+
+    assert [e.text for e in rehydrated] == [e.text for e in elements]
+
+
+def it_still_splits_lines_on_a_lone_carriage_return():
+    elements = partition_ndjson(text='{"key": "a"}\r{"key": "b"}\r')
+
+    assert [json.loads(e.text) for e in elements] == [{"key": "a"}, {"key": "b"}]
 
 
 # -- the file-like contract ------------------------------------------------------------------------

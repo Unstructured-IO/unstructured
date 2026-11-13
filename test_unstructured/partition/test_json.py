@@ -821,6 +821,43 @@ def and_it_preserves_that_text_when_reading_from_a_filename_too():
     assert elements[0].text == _ZWS_TEXT
 
 
+# -- non-ASCII text in arbitrary JSON --------------------------------------------------------------
+
+_NON_ASCII_RECORD = {"title": "東京の天気", "city": "São Paulo", "mood": "🙂"}
+_NON_ASCII_RECORD_TEXT = '{\n  "city": "São Paulo",\n  "mood": "🙂",\n  "title": "東京の天気"\n}'
+
+
+@pytest.mark.parametrize("ensure_ascii", [False, True])
+def it_keeps_non_ASCII_characters_in_the_text_of_an_arbitrary_payload(ensure_ascii: bool):
+    # -- the same text whether the payload holds the UTF-8 characters or the escapes that
+    # -- `json.dumps()` writes by default --
+    payload = json.dumps([_NON_ASCII_RECORD], ensure_ascii=ensure_ascii)
+
+    elements = partition_json(file=io.BytesIO(payload.encode("utf-8")))
+
+    assert [e.text for e in elements] == [_NON_ASCII_RECORD_TEXT]
+
+
+def and_it_keeps_them_when_reading_an_arbitrary_payload_from_a_filename(tmp_path: pathlib.Path):
+    path = tmp_path / "record.json"
+    path.write_bytes(json.dumps(_NON_ASCII_RECORD, ensure_ascii=False).encode("utf-8"))
+
+    elements = partition_json(filename=str(path))
+
+    assert [e.text for e in elements] == [_NON_ASCII_RECORD_TEXT]
+
+
+def it_partitions_an_arbitrary_payload_holding_a_lone_surrogate_escape():
+    # -- UTF-8 cannot encode a lone surrogate, so it stays escaped and the element id, hashed
+    # -- from the UTF-8 bytes of the text, can still be computed --
+    value = {"city": "São Paulo", "key": chr(0xD800)}
+
+    elements = partition_json(text=json.dumps(value))
+
+    assert len(elements) == 1
+    assert json.loads(elements[0].text) == value
+
+
 # -- the file-like contract ------------------------------------------------------------------------
 
 

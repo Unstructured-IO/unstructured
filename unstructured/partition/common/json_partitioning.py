@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 from typing import IO, Any, Optional
 
 from unstructured.documents.elements import TYPE_TO_TEXT_ELEMENT_MAP, Element, Text
@@ -113,14 +114,28 @@ def rehydrate_elements(values: list[dict[str, Any]]) -> list[Element]:
         ) from e
 
 
+_KEEP_ESCAPED_PATTERN = re.compile(r"[\x7f\ud800-\udfff]")
+
+
 def pretty_json_text(value: Any) -> str:
-    """The pretty-printed JSON text used for arbitrary-JSON `Text` elements."""
+    """The pretty-printed JSON text used for arbitrary-JSON `Text` elements.
+
+    Non-ASCII characters are written as themselves rather than as JSON escapes. A lone surrogate,
+    which UTF-8 cannot encode, stays escaped, and so does DEL (U+007F), so text that is all ASCII
+    is the same as `json.dumps()` writes by default.
+    """
     # NOTE(simon): sort_keys=True gives deterministic, diffable output; it alphabetizes
     # customer field order -- revisit if source-order fidelity is required.
     try:
-        return json.dumps(value, indent=2, sort_keys=True)
+        text = json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True)
     except RecursionError:
         raise ValueError("JSON value is nested too deeply to partition")
+    # NOTE(tanishqbaweja): a JSON escape can hold one half of a UTF-16 surrogate pair on its own.
+    # UTF-8 cannot encode that character, and element ids are hashed from the UTF-8 bytes of the
+    # text, so it is written back as the escape `json.dumps()` uses by default. DEL is ASCII but
+    # `json.dumps()` escapes it by default too, so it is escaped again to keep the text, and the
+    # element ids, of all-ASCII content unchanged.
+    return _KEEP_ESCAPED_PATTERN.sub(lambda match: f"\\u{ord(match.group()):04x}", text)
 
 
 def elements_from_arbitrary_value(value: Any) -> list[Element]:
