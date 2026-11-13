@@ -414,7 +414,12 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
         output_cct, source_cct = self._get_ccts(doc)
         # NOTE(amadeusz): Levenshtein distance calculation takes too long
         # skip it if file sizes differ wildly
-        if 0.5 < len(output_cct.encode()) / len(source_cct.encode()) < 2.0:
+        # Empty comparisons are cheap and have exact scores, including a blank reference.
+        if (
+            not output_cct
+            or not source_cct
+            or 0.5 < len(output_cct.encode()) / len(source_cct.encode()) < 2.0
+        ):
             accuracy = round(calculate_accuracy(output_cct, source_cct, self.weights), 3)
         else:
             # 0.01 to distinguish it was set manually
