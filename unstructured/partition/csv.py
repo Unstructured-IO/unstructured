@@ -509,6 +509,39 @@ def _first_record_width(
     return n_delimiters + 1, iter(())
 
 
+def _read_whole_lines(file: IO[bytes], limit: int) -> list[bytes]:
+    """The first whole lines of `file`, each keeping its terminator, as `readlines(limit)`.
+
+    A reader with no line reads of its own is sampled by chunk reads instead: a zstd stream
+    raises `io.UnsupportedOperation` from `readlines()` without consuming any bytes, so its
+    chunks are split on b"\\n" and the unterminated remainder is dropped until the sample
+    passes `limit`, the same whole lines `readlines()` leaves a limit-truncated line out of.
+    """
+    try:
+        return file.readlines(limit)
+    except io.UnsupportedOperation:
+        pass
+    lines: list[bytes] = []
+    buffered = b""
+    total = 0
+    while True:
+        chunk = file.read(_CSV_CHUNK_CHARS)
+        if not chunk:
+            # -- end of file: a last line with no terminator is whole, not truncated --
+            if buffered:
+                lines.append(buffered)
+            return lines
+        buffered += chunk
+        parts = buffered.split(b"\n")
+        buffered = parts.pop()  # -- an unterminated line, perhaps continued in the next chunk --
+        for part in parts:
+            line = part + b"\n"
+            lines.append(line)
+            total += len(line)
+            if total > limit:
+                return lines
+
+
 class _CsvPartitioningContext:
     """Encapsulates the partitioning-run details.
 
@@ -559,7 +592,7 @@ class _CsvPartitioningContext:
         with self.open() as file:
             # -- read whole lines, sniffer can be confused by a trailing partial line --
             data = "\n".join(
-                ln.decode(self._encoding or "utf-8") for ln in file.readlines(num_bytes)
+                ln.decode(self._encoding or "utf-8") for ln in _read_whole_lines(file, num_bytes)
             )
 
         try:

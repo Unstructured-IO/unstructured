@@ -692,3 +692,25 @@ def test_partition_csv_produces_no_elements_for_an_empty_compressed_file(tmp_pat
         pass
 
     assert partition_csv(str(file_path)) == []
+
+
+def test_partition_csv_decompresses_a_zstandard_filename(tmp_path: Path):
+    zstandard = pytest.importorskip("zstandard")
+
+    file_path = tmp_path / "table.csv.zst"
+    with zstandard.open(file_path, "wb") as f:
+        f.write(b"a,b\n1,2\n")
+
+    (table,) = partition_csv(str(file_path))
+
+    assert table.text == "a b 1 2"
+
+
+def test_partition_csv_produces_no_elements_for_an_empty_zstandard_file(tmp_path: Path):
+    zstandard = pytest.importorskip("zstandard")
+
+    file_path = tmp_path / "table.csv.zst"
+    with zstandard.open(file_path, "wb"):
+        pass
+
+    assert partition_csv(str(file_path)) == []
