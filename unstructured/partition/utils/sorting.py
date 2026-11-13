@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from math import isfinite
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
@@ -61,7 +62,7 @@ def shrink_bbox(bbox: tuple[int, int, int, int], shrink_factor) -> tuple[int, in
 
 def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
     """
-    Verifies all 4 points in a coordinate exist and are positive.
+    Verifies all 4 points in a coordinate exist and are finite and nonnegative.
     """
     if not coordinates:
         return False
@@ -71,7 +72,7 @@ def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
         if len(point) != 2:
             return False
         try:
-            if point[0] < 0 or point[1] < 0:
+            if not all(isfinite(value) and value >= 0 for value in point):
                 return False
         except TypeError:
             return False
@@ -225,9 +226,9 @@ def sort_text_regions(
     bboxes = elements.element_coords
 
     def _bboxes_ok(strict_points: bool):
-        if np.isnan(bboxes).any():
+        if not np.isfinite(bboxes).all():
             trace_logger.detail(  # type: ignore
-                "some or all elements are missing bboxes, skipping sort",
+                "some or all elements have nonfinite bboxes, skipping sort",
             )
             return False
 
