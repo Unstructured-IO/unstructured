@@ -31,7 +31,7 @@ def get_element_type_frequency(
         return frequency
     for element in json.loads(elements):
         type = element.get("type")
-        category_depth = element["metadata"].get("category_depth")
+        category_depth = (element.get("metadata") or {}).get("category_depth")
         key = (type, category_depth)
         if key not in frequency:
             frequency[key] = 1
