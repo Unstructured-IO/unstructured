@@ -123,16 +123,49 @@ def read_delimited_text(
     # -- "N/A", "NULL" or "None", turns a column of whole numbers with one empty cell into floats
     # -- (12 reads "12.0") and drops the leading zeros of a code such as "007" --
     cells_as_written = {"dtype": str, "keep_default_na": False}
+    # -- the first non-blank line is peeked once: the sniff reads it, and a repeated header label
+    # -- is restored from it after the read --
+    first_line = reader.peek_first_non_blank_line() if sep is None or header == 0 else ""
     try:
         if sep is None:
-            sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
+            sep = _sniff_delimiter(_normalize_line_endings(first_line))
             # -- the C engine does not sniff, so keep the Python engine this path has always used --
-            return pd.read_csv(reader, sep=sep, header=header, engine="python", **cells_as_written)
-        return pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
+            dataframe = pd.read_csv(
+                reader, sep=sep, header=header, engine="python", **cells_as_written
+            )
+        else:
+            dataframe = pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
     except pd.errors.EmptyDataError:
         # -- an empty file, or one of only blank lines, has no columns; the partitioners turn that
         # -- into no elements, the same as partitioning an empty text, markdown or HTML file --
         return pd.DataFrame()
+    return _restore_repeated_header_labels(dataframe, first_line=first_line, sep=sep, header=header)
+
+
+def _restore_repeated_header_labels(
+    dataframe: pd.DataFrame, *, first_line: str, sep: str, header: int | None
+) -> pd.DataFrame:
+    """Give `dataframe` the header labels the file holds where Pandas has renamed a repeated one.
+
+    Pandas makes a repeated label unique as it reads the header record, writing "name.1" for a
+    second "name", and renames a column genuinely named "name.1" to "name.2". Each label the
+    file holds is restored to its column; an empty header cell keeps the "Unnamed: n" label
+    Pandas gives it, which is what `partition_csv()` and `partition_tsv()` have always emitted.
+
+    The header record is parsed from `first_line`, the first non-blank line of the file. A
+    quoted header cell holding a line break spans lines, so that one line does not hold the
+    whole record; its field count then differs from the columns and the labels are left alone.
+    """
+    if header != 0 or len(sep) != 1 or not first_line:
+        return dataframe
+    fields = next(csv.reader([first_line], delimiter=sep), [])
+    labels = [field for field in fields if field != ""]
+    if len(labels) == len(set(labels)) or len(fields) != len(dataframe.columns):
+        return dataframe
+    dataframe.columns = [
+        field if field != "" else label for field, label in zip(fields, dataframe.columns)
+    ]
+    return dataframe
 
 
 def check_cell_count(

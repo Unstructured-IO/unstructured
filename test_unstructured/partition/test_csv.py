@@ -650,3 +650,60 @@ def test_partition_csv_reads_a_line_break_in_a_quoted_cell_as_whitespace_not_an_
         "<tr><td>Alice</td><td>1 Main St Springfield</td></tr>"
         "<tr><td>Bob</td><td>x&lt;y &amp; z</td></tr></table>"
     )
+
+
+def test_partition_csv_reads_a_repeated_header_label_as_written(tmp_path: Path):
+    file_path = tmp_path / "repeated-labels.csv"
+    file_path.write_text("name,name,age\nAlice,Bob,30\n")
+
+    element = partition_csv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name name age Alice Bob 30"
+    assert element.metadata.text_as_html == (
+        "<table><tr><td>name</td><td>name</td><td>age</td></tr>"
+        "<tr><td>Alice</td><td>Bob</td><td>30</td></tr></table>"
+    )
+
+
+def test_partition_csv_keeps_a_genuinely_suffixed_label_when_labels_repeat(tmp_path: Path):
+    file_path = tmp_path / "genuine-suffix.csv"
+    file_path.write_text("name,name,name.1\nAlice,Bob,Cara\n")
+
+    element = partition_csv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name name name.1 Alice Bob Cara"
+
+
+def test_partition_csv_restores_a_repeated_label_without_touching_unnamed_cells(
+    tmp_path: Path,
+):
+    file_path = tmp_path / "repeated-with-blank.csv"
+    file_path.write_text("name,,name\nAlice,Bob,Cara\n")
+
+    element = partition_csv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name Unnamed: 1 name Alice Bob Cara"
+
+
+def test_partition_csv_reads_a_quoted_repeated_header_label_as_written():
+    element = partition_csv(file=io.BytesIO(b'"name","name"\nAlice,Bob\n'), include_header=True)[0]
+
+    assert element.text == "name name Alice Bob"
+
+
+def test_partition_csv_reads_a_repeated_header_label_with_crlf_endings_as_written():
+    data = b"name,name\r\nAlice,Bob\r\n"
+
+    element = partition_csv(file=io.BytesIO(data), include_header=True)[0]
+
+    assert element.text == "name name Alice Bob"
+
+
+def test_partition_csv_leaves_the_labels_alone_when_a_quoted_header_cell_spans_lines():
+    # -- the first line alone is not the whole header record, so its fields cannot be compared
+    # -- with the columns and the labels are left as read --
+    data = b'"a\nb",a\nv1,v2\n'
+
+    element = partition_csv(file=io.BytesIO(data), include_header=True)[0]
+
+    assert element.text == "a b a v1 v2"

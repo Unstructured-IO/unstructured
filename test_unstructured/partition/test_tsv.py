@@ -537,3 +537,16 @@ def test_partition_tsv_reads_a_line_break_in_a_quoted_cell_as_whitespace_not_an_
         "<table><tr><td>name</td><td>note</td></tr>"
         "<tr><td>Bob</td><td>line one line two</td></tr></table>"
     )
+
+
+def test_partition_tsv_reads_a_repeated_header_label_as_written(tmp_path: Path):
+    file_path = tmp_path / "repeated-labels.tsv"
+    file_path.write_text("name\tname\tage\nAlice\tBob\t30\n")
+
+    element = partition_tsv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name name age Alice Bob 30"
+    assert element.metadata.text_as_html == (
+        "<table><tr><td>name</td><td>name</td><td>age</td></tr>"
+        "<tr><td>Alice</td><td>Bob</td><td>30</td></tr></table>"
+    )
