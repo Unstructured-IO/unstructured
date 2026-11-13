@@ -481,16 +481,18 @@ def ocr_data_to_elements(
     coordinate_system = PixelSpace(width=image_width, height=image_height)
     elements: list[Element] = []
     for layout_element in ocr_data:
-        element = normalize_layout_element(
+        normalized = normalize_layout_element(
             layout_element,
             coordinate_system=coordinate_system,
             infer_list_items=infer_list_items,
             source_format=source_format if source_format else "html",
         )
-
-        if common_metadata:
-            element.metadata.update(common_metadata)
-
-        elements.append(element)
+        # -- an inferred ``List`` becomes one ``ListItem`` per item, so normalize can return
+        # -- several elements for a single layout element --
+        normalized_elements = normalized if isinstance(normalized, list) else [normalized]
+        for element in normalized_elements:
+            if common_metadata:
+                element.metadata.update(common_metadata)
+            elements.append(element)
 
     return elements

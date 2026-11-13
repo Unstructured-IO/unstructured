@@ -86,7 +86,9 @@ class TitleElementHtml(ElementHtml):
 
     @property
     def html_tag(self) -> str:
-        return self._html_tag % (self.element.metadata.category_depth or 1)
+        # -- `category_depth` is zero-based (h1 -> 0, h2 -> 1, ...) and HTML stops at h6 --
+        depth = self.element.metadata.category_depth or 0
+        return self._html_tag % (min(max(depth, 0), 5) + 1)
 
 
 class ImageElementHtml(ElementHtml):

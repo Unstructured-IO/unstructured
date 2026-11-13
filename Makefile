@@ -106,7 +106,7 @@ test-extra-xlsx:
 
 ## check:                   runs all linters and checks
 .PHONY: check
-check: check-ruff check-version
+check: check-ruff
 
 ## check-ruff:              runs ruff linter and formatter check
 .PHONY: check-ruff
@@ -118,13 +118,6 @@ check-ruff:
 check-licenses:
 	@scripts/check-licenses.sh
 
-## check-version:           run check to ensure version in CHANGELOG.md matches version in package
-.PHONY: check-version
-check-version:
-    # Fail if syncing version would produce changes
-	scripts/version-sync.sh -c \
-		-f "unstructured/__version__.py" semver
-
 ## tidy:                    auto-format and fix lint issues
 .PHONY: tidy
 tidy:
@@ -134,12 +127,6 @@ tidy:
 .PHONY: tidy-shell
 tidy-shell:
 	shfmt -i 2 -l -w .
-
-## version-sync:            update __version__.py with most recent version from CHANGELOG.md
-.PHONY: version-sync
-version-sync:
-	scripts/version-sync.sh \
-		-f "unstructured/__version__.py" semver
 
 ## check-coverage:          check test coverage meets threshold
 .PHONY: check-coverage

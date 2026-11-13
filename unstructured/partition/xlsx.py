@@ -84,6 +84,13 @@ def partition_xlsx(
         and is the text content of the table (no structure).
     include_header
         Determines whether or not header info is included in text and medatada.text_as_html
+
+    Notes
+    -----
+    The shared XLSX/XLS reader preserves literal text such as "NA", "N/A", "None", and "null".
+    Empty cells and empty strings remain missing. Excel error cells and formula caches retain
+    the engine's existing behavior. Retained tokens can change table boundaries and inferred
+    column types, including numeric rendering.
     """
     opts = _XlsxPartitionerOptions(
         file_path=filename,
@@ -188,8 +195,10 @@ class ExcelWorkbookReader:
         return self._reader.sheet_names
 
     def parse(self, sheet_name: str, *, header: int | None = None) -> pd.DataFrame:
-        """Read one worksheet with the validated engine and row-compaction policy."""
-        return self._reader.parse(sheet_name=sheet_name, header=header)
+        """Read one worksheet, preserving NA-like text while keeping blank cells missing."""
+        return self._reader.parse(
+            sheet_name=sheet_name, header=header, keep_default_na=False, na_values=[""]
+        )
 
 
 @contextmanager

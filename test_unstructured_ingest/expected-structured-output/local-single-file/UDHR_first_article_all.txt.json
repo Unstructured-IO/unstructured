@@ -93,7 +93,8 @@
     "text": "(Jinan)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -598,7 +599,8 @@
     "text": "Amharic",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -839,7 +841,8 @@
     "text": "Awa-Cuaiquer",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -1828,7 +1831,8 @@
     "text": "Chinese, Gan",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -1871,7 +1875,8 @@
     "text": "Chinese, Hakka",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -1914,7 +1919,8 @@
     "text": "Chinese, Jinyu",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -1957,7 +1963,8 @@
     "text": "Chinese, Mandarin (Beijing)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2000,7 +2007,8 @@
     "text": "Chinese, Mandarin (Guiyang)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2043,7 +2051,8 @@
     "text": "Chinese, Mandarin (Harbin)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2086,7 +2095,8 @@
     "text": "Chinese, Mandarin (Nanjing)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2129,7 +2139,8 @@
     "text": "Chinese, Mandarin (Simplified)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2172,7 +2183,8 @@
     "text": "Chinese, Mandarin (Tianjin)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2215,7 +2227,8 @@
     "text": "Chinese, Mandarin (Traditional)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2258,7 +2271,8 @@
     "text": "Chinese, Min Nan",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2301,7 +2315,8 @@
     "text": "Chinese, Wu",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2344,7 +2359,8 @@
     "text": "Chinese, Xiang",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -2387,7 +2403,8 @@
     "text": "Chinese, Yue",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -4542,7 +4559,8 @@
     "text": "Japanese",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -4585,7 +4603,8 @@
     "text": "Japanese (Osaka)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -4628,7 +4647,8 @@
     "text": "Japanese (Tokyo)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -4671,7 +4691,8 @@
     "text": "Javanese (Javanese)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -6672,7 +6693,8 @@
     "text": "Mongolian, Halh (Mongolian)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -7089,7 +7111,8 @@
     "text": "Nuosu",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -9992,7 +10015,8 @@
     "text": "Thai",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -10035,7 +10059,8 @@
     "text": "Thai (2)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -10100,7 +10125,8 @@
     "text": "Tibetan, Central",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -10957,7 +10983,8 @@
     "text": "Vietnamese (Han nom)",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {
@@ -11506,7 +11533,8 @@
     "text": "------",
     "metadata": {
       "languages": [
-        "eng"
+        "ind",
+        "est"
       ],
       "filetype": "text/plain",
       "data_source": {

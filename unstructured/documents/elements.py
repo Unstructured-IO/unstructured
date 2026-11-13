@@ -10,7 +10,6 @@ import os
 import pathlib
 import uuid
 from functools import cached_property
-from itertools import groupby
 from types import MappingProxyType
 from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
@@ -215,6 +214,10 @@ class ElementMetadata:
     sent_to: Optional[list[str]]
     subject: Optional[str]
     signature: Optional[str]
+    # -- name of the paragraph-style in the source document, e.g. "Title" or "Heading 1".
+    # -- DOCX only for now, where `category_depth` alone cannot tell a document title from a
+    # -- first-level heading (both are 0). See `partition.docx` and issue #4557. --
+    style_name: Optional[str]
 
     # -- used for Table elements to capture rows/col structure --
     text_as_html: Optional[str]
@@ -291,6 +294,7 @@ class ElementMetadata:
         url: Optional[str] = None,
         segment_end_seconds: Optional[float] = None,
         segment_start_seconds: Optional[float] = None,
+        style_name: Optional[str] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
         self.bcc_recipient = bcc_recipient
@@ -345,6 +349,7 @@ class ElementMetadata:
         self.url = url
         self.segment_end_seconds = segment_end_seconds
         self.segment_start_seconds = segment_start_seconds
+        self.style_name = style_name
 
     def __eq__(self, other: object) -> bool:
         """Implments equivalence, like meta == other_meta.
@@ -577,6 +582,7 @@ class ConsolidationStrategy(enum.Enum):
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
+            "style_name": cls.DROP,  # -- DROP like category_depth: a chunk spans mixed styles --
             "subject": cls.FIRST,
             "text_as_html": cls.STRING_CONCATENATE,
             "table_as_cells": cls.FIRST,  # -- only occurs in Table --
@@ -612,10 +618,15 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
         List of updated Element objects with hashes for `id` and `parent_id`.
     """
     # -- generate sequence number for each element on a page --
+    # -- Count per page number, not per contiguous run of equal page numbers: otherwise the
+    # -- sequence number of an element depends on which elements precede it and two elements that
+    # -- share their text on a page that is not contiguous in this list collide.
     page_numbers = [e.metadata.page_number for e in elements]
-    page_seq_pairs = [
-        seq_on_page for _, group in groupby(page_numbers) for seq_on_page, _ in enumerate(group)
-    ]
+    page_seq_counts: dict[int | None, int] = {}
+    page_seq_pairs: list[int] = []
+    for page_number in page_numbers:
+        page_seq_pairs.append(page_seq_counts.get(page_number, 0))
+        page_seq_counts[page_number] = page_seq_pairs[-1] + 1
 
     # -- assign hash IDs to elements --
     old_to_new_mapping = {

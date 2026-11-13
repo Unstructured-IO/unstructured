@@ -8,12 +8,13 @@ from __future__ import annotations
 import copy
 import datetime as dt
 import email
+import email.encoders
 import email.policy
 import email.utils
 import io
 import os
 import re
-from email.message import EmailMessage, MIMEPart
+from email.message import EmailMessage, Message, MIMEPart
 from functools import cached_property
 from typing import IO, Any, Final, Iterator, cast
 
@@ -51,6 +52,18 @@ def _format_address(name: str, address: str) -> str:
     quotes = '"' if _SPECIALS_RE.search(name) else ""
     name = _ESCAPES_RE.sub(r"\\\g<0>", name)
     return f"{quotes}{name}{quotes} <{address}>"
+
+
+def _format_addresses(headers: list[str]) -> list[str] | None:
+    """The addresses in `headers`, formatted, or None when there are none.
+
+    An empty group such as "undisclosed-recipients:;" holds no address, and `getaddresses()`
+    reports it as `("", "")`, so entries without an address are dropped.
+    """
+    addrs = [
+        _format_address(name, addr) for name, addr in email.utils.getaddresses(headers) if addr
+    ]
+    return addrs or None
 
 
 @partition_runtime_telemetry("eml")
@@ -151,8 +164,7 @@ class EmailPartitioningContext:
         bccs = self.msg.get_all("Bcc")
         if not bccs:
             return None
-        addrs = email.utils.getaddresses(bccs)
-        return [_format_address(*addr) for addr in addrs]
+        return _format_addresses(bccs)
 
     @cached_property
     def body_part(self) -> MIMEPart | None:
@@ -169,8 +181,7 @@ class EmailPartitioningContext:
         ccs = self.msg.get_all("Cc")
         if not ccs:
             return None
-        addrs = email.utils.getaddresses(ccs)
-        return [_format_address(*addr) for addr in addrs]
+        return _format_addresses(ccs)
 
     @cached_property
     def content_type_preference(self) -> tuple[str, ...]:
@@ -204,9 +215,8 @@ class EmailPartitioningContext:
         if not froms:
             # -- this should never occur because the From: header is mandatory per RFC 5322 --
             return None
-        addrs = email.utils.getaddresses(froms)
-        formatted_addrs = [_format_address(*addr) for addr in addrs]
-        return formatted_addrs[0]
+        formatted_addrs = _format_addresses(froms)
+        return formatted_addrs[0] if formatted_addrs else None
 
     @cached_property
     def message_id(self) -> str | None:
@@ -294,8 +304,7 @@ class EmailPartitioningContext:
         tos = self.msg.get_all("To")
         if not tos:
             return None
-        addrs = email.utils.getaddresses(tos)
-        return [_format_address(*addr) for addr in addrs]
+        return _format_addresses(tos)
 
     @cached_property
     def _filesystem_last_modified(self) -> str | None:
@@ -420,13 +429,19 @@ class _AttachmentPartitioner:
 
         file = io.BytesIO(self._file_bytes)
 
+        partitioning_kwargs = self._ctx.partitioning_kwargs
+        # -- a `message/rfc822` part is an email whatever its first header is; libmagic reports
+        # -- e.g. a message starting with "MIME-Version:" as "text/plain" --
+        if self._attachment.get_content_type() == "message/rfc822":
+            partitioning_kwargs = {**partitioning_kwargs, "content_type": "message/rfc822"}
+
         # -- partition the attachment --
         try:
             elements = partition(
                 file=file,
                 metadata_filename=self._attachment_file_name,
                 metadata_last_modified=self._ctx.metadata_last_modified,
-                **self._ctx.partitioning_kwargs,
+                **partitioning_kwargs,
             )
         except BaseException as e:
             if not isinstance(e, EXPECTED_ATTACHMENT_ERRORS):
@@ -474,8 +489,40 @@ class _AttachmentPartitioner:
         if isinstance(content, str):
             return content.encode("utf-8")
 
+        # -- a `message/rfc822` part (a message forwarded as an attachment, a returned message in a
+        # -- bounce, each part of a `multipart/digest`) gets the enclosed message, not bytes --
+        if isinstance(content, Message):
+            return self._serialize_message(content)
+
         assert isinstance(content, bytes)
         return content
+
+    @staticmethod
+    def _serialize_message(message: Message) -> bytes:
+        """Serialized bytes of `message`, the email enclosed in a `message/rfc822` attachment.
+
+        `as_bytes()` writes the body of each part as is, except that it rewrites each CR in it,
+        alone or in a CRLF, as LF. Unless the part is in Base64, which ignores line breaks, that
+        corrupts binary data such as a PNG image, whatever the Content-Transfer-Encoding says
+        ("binary", "8bit", or none, i.e. "7bit"). So re-encode each part whose decoded bytes hold a
+        CR in Base64, from those bytes, on a *copy* first; `message` belongs to the parsed email
+        and is left as is. Each part then reaches its partitioner with the same bytes as when the
+        enclosed email is partitioned on its own.
+        """
+        enclosed = copy.deepcopy(message)
+        for part in enclosed.walk():
+            if part.is_multipart():
+                continue
+            # -- the same test for Base64 that `get_payload(decode=True)` makes --
+            if str(part.get("Content-Transfer-Encoding", "")).lower() == "base64":
+                continue
+            data = part.get_payload(decode=True)
+            if not data or b"\r" not in data:
+                continue
+            del part["Content-Transfer-Encoding"]
+            part.set_payload(data)
+            email.encoders.encode_base64(part)
+        return enclosed.as_bytes()
 
     @cached_property
     def _serialized_multipart_bytes(self) -> bytes:

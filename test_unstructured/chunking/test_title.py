@@ -10,6 +10,7 @@ import pytest
 
 from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock, input_path
 from unstructured.chunking.base import CHUNK_MULTI_PAGE_DEFAULT
+from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import _ByTitleChunkingOptions, chunk_by_title
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
@@ -888,3 +889,81 @@ class DescribeTokenBasedChunking:
             for chunk in chunks:
                 token_count = len(enc.encode(chunk.text))
                 assert token_count <= 12, f"Chunk exceeded token limit: {token_count} tokens"
+
+    def it_fills_the_token_budget_when_combining_short_sections(self, word_token_counter_: Mock):
+        """Short sections combine up to `max_tokens`, like `chunk_elements()` does.
+
+        `combine_text_under_n_chars` defaults to `max_tokens` in token mode, so a section had to
+        be under that many *tokens* to be combined. Measuring it in characters instead put every
+        section over the threshold and suppressed combining altogether, leaving one chunk per
+        section at a fraction of the requested chunk size.
+        """
+        elements: list[Element] = []
+        for idx in range(12):
+            # -- each section is 2 + 8 == 10 tokens, a sixth of the budget --
+            elements.append(Title(f"Section {idx}"))
+            elements.append(Text("alpha beta gamma delta epsilon zeta seven eight"))
+
+        chunks = chunk_by_title(elements, max_tokens=60, tokenizer="cl100k_base")
+
+        assert [len(chunk.text.split()) for chunk in chunks] == [60, 60]
+        # -- and the section boundaries cost nothing relative to ignoring them entirely --
+        assert [chunk.text for chunk in chunks] == [
+            chunk.text for chunk in chunk_elements(elements, max_tokens=60, tokenizer="cl100k_base")
+        ]
+
+    def it_still_measures_the_combine_threshold_in_characters_in_character_mode(self):
+        """Character mode is unaffected: `combine_text_under_n_chars` stays a character count."""
+        elements: list[Element] = [
+            Title("Alpha"),
+            Text("one two three four five"),  # -- 5 tokens but 23 characters --
+            Title("Bravo"),
+            Text("six seven eight nine ten"),
+        ]
+
+        chunks = chunk_by_title(elements, max_characters=200, combine_text_under_n_chars=20)
+
+        # -- 29 characters is over the 20-character threshold, so no combining --
+        assert [chunk.text for chunk in chunks] == [
+            "Alpha\n\none two three four five",
+            "Bravo\n\nsix seven eight nine ten",
+        ]
+
+
+# ================================================================================================
+# `combine_text_under_n_chars` IS CAPPED AT `new_after_n_chars`
+# ================================================================================================
+
+
+def test_chunk_by_title_caps_combine_text_under_n_chars_at_new_after_n_chars():
+    """`combine_text_under_n_chars` is reduced to `new_after_n_chars` when it exceeds it.
+
+    The soft-max is the ceiling on how much text a caller wants combined, so asking to combine
+    up to a larger value than `new_after_n_chars` must not combine more, and the default (which
+    is `max_characters`) must behave like `combine_text_under_n_chars == new_after_n_chars`.
+
+    Before the cap was applied, `combine_text_under_n_chars` was used exactly as specified, so
+    these four undersized sections were merged into a single 354-character chunk -- more than
+    three times the 100-character soft-max the caller asked for.
+    """
+
+    def elements() -> list[Element]:
+        # -- four sections, each well under `new_after_n_chars=100` --
+        return [
+            element
+            for idx in range(1, 5)
+            for element in (
+                Title(f"Section {idx} heading"),
+                Text("Body text of section " + "word " * 10),
+            )
+        ]
+
+    capped_chunks = chunk_by_title(
+        elements(), max_characters=500, new_after_n_chars=100, combine_text_under_n_chars=400
+    )
+    soft_max_chunks = chunk_by_title(
+        elements(), max_characters=500, new_after_n_chars=100, combine_text_under_n_chars=100
+    )
+
+    assert len(soft_max_chunks) == 2
+    assert [chunk.text for chunk in capped_chunks] == [chunk.text for chunk in soft_max_chunks]
