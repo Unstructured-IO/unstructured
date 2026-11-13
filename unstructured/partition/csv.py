@@ -123,13 +123,14 @@ def read_delimited_text(
     # -- "N/A", "NULL" or "None", turns a column of whole numbers with one empty cell into floats
     # -- (12 reads "12.0") and drops the leading zeros of a code such as "007" --
     cells_as_written = {"dtype": str, "keep_default_na": False}
-    # -- the first non-blank line is peeked once for the sniff, the way it always has been; a
-    # -- repeated header label is restored from the first line the read itself would not skip --
+    # -- the first non-blank line is peeked once for the sniff, the way it always has been: the
+    # -- sample the sniff joins is a whole record of any size, so it is passed as a temporary
+    # -- rather than held through the read. A repeated header label is restored from the first
+    # -- line the read itself would not skip --
     first_line = ""
     try:
         if sep is None:
-            first_line = reader.peek_first_non_blank_line()
-            sep = _sniff_delimiter(_normalize_line_endings(first_line))
+            sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
             if header == 0:
                 # -- a line the sniff skipped can hold the header record: re-peek with the
                 # -- sniffed delimiter, now that it is known --

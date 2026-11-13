@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import io
 import itertools
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -812,3 +813,34 @@ def test_partition_csv_does_not_split_an_oversized_sniffed_header(
     expected_second = "name.1" if duplicate else "other"
     assert element.text == f"name {expected_second} {long_label} A B C"
     assert f"<td>{expected_second}</td>" in element.metadata.text_as_html
+
+
+def test_partition_csv_headerless_sniffed_read_does_not_hold_the_first_record(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # -- the context's sniffer only tries ",;|", so a tab-delimited file is sniffed again by the
+    # -- read itself, without a header: the sample that sniff joins is a whole data record of any
+    # -- size, so it must stay a temporary and no local of read_delimited_text() may still hold
+    # -- it while pd.read_csv() builds the data-frame --
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 32)
+    first_record = "x" * 4096 + "\ty\tz\n"
+    read_csv_ = pd.read_csv
+    held_during_the_read: list[str] = []
+    read_kwargs: dict[str, object] = {}
+
+    def read_csv_keeping_only_the_parse(*args, **kwargs):
+        caller_locals = sys._getframe(1).f_locals
+        held_during_the_read[:] = [
+            value for value in caller_locals.values() if isinstance(value, str) and len(value) > 64
+        ]
+        read_kwargs.update(kwargs)
+        return read_csv_(*args, **kwargs)
+
+    monkeypatch.setattr(pd, "read_csv", read_csv_keeping_only_the_parse)
+
+    element = partition_csv(file=io.BytesIO((first_record + "a\tb\tc\n").encode()))[0]
+
+    assert read_kwargs.get("sep") == "\t"
+    assert read_kwargs.get("engine") == "python"
+    assert held_during_the_read == []
+    assert element.text == "x" * 4096 + " y z a b c"
