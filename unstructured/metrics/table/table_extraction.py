@@ -80,7 +80,7 @@ def deckerd_table_to_html(cells: List[Dict[str, Any]]) -> str:
     # determine which cells are in header. Consider row 0 as header
     # but spans may make it larger
     first_row_cells = [cell for cell in cells if cell["y"] == 0]
-    header_length = max(cell["w"] for cell in first_row_cells)
+    header_length = max(cell["h"] for cell in first_row_cells)
     header_rows = set(range(header_length))
     for cell in cells:
         cell_data = {
