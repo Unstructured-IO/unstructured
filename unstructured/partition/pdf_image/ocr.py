@@ -13,6 +13,7 @@ from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
+from unstructured.partition.common.common import copy_file_to_stream
 from unstructured.partition.common.lang import tesseract_to_paddle_language
 from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
 from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_image, valid_text
@@ -77,12 +78,10 @@ def process_data_with_ocr(
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
-    data_bytes = data if isinstance(data, bytes) else data.read()
-
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
         with open(tmp_file_path, "wb") as tmp_file:
-            tmp_file.write(data_bytes)
+            copy_file_to_stream(data, tmp_file)
 
         merged_layouts = process_file_with_ocr(
             filename=tmp_file_path,

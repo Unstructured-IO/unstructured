@@ -1,12 +1,24 @@
 from __future__ import annotations
 
+import io
 import os
 import pathlib
+import struct
 import tempfile
+import time
+import zlib
+from typing import Any, Callable
 from unittest import mock
 
 import pytest
-from PIL import Image
+from pi_heif import register_heif_opener
+from PIL import (
+    GifImagePlugin,
+    Image,
+    ImageFile,
+    ImageSequence,
+    TiffImagePlugin,
+)
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout
 from unstructured_pytesseract import TesseractError
@@ -15,6 +27,7 @@ from test_unstructured.partition.pdf_image.test_pdf import assert_element_extrac
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ElementType
+from unstructured.errors import UnprocessableEntityError
 from unstructured.partition import image, pdf
 from unstructured.partition.pdf_image import ocr
 from unstructured.partition.utils.constants import (
@@ -672,3 +685,597 @@ def test_multi_page_tiff_starts_on_starting_page_number():
     pages = {element.metadata.page_number for element in elements}
 
     assert pages == {2, 3}
+
+
+# -- pixel limit ---------------------------------------------------------------------------------
+
+
+def _write_multi_frame_tiff(tmp_path: pathlib.Path, n_frames: int, side: int) -> str:
+    """Write a TIFF of `n_frames` blank `side x side` frames; blank frames compress to ~nothing."""
+    frame = Image.new("1", (side, side), 1)
+    file_path = str(tmp_path / "frames.tiff")
+    frame.save(
+        file_path, compression="group4", save_all=True, append_images=[frame] * (n_frames - 1)
+    )
+    return file_path
+
+
+@pytest.mark.parametrize("source", ["filename", "file", "bytes"])
+def test_check_image_max_pixels_exceeded_sums_pixels_across_frames(
+    source: str, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    # -- 3 frames of 100 x 100 = 30,000 pixels --
+    file_path = _write_multi_frame_tiff(tmp_path, n_frames=3, side=100)
+    with open(file_path, "rb") as f:
+        file_bytes = f.read()
+
+    def check():
+        if source == "filename":
+            pdf.check_image_max_pixels_exceeded(filename=file_path)
+        elif source == "bytes":
+            pdf.check_image_max_pixels_exceeded(file=file_bytes)
+        else:
+            file = io.BytesIO(file_bytes)
+            file.seek(7)
+            pdf.check_image_max_pixels_exceeded(file=file)
+            # -- the caller's read position is restored --
+            assert file.tell() == 7
+
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "30000")
+    check()
+
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "29999")
+    with pytest.raises(UnprocessableEntityError, match="first 3 frame"):
+        check()
+
+
+def test_check_image_max_pixels_exceeded_reports_a_decompression_bomb_frame_as_unprocessable(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    # -- PIL refuses to open a frame over twice `MAX_IMAGE_PIXELS` --
+    file_path = _write_multi_frame_tiff(tmp_path, n_frames=1, side=100)
+    monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 1000)
+
+    with pytest.raises(UnprocessableEntityError, match="too many pixels"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path)
+
+
+def _write_tiff(tmp_path: pathlib.Path, sizes: list[tuple[int, int]]) -> str:
+    """Write a TIFF with one blank frame of each `(width, height)` in `sizes`."""
+    first, *rest = (Image.new("1", size, 1) for size in sizes)
+    file_path = str(tmp_path / "mixed.tiff")
+    first.save(file_path, compression="group4", save_all=True, append_images=rest)
+    return file_path
+
+
+@pytest.fixture()
+def pixel_allocations(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    """Records each pixel-buffer allocation and frame load PIL makes from now on."""
+    calls: list[str] = []
+    core_new = Image.core.new
+    load = ImageFile.ImageFile.load
+
+    def recording_core_new(*args: Any, **kwargs: Any):
+        calls.append("core.new")
+        return core_new(*args, **kwargs)
+
+    def recording_load(self: ImageFile.ImageFile, *args: Any, **kwargs: Any):
+        calls.append("load")
+        return load(self, *args, **kwargs)
+
+    monkeypatch.setattr(Image.core, "new", recording_core_new)
+    monkeypatch.setattr(ImageFile.ImageFile, "load", recording_load)
+    return calls
+
+
+def test_check_image_max_pixels_exceeded_reads_tiff_frame_sizes_without_allocating(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+):
+    # -- mixed frame sizes: 100x100 + 300x200 + 50x50 = 72,500 pixels --
+    file_path = _write_tiff(tmp_path, [(100, 100), (300, 200), (50, 50)])
+    pixel_allocations = request.getfixturevalue("pixel_allocations")
+
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "72500")
+    pdf.check_image_max_pixels_exceeded(filename=file_path)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "72499")
+    with pytest.raises(UnprocessableEntityError, match="first 3 frame"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path)
+
+    assert pixel_allocations == []
+
+
+def test_check_image_max_pixels_exceeded_stops_at_the_frame_that_exceeds_the_limit(
+    tmp_path: pathlib.Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = _write_tiff(tmp_path, [(10, 10), (100, 100), (1000, 1000)])
+    seek_ = mocker.spy(TiffImagePlugin.TiffImageFile, "seek")
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "5000")
+
+    with pytest.raises(UnprocessableEntityError, match="first 2 frame.* 10,100 pixels"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path)
+
+    # -- the third frame's header is never read --
+    assert max(call.args[1] for call in seek_.call_args_list) == 1
+
+
+def _save_frames(tmp_path: pathlib.Path, format: str, frames: list[Image.Image]) -> str:
+    file_path = str(tmp_path / f"frames.{format.lower()}")
+    frames[0].save(file_path, format=format, save_all=True, append_images=frames[1:])
+    return file_path
+
+
+def _distinct_frames(mode: str, size: tuple[int, int], n: int) -> list[Image.Image]:
+    """`n` frames that differ, so an encoder does not merge them."""
+    frames = []
+    for i in range(n):
+        frame = Image.new(mode, size, 0)
+        frame.putpixel((i, 0), (255, 255, 255) if mode == "RGB" else i + 1)
+        frames.append(frame)
+    return frames
+
+
+@pytest.mark.parametrize(
+    ("make_file", "n_frames", "total_pixels"),
+    [
+        # -- frames composited onto the canvas, counted from metadata --
+        (lambda p: _save_frames(p, "PNG", _distinct_frames("RGB", (40, 40), 3)), 3, 3 * 1600),
+        (lambda p: _save_frames(p, "WEBP", _distinct_frames("RGB", (40, 40), 3)), 3, 3 * 1600),
+        (lambda p: _save_frames(p, "GIF", _distinct_frames("P", (40, 30), 3)), 3, 3 * 1200),
+        # -- frames of different sizes, read from each frame's header --
+        (
+            lambda p: _save_frames(
+                p, "MPO", [Image.new("RGB", (40, 30)), Image.new("RGB", (400, 300))]
+            ),
+            2,
+            40 * 30 + 400 * 300,
+        ),
+        # -- images of different sizes, read from the HEIF container --
+        (
+            lambda p: example_doc_path("img/multi-image-64x48-640x480.heic"),
+            2,
+            64 * 48 + 640 * 480,
+        ),
+    ],
+    ids=["apng", "webp", "gif", "mpo", "heif"],
+)
+def test_check_image_max_pixels_exceeded_charges_every_frame_without_decoding_any(
+    make_file: Callable[[pathlib.Path], str],
+    n_frames: int,
+    total_pixels: int,
+    tmp_path: pathlib.Path,
+    monkeypatch: pytest.MonkeyPatch,
+    request: pytest.FixtureRequest,
+):
+    register_heif_opener()
+    file_path = make_file(tmp_path)
+    pixel_allocations = request.getfixturevalue("pixel_allocations")
+
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels))
+    pdf.check_image_max_pixels_exceeded(filename=file_path)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels - 1))
+    with pytest.raises(UnprocessableEntityError, match=f"first {n_frames} frame"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path)
+
+    assert pixel_allocations == []
+
+
+def _apng_declaring_frames(n_frames: int) -> bytes:
+    """A valid two-frame 1x1 APNG whose `acTL` chunk declares `n_frames` frames instead."""
+    buffer = io.BytesIO()
+    frames = _distinct_frames("RGB", (2, 1), 2)
+    frames[0].save(buffer, format="PNG", save_all=True, append_images=frames[1:])
+    data = buffer.getvalue()
+    i = data.index(b"acTL")
+    # -- chunk: 4-byte length, type, data (num_frames, num_plays), CRC over type + data --
+    body = b"acTL" + struct.pack(">II", n_frames, 0)
+    return (
+        data[: i - 4]
+        + struct.pack(">I", 8)
+        + body
+        + struct.pack(">I", zlib.crc32(body))
+        + (data[i + 4 + 8 + 4 :])
+    )
+
+
+def test_check_image_max_pixels_exceeded_does_not_iterate_a_declared_frame_count(
+    monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+):
+    monkeypatch.delenv("IMAGE_MAX_TOTAL_PIXELS", raising=False)  # -- default limit of 5e8 --
+    # -- a few hundred bytes declaring 2^31 - 1 frames of 2 x 1 pixels --
+    file = io.BytesIO(_apng_declaring_frames(2**31 - 1))
+    pixel_allocations = request.getfixturevalue("pixel_allocations")
+
+    started = time.monotonic()
+    with pytest.raises(
+        UnprocessableEntityError, match="first 250,000,001 frame.* 500,000,002 pixels"
+    ):
+        pdf.check_image_max_pixels_exceeded(file=file)
+
+    # -- constant work: a loop over the declared frames would take minutes --
+    assert time.monotonic() - started < 2
+    assert pixel_allocations == []
+
+
+def test_check_image_max_pixels_exceeded_leaves_the_file_open_at_its_position_when_reading_fails(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    with open(_write_tiff(tmp_path, [(10, 10)] * 3), "rb") as f:
+        file = io.BytesIO(f.read())
+    file.seek(3)
+
+    def failing_seek(self: TiffImagePlugin.TiffImageFile, frame: int) -> None:
+        raise OSError("truncated frame header")
+
+    monkeypatch.setattr(TiffImagePlugin.TiffImageFile, "seek", failing_seek)
+
+    with pytest.raises(OSError, match="truncated frame header"):
+        pdf.check_image_max_pixels_exceeded(file=file)
+
+    assert not file.closed
+    assert file.tell() == 3
+
+
+def _gif_with_frames(
+    screen: tuple[int, int], frames: list[tuple[int, int, int, int]], between: bytes = b""
+) -> bytes:
+    """A GIF with a `screen` logical screen and a blank frame at each `(left, top, width, height)`.
+
+    Pillow does not write frames that extend past the logical screen, so each frame is encoded on
+    its own and its image data placed under a descriptor at the given position. `between` goes
+    before each frame, e.g. an extension or a stray byte.
+    """
+    head, body = b"", b""
+    for left, top, width, height in frames:
+        buffer = io.BytesIO()
+        Image.new("P", (width, height), 0).save(buffer, format="GIF")
+        data = buffer.getvalue()
+        flags = data[10]
+        i = 13 + (3 << ((flags & 7) + 1) if flags & 0x80 else 0)
+        while data[i : i + 1] == b"!":  # -- skip any extension Pillow wrote --
+            i += 2
+            while data[i]:
+                i += data[i] + 1
+            i += 1
+        head = head or b"GIF89a" + struct.pack("<HH", *screen) + data[10:i]
+        descriptor = struct.pack("<4H", left, top, width, height)
+        body += between + b"," + descriptor + data[i + 9 : data.rindex(b";")]
+    return head + body + b";"
+
+
+@pytest.mark.parametrize(
+    ("screen", "frames", "between"),
+    [
+        ((40, 30), [(0, 0, 40, 30)] * 3, b""),
+        ((10, 10), [(0, 0, 10, 10), (0, 0, 100, 80), (50, 50, 10, 10)], b""),
+        ((20, 20), [(0, 0, 20, 20), (15, 15, 30, 30)], b"!\xfe\x03abc\x00\x07"),
+        ((10, 10), [(0, 0, 60, 40), (0, 0, 10, 10)], b""),
+    ],
+    ids=["fixed-canvas", "grows-on-a-later-frame", "grows-by-offset", "first-frame-past-screen"],
+)
+def test_iter_gif_canvas_sizes_matches_the_canvas_pillow_decodes_each_frame_at(
+    screen: tuple[int, int], frames: list[tuple[int, int, int, int]], between: bytes
+):
+    data = _gif_with_frames(screen, frames, between)
+    with Image.open(io.BytesIO(data)) as image:
+        decoded_sizes = [frame.copy().size for frame in ImageSequence.Iterator(image)]
+
+    assert list(pdf._iter_gif_canvas_sizes(io.BytesIO(data))) == decoded_sizes
+
+
+@pytest.mark.parametrize("before_first", [False, True])
+@pytest.mark.parametrize("label", [b"\xff", b"\xf9", b"\x01"])
+@pytest.mark.parametrize("source_kind", ["filename", "bytes", "stream"])
+def test_gif_empty_extension_cannot_hide_decoded_frames(
+    tmp_path, monkeypatch, mocker, request, before_first, label, source_kind
+):
+    # Pillow consumes another sub-block chain after an empty non-comment block.
+    extension = b"!" + label + b"\x00;" + b"A" * 59 + b"\x00"
+    data = _gif_with_frames((10, 10), [(0, 0, 10, 10)] * 3, extension if before_first else b"")
+    if not before_first:
+        first = _gif_with_frames((10, 10), [(0, 0, 10, 10)])
+        offset = len(first) - 1
+        data = data[:offset] + extension + data[offset:]
+    with Image.open(io.BytesIO(data)) as decoded:
+        assert [frame.copy().size for frame in ImageSequence.Iterator(decoded)] == [(10, 10)] * 3
+    pixel_allocations = request.getfixturevalue("pixel_allocations")
+    stream = io.BytesIO(data)
+    stream.seek(3)
+    path = tmp_path / "extension.gif"
+    path.write_bytes(data)
+    kwargs = (
+        {"filename": str(path)}
+        if source_kind == "filename"
+        else {"file": data if source_kind == "bytes" else stream}
+    )
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "300")
+    pdf.check_image_max_pixels_exceeded(**kwargs)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "299")
+    with pytest.raises(UnprocessableEntityError, match="first 3 frame.*300 pixels"):
+        pdf.check_image_max_pixels_exceeded(**kwargs)
+    assert not stream.closed
+    assert stream.tell() == 3
+    local_ = mocker.patch.object(pdf, "_partition_pdf_or_image_local")
+    ocr_ = mocker.patch.object(pdf, "_partition_pdf_or_image_with_ocr")
+    with pytest.raises(UnprocessableEntityError, match="first 3 frame.*300 pixels"):
+        image.partition_image(**kwargs, strategy=PartitionStrategy.HI_RES)
+    local_.assert_not_called()
+    ocr_.assert_not_called()
+    assert pixel_allocations == []
+
+
+@pytest.mark.parametrize(
+    "extension",
+    [
+        b"!\xfe\x00",  # -- empty comments stop at their initial block --
+        b"!\xfe\x03abc\x00",  # -- nonempty comments --
+        b"!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00",  # -- ordinary looping GIF --
+        b"!\xff\x0bNETSCAPE2.0\x00;" + b"A" * 59 + b"\x00",
+    ],
+    ids=["empty-comment", "comment", "netscape-loop", "empty-netscape-loop-block"],
+)
+def test_gif_extension_consumption_matches_pillow(extension):
+    data = _gif_with_frames((10, 10), [(0, 0, 10, 10)] * 3)
+    # Insert before the first frame, after the global color table.
+    offset = 13 + (3 << ((data[10] & 7) + 1) if data[10] & 0x80 else 0)
+    data = data[:offset] + extension + data[offset:]
+    with Image.open(io.BytesIO(data)) as decoded:
+        sizes = [frame.copy().size for frame in ImageSequence.Iterator(decoded)]
+    assert sizes == [(10, 10)] * 3
+    assert list(pdf._iter_gif_canvas_sizes(io.BytesIO(data))) == sizes
+
+
+@pytest.mark.parametrize("budget", [50, 150, 250])
+def test_gif_budget_rejection_closes_scanner_with_retained_traceback(tmp_path, monkeypatch, budget):
+    path = tmp_path / "frames.gif"
+    path.write_bytes(_gif_with_frames((10, 10), [(0, 0, 10, 10)] * 3))
+    handles = []
+    real_open = open
+
+    def tracked_open(*args, **kwargs):
+        handle = real_open(*args, **kwargs)
+        handles.append(handle)
+        return handle
+
+    monkeypatch.setattr(pdf, "open", tracked_open, raising=False)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(budget))
+    with pytest.raises(UnprocessableEntityError) as retained:
+        pdf.check_image_max_pixels_exceeded(filename=str(path))
+    assert retained.value.__traceback__ is not None
+    assert handles
+    assert all(handle.closed for handle in handles)
+
+
+def test_check_image_max_pixels_exceeded_charges_a_gif_canvas_that_grows(
+    monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+):
+    # -- a 10x10 screen whose second frame grows the canvas Pillow decodes onto to 100x80 --
+    data = _gif_with_frames((10, 10), [(0, 0, 10, 10), (0, 0, 100, 80), (0, 0, 10, 10)])
+    total_pixels = 10 * 10 + 2 * 100 * 80
+    pixel_allocations = request.getfixturevalue("pixel_allocations")
+
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels))
+    pdf.check_image_max_pixels_exceeded(file=io.BytesIO(data))
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels - 1))
+    with pytest.raises(UnprocessableEntityError, match=f"first 3 frame.* {total_pixels:,} pixels"):
+        pdf.check_image_max_pixels_exceeded(file=io.BytesIO(data))
+
+    assert pixel_allocations == []
+
+
+def test_check_image_max_pixels_exceeded_reads_a_gif_from_offset_0_like_pillow(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- `Image.open()` reads a stream from offset 0 whatever its position, so the frames must be
+    # -- measured from there too; read from the caller's position they would be misaligned --
+    data = _gif_with_frames((10, 10), [(0, 0, 10, 10), (0, 0, 100, 80), (0, 0, 10, 10)])
+    total_pixels = 10 * 10 + 2 * 100 * 80
+    file = io.BytesIO(data)
+    file.seek(20)
+
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels))
+    pdf.check_image_max_pixels_exceeded(file=file)
+    assert file.tell() == 20
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", str(total_pixels - 1))
+    with pytest.raises(UnprocessableEntityError, match=f"first 3 frame.* {total_pixels:,} pixels"):
+        pdf.check_image_max_pixels_exceeded(file=file)
+    assert file.tell() == 20
+
+
+def test_iter_frame_runs_charges_a_declared_frame_count_as_one_run():
+    # -- deterministic work: the 2^31 - 1 frames an APNG declares are one run, never a loop --
+    file = io.BytesIO(_apng_declaring_frames(2**31 - 1))
+    with Image.open(file) as image:
+        runs = list(pdf._iter_frame_runs(image, file))
+
+    assert runs == [(2**31 - 1, (2, 1))]
+
+
+def test_partition_image_lets_a_frame_header_failure_escape_before_partitioning(
+    tmp_path: pathlib.Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    with open(_write_tiff(tmp_path, [(10, 10)] * 3), "rb") as f:
+        file = io.BytesIO(f.read())
+    original_seek = TiffImagePlugin.TiffImageFile.seek
+
+    def seek_failing_after_the_first_frame(self: TiffImagePlugin.TiffImageFile, frame: int):
+        if frame >= 1:
+            raise OSError("truncated frame header")
+        return original_seek(self, frame)
+
+    monkeypatch.setattr(TiffImagePlugin.TiffImageFile, "seek", seek_failing_after_the_first_frame)
+    local_ = mocker.patch.object(pdf, "_partition_pdf_or_image_local")
+    ocr_ = mocker.patch.object(pdf, "_partition_pdf_or_image_with_ocr")
+    convert_ = mocker.spy(Image.Image, "convert")
+
+    with pytest.raises(OSError, match="truncated frame header"):
+        image.partition_image(file=file, strategy=PartitionStrategy.HI_RES)
+
+    local_.assert_not_called()
+    ocr_.assert_not_called()
+    convert_.assert_not_called()
+    assert not file.closed
+    assert file.tell() == 0
+
+
+@pytest.mark.parametrize("missing_dependency", [None, "unstructured_inference"])
+@pytest.mark.parametrize("image_format", ["tiff", "apng", "gif"])
+def test_partition_image_with_ocr_only_never_reads_frames_after_the_first(
+    image_format: str,
+    missing_dependency: str | None,
+    tmp_path: pathlib.Path,
+    mocker: MockFixture,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- requested ocr_only, or hi_res falling back to ocr_only without unstructured_inference --
+    strategy = (
+        PartitionStrategy.OCR_ONLY if missing_dependency is None else PartitionStrategy.HI_RES
+    )
+    if image_format == "tiff":
+        file_path = _write_tiff(tmp_path, [(10, 10)] * 3)
+    elif image_format == "apng":
+        file_path = _save_frames(tmp_path, "PNG", _distinct_frames("RGB", (10, 10), 3))
+    else:
+        file_path = str(tmp_path / "frames.gif")
+        pathlib.Path(file_path).write_bytes(
+            _gif_with_frames((10, 10), [(0, 0, 10, 10), (0, 0, 100, 100)])
+        )
+
+    # -- poison every way of reaching a later frame or a declared frame count --
+    def poisoned(*args: Any, **kwargs: Any):
+        raise AssertionError("a frame after the first was read")
+
+    original_tiff_seek = TiffImagePlugin.TiffImageFile.seek
+    monkeypatch.setattr(
+        TiffImagePlugin.TiffImageFile,
+        "seek",
+        lambda self, frame: poisoned() if frame else original_tiff_seek(self, frame),
+    )
+    monkeypatch.setattr(GifImagePlugin.GifImageFile, "n_frames", property(poisoned))
+    monkeypatch.setattr(pdf, "_iter_gif_canvas_sizes", poisoned)
+    # -- the only routes to later frames or a declared count (e.g. an APNG's `acTL`) --
+    monkeypatch.setattr(pdf, "_iter_frame_runs", poisoned)
+    monkeypatch.setattr(pdf.ImageSequence, "Iterator", poisoned)
+    mocker.patch(
+        "unstructured.partition.strategies.dependency_exists",
+        side_effect=lambda name: name != missing_dependency,
+    )
+    ocr_ = mocker.patch.object(pdf, "_partition_pdf_or_image_with_ocr", return_value=[])
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "100")  # -- exactly the first frame --
+
+    image.partition_image(file_path, strategy=strategy)
+
+    ocr_.assert_called_once()
+
+
+def test_partition_image_with_hi_res_does_read_later_frames(
+    tmp_path: pathlib.Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    # -- the control for the ocr_only test: the same poison trips when every frame is charged --
+    file_path = _write_tiff(tmp_path, [(10, 10)] * 3)
+
+    def poisoned(*args: Any, **kwargs: Any):
+        raise AssertionError("a frame after the first was read")
+
+    monkeypatch.setattr(pdf, "_iter_frame_runs", poisoned)
+    local_ = mocker.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[])
+
+    with pytest.raises(AssertionError, match="a frame after the first was read"):
+        image.partition_image(file_path, strategy=PartitionStrategy.HI_RES)
+
+    local_.assert_not_called()
+
+
+def test_check_image_max_pixels_exceeded_charges_only_the_first_frame_unless_all_frames(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = _write_tiff(tmp_path, [(100, 100)] * 3)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "10000")
+
+    pdf.check_image_max_pixels_exceeded(filename=file_path, all_frames=False)
+    with pytest.raises(UnprocessableEntityError, match="first 2 frame"):
+        pdf.check_image_max_pixels_exceeded(filename=file_path, all_frames=True)
+
+
+def test_check_image_max_pixels_exceeded_leaves_a_rejected_file_open_at_its_position(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    with open(_write_tiff(tmp_path, [(100, 100)] * 3), "rb") as f:
+        file = io.BytesIO(f.read())
+    file.seek(5)
+    monkeypatch.setenv("IMAGE_MAX_TOTAL_PIXELS", "100")
+
+    with pytest.raises(UnprocessableEntityError):
+        pdf.check_image_max_pixels_exceeded(file=file)
+
+    assert not file.closed
+    assert file.tell() == 5
+
+
+@pytest.mark.parametrize(
+    ("strategy", "missing_dependency", "partitioner_name", "expected_all_frames"),
+    [
+        (PartitionStrategy.HI_RES, None, "_partition_pdf_or_image_local", True),
+        (PartitionStrategy.OCR_ONLY, None, "_partition_pdf_or_image_with_ocr", False),
+        # -- auto resolves to hi_res for an image --
+        (PartitionStrategy.AUTO, None, "_partition_pdf_or_image_local", True),
+        # -- the limit follows the strategy a missing dependency falls back to --
+        (
+            PartitionStrategy.HI_RES,
+            "unstructured_inference",
+            "_partition_pdf_or_image_with_ocr",
+            False,
+        ),
+        (
+            PartitionStrategy.OCR_ONLY,
+            "unstructured_pytesseract",
+            "_partition_pdf_or_image_local",
+            True,
+        ),
+    ],
+)
+def test_partition_image_measures_every_frame_only_for_hi_res(
+    strategy: str,
+    missing_dependency: str | None,
+    partitioner_name: str,
+    expected_all_frames: bool,
+    mocker: MockFixture,
+):
+    check_ = mocker.patch.object(pdf, "check_image_max_pixels_exceeded")
+    mocker.patch.object(pdf, partitioner_name, return_value=[])
+    mocker.patch(
+        "unstructured.partition.strategies.dependency_exists",
+        side_effect=lambda name: name != missing_dependency,
+    )
+    file_path = example_doc_path("img/layout-parser-paper-fast.jpg")
+
+    pdf.partition_pdf_or_image(file_path, is_image=True, strategy=strategy)
+
+    check_.assert_called_once_with(filename=file_path, file=None, all_frames=expected_all_frames)
+
+
+def test_partition_pdf_does_not_apply_the_image_pixel_limit(mocker: MockFixture):
+    check_ = mocker.patch.object(pdf, "check_image_max_pixels_exceeded")
+
+    pdf.partition_pdf_or_image(
+        example_doc_path("pdf/layout-parser-paper-fast.pdf"), strategy=PartitionStrategy.FAST
+    )
+
+    check_.assert_not_called()
+
+
+def test_check_image_max_pixels_exceeded_ignores_a_file_that_is_not_an_image():
+    pdf.check_image_max_pixels_exceeded(file=b"not an image")
+
+
+def test_partition_image_rejects_frames_over_the_pixel_limit_before_decoding(
+    tmp_path: pathlib.Path, mocker: MockFixture, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.delenv("IMAGE_MAX_TOTAL_PIXELS", raising=False)  # -- default limit of 5e8 --
+    # -- 6 blank 10,000 x 10,000 frames: 6e8 pixels, ~1.8 GB as RGB, from a ~40 KB file --
+    file_path = _write_multi_frame_tiff(tmp_path, n_frames=6, side=10_000)
+    convert_ = mocker.spy(Image.Image, "convert")
+
+    with pytest.raises(UnprocessableEntityError, match="first 6 frame"):
+        image.partition_image(file_path, strategy=PartitionStrategy.HI_RES)
+
+    convert_.assert_not_called()

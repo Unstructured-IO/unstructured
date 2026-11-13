@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import numbers
+import os
+import shutil
 import subprocess
 from enum import Enum
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
 from time import sleep
-from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar, cast
+from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar
 
 import emoji
 import psutil
@@ -253,6 +255,24 @@ def _is_soffice_running():
     return False
 
 
+def _decode_soffice_output(raw: bytes) -> str:
+    """Decode and strip `soffice` output, tolerating a non-UTF-8 console encoding.
+
+    LibreOffice echoes the input path using the console encoding, which on Windows is the locale
+    codepage rather than UTF-8. A name or path containing multi-byte characters therefore makes
+    a strict decode raise `UnicodeDecodeError`, and `partition_doc()` / `partition_ppt()` fail
+    on a file they could otherwise have converted. This output is only used for logging and
+    for an is-it-empty check, so an approximate rendering is preferable to an exception.
+
+    `backslashreplace` (rather than `replace`) keeps the result pure ASCII, so the line still
+    reaches a handler whose stream uses the locale encoding -- a `logging.FileHandler` on the
+    same Windows box cannot encode U+FFFD and would drop the whole record. The escaped bytes
+    are also more diagnostic than `?`. `b""` still decodes to `""`, so the empty-stdout check
+    in `convert_office_doc()` is unaffected.
+    """
+    return raw.decode("utf-8", errors="backslashreplace").strip()
+
+
 def convert_office_doc(
     input_filename: str,
     output_directory: str,
@@ -302,7 +322,7 @@ def convert_office_doc(
         wait_time = 0
         sleep_time = 0.1
         output = subprocess.run(command, capture_output=True)
-        message = output.stdout.decode().strip()
+        message = _decode_soffice_output(output.stdout)
         # we can't rely on returncode unfortunately because on macOS it would return 0 even when the
         # command failed to run; instead we have to rely on the stdout being empty as a sign of the
         # process failed
@@ -312,7 +332,7 @@ def convert_office_doc(
                 sleep(sleep_time)
             else:
                 output = subprocess.run(command, capture_output=True)
-                message = output.stdout.decode().strip()
+                message = _decode_soffice_output(output.stdout)
     except FileNotFoundError:
         raise FileNotFoundError(
             """soffice command was not found. Please install libreoffice
@@ -328,7 +348,7 @@ on your system and try again.
         logger.error(
             "soffice failed to convert to format %s with code %i", target_format, output.returncode
         )
-        logger.error(output.stderr.decode().strip())
+        logger.error(_decode_soffice_output(output.stderr))
 
 
 def exactly_one(**kwargs: Any) -> None:
@@ -350,22 +370,28 @@ def exactly_one(**kwargs: Any) -> None:
 _T = TypeVar("_T")
 
 
-def spooled_to_bytes_io_if_needed(file: _T | SpooledTemporaryFile[bytes]) -> _T | BytesIO:
-    """Convert `file` to `BytesIO` when it is a `SpooledTemporaryFile`.
+def rewind_if_spooled(file: _T) -> _T:
+    """Rewind `file` to read position 0 when it is a `SpooledTemporaryFile`, without copying it.
 
     Note that `file` does not need to be IO[bytes]. It can be `None` or `bytes` and this function
-    will not complain.
-
-    In Python <3.11, `SpooledTemporaryFile` does not implement `.readable()` or `.seekable()` which
-    triggers an exception when the file is loaded by certain packages. In particular, the stdlib
-    `zipfile.Zipfile` raises on opening a `SpooledTemporaryFile` as does `Pandas.read_csv()`.
+    will not complain. A spool is read in place, so a rolled-over upload stays disk-backed.
     """
     if isinstance(file, SpooledTemporaryFile):
         file.seek(0)
-        return BytesIO(cast(bytes, file.read()))
 
     # -- return `file` unchanged otherwise --
     return file
+
+
+def copy_file_to_stream(file: bytes | IO[bytes], destination: IO[bytes]) -> None:
+    """Copy bytes or the remaining stream to a destination with at most 1 MiB per read.
+
+    Streams remain open and their cursors advance; the caller owns rewind and cleanup.
+    """
+    if isinstance(file, bytes):
+        destination.write(file)
+    else:
+        shutil.copyfileobj(file, destination, length=1024 * 1024)
 
 
 def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
@@ -376,18 +402,28 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
     if isinstance(file, bytes):
         return file
 
-    if isinstance(file, SpooledTemporaryFile):
-        file.seek(0)
-        f_bytes = file.read()
-        file.seek(0)
-        return f_bytes
-
     if isinstance(file, BytesIO):
         return file.getvalue()
 
-    if isinstance(file, (TextIOWrapper, BufferedReader)):
+    if isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
+        getattr(file, "name", None), (str, bytes, os.PathLike)
+    ):
         with open(file.name, "rb") as f:
             return f.read()
+
+    if callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
+        # -- a pipe or socket cannot be rewound, so its remaining content is read once --
+        if callable(seekable := getattr(file, "seekable", None)) and not seekable():
+            if isinstance(file, TextIOWrapper):
+                # -- the wrapper may already hold decoded text read ahead from the pipe --
+                return file.read().encode(file.encoding, file.errors)
+            return file.read()
+        # -- a text file is read as bytes through its binary buffer --
+        source = file.buffer if isinstance(file, TextIOWrapper) else file
+        file.seek(0)
+        f_bytes = source.read()
+        file.seek(0)
+        return f_bytes
 
     raise ValueError("Invalid file-like object type")
 
@@ -445,16 +481,18 @@ def ocr_data_to_elements(
     coordinate_system = PixelSpace(width=image_width, height=image_height)
     elements: list[Element] = []
     for layout_element in ocr_data:
-        element = normalize_layout_element(
+        normalized = normalize_layout_element(
             layout_element,
             coordinate_system=coordinate_system,
             infer_list_items=infer_list_items,
             source_format=source_format if source_format else "html",
         )
-
-        if common_metadata:
-            element.metadata.update(common_metadata)
-
-        elements.append(element)
+        # -- an inferred ``List`` becomes one ``ListItem`` per item, so normalize can return
+        # -- several elements for a single layout element --
+        normalized_elements = normalized if isinstance(normalized, list) else [normalized]
+        for element in normalized_elements:
+            if common_metadata:
+                element.metadata.update(common_metadata)
+            elements.append(element)
 
     return elements

@@ -21,6 +21,7 @@ from test_unstructured.unit_utils import (
     example_doc_text,
     function_mock,
 )
+from unstructured.chunking.dispatch import reconstruct_table_from_chunks
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
@@ -37,6 +38,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.partition.html import partition_html
+from unstructured.partition.html.convert import elements_to_html
 from unstructured.partition.html.partition import HtmlPartitionerOptions, _HtmlPartitioner
 
 # ================================================================================================
@@ -421,12 +423,17 @@ def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_
     (element,) = partition_html(text=html_text)
 
     assert isinstance(element, Table)
+    assert element.text == (
+        "Lorem Ipsum Lorem ipsum dolor sit amet nulla Ut enim non ad minim\nveniam quis Dolor Equis"
+    )
     assert element.metadata.text_as_html == (
         "<table>"
-        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
-        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
-        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
-        "<tr><td>Dolor</td><td>Equis</td></tr>"
+        "<thead><tr><th>Lorem</th><th>Ipsum</th></tr></thead>"
+        "<tbody>"
+        "<tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>"
+        "<tr><th>Ut enim non</th><td>ad minim<br/>veniam quis</td></tr>"
+        "</tbody>"
+        "<tfoot><tr><th>Dolor</th><td>Equis</td></tr></tfoot>"
         "</table>"
     )
 
@@ -442,6 +449,34 @@ def test_it_does_not_emit_a_Table_element_for_a_table_with_no_text():
         "</body>\n"
         "</html>"
     )
+
+    assert partition_html(text=html_text) == []
+
+
+def test_it_keeps_the_table_caption_in_the_text_and_html():
+    html_text = (
+        "<table>\n"
+        '  <caption class="title">Quarterly <b>revenue</b> &amp; growth</caption>\n'
+        "  <tr><th>Region</th><th>Q1</th></tr>\n"
+        "  <tr><td>EMEA</td><td>4.2</td></tr>\n"
+        "</table>"
+    )
+
+    (element,) = partition_html(text=html_text)
+
+    assert isinstance(element, Table)
+    assert element.text == "Quarterly revenue & growth Region Q1 EMEA 4.2"
+    assert element.metadata.text_as_html == (
+        "<table>"
+        "<caption>Quarterly revenue &amp; growth</caption>"
+        "<tr><th>Region</th><th>Q1</th></tr>"
+        "<tr><td>EMEA</td><td>4.2</td></tr>"
+        "</table>"
+    )
+
+
+def test_it_does_not_emit_a_Table_element_for_a_table_with_only_a_caption():
+    html_text = "<table><caption>Empty results</caption><tr><td> </td></tr></table>"
 
     assert partition_html(text=html_text) == []
 
@@ -478,10 +513,12 @@ def test_it_provides_parseable_HTML_in_text_as_html():
     assert etree.tostring(html, encoding=str) == (
         "<html><body>"
         "<table>"
-        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
-        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
-        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
-        "<tr><td>Dolor</td><td>Equis</td></tr>"
+        "<thead><tr><th>Lorem</th><th>Ipsum</th></tr></thead>"
+        "<tbody>"
+        "<tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>"
+        "<tr><th>Ut enim non</th><td>ad minim<br/>veniam quis</td></tr>"
+        "</tbody>"
+        "<tfoot><tr><th>Dolor</th><td>Equis</td></tr></tfoot>"
         "</table>"
         "</body></html>"
     )
@@ -490,8 +527,18 @@ def test_it_provides_parseable_HTML_in_text_as_html():
 @pytest.mark.parametrize(
     ("tag", "expected_text_as_html"),
     [
-        ("thead", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
-        ("tfoot", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
+        (
+            "thead",
+            "<table><thead><tr><th>Header 1</th><th>Header 2</th></tr></thead></table>",
+        ),
+        (
+            "tbody",
+            "<table><tbody><tr><th>Header 1</th><th>Header 2</th></tr></tbody></table>",
+        ),
+        (
+            "tfoot",
+            "<table><tfoot><tr><th>Header 1</th><th>Header 2</th></tr></tfoot></table>",
+        ),
     ],
 )
 def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_html: str):
@@ -505,6 +552,50 @@ def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_ht
         )
     )
     assert elements[0].metadata.text_as_html == expected_text_as_html
+
+
+def test_partition_html_preserves_table_structure_in_source_order_without_attributes():
+    html_text = (
+        '<table class="source-table">'
+        '<tfoot id="foot"><tr><th scope="row">F</th></tr></tfoot>'
+        '<tr class="direct"><td onclick="alert(1)">D &amp; &lt;x&gt;</td></tr>'
+        '<tbody><tr><td colspan="2">B1</td></tr></tbody>'
+        '<tbody style="color:red"><tr><th rowspan="2">B2</th></tr></tbody>'
+        "<thead><tr><td>H</td></tr></thead>"
+        "</table>"
+    )
+
+    (element,) = partition_html(text=html_text)
+
+    assert element.text == "F D & <x> B1 B2 H"
+    assert element.metadata.text_as_html == (
+        "<table>"
+        "<tfoot><tr><th>F</th></tr></tfoot>"
+        "<tr><td>D &amp; &lt;x&gt;</td></tr>"
+        "<tbody><tr><td>B1</td></tr></tbody>"
+        "<tbody><tr><th>B2</th></tr></tbody>"
+        "<thead><tr><td>H</td></tr></thead>"
+        "</table>"
+    )
+    reconstructed = etree.fromstring(element.metadata.text_as_html)
+    assert [node.tag for node in reconstructed.iter()] == [
+        "table",
+        "tfoot",
+        "tr",
+        "th",
+        "tr",
+        "td",
+        "tbody",
+        "tr",
+        "td",
+        "tbody",
+        "tr",
+        "th",
+        "thead",
+        "tr",
+        "td",
+    ]
+    assert all(not node.attrib for node in reconstructed.iter())
 
 
 def test_partition_html_reduces_a_nested_table_to_its_text_placed_in_the_cell_that_contains_it():
@@ -708,6 +799,126 @@ def test_partition_html_tag_tail_parsing():
     elements = partition_html(text=html_text)
 
     assert elements == [Text("Head"), Text("Nested"), Text("Tail")]
+
+
+def test_partition_html_keeps_the_text_of_font_elements():
+    """`<font>` is not a registered element but is still common, in email bodies especially."""
+    html_text = (
+        "<div>\n"
+        '  <p><font face="Arial"><b>From:</b> Maria Lopez</font> (Procurement)</p>\n'
+        '  <font size="2">\n'
+        "    <p>The vendor confirmed the delivery date.</p>\n"
+        "    <p>Please sign the revised purchase order by Friday.</p>\n"
+        "  </font>\n"
+        "</div>\n"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [e.text for e in elements] == [
+        "From: Maria Lopez (Procurement)",
+        "The vendor confirmed the delivery date.",
+        "Please sign the revised purchase order by Friday.",
+    ]
+    assert elements[0].metadata.emphasized_text_contents == ["From:"]
+
+
+def test_partition_html_keeps_inline_xbrl_facts_but_not_the_hidden_xbrl_header():
+    """SEC filings are Inline XBRL; a fact can wrap a number or a whole note, tables included."""
+    html_text = (
+        "<body>\n"
+        '<div style="display:none">\n'
+        "  <ix:header>\n"
+        "    <ix:hidden>\n"
+        '      <ix:nonNumeric name="dei:AmendmentFlag" contextRef="c-1">false</ix:nonNumeric>\n'
+        "    </ix:hidden>\n"
+        "    <ix:resources>\n"
+        '      <xbrli:context id="c-1"><xbrli:entity><xbrli:identifier scheme="http://www.sec.gov/'
+        'CIK">0000013156</xbrli:identifier></xbrli:entity></xbrli:context>\n'
+        "    </ix:resources>\n"
+        "  </ix:header>\n"
+        "</div>\n"
+        '<p>Revenue was $<ix:nonFraction name="us-gaap:Revenues" contextRef="c-1" unitRef="usd"'
+        ' decimals="0">19,984,378</ix:nonFraction> for the year.</p>\n'
+        '<ix:nonNumeric name="us-gaap:InventoryDisclosureTextBlock" contextRef="c-1">\n'
+        "  <p>NOTE 4. INVENTORY</p>\n"
+        "  <p>Inventory consisted of the following as of December 31, 2021:</p>\n"
+        "  <table><tr><td>Finished goods</td><td>$ 356,928</td></tr></table>\n"
+        "</ix:nonNumeric>\n"
+        "</body>\n"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [e.text for e in elements] == [
+        "Revenue was $19,984,378 for the year.",
+        "NOTE 4. INVENTORY",
+        "Inventory consisted of the following as of December 31, 2021:",
+        "Finished goods $ 356,928",
+    ]
+    assert isinstance(elements[3], Table)
+
+
+@pytest.mark.parametrize("wrapper", ["<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+def test_partition_html_keeps_each_formula_once_inside_an_unrecognized_element(wrapper: str):
+    html = "<div>{}</div>".format(
+        wrapper.format(
+            "The error rate is"
+            " <math><semantics><mrow><mn>10</mn></mrow>"
+            '<annotation encoding="application/x-tex">10^{-4}</annotation></semantics></math>'
+            " and the loss is"
+            ' <span class="katex">'
+            '<span class="katex-mathml"><math alttext="x^2"><semantics>'
+            "<msup><mi>x</mi><mn>2</mn></msup>"
+            '<annotation encoding="application/x-tex">x^2</annotation>'
+            "</semantics></math></span>"
+            '<span class="katex-html" aria-hidden="true">'
+            '<span class="base"><span>x</span><span>2</span></span>'
+            "</span></span>"
+            " per token."
+        )
+    )
+
+    elements = partition_html(text=html)
+
+    assert [e.text for e in elements] == [
+        "The error rate is 10^{-4} and the loss is x^2 per token."
+    ]
+
+
+@pytest.mark.parametrize("wrapper", ["<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+def test_partition_html_keeps_katex_html_of_unusable_mathml_inside_an_unrecognized_element(
+    wrapper: str,
+):
+    html = "<div>{}</div>".format(
+        wrapper.format(
+            "Before"
+            ' <span class="katex">'
+            '<span class="katex-mathml"><math><semantics><mi>x</mi></semantics></math></span>'
+            '<span class="katex-html" aria-hidden="true">'
+            '<span class="base"><span>x</span><span>2</span></span>'
+            "</span></span>"
+            " After"
+        )
+    )
+
+    elements = partition_html(text=html)
+
+    assert [e.text for e in elements] == ["Before x2 After"]
+
+
+@pytest.mark.parametrize("wrapper", ["<font size='2'>{}</font>", "<my-card>{}</my-card>"])
+def test_partition_html_keeps_display_math_boundaries_inside_an_unrecognized_element(
+    wrapper: str,
+):
+    html = '<div data-page-number="7">{}</div>'.format(
+        wrapper.format('Before<math display="block" alttext="x=1"></math>After')
+    )
+
+    elements = partition_html(text=html)
+
+    assert [e.text for e in elements] == ["Before", "x=1", "After"]
+    assert [e.metadata.page_number for e in elements] == [7, 7, 7]
 
 
 # -- parsing edge cases --------------------------------------------------------------------------
@@ -1184,7 +1395,7 @@ def test_partition_html_links():
     [
         (
             "<table><tr><th>Header 1</th><th>Header 2</th></tr></table>",
-            "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>",
+            "<table><tr><th>Header 1</th><th>Header 2</th></tr></table>",
         ),
         (
             "<table>"
@@ -1206,6 +1417,26 @@ def test_partition_html_applies_text_as_html_metadata_for_tables(
 
     assert len(elements) == 1
     assert elements[0].metadata.text_as_html == expected_value
+
+
+def test_partition_html_reconstructs_wrapped_repeated_headers_without_duplication():
+    html_text = (
+        "<table><thead><tr><th>foo \nbar</th></tr></thead><tbody>"
+        + "".join(f"<tr><td>body row {i} with enough text to split</td></tr>" for i in range(6))
+        + "</tbody></table>"
+    )
+
+    chunks = partition_html(
+        text=html_text,
+        chunking_strategy="by_title",
+        max_characters=60,
+        combine_text_under_n_chars=0,
+    )
+    [table] = reconstruct_table_from_chunks(chunks)
+
+    assert table.text.count("foo bar") == 1
+    assert table.metadata.text_as_html is not None
+    assert " ".join(etree.HTML(table.metadata.text_as_html).itertext()).split().count("foo") == 1
 
 
 # -- .metadata.url -------------------------------------------------------------------------------
@@ -1551,3 +1782,635 @@ def test_partition_html_leaves_page_number_None_when_not_present():
     html_text = "<html><body><p>No page markup.</p></body></html>"
     elements = partition_html(text=html_text)
     assert all(e.metadata.page_number is None for e in elements)
+
+
+@pytest.mark.parametrize(
+    "encoding",
+    [
+        "application/x-tex",
+        "TeX",
+        "tex",
+        "TEX",
+        "latex",
+        "application/x-latex",
+    ],
+)
+def test_partition_html_preserves_tex_math_annotations(encoding: str):
+    html = f"""
+    <html>
+      <body>
+        <p>
+          The value is
+          <math>
+            <semantics>
+              <mrow>
+                <msup>
+                  <mi>x</mi>
+                  <mn>2</mn>
+                </msup>
+              </mrow>
+              <annotation encoding="{encoding}">x^{{2}}</annotation>
+            </semantics>
+          </math>
+          units.
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert len(elements) == 1
+    assert elements[0].text == "The value is x^{2} units."
+
+
+def test_partition_html_uses_math_alttext_when_tex_annotation_is_absent():
+    html = r"""
+    <html>
+      <body>
+        <p>
+          The value is
+          <math alttext="\sqrt{2}">
+            <mrow>
+              <msqrt>
+                <mn>2</mn>
+              </msqrt>
+            </mrow>
+          </math>
+          approximately.
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert len(elements) == 1
+    assert elements[0].text == r"The value is \sqrt{2} approximately."
+
+
+def test_partition_html_prefers_tex_annotation_over_math_alttext():
+    html = r"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math alttext="preferred alttext">
+            <semantics>
+              <mrow>
+                <mi>x</mi>
+              </mrow>
+              <annotation encoding="application/x-tex">x^{2}</annotation>
+            </semantics>
+          </math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert len(elements) == 1
+    assert elements[0].text == r"Value: x^{2}"
+
+
+@pytest.mark.parametrize(
+    "math_contents",
+    [
+        # -- the semantics node only describes the first part of the root expression --
+        """
+        <semantics>
+          <mi>x</mi>
+          <annotation encoding="tex">x</annotation>
+        </semantics>
+        <mo>+</mo>
+        <mi>y</mi>
+        """,
+        # -- the semantics node only describes the last part of the root expression --
+        """
+        <mi>x</mi>
+        <mo>+</mo>
+        <semantics>
+          <mi>y</mi>
+          <annotation encoding="tex">y</annotation>
+        </semantics>
+        """,
+        # -- multiple semantics children cannot each represent the complete root expression --
+        """
+        <semantics>
+          <mi>x</mi>
+          <annotation encoding="tex">x</annotation>
+        </semantics>
+        <semantics>
+          <mi>y</mi>
+          <annotation encoding="tex">y</annotation>
+        </semantics>
+        """,
+    ],
+)
+def test_partition_html_uses_math_alttext_when_semantics_does_not_cover_root_expression(
+    math_contents: str,
+):
+    html = f"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math alttext="x+y">
+            {math_contents}
+          </math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Value: x+y"]
+
+
+@pytest.mark.parametrize(
+    ("before_semantics", "after_semantics"),
+    [("x+", ""), ("", "+y")],
+)
+def test_partition_html_uses_math_alttext_when_semantics_has_root_text_outside_it(
+    before_semantics: str, after_semantics: str
+):
+    html = f"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math alttext="x+y">{before_semantics}<semantics>
+            <mi>x</mi>
+            <annotation encoding="tex">x</annotation>
+          </semantics>{after_semantics}</math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Value: x+y"]
+
+
+def test_partition_html_falls_back_to_math_alttext_when_tex_annotation_is_empty():
+    html = r"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math alttext="x^{2}">
+            <semantics>
+              <mrow>
+                <mi>x</mi>
+              </mrow>
+              <annotation encoding="application/x-tex">   </annotation>
+            </semantics>
+          </math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert len(elements) == 1
+    assert elements[0].text == r"Value: x^{2}"
+
+
+def test_partition_html_preserves_text_after_math_element():
+    html = r"""
+    <html>
+      <body>
+        <p>Before <math alttext="x^{2}"></math> after the equation.</p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert len(elements) == 1
+    assert elements[0].text == r"Before x^{2} after the equation."
+
+
+def test_partition_html_preserves_multiple_inline_math_elements():
+    html = r"""
+    <html>
+      <body>
+        <p>
+          Complexity decreases from
+          <math alttext="O(n^2)"></math>
+          to
+          <math alttext="O(n^2/r)"></math>.
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert len(elements) == 1
+    assert elements[0].text == "Complexity decreases from O(n^2) to O(n^2/r)."
+
+
+def test_partition_html_ignores_unrecognized_math_annotation_encoding():
+    html = r"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math alttext="x^{2}">
+            <semantics>
+              <annotation encoding="application/x-some-proprietary-format">
+                garbage
+              </annotation>
+            </semantics>
+          </math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert len(elements) == 1
+    assert elements[0].text == r"Value: x^{2}"
+
+
+def test_partition_html_uses_outer_math_annotation_not_nested_semantics_annotation():
+    html = r"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math>
+            <semantics>
+              <mrow>
+                <math>
+                  <semantics>
+                    <mi>x</mi>
+                    <annotation encoding="tex">INNER</annotation>
+                  </semantics>
+                </math>
+              </mrow>
+              <annotation encoding="tex">OUTER</annotation>
+            </semantics>
+          </math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Value: OUTER"]
+
+
+def test_partition_html_skips_empty_math_annotation_and_uses_later_supported_annotation():
+    html = r"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math>
+            <semantics>
+              <mi>x</mi>
+              <annotation encoding="application/x-tex">   </annotation>
+              <annotation encoding="tex">x^{2}</annotation>
+            </semantics>
+          </math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == [r"Value: x^{2}"]
+
+
+@pytest.mark.parametrize("display", ["block", "BLOCK", "Block"])
+def test_partition_html_emits_display_math_as_element_boundary(display: str):
+    html = f"""
+    <html>
+      <body>
+        <div>Before<math display="{display}" alttext="x=1"></math>After</div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before", "x=1", "After"]
+
+
+def test_partition_html_keeps_adjacent_display_math_as_separate_elements():
+    html = """
+    <html>
+      <body>
+        <div>
+          <math display="block" alttext="x=1"></math>
+          <math display="block" alttext="y=2"></math>
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["x=1", "y=2"]
+
+
+@pytest.mark.parametrize("display_attribute", ["", ' display="inline"'])
+def test_partition_html_keeps_non_display_math_inline(display_attribute: str):
+    html = (
+        "<html><body><div>Before "
+        f'<math{display_attribute} alttext="x=1"></math>'
+        " After</div></body></html>"
+    )
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x=1 After"]
+
+
+def test_partition_html_preserves_page_number_on_display_math():
+    html = """
+    <html>
+      <body>
+        <div data-page-number="7">
+          Before
+          <math display="block" alttext="x=1"></math>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before", "x=1", "After"]
+    assert [element.metadata.page_number for element in elements] == [7, 7, 7]
+
+
+def test_partition_html_preserves_katex_visual_fallback_in_table_cells():
+    html = r"""
+    <html>
+      <body>
+        <table>
+          <tr>
+            <td>
+              <span class="katex">
+                <span class="katex-mathml">
+                  <math alttext="x^2"></math>
+                </span>
+                <span class="katex-html" aria-hidden="true">
+                  <span class="base"><span>x</span><span>2</span></span>
+                </span>
+              </span>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert elements == [Table("x 2")]
+    assert elements[0].metadata.text_as_html == "<table><tr><td>x 2</td></tr></table>"
+
+
+def test_partition_html_does_not_duplicate_paired_katex_output():
+    html = r"""
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-mathml">
+              <math alttext="x^2">
+                <semantics>
+                  <msup><mi>x</mi><mn>2</mn></msup>
+                  <annotation encoding="application/x-tex">x^2</annotation>
+                </semantics>
+              </math>
+            </span>
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>2</span></span>
+            </span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x^2 After"]
+    assert elements[0].text.count("x^2") == 1
+
+
+def test_partition_html_keeps_katex_html_when_mathml_is_unusable():
+    html = """
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-mathml">
+              <math>
+                <semantics><mi>x</mi></semantics>
+              </math>
+            </span>
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>2</span></span>
+            </span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x2 After"]
+
+
+def test_partition_html_keeps_katex_html_only_output():
+    html = """
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>2</span></span>
+            </span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x2 After"]
+
+
+def test_partition_html_keeps_katex_mathml_only_output():
+    html = r"""
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-mathml">
+              <math alttext="x^2">
+                <semantics>
+                  <msup><mi>x</mi><mn>2</mn></msup>
+                  <annotation encoding="application/x-tex">x^2</annotation>
+                </semantics>
+              </math>
+            </span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x^2 After"]
+
+
+def test_partition_html_keeps_two_separate_identical_katex_equations():
+    html = """
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-mathml"><math alttext="2"></math></span>
+            <span class="katex-html" aria-hidden="true"><span>2</span></span>
+          </span>
+          and
+          <span class="katex">
+            <span class="katex-mathml"><math alttext="2"></math></span>
+            <span class="katex-html" aria-hidden="true"><span>2</span></span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before 2 and 2 After"]
+    assert elements[0].text.count("2") == 2
+
+
+def test_partition_html_preserves_page_number_on_span_wrapped_katex_display_math():
+    html = r"""
+    <html>
+      <body>
+        <div data-page-number="7">
+          <span class="katex">
+            <span class="katex-mathml">
+              <math display="block" alttext="x=1"></math>
+            </span>
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>=</span><span>1</span></span>
+            </span>
+          </span>
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["x=1"]
+    assert [element.metadata.page_number for element in elements] == [7]
+
+
+def test_partition_html_preserves_span_wrapped_katex_display_math_in_page_grouped_html():
+    html = r"""
+    <html>
+      <body>
+        <div data-page-number="7">
+          <span class="katex">
+            <span class="katex-mathml">
+              <math display="block" alttext="x=1"></math>
+            </span>
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>=</span><span>1</span></span>
+            </span>
+          </span>
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    html_output = elements_to_html(elements, no_group_by_page=False)
+
+    assert "x=1" in html_output
+
+
+# -- definition lists (`<dl>`) --------------------------------------------------------------------
+
+
+def test_partition_html_extracts_definition_list_terms_and_definitions():
+    """`<dl>`, `<dt>` and `<dd>` were `RemovedBlock`, so a glossary vanished without an error."""
+    html_text = (
+        "<html><body><h2>Glossary</h2><dl>"
+        "<dt>Shard</dt><dd>A horizontal partition of a table stored on its own server.</dd>"
+        "<dt>Replica</dt><dd>A read-only copy of a shard.</dd>"
+        "</dl></body></html>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [(type(e).__name__, e.text, e.metadata.category_depth) for e in elements] == [
+        ("Title", "Glossary", 1),
+        ("Text", "Shard", None),
+        ("ListItem", "A horizontal partition of a table stored on its own server.", 1),
+        ("Text", "Replica", None),
+        ("ListItem", "A read-only copy of a shard.", 1),
+    ]
+
+
+def test_partition_html_extracts_a_sphinx_style_api_reference():
+    """Sphinx renders each documented object as a `<dl>`, so a whole API reference was dropped."""
+    html_text = (
+        '<html><body><h1>API reference</h1><dl class="py function">'
+        '<dt class="sig sig-object py"><span class="sig-name">connect</span>'
+        "(<em>host</em>, <em>port=5432</em>)</dt>"
+        "<dd><p>Open a connection to the database server.</p>"
+        '<dl class="field-list simple"><dt class="field-odd">Parameters</dt>'
+        '<dd class="field-odd"><ul><li><p><strong>host</strong>: server hostname.</p></li>'
+        "<li><p><strong>port</strong>: TCP port.</p></li></ul></dd>"
+        '<dt class="field-even">Returns</dt>'
+        '<dd class="field-even"><p>An open connection object.</p></dd></dl>'
+        "</dd></dl></body></html>"
+    )
+
+    assert [e.text for e in partition_html(text=html_text)] == [
+        "API reference",
+        "connect(host, port=5432)",
+        "Open a connection to the database server.",
+        "Parameters",
+        "host: server hostname.",
+        "port: TCP port.",
+        "Returns",
+        "An open connection object.",
+    ]

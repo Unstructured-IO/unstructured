@@ -19,6 +19,9 @@ from filelock import FileLock
 logger = logging.getLogger(__name__)
 
 CACHE_MAX_SIZE: Final[int] = 128
+# -- Characters, not bytes: `Doc` size tracks token count, which tracks characters rather
+# -- than UTF-8 width. Element text is a paragraph or a table cell, so 8,192 covers it. --
+MAX_CACHEABLE_CHARS: Final[int] = 8192
 
 _SPACY_MODEL_NAME: Final[str] = "en_core_web_sm"
 _SPACY_MODEL_VERSION: Final[str] = "3.8.0"
@@ -148,10 +151,32 @@ def _get_nlp() -> spacy.language.Language:
     return _load_spacy_model()
 
 
+@lru_cache(maxsize=CACHE_MAX_SIZE)
+def _process_cached(text: str) -> spacy.tokens.Doc:
+    """Memoized `_run_pipeline`, keyed on the text.
+
+    `word_tokenize`, `pos_tag` and `sent_tokenize` each cache their own extracted view, so a
+    caller that needs two of them for the same string previously paid for two identical pipeline
+    runs. Classifying one element in `is_possible_narrative_text` reaches all three.
+    """
+    return _run_pipeline(text)
+
+
 def _process(text: str) -> spacy.tokens.Doc:
     """Run the spaCy pipeline once. All public functions extract what they need from the Doc."""
     # -- str() handles numpy.str_ from OCR pipelines --
     text = str(text)
+    # -- Docs are far heavier than the token lists the other caches hold, and this accepts text
+    # -- up to spaCy's 1M-character limit. Cache the element-sized strings this is actually
+    # -- called with; stream anything longer, where a repeat hit is unlikely to pay for the
+    # -- residency.
+    if len(text) > MAX_CACHEABLE_CHARS:
+        return _run_pipeline(text)
+    return _process_cached(text)
+
+
+def _run_pipeline(text: str) -> spacy.tokens.Doc:
+    """Feed `text` through spaCy, truncating to the model's limit if needed."""
     nlp = _get_nlp()
     if len(text) > nlp.max_length:
         logger.warning(

@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import collections
 import copy
+import heapq
+import itertools
 import uuid
-from functools import cached_property
+from functools import cached_property, lru_cache
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, NamedTuple, Sequence, cast
 
 import regex
@@ -20,6 +22,7 @@ from unstructured.documents.elements import (
     ConsolidationStrategy,
     Element,
     ElementMetadata,
+    Image,
     Table,
     TableChunk,
     Title,
@@ -43,6 +46,14 @@ CHUNK_MULTI_PAGE_DEFAULT: bool = True
 """When False, respect page-boundaries (no two elements from different page in same chunk).
 
 Only operative for "by_title" chunking strategy.
+"""
+
+SPLIT_ORIG_ELEMENTS_MAX_CHARS: int = 1_000_000
+"""Largest element, in characters of text, HTML and image payload, whose split chunks keep it.
+
+Every chunk split from an oversized element carries that whole element in
+`.metadata.orig_elements`, so serialized output grows with the square of the element size. Chunks
+split from a larger element get no `.metadata.orig_elements`.
 """
 
 BoundaryPredicate: TypeAlias = Callable[[Element], bool]
@@ -74,7 +85,22 @@ class TokenCounter:
 
     def count(self, text: str) -> int:
         """Return the number of tokens in `text`."""
-        return len(self._encoder.encode(text))
+        return len(self._encoder.encode_ordinary(text))
+
+    @cached_property
+    def max_token_bytes(self) -> int:
+        """Longest byte length of any single token in this encoding.
+
+        Tokens partition the encoded text with at most `max_token_bytes` characters per token
+        (each character occupies at least one byte), so `ceil(len(text) / max_token_bytes)` is a
+        valid lower bound on its token count. That bound lets a caller reject an oversized text
+        without tokenizing or encoding it, even though a prefix's token count is not an upper
+        bound on the whole (see `_fits_token_budget`).
+
+        The vocabulary traversal is shared process-wide per resolved encoding, so counters built
+        repeatedly for the same tokenizer (e.g. one per oversized HTML cell) traverse it once.
+        """
+        return _max_token_bytes_for_encoding(self._encoder)
 
     def validate(self) -> None:
         """Resolve the tokenizer now, raising if it is unknown or tiktoken is not installed.
@@ -85,6 +111,26 @@ class TokenCounter:
         both forms raising at the same call site.
         """
         _ = self._encoder
+
+
+@lru_cache(maxsize=None)
+def _max_token_bytes_for_encoding(_encoder: Any) -> int:
+    """Longest byte length of any single token in `_encoder`'s vocabulary.
+
+    Keyed by the encoding object, which tiktoken caches and returns as a process-wide singleton
+    for a given encoding name, so every counter for that tokenizer shares one traversal. The
+    bound is immutable for a resolved encoding, which makes the shared cache safe.
+
+    `_encoder` is excluded from the public name because lru_cache keys on the object itself and
+    the parameter is only used to reach the vocabulary.
+    """
+    longest = 1
+    for token_id in range(_encoder.n_vocab):
+        try:
+            longest = max(longest, len(_encoder.decode_single_token_bytes(token_id)))
+        except KeyError:
+            continue  # -- special-token ids are not part of the ordinary byte tokens --
+    return longest
 
 
 # ================================================================================================
@@ -390,6 +436,15 @@ class ChunkingOptions:
                 " adjacent elements"
             )
 
+        # -- a negative `overlap` is a caller mistake, not a smaller overlap: on the
+        # -- character-split path it moves the remainder's start past the end of the fragment and
+        # -- silently deletes that many characters from the document, and with `overlap_all=True`
+        # -- `_text[-overlap:]` becomes a forward slice that repeats most of the chunk instead of
+        # -- its tail. Reject it here, as `new_after_n_chars` already is.
+        overlap_arg = self._kwargs.get("overlap")
+        if overlap_arg is not None and overlap_arg < 0:
+            raise ValueError(f"'overlap' argument must be >= 0, got {overlap_arg}")
+
         # -- overlap must be less than max-chars or the chunk text will never be consumed --
         if self.overlap >= hard_max:
             raise ValueError(
@@ -522,6 +577,55 @@ class PreChunker:
         return any(semantic_boundaries)
 
 
+class _MetadataOnlyImage(Image):
+    """Consolidation inputs for an empty-image run when originals are excluded."""
+
+    def __init__(self, image: Image):
+        super().__init__(text="")
+        self.field_values: dict[str, list[Any]] = {}
+        self._unique_values: dict[str, dict[Any, None]] = {}
+        self._record_ids: dict[str, dict[str, set[Any]]] = {}
+        self.add(image)
+
+    def add(self, image: Image) -> None:
+        strategies = ConsolidationStrategy.field_consolidation_strategies()
+        CS = ConsolidationStrategy
+        for name, value in image.metadata.known_fields.items():
+            if value is None:
+                continue
+            strategy = strategies[name]
+            if strategy is CS.DROP:
+                continue
+            if strategy is CS.FIRST:
+                self.field_values.setdefault(name, [value])
+            elif strategy is CS.LIST_CONCATENATE:
+                self.field_values.setdefault(name, [[]])[0].extend(value)
+            elif strategy is CS.LIST_UNIQUE:
+                unique = self._unique_values.setdefault(name, {})
+                kept = self.field_values.setdefault(name, [[]])[0]
+                for item in value:
+                    if item not in unique:
+                        unique[item] = None
+                        kept.append(item)
+            elif strategy is CS.STRING_CONCATENATE:
+                # Keep individual values: stripping a partially joined string would lose
+                # the separators contributed by empty values at either end of a run.
+                self.field_values.setdefault(name, []).append(value)
+            elif strategy is CS.DICT_LIST_UNIQUE:
+                merged = self.field_values.setdefault(name, [{}])[0]
+                record_ids = self._record_ids.setdefault(name, {})
+                for key, records in value.items():
+                    kept = merged.setdefault(key, [])
+                    seen = record_ids.setdefault(key, set())
+                    for record in records:
+                        record_id = tuple(sorted(record.items()))
+                        if record_id not in seen:
+                            seen.add(record_id)
+                            kept.append(record)
+            else:
+                raise NotImplementedError(f"metadata field {name!r} has no consolidation strategy")
+
+
 class PreChunkBuilder:
     """An element accumulator suitable for incrementally forming a pre-chunk.
 
@@ -561,7 +665,17 @@ class PreChunkBuilder:
             self._text_segments = []
             self._text_len = 0
 
-        self._elements.append(element)
+        if (
+            not self._opts.include_orig_elements
+            and isinstance(element, Image)
+            and not element.text.strip()
+        ):
+            if self._elements and isinstance(self._elements[-1], _MetadataOnlyImage):
+                self._elements[-1].add(element)
+            else:
+                self._elements.append(_MetadataOnlyImage(element))
+        else:
+            self._elements.append(element)
         if element.text:
             self._text_segments.append(element.text)
             # -- only track char-based length; token-based length computed on demand --
@@ -701,13 +815,15 @@ class PreChunk:
             self._elements, pre_chunk._elements
         ):
             return False
-        if len(self._text) >= self._opts.combine_text_under_n_chars:
+        # -- both thresholds below are expressed in the configured units, so the text has to be
+        # -- sized in those units too; `measure()` is `len()` in character mode --
+        if self._opts.measure(self._text) >= self._opts.combine_text_under_n_chars:
             return False
         # -- avoid duplicating length computations by doing a trial-combine which is just as
         # -- efficient and definitely more robust than hoping two different computations of combined
         # -- length continue to get the same answer as the code evolves. Only possible because
         # -- `.combine()` is non-mutating.
-        combined_len = len(self.combine(pre_chunk)._text)
+        combined_len = self._opts.measure(self.combine(pre_chunk)._text)
 
         return combined_len <= self._opts.hard_max
 
@@ -786,6 +902,24 @@ class PreChunk:
 # ================================================================================================
 
 
+def _payload_size(element: Element) -> int:
+    """Characters of text, HTML and image data `element` adds to `.metadata.orig_elements`."""
+    metadata = element.metadata
+    return (
+        len(element.text or "")
+        + len(metadata.text_as_html or "")
+        + len(metadata.image_base64 or "")
+    )
+
+
+def _warn_orig_elements_omitted(size: int) -> None:
+    logger.warning(
+        "Omitting .metadata.orig_elements from chunks split from an element of %d characters,"
+        " because each chunk would carry its own copy of the whole element.",
+        size,
+    )
+
+
 class _Chunker:
     """Forms chunks from a pre-chunk other than one containing only a `Table`.
 
@@ -796,6 +930,7 @@ class _Chunker:
         self._elements = list(elements)
         self._text = text
         self._opts = opts
+        self._omit_orig_elements = False
 
     @classmethod
     def iter_chunks(
@@ -820,6 +955,12 @@ class _Chunker:
 
         # -- emit first chunk --
         s, remainder = split(self._text)
+        # -- each chunk split from a very large element would repeat it in `.orig_elements` --
+        if remainder and self._opts.include_orig_elements and len(self._elements) == 1:
+            size = _payload_size(self._elements[0])
+            if size > SPLIT_ORIG_ELEMENTS_MAX_CHARS:
+                _warn_orig_elements_omitted(size)
+                self._omit_orig_elements = True
         yield CompositeElement(text=s, metadata=self._chunk_metadata())
 
         # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
@@ -858,6 +999,10 @@ class _Chunker:
 
         # -- collect all non-None field values in a list for each field, in element-order --
         for e in self._elements:
+            if isinstance(e, _MetadataOnlyImage):
+                for field_name, values in e.field_values.items():
+                    field_values[field_name].extend(values)
+                continue
             for field_name, value in iter_populated_fields(e.metadata):
                 field_values[field_name].append(value)
 
@@ -875,7 +1020,7 @@ class _Chunker:
         "consolidated".
         """
         consolidated_metadata = ElementMetadata(**self._meta_kwargs)
-        if self._opts.include_orig_elements:
+        if self._opts.include_orig_elements and not self._omit_orig_elements:
             consolidated_metadata.orig_elements = self._orig_elements
         return consolidated_metadata
 
@@ -1094,11 +1239,7 @@ class _TableChunker:
             header_row_count=header_row_count,
         )
         yield from self._make_table_chunks(
-            _HtmlTableSplitter.iter_subtables(
-                html_table,
-                self._opts,
-                header_row_count=header_row_count,
-            ),
+            splitter._iter_subtables(),
             num_carried_over_header_rows=splitter.carried_over_header_row_count,
         )
 
@@ -1132,9 +1273,23 @@ class _TableChunker:
         """
         table_id = str(uuid.uuid4())
         carried_header_row_count = max(0, num_carried_over_header_rows)
+        # -- each chunk split from a very large table would repeat it in `.orig_elements`; look
+        # -- ahead one pair because some split paths still produce a single chunk.
+        text_html_pairs = iter(text_html_pairs)
+        first_pairs = list(itertools.islice(text_html_pairs, 2))
+        size = _payload_size(self._table)
+        omit_orig_elements = (
+            len(first_pairs) > 1
+            and self._opts.include_orig_elements
+            and size > SPLIT_ORIG_ELEMENTS_MAX_CHARS
+        )
+        if omit_orig_elements:
+            _warn_orig_elements_omitted(size)
 
-        for chunk_index, (text, html) in enumerate(text_html_pairs):
+        for chunk_index, (text, html) in enumerate(itertools.chain(first_pairs, text_html_pairs)):
             metadata = self._metadata
+            if omit_orig_elements:
+                metadata.orig_elements = None
             if html is not None:
                 metadata.text_as_html = html
             else:
@@ -1224,6 +1379,324 @@ class _OpenSpan(NamedTuple):
     """Last row-index (relative to the containing rowspan-bound group) this span still covers."""
 
 
+class _GapNode:
+    """An AVL node augmented with the widest free interval in its subtree."""
+
+    __slots__ = ("start", "end", "left", "right", "height", "max_width")
+
+    def __init__(self, start: int, end: int | None) -> None:
+        self.start = start
+        self.end = end
+        self.left: _GapNode | None = None
+        self.right: _GapNode | None = None
+        self.height = 1
+        self.max_width: int | None = None if end is None else end - start
+
+
+class _GapIndex:
+    """Ordered free intervals supporting earliest width-fitting lookup in logarithmic time."""
+
+    def __init__(self) -> None:
+        self.root: _GapNode | None = None
+
+    @staticmethod
+    def _height(node: _GapNode | None) -> int:
+        return node.height if node else 0
+
+    @classmethod
+    def _pull(cls, node: _GapNode) -> None:
+        node.height = 1 + max(cls._height(node.left), cls._height(node.right))
+        widths = [
+            None if node.end is None else node.end - node.start,
+            node.left.max_width if node.left else 0,
+            node.right.max_width if node.right else 0,
+        ]
+        node.max_width = (
+            None if None in widths else max(width for width in widths if width is not None)
+        )
+
+    @classmethod
+    def _rotate_left(cls, node: _GapNode) -> _GapNode:
+        pivot = node.right
+        assert pivot is not None
+        node.right = pivot.left
+        pivot.left = node
+        cls._pull(node)
+        cls._pull(pivot)
+        return pivot
+
+    @classmethod
+    def _rotate_right(cls, node: _GapNode) -> _GapNode:
+        pivot = node.left
+        assert pivot is not None
+        node.left = pivot.right
+        pivot.right = node
+        cls._pull(node)
+        cls._pull(pivot)
+        return pivot
+
+    @classmethod
+    def _balance(cls, node: _GapNode) -> _GapNode:
+        cls._pull(node)
+        skew = cls._height(node.left) - cls._height(node.right)
+        if skew > 1:
+            assert node.left is not None
+            if cls._height(node.left.left) < cls._height(node.left.right):
+                node.left = cls._rotate_left(node.left)
+            return cls._rotate_right(node)
+        if skew < -1:
+            assert node.right is not None
+            if cls._height(node.right.right) < cls._height(node.right.left):
+                node.right = cls._rotate_right(node.right)
+            return cls._rotate_left(node)
+        return node
+
+    @classmethod
+    def _insert(cls, node: _GapNode | None, start: int, end: int | None) -> _GapNode:
+        if node is None:
+            return _GapNode(start, end)
+        if start < node.start:
+            node.left = cls._insert(node.left, start, end)
+        elif start > node.start:
+            node.right = cls._insert(node.right, start, end)
+        else:
+            node.end = end
+        return cls._balance(node)
+
+    @classmethod
+    def _delete(cls, node: _GapNode | None, start: int) -> _GapNode | None:
+        assert node is not None
+        if start < node.start:
+            node.left = cls._delete(node.left, start)
+        elif start > node.start:
+            node.right = cls._delete(node.right, start)
+        elif node.left is None:
+            return node.right
+        elif node.right is None:
+            return node.left
+        else:
+            successor = node.right
+            while successor.left is not None:
+                successor = successor.left
+            node.start, node.end = successor.start, successor.end
+            node.right = cls._delete(node.right, successor.start)
+        return cls._balance(node)
+
+    @classmethod
+    def _first_fit(cls, node: _GapNode | None, cursor: int, width: int) -> int | None:
+        if node is None or (node.max_width is not None and node.max_width < width):
+            return None
+        if node.start >= cursor:
+            left = cls._first_fit(node.left, cursor, width)
+            if left is not None:
+                return left
+        col = max(cursor, node.start)
+        if node.end is None or col + width <= node.end:
+            return node.start
+        return cls._first_fit(node.right, cursor, width)
+
+    def insert(self, start: int, end: int | None) -> None:
+        self.root = self._insert(self.root, start, end)
+
+    def delete(self, start: int) -> None:
+        self.root = self._delete(self.root, start)
+
+    def first_fit(self, cursor: int, width: int) -> int | None:
+        return self._first_fit(self.root, cursor, width)
+
+    def trailing_gap_start(self) -> int:
+        """Right edge of occupied columns, found along the AVL right spine."""
+        node = self.root
+        assert node is not None
+        while node.right is not None:
+            node = node.right
+        assert node.end is None
+        return node.start
+
+    def covering_or_next(self, cursor: int) -> tuple[int, int] | None:
+        """Find the first finite interval ending after cursor."""
+        node = self.root
+        match: _GapNode | None = None
+        while node is not None:
+            if node.end is not None and node.end <= cursor:
+                node = node.right
+            else:
+                match = node
+                node = node.left
+        if match is None:
+            return None
+        assert match.end is not None
+        return match.start, match.end
+
+
+class _ActiveSpanLedger:
+    """Sparse source-row span geometry with expiry events and indexed free-column gaps.
+
+    Gaps are maximal half-open column intervals; `None` is the unbounded right edge. An
+    augmented AVL tree finds the first gap wide enough for a cell, while boundary dictionaries
+    let an expired span join its immediate gaps without visiting other live spans.
+    """
+
+    def __init__(self) -> None:
+        self.spans: dict[int, _OpenSpan] = {}
+        self.text_spans: dict[int, _OpenSpan] = {}
+        self.text_runs: dict[int, int] = {}
+        self.text_runs_by_end: dict[int, int] = {}
+        self.text_run_index = _GapIndex()
+        self.reach_counts: dict[int, int] = {}
+        self.text_len = 0
+        self.text_count = 0
+        self.text_version = 0
+        self.expiry: list[tuple[int, int]] = []
+        self.gaps: dict[int, int | None] = {0: None}
+        self.gaps_by_end: dict[int, int] = {}
+        self.gap_index = _GapIndex()
+        self.gap_index.insert(0, None)
+
+    def expire(self, row_idx: int) -> list[int]:
+        """Remove expired spans and return only the columns actually released."""
+        expired_cols: list[int] = []
+        while self.expiry and self.expiry[0][0] <= row_idx:
+            end_row, col = heapq.heappop(self.expiry)
+            span = self.spans.get(col)
+            if span is None or span.reach_idx + 1 != end_row:
+                continue
+            del self.spans[col]
+            remaining = self.reach_counts[span.reach_idx] - 1
+            if remaining:
+                self.reach_counts[span.reach_idx] = remaining
+            else:
+                del self.reach_counts[span.reach_idx]
+            expired_cols.append(col)
+            if span.text:
+                del self.text_spans[col]
+                self.text_len -= len(span.text)
+                self.text_count -= 1
+                self.text_version += 1
+                run = self.text_run_index.covering_or_next(span.col)
+                assert run is not None
+                assert run[0] <= span.col
+                self._remove_text_run(run[0])
+                if run[0] < span.col:
+                    self._add_text_run(run[0], span.col)
+                span_end = span.col + span.colspan
+                if span_end < run[1]:
+                    self._add_text_run(span_end, run[1])
+            start = span.col
+            end: int | None = span.col + span.colspan
+            left = self.gaps_by_end.get(start)
+            if left is not None:
+                self._remove_gap(left)
+                start = left
+            if end in self.gaps:
+                right_end = self.gaps[end]
+                self._remove_gap(end)
+                end = right_end
+            self._add_gap(start, end)
+        return expired_cols
+
+    def place(self, cells: Sequence[HtmlCell]) -> list[tuple[int, int, HtmlCell]]:
+        """Place own cells in source order, visiting only gaps passed by those cells.
+
+        The third tuple item retains the source cell; the second is the gap's initial start,
+        used when opening several spans in that same gap after the row is accepted.
+        """
+        placed: list[tuple[int, int, HtmlCell]] = []
+        cursor = 0
+        for cell in cells:
+            start = self.gap_index.first_fit(cursor, cell.colspan)
+            assert start is not None  # -- the final gap is unbounded --
+            col = max(cursor, start)
+            placed.append((col, start, cell))
+            cursor = col + cell.colspan
+        return placed
+
+    def add(self, spans: Sequence[tuple[_OpenSpan, int]]) -> None:
+        """Commit new source spans once, splitting only the gaps they occupy."""
+        right_of_initial_gap: dict[int, int] = {}
+        for span, initial_gap in spans:
+            gap_start = right_of_initial_gap.get(initial_gap, initial_gap)
+            if gap_start not in self.gaps:
+                # -- Conflicting source colspans can consume this gap before a later cell
+                # -- opens its rowspan. Its original HTML was already emitted; omit only
+                # -- the impossible continuation geometry. --
+                continue
+            gap_end = self.gaps[gap_start]
+            span_end = span.col + span.colspan
+            if span.col < gap_start or (gap_end is not None and span_end > gap_end):
+                # -- OCR/VLM HTML can overlap a live span. Never corrupt the sparse index
+                # -- trying to retain an interval that is not wholly free. --
+                continue
+            self._remove_gap(gap_start)
+            if gap_start < span.col:
+                self._add_gap(gap_start, span.col)
+            if gap_end is None or span_end < gap_end:
+                self._add_gap(span_end, gap_end)
+            right_of_initial_gap[initial_gap] = span_end
+            self.spans[span.col] = span
+            self.reach_counts[span.reach_idx] = self.reach_counts.get(span.reach_idx, 0) + 1
+            if span.text:
+                self.text_spans[span.col] = span
+                self.text_len += len(span.text)
+                self.text_count += 1
+                self.text_version += 1
+                start = span.col
+                end = span.col + span.colspan
+                left = self.text_runs_by_end.get(start)
+                if left is not None:
+                    self._remove_text_run(left)
+                    start = left
+                right = self.text_runs.get(end)
+                if right is not None:
+                    self._remove_text_run(end)
+                    end = right
+                self._add_text_run(start, end)
+            heapq.heappush(self.expiry, (span.reach_idx + 1, span.col))
+
+    def uniform_cover(self) -> tuple[int, int] | None:
+        """Return (width, reach) when spans densely cover the left columns."""
+        if not self.spans or len(self.reach_counts) != 1:
+            return None
+        if len(self.gaps) != 1:
+            return None
+        width = self.gap_index.trailing_gap_start()
+        return width, next(iter(self.reach_counts))
+
+    def _add_gap(self, start: int, end: int | None) -> None:
+        self.gaps[start] = end
+        if end is not None:
+            self.gaps_by_end[end] = start
+        self.gap_index.insert(start, end)
+
+    def _add_text_run(self, start: int, end: int) -> None:
+        self.text_runs[start] = end
+        self.text_runs_by_end[end] = start
+        self.text_run_index.insert(start, end)
+
+    def _remove_text_run(self, start: int) -> None:
+        end = self.text_runs.pop(start)
+        del self.text_runs_by_end[end]
+        self.text_run_index.delete(start)
+
+    def _remove_gap(self, start: int) -> None:
+        end = self.gaps.pop(start)
+        if end is not None:
+            del self.gaps_by_end[end]
+        self.gap_index.delete(start)
+
+
+class _FragmentCell:
+    """A fragment cell whose blank rowspan is finalized when its interval closes."""
+
+    __slots__ = ("col", "width", "start_row", "html")
+
+    def __init__(self, col: int, width: int, start_row: int, html: str) -> None:
+        self.col = col
+        self.width = width
+        self.start_row = start_row
+        self.html = html
+
+
 class _HtmlTableSplitter:
     """Produces (text, html) pairs for a `<table>` HtmlElement.
 
@@ -1291,7 +1764,10 @@ class _HtmlTableSplitter:
                 # -- into whatever rows follow in the reassembled table --
                 bounded_row = group[0].row_clipped_to_rows(group_bounds[0])
                 for text, html in self._iter_row_splits(
-                    bounded_row, maxlen=self._maxlen(is_first_chunk)
+                    # -- this generator can yield multiple fragments; size every fragment for
+                    # -- the continuation case because all but its first yield carry headers --
+                    bounded_row,
+                    maxlen=self._maxlen(False),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -1303,7 +1779,10 @@ class _HtmlTableSplitter:
                 # -- like an ordinary oversized row, re-materializing any covered column a
                 # -- fragment boundary separates from the row whose rowspan declares it.
                 for text, html in self._iter_oversized_group_splits(
-                    group, maxlen=self._maxlen(is_first_chunk)
+                    # -- this generator can yield multiple fragments; size every fragment for
+                    # -- the continuation case because all but its first yield carry headers --
+                    group,
+                    maxlen=self._maxlen(False),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -1392,69 +1871,362 @@ class _HtmlTableSplitter:
         Rows are packed in order like an ordinary sequence, falling back to `_iter_row_splits`
         for a single row still too big alone. A column covered only by an earlier row's
         `rowspan` -- and so absent from a later row's own `<tr>` -- is re-materialized as a fresh
-        cell repeating the covering cell's text whenever a fragment boundary separates that row
-        from the row declaring the span, with the copy's `rowspan` set to only the rows of that
-        span actually present in the fragment. This unavoidably repeats the covering cell's text
-        across fragments, the accepted trade-off for honoring the hard size limit.
+        cell at a fragment boundary, with the copy's `rowspan` limited to the rows in that
+        fragment. The covering text repeats when it fits with the row. When it would force a
+        cell-level fallback, a blank covering cell keeps the column geometry without re-splitting
+        the same long text on every covered row.
         """
         n = len(group)
-        active: list[_OpenSpan] = []
-        fragment_cells: list[list[str]] = []
+        group_last_idx = self._group_last_idx(group)
+        active = _ActiveSpanLedger()
+        oversized_carry_cols: set[int] = set()
+        fragment_cells: list[list[str | _FragmentCell]] = []
         fragment_texts: list[list[str]] = []
+        fragment_text_count = 0
+        fragment_char_len = 0
+        fragment_carry_cost = 0
+        fragment_blank_per_row = False
+        fragment_text_cover_per_row = False
+        fragment_blank_runs: dict[int, tuple[int, _FragmentCell]] = {}
+        fragment_blank_index = _GapIndex()
+        fragment_text_expiry: list[tuple[int, int, int]] = []
+        fragment_width = 0
+        carry_measure_version = -1
+        carry_measure_value = 0
+        carry_probe_budget = 2 * max(maxlen, 256)
+        additive_char_measure = (
+            not self._opts.use_token_counting
+            and getattr(self._opts.measure, "__func__", None) is ChunkingOptions.measure
+        )
 
-        def build_row(
-            row: HtmlRow, idx: int, active: list[_OpenSpan], materialize: bool
-        ) -> tuple[list[str], list[str], list[_OpenSpan]]:
+        def commit_spans(new_spans: list[tuple[_OpenSpan, int]]) -> None:
+            nonlocal fragment_carry_cost
+            active.add(new_spans)
+            for span, _gap in new_spans:
+                if (
+                    active.spans.get(span.col) is span
+                    and span.text
+                    and (len(span.text) if additive_char_measure else self._opts.measure(span.text))
+                    > maxlen
+                ):
+                    oversized_carry_cols.add(span.col)
+            # Own rowspans in this fragment stay in future whole-candidate probes.
+            # Charge only accepted text spans; active spans may be blanked on fallback.
+            if fragment_cells and not additive_char_measure:
+                fragment_carry_cost += sum(
+                    len(span.text) + 1
+                    for span, _gap in new_spans
+                    if span.text and active.spans.get(span.col) is span
+                )
+
+        def append_row(cells: Sequence[str | _FragmentCell], texts: list[str]) -> None:
+            nonlocal fragment_text_count, fragment_char_len
+            fragment_cells.append(list(cells))
+            fragment_texts.append(texts)
+            if texts:
+                fragment_char_len += sum(map(len, texts)) + len(texts) - 1
+                if fragment_text_count:
+                    fragment_char_len += 1
+                fragment_text_count += len(texts)
+
+        def open_fragment_blank(start: int, end: int, row_cells: list[_FragmentCell]) -> None:
+            if start >= end:
+                return
+            cell = _FragmentCell(
+                start, end - start, len(fragment_cells), _format_td("", end - start)
+            )
+            fragment_blank_runs[start] = end, cell
+            fragment_blank_index.insert(start, end)
+            row_cells.append(cell)
+
+        def close_fragment_blank(
+            start: int, row_cells: list[_FragmentCell] | None = None
+        ) -> tuple[int, _FragmentCell]:
+            end, cell = fragment_blank_runs.pop(start)
+            fragment_blank_index.delete(start)
+            if cell.start_row == len(fragment_cells):
+                assert row_cells is not None
+                cell.html = ""
+            else:
+                cell.html = _format_td("", cell.width, len(fragment_cells) - cell.start_row)
+            return end, cell
+
+        def cut_fragment_blanks(start: int, end: int, row_cells: list[_FragmentCell]) -> None:
+            cursor = start
+            while (run := fragment_blank_index.covering_or_next(cursor)) is not None:
+                run_start, run_end = run
+                if run_start >= end:
+                    break
+                close_fragment_blank(run_start, row_cells)
+                if run_start < start:
+                    open_fragment_blank(run_start, start, row_cells)
+                if end < run_end:
+                    open_fragment_blank(end, run_end, row_cells)
+                cursor = run_end
+
+        def start_fragment_text_cover(cells: list[str]) -> None:
+            """Index initial blank intervals and label expiry without later row scans."""
+            nonlocal fragment_width
+            row = HtmlRow(_HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(cells)}</tr>"))
+            col = 0
+            for offset, cell in enumerate(row.iter_cells()):
+                end = col + cell.colspan
+                if cell.text:
+                    heapq.heappush(
+                        fragment_text_expiry,
+                        (len(fragment_cells) - 1 + (cell.rowspan or 1), col, end),
+                    )
+                else:
+                    output = _FragmentCell(
+                        col, cell.colspan, len(fragment_cells) - 1, cells[offset]
+                    )
+                    fragment_cells[-1][offset] = output
+                    fragment_blank_runs[col] = end, output
+                    fragment_blank_index.insert(col, end)
+                col = end
+            fragment_width = col
+
+        def append_fragment_text_cover_row(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int, texts: list[str]
+        ) -> None:
+            """Process only labels that expire and own cells that open on this row."""
+            nonlocal fragment_width
+            row_cells: list[_FragmentCell] = []
+            while fragment_text_expiry and fragment_text_expiry[0][0] <= len(fragment_cells):
+                _expiry, start, end = heapq.heappop(fragment_text_expiry)
+                open_fragment_blank(start, end, row_cells)
+            own_end = max((col + cell.colspan for col, _gap, cell in placed), default=0)
+            width = max(fragment_width, active.gap_index.trailing_gap_start(), own_end)
+            if fragment_width < width:
+                open_fragment_blank(fragment_width, width, row_cells)
+                fragment_width = width
+            for col, _gap, cell in placed:
+                if not cell.text:
+                    continue
+                end = col + cell.colspan
+                cut_fragment_blanks(col, end, row_cells)
+                row_cells.append(
+                    _FragmentCell(col, cell.colspan, len(fragment_cells), own_cell_html(cell, idx))
+                )
+                reach = (
+                    group_last_idx[idx]
+                    if cell.rowspan is None
+                    else min(idx + cell.rowspan - 1, n - 1)
+                )
+                heapq.heappush(
+                    fragment_text_expiry, (len(fragment_cells) + reach - idx + 1, col, end)
+                )
+            row_cells.sort(key=lambda cell: cell.col)
+            append_row(row_cells, texts)
+
+        def own_cell_html(cell: HtmlCell, idx: int) -> str:
+            """Resolve a zero rowspan against its source section, before fragment clipping."""
+            if cell.rowspan is not None:
+                return cell.html
+            section_remaining = group_last_idx[idx] - idx + 1
+            if not cell.text:
+                return _format_td("", cell.colspan, section_remaining)
+            td = copy.deepcopy(cell._td)
+            if section_remaining <= 1:
+                td.attrib.pop("rowspan", None)
+            else:
+                td.attrib["rowspan"] = str(section_remaining)
+            return tostring(td, encoding=str)
+
+        def carried_text_measure() -> int:
+            """Cache the configured measure of live labels between ledger changes."""
+            nonlocal carry_measure_version, carry_measure_value
+            if additive_char_measure:
+                return active.text_len + max(0, active.text_count - 1)
+            if carry_measure_version != active.text_version:
+                joined = " ".join(
+                    span.text for span in sorted(active.text_spans.values(), key=lambda s: s.col)
+                )
+                carry_measure_value = self._opts.measure(joined)
+                carry_measure_version = active.text_version
+            return carry_measure_value
+
+        def materialize(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int, carry_text: bool = True
+        ) -> tuple[list[str], list[str]]:
+            """Merge incoming spans with own cells only at a real fragment boundary."""
+            incoming = sorted(active.spans.values(), key=lambda span: span.col)
             cells: list[str] = []
             texts: list[str] = []
-            new_active: list[_OpenSpan] = []
-            spans = iter(sorted((s for s in active if s.reach_idx >= idx), key=lambda s: s.col))
-            next_span = next(spans, None)
-            own_cells = list(row.iter_cells())
-            own_idx = 0
             col = 0
-            while True:
-                if next_span is not None and next_span.col == col:
-                    if materialize:
-                        remaining = next_span.reach_idx - idx + 1
-                        cells.append(_format_td(next_span.text, next_span.colspan, remaining))
-                        if next_span.text:
-                            texts.append(next_span.text)
-                    if next_span.reach_idx > idx:
-                        new_active.append(next_span)
-                    col += next_span.colspan
-                    next_span = next(spans, None)
-                    continue
-                if own_idx < len(own_cells):
-                    cell = own_cells[own_idx]
+            own_idx = span_idx = 0
+            while own_idx < len(placed) or span_idx < len(incoming):
+                own_col = placed[own_idx][0] if own_idx < len(placed) else None
+                span_col = incoming[span_idx].col if span_idx < len(incoming) else None
+                if span_col is not None and (own_col is None or span_col < own_col):
+                    span = incoming[span_idx]
+                    span_idx += 1
+                    if col < span.col:
+                        cells.append(_format_td("", span.col - col))
+                    cells.append(
+                        _format_td(
+                            span.text if carry_text else "", span.colspan, span.reach_idx - idx + 1
+                        )
+                    )
+                    if carry_text and span.text:
+                        texts.append(span.text)
+                    col = span.col + span.colspan
+                else:
+                    assert own_col is not None
+                    cell = placed[own_idx][2]
                     own_idx += 1
-                    cells.append(cell.html)
+                    if col < own_col:
+                        cells.append(_format_td("", own_col - col))
+                    cells.append(own_cell_html(cell, idx))
                     if cell.text:
                         texts.append(cell.text)
-                    cell_reach = (
-                        n - 1 if cell.rowspan is None else min(idx + cell.rowspan - 1, n - 1)
+                    col = own_col + cell.colspan
+            return cells, texts
+
+        def materialize_blank_compact(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int
+        ) -> list[str]:
+            """Represent covered columns as blank runs without visiting retained spans."""
+            cells: list[str] = []
+            col = 0
+            for own_col, _gap, cell in placed:
+                if col < own_col:
+                    cells.append(_format_td("", own_col - col))
+                cells.append(own_cell_html(cell, idx))
+                col = own_col + cell.colspan
+            trailing_col = active.gap_index.trailing_gap_start()
+            if col < trailing_col:
+                cells.append(_format_td("", trailing_col - col))
+            return cells
+
+        def materialize_compact_text_cover(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int, emit_text: bool
+        ) -> tuple[list[str], list[str]]:
+            """Represent blank geometry as runs while retaining live text spans.
+
+            Text spans are emitted only at a fragment boundary. On later rows their
+            already emitted rowspans occupy those columns, so omit them entirely.
+            """
+            cells: list[str] = []
+            texts: list[str] = []
+            if not emit_text:
+                col = own_idx = 0
+                trailing_col = active.gap_index.trailing_gap_start()
+                while own_idx < len(placed) or col < trailing_col:
+                    own_col = placed[own_idx][0] if own_idx < len(placed) else None
+                    run = active.text_run_index.covering_or_next(col)
+                    if run is not None and run[0] < (
+                        own_col if own_col is not None else trailing_col
+                    ):
+                        if col < run[0]:
+                            cells.append(_format_td("", run[0] - col))
+                        col = run[1]
+                    elif own_col is not None:
+                        cell = placed[own_idx][2]
+                        own_idx += 1
+                        if col < own_col:
+                            cells.append(_format_td("", own_col - col))
+                        cells.append(
+                            _format_td("", cell.colspan)
+                            if not cell.text
+                            else own_cell_html(cell, idx)
+                        )
+                        if cell.text:
+                            texts.append(cell.text)
+                        col = own_col + cell.colspan
+                    else:
+                        cells.append(_format_td("", trailing_col - col))
+                        break
+                return cells, texts
+
+            incoming = sorted(active.text_spans.values(), key=lambda span: span.col)
+            col = own_idx = span_idx = 0
+            while own_idx < len(placed) or span_idx < len(incoming):
+                own_col = placed[own_idx][0] if own_idx < len(placed) else None
+                span_col = incoming[span_idx].col if span_idx < len(incoming) else None
+                if span_col is not None and (own_col is None or span_col < own_col):
+                    span = incoming[span_idx]
+                    span_idx += 1
+                    if col < span.col:
+                        cells.append(_format_td("", span.col - col))
+                    if emit_text:
+                        cells.append(_format_td(span.text, span.colspan, span.reach_idx - idx + 1))
+                        texts.append(span.text)
+                    col = span.col + span.colspan
+                else:
+                    assert own_col is not None
+                    cell = placed[own_idx][2]
+                    own_idx += 1
+                    if col < own_col:
+                        cells.append(_format_td("", own_col - col))
+                    cells.append(
+                        _format_td("", cell.colspan) if not cell.text else own_cell_html(cell, idx)
                     )
-                    if cell_reach > idx:
-                        new_active.append(_OpenSpan(col, cell.colspan, cell.text, cell_reach))
-                    col += cell.colspan
-                    continue
-                break
-            return cells, texts, new_active
+                    if cell.text:
+                        texts.append(cell.text)
+                    col = own_col + cell.colspan
+            trailing_col = active.gap_index.trailing_gap_start()
+            if col < trailing_col:
+                cells.append(_format_td("", trailing_col - col))
+            return cells, texts
+
+        def materialize_uniform_cover(
+            placed: Sequence[tuple[int, int, HtmlCell]], idx: int, width: int, reach: int
+        ) -> tuple[list[str], list[str]]:
+            """Emit text cells and blank runs for a dense single-expiry cover."""
+            cells: list[str] = []
+            texts: list[str] = []
+            col = 0
+            remaining_rows = reach - idx + 1
+            for span in sorted(active.text_spans.values(), key=lambda span: span.col):
+                if col < span.col:
+                    cells.append(_format_td("", span.col - col, remaining_rows))
+                cells.append(_format_td(span.text, span.colspan, remaining_rows))
+                texts.append(span.text)
+                col = span.col + span.colspan
+            if col < width:
+                cells.append(_format_td("", width - col, remaining_rows))
+            col = width
+            for own_col, _gap, cell in placed:
+                if col < own_col:
+                    cells.append(_format_td("", own_col - col))
+                cells.append(own_cell_html(cell, idx))
+                if cell.text:
+                    texts.append(cell.text)
+                col = own_col + cell.colspan
+            return cells, texts
 
         def fits(texts: Sequence[str]) -> bool:
-            candidate = fragment_texts + [list(texts)]
-            joined = " ".join(t for row_texts in candidate for t in row_texts)
-            return self._opts.measure(joined) <= maxlen
+            nonlocal carry_probe_budget
+            if not texts:
+                return True
+            if additive_char_measure:
+                extra = sum(map(len, texts)) + len(texts) - 1
+                return fragment_char_len + extra + bool(fragment_text_count) <= maxlen
+            if fragment_carry_cost:
+                if fragment_carry_cost > carry_probe_budget:
+                    return False
+                carry_probe_budget -= fragment_carry_cost
+            joined = " ".join(t for row_texts in fragment_texts for t in row_texts)
+            candidate = f"{joined} {' '.join(texts)}" if joined else " ".join(texts)
+            return self._opts.measure(candidate) <= maxlen
 
         def flush_fragment() -> Iterator[TextAndHtml]:
-            nonlocal fragment_cells, fragment_texts
+            nonlocal fragment_cells, fragment_texts, fragment_text_count, fragment_char_len
+            nonlocal fragment_blank_per_row
+            nonlocal fragment_text_cover_per_row
+            nonlocal fragment_blank_runs, fragment_blank_index, fragment_text_expiry, fragment_width
+            nonlocal fragment_carry_cost
             if not fragment_cells:
                 return
+            for start in list(fragment_blank_runs):
+                close_fragment_blank(start)
             m = len(fragment_cells)
             trs: list[str] = []
             for k, cells in enumerate(fragment_cells):
                 bound = m - k
-                tr = _HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(cells)}</tr>")
+                html_cells = "".join(cell if isinstance(cell, str) else cell.html for cell in cells)
+                tr = _HtmlTableSplitter._parse_row_fragment(f"<tr>{html_cells}</tr>")
                 row = HtmlRow(tr)
                 trs.append(
                     row.html_clipped_to_rows(bound)
@@ -1464,37 +2236,231 @@ class _HtmlTableSplitter:
             text = " ".join(t for row_texts in fragment_texts for t in row_texts)
             html = f"<table>{''.join(trs)}</table>"
             fragment_cells, fragment_texts = [], []
+            fragment_text_count = fragment_char_len = 0
+            fragment_carry_cost = 0
+            fragment_blank_per_row = False
+            fragment_text_cover_per_row = False
+            fragment_blank_runs = {}
+            fragment_blank_index = _GapIndex()
+            fragment_text_expiry = []
+            fragment_width = 0
             yield text, html
 
         for idx, row in enumerate(group):
-            active = [s for s in active if s.reach_idx >= idx]
-            cells, texts, next_active = build_row(row, idx, active, materialize=False)
+            for expired_col in active.expire(idx):
+                oversized_carry_cols.discard(expired_col)
+            placed = active.place(list(row.iter_cells()))
+            cells = [own_cell_html(cell, idx) for _col, _gap, cell in placed]
+            texts = [cell.text for _col, _gap, cell in placed if cell.text]
+            if idx:
+                carry_probe_budget = min(
+                    2 * max(maxlen, 256),
+                    carry_probe_budget + sum(map(len, texts)) + len(placed),
+                )
+            new_spans: list[tuple[_OpenSpan, int]] = []
+            for col, gap, cell in placed:
+                reach = (
+                    group_last_idx[idx]
+                    if cell.rowspan is None
+                    else min(idx + cell.rowspan - 1, n - 1)
+                )
+                if reach > idx:
+                    new_spans.append((_OpenSpan(col, cell.colspan, cell.text, reach), gap))
             if fragment_cells and fits(texts):
-                fragment_cells.append(cells)
-                fragment_texts.append(texts)
-                active = next_active
+                if fragment_text_cover_per_row:
+                    append_fragment_text_cover_row(placed, idx, texts)
+                else:
+                    packed_cells = (
+                        materialize_blank_compact(placed, idx) if fragment_blank_per_row else cells
+                    )
+                    append_row(packed_cells, texts)
+                commit_spans(new_spans)
+                if fragment_blank_per_row and not fragment_text_cover_per_row and new_spans:
+                    yield from flush_fragment()
                 continue
 
             yield from flush_fragment()
 
-            mat_cells, mat_texts, mat_active = build_row(row, idx, active, materialize=True)
-            if self._opts.measure(" ".join(mat_texts)) <= maxlen:
-                fragment_cells, fragment_texts = [mat_cells], [mat_texts]
-                active = mat_active
+            own_measure = self._opts.measure(" ".join(texts))
+            own_fits = own_measure <= maxlen
+            # -- For ordinary character measurement, decide whether carried text fits
+            # -- before escaping and formatting potentially huge retained cells. --
+            carry_fits = (
+                False
+                if oversized_carry_cols or not own_fits
+                else (
+                    active.text_len
+                    + sum(map(len, texts))
+                    + max(0, active.text_count + len(texts) - 1)
+                    <= maxlen
+                    if additive_char_measure
+                    else None
+                )
+            )
+            strategic_blank_carry = False
+            if carry_fits is not False and active.text_count:
+                # -- Bound optional repeated context by its serialized size per row.
+                # -- In token mode use the label count as a lower bound on token cost:
+                # -- rejected carry must not sort and remeasure the entire live set. --
+                own_step = (
+                    sum(map(len, texts)) + len(texts)
+                    if additive_char_measure
+                    else max(1, own_measure)
+                )
+                carry_lower_bound = (
+                    active.text_len + active.text_count - 1
+                    if additive_char_measure
+                    else active.text_count
+                )
+                optimistic_rows = max(1, (maxlen - carry_lower_bound) // max(1, own_step))
+                repeat_cost = carry_lower_bound if additive_char_measure else active.text_len
+                allowed_cost = 16 if additive_char_measure else 4
+                if (
+                    repeat_cost > allowed_cost * optimistic_rows
+                    and (
+                        active.text_count >= 16
+                        or repeat_cost >= 256
+                        or 4 * carry_lower_bound >= 3 * maxlen
+                    )
+                ) or (not additive_char_measure and active.text_len >= max(256, maxlen // 2)):
+                    carry_fits = False
+                    strategic_blank_carry = True
+                if not strategic_blank_carry:
+                    probe_cost = active.text_len + active.text_count
+                    if probe_cost > carry_probe_budget:
+                        carry_fits = False
+                        strategic_blank_carry = True
+                    else:
+                        carry_probe_budget -= probe_cost
+            if carry_fits is False:
+                mat_cells: list[str] = []
+                mat_texts: list[str] = []
+            else:
+                uniform_cover = active.uniform_cover()
+                if uniform_cover is not None:
+                    width, reach = uniform_cover
+                    mat_cells, mat_texts = materialize_uniform_cover(placed, idx, width, reach)
+                    carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
+                elif active.spans:
+                    # -- Mixed expiries or gaps need a per-row blank scaffold. Retained
+                    # -- text spans remain as bounded rowspans across packed rows. --
+                    mat_cells, mat_texts = materialize_compact_text_cover(
+                        placed, idx, bool(active.text_count)
+                    )
+                    carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
+                    fragment_blank_per_row = True
+                    fragment_text_cover_per_row = bool(active.text_count)
+                else:
+                    mat_cells, mat_texts = materialize(placed, idx)
+                    carry_fits = self._opts.measure(" ".join(mat_texts)) <= maxlen
+            if carry_fits:
+                append_row(mat_cells, mat_texts)
+                # This fragment copied active cover text. Later candidate probes
+                # remeasure it even after the source span expires.
+                fragment_carry_cost = active.text_len + active.text_count
+                if fragment_text_cover_per_row:
+                    start_fragment_text_cover(mat_cells)
             else:
                 # -- even this single row, with its covered columns materialized, is too big to
-                # -- fit alone; fall back to cell-level splitting, the same tolerance granted an
-                # -- ordinary oversized row -- it can't span beyond itself, so bound it to 1 --
-                tr = _HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(mat_cells)}</tr>")
-                bounded_row = HtmlRow(tr).row_clipped_to_rows(1)
-                yield from self._iter_row_splits(bounded_row, maxlen=maxlen)
-                active = []
+                # -- fit alone. Keep incoming spans as blank geometry in its cell-level
+                # -- fragments: their text was emitted earlier and repeating a long covering
+                # -- cell on every source row would multiply both output size and work. --
+                if own_fits:
+                    # -- Blank every active cover in this row; later packed rows will
+                    # -- receive their own compact blank columns. --
+                    fallback_cells = materialize_blank_compact(placed, idx)
+                    append_row(fallback_cells, texts)
+                    fragment_blank_per_row = True
+                    fragment_text_cover_per_row = strategic_blank_carry
+                    if strategic_blank_carry:
+                        start_fragment_text_cover(fallback_cells)
+                    # -- If the carry text could fit with a later, smaller row, let that row
+                    # -- start a fresh fragment and recover its covering context. A carry too
+                    # -- long to fit even alone stays blank while ordinary rows accumulate;
+                    # -- otherwise it would be split again on every covered source row. --
+                    if (
+                        not strategic_blank_carry
+                        and not oversized_carry_cols
+                        and carried_text_measure() <= maxlen
+                    ):
+                        yield from flush_fragment()
+                else:
+                    # -- Cell splits are singleton rows, so compact their blank geometry
+                    # -- directly without visiting every retained span. --
+                    fallback_cells = materialize_blank_compact(placed, idx)
+                    tr = _HtmlTableSplitter._parse_row_fragment(
+                        f"<tr>{''.join(fallback_cells)}</tr>"
+                    )
+                    bounded_row = HtmlRow(tr).row_clipped_to_rows(1)
+                    # -- One colspan represents a run of plain blank cells, preserving
+                    # -- column geometry without hundreds of repeated empty tags. --
+                    compact_cells: list[str] = []
+                    blank_cols = 0
+                    for cell in bounded_row.iter_cells():
+                        if cell.html == _format_td("", cell.colspan):
+                            blank_cols += cell.colspan
+                            continue
+                        if blank_cols:
+                            compact_cells.append(_format_td("", blank_cols))
+                            blank_cols = 0
+                        compact_cells.append(cell.html)
+                    if blank_cols:
+                        compact_cells.append(_format_td("", blank_cols))
+                    bounded_row = HtmlRow(
+                        _HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(compact_cells)}</tr>")
+                    )
+                    empty_markup_len = sum(
+                        len(cell.html) for cell in bounded_row.iter_cells() if not cell.text
+                    )
+                    # -- An infeasible blank scaffold must not force one-character text
+                    # -- fragments for the entire oversized cell. --
+                    split_maxlen = (
+                        maxlen if self._opts.use_token_counting else maxlen - empty_markup_len
+                    )
+                    min_text_fragment_len = max(
+                        len(f"<table><tr>{_format_td('x', cell.colspan)}</tr></table>")
+                        for _col, _gap, cell in placed
+                        if cell.text
+                    )
+                    useful_text_budget = max(1, (maxlen - min_text_fragment_len) // 2)
+                    if split_maxlen < min_text_fragment_len + useful_text_budget:
+                        # -- The blank scaffold leaves less than half the normal text
+                        # -- capacity. Keep the ordinary budget rather than imposing
+                        # -- this tiny allowance on every subsequent fragment. --
+                        split_maxlen = maxlen
+                    pending_empty_cells = ""
+                    pending_output: TextAndHtml | None = None
+                    for text, html in self._iter_row_splits(bounded_row, maxlen=split_maxlen):
+                        if not text:
+                            # -- The cell accumulator can flush a blank carry by itself
+                            # -- before splitting an oversized own cell. Keep its geometry
+                            # -- with the next text-bearing fragment, not as an empty chunk.
+                            pending_empty_cells += html[len("<table><tr>") : -len("</tr></table>")]
+                            continue
+                        if pending_output is not None:
+                            yield pending_output
+                        if pending_empty_cells:
+                            html = html.replace(
+                                "<table><tr>", f"<table><tr>{pending_empty_cells}", 1
+                            )
+                            pending_empty_cells = ""
+                        pending_output = text, html
+                    if pending_output is not None:
+                        text, html = pending_output
+                        if pending_empty_cells:
+                            html = html.replace(
+                                "</tr></table>", f"{pending_empty_cells}</tr></table>", 1
+                            )
+                        yield text, html
+            commit_spans(new_spans)
+            if fragment_blank_per_row and not fragment_text_cover_per_row and new_spans:
+                yield from flush_fragment()
 
         yield from flush_fragment()
 
     def _iter_row_splits(self, row: HtmlRow, maxlen: int) -> Iterator[TextAndHtml]:
         """Split oversized row into (text, html) pairs containing as many cells as will fit."""
-        accum = _CellAccumulator(maxlen=maxlen)
+        accum = _CellAccumulator(maxlen=maxlen, measure=self._opts.measure)
 
         for cell in row.iter_cells():
             # -- if cell won't fit, flush and check again --
@@ -1519,11 +2485,14 @@ class _HtmlTableSplitter:
             )
             split = _TextSplitter(opts)
 
-            text, remainder = split(cell.text)
-            yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
-
+            remainder = cell.text
             while remainder:
+                prior_remainder = remainder
                 text, remainder = split(remainder)
+                if not text or len(remainder) >= len(prior_remainder):
+                    # A single code point can exceed a very small token budget. Preserve it
+                    # intact and accept the unavoidable overflow so this loop always advances.
+                    text, remainder = prior_remainder[:1], prior_remainder[1:].lstrip()
                 yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
             return
 
@@ -1641,9 +2610,146 @@ class _HtmlTableSplitter:
         if not self._header_rows:
             return False
 
-        # -- guard against pathological headers where a single repeated header row would consume
-        # -- more than half the chunking window.
-        return self._max_header_row_len <= (self._opts.hard_max + 1) // 2
+        # -- guard against pathological headers where one row consumes more than half the window,
+        # -- all repeated rows together leave less than a quarter for continuation content, the
+        # -- serialized header markup is disproportionate to the window, or the remaining window
+        # -- would force an oversized body cell into one-unit fragments.
+        return (
+            self._max_header_row_len <= (self._opts.hard_max + 1) // 2
+            and self._header_text_len <= (3 * self._opts.hard_max) // 4
+            and self._opts.measure(self._header_rows_html) <= 4 * self._opts.hard_max
+            and not self._would_starve_oversized_body_cell
+        )
+
+    @cached_property
+    def _would_starve_oversized_body_cell(self) -> bool:
+        """True when repetition would leave no usable split budget for an oversized body cell."""
+        maxlen = max(1, self._opts.hard_max - self._header_text_len - 1)
+        if self._header_text_len > maxlen and any(
+            idx < self._header_row_count for idx in self._reduced_budget_header_row_idxs
+        ):
+            return True
+
+        for idx, row in enumerate(self._table_element.iter_rows()):
+            # -- Header rows only need scanning when the real packing decisions can route their
+            # -- group into a reduced-budget row/cell split. All body rows are scanned.
+            if idx < self._header_row_count and idx not in self._reduced_budget_header_row_idxs:
+                continue
+            if idx < self._header_row_count:
+                row_text_len = self._materialized_row_text_lens[idx]
+                if row_text_len <= self._opts.hard_max and row_text_len > maxlen:
+                    # -- The oversized-group splitter reserves header room for every fragment.
+                    # -- Avoid degrading a size-compliant header row for headers the first
+                    # -- fragment would not even carry. --
+                    return True
+            for cell in row.iter_cells():
+                if self._opts.measure(cell.text) <= maxlen:
+                    continue
+                if self._opts.use_token_counting:
+                    if maxlen <= 11:
+                        return True
+                    split_budget = max(1, maxlen - 10)
+                    if any(self._opts.measure(char) > split_budget for char in set(cell.text)):
+                        return True
+                    continue
+                probe = (
+                    f"{chr(39)} {chr(39)}" if any(c.isspace() for c in cell.text) else chr(39) * 2
+                )
+                two_char_fragment_len = len(
+                    # -- a quote has the longest `html.escape()` spelling of any character;
+                    # -- include a normalized separator when the actual cell has whitespace. --
+                    f"<table><tr>{_format_td(probe, cell.colspan, rowspan=1)}</tr></table>"
+                )
+                if maxlen < two_char_fragment_len:
+                    return True
+        return False
+
+    @cached_property
+    def _materialized_row_text_lens(self) -> tuple[int, ...]:
+        """Header-row sizes including text from incoming rowspans materialized at a split."""
+        measured: list[int] = []
+
+        for group, _bounds, _is_clipped in self._iter_rowspan_bound_row_groups():
+            if len(measured) >= self._header_row_count:
+                break
+            active: list[tuple[int, str]] = []
+            n = len(group)
+            row_group_ends = {id(row.row_group_key): idx for idx, row in enumerate(group)}
+            for idx, row in enumerate(group):
+                if len(measured) >= self._header_row_count:
+                    break
+                active = [(reach, text) for reach, text in active if reach >= idx]
+                texts = [text for _reach, text in active if text]
+                texts.extend(row.iter_cell_texts())
+                measured.append(self._opts.measure(" ".join(texts)))
+
+                for cell in row.iter_cells():
+                    reach = (
+                        row_group_ends[id(row.row_group_key)]
+                        if cell.rowspan is None
+                        else min(idx + cell.rowspan - 1, n - 1)
+                    )
+                    if reach > idx:
+                        active.append((reach, cell.text))
+
+        return tuple(measured)
+
+    @cached_property
+    def _reduced_budget_header_row_idxs(self) -> set[int]:
+        """Header-row indices that can reach row/cell splitting at the reduced budget."""
+        if self._header_row_count <= 0:
+            return set()
+
+        at_risk_idxs: set[int] = set()
+        start_idx = 0
+        is_first_chunk = True
+        accum = _RowAccumulator(maxlen=self._opts.hard_max, measure=self._opts.measure)
+
+        for group, bounds, is_clipped in self._iter_rowspan_bound_row_groups():
+            if start_idx >= self._header_row_count:
+                break
+
+            if (
+                accum.last_row_group_key is not None
+                and group[0].row_group_key is not accum.last_row_group_key
+                and accum.crosses_a_row_group_unsafely_if_extended
+            ):
+                if any(accum.flush()):
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=(
+                        self._opts.hard_max
+                        if is_first_chunk
+                        else max(1, self._opts.hard_max - self._header_text_len - 1)
+                    ),
+                    measure=self._opts.measure,
+                )
+
+            if not accum.will_fit(group):
+                if any(accum.flush()):
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=(
+                        self._opts.hard_max
+                        if is_first_chunk
+                        else max(1, self._opts.hard_max - self._header_text_len - 1)
+                    ),
+                    measure=self._opts.measure,
+                )
+
+            if accum.will_fit(group):
+                accum.add_rows(group, bounds, is_clipped=is_clipped)
+            else:
+                stop_idx = min(start_idx + len(group), self._header_row_count)
+                at_risk_idxs.update(range(start_idx, stop_idx))
+                is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=max(1, self._opts.hard_max - self._header_text_len - 1),
+                    measure=self._opts.measure,
+                )
+
+            start_idx += len(group)
+        return at_risk_idxs
 
     @cached_property
     def _max_header_row_len(self) -> int:
@@ -1759,7 +2865,7 @@ class _TextSplitter:
 
         # -- for token counting, use the measurement abstraction for size check --
         if self._opts.use_token_counting:
-            if self._opts.measure(s) <= maxlen:
+            if self._fits_token_budget(s):
                 return s, ""
             return self._split_by_tokens(s)
 
@@ -1785,6 +2891,47 @@ class _TextSplitter:
         # -- tail and remainder on arb-char split.
         return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
 
+    def _fits_token_budget(self, s: str) -> bool:
+        """True when `s` fits within the configured token budget.
+
+        Doubling prefixes of `s` are measured before the whole string, and the whole `s` is
+        measured only when every probe fits or when the character-length bound leaves a whole
+        measurement possible. A text-only table routes its complete flattened text through here,
+        which made this check quadratic when the whole remainder was processed for every chunk;
+        both probes and the bound keep per-call work independent of the suffix length.
+
+        Token counts are not monotone in prefix length -- truncating a run can make the prefix
+        tokenize to one more token than the completed run (``'0' * 15`` is two GPT-2 tokens but
+        ``'0' * 16`` is one). A prefix overflow therefore does not reject `s` by itself: token
+        counting is done on the whole string unless the character-length bound already exceeds
+        the budget, in which case no unread suffix can bring the count under. The bound needs no
+        encoding of the suffix, so it stays consistent with the tokenizer's accepted input
+        (e.g. lone surrogate code units) and linear in the suffix length.
+        """
+        maxlen = self._opts.hard_max
+        measure = self._opts.measure
+        token_counter = self._opts.token_counter
+        n = len(s)
+        end = min(n, 256)
+
+        while True:
+            if measure(s[:end]) > maxlen:
+                if end == n:
+                    return False
+                # -- conservative rejection that does not touch the unread suffix: each --
+                # -- character occupies at least one byte and a token covers at most --
+                # -- `max_token_bytes` of them, so this floor holds for the whole string -- #
+                # -- without encoding it (a text-only table re-splits a barely shorter -- #
+                # -- suffix per chunk, so encoding the suffix here is quadratic) -- #
+                assert token_counter is not None  # token mode is the only caller
+                token_floor = -(-n // token_counter.max_token_bytes)
+                if token_floor > maxlen:
+                    return False
+                return measure(s) <= maxlen
+            if end == n:
+                return True
+            end = min(n, 2 * end)
+
     def _split_by_tokens(self, s: str) -> tuple[str, str]:
         """Split text `s` on a separator boundary while respecting token limits.
 
@@ -1796,64 +2943,176 @@ class _TextSplitter:
         overlap = self._opts.overlap
         measure = self._opts.measure
 
+        # -- bound the prospective chunk window: the last prefix position probed as fitting,
+        # -- padded by a short margin so partial-token effects cannot hide a fitting candidate
+        # -- just beyond it. The separator search is restricted to this window; without it a
+        # -- separator-dense string makes the search quadratic in its length (a text-only table
+        # -- routes its whole flattened text through here when HTML is disabled).
+        window_end = self._token_window_end(s, maxlen)
+        search_end = min(len(s), window_end + 16)
+
         # -- try each separator in order of preference --
-        for pattern, _ in self._patterns:
-            # -- find all matches of this separator in the string --
-            # -- note: (?r) flag makes finditer return matches right-to-left --
-            matches = list(pattern.finditer(s))
-            # -- iterate through matches (already right-to-left due to (?r) flag) --
-            for match in matches:
+        for pattern, sep_len in self._patterns:
+            # -- candidates inside one whitespace run all trim to the same fragment and --
+            # -- lstrip to the same remainder; evaluate the run once and skip the rest -- #
+            skip_from = -1
+            # -- note: the (?r) flag makes finditer return matches right-to-left; the endpos
+            # -- restriction means only candidates inside the token window are visited --
+            for match in pattern.finditer(s, 0, min(len(s), search_end + sep_len)):
                 match_start, match_end = match.span()
-                fragment = s[:match_start].rstrip()
-                # -- check if fragment fits within token limit --
-                if measure(fragment) <= maxlen:
-                    # -- skip if fragment is too short (needs at least some content) --
-                    if measure(fragment) == 0:
-                        continue
+                if skip_from >= 0 and match_start >= skip_from:
+                    continue
+                fragment = self._trimmed_prefix(s, match_start)
+                fragment_tokens = measure(fragment)
+                # -- a prefix wholly covered by overlap cannot make progress -- #
+                if (
+                    fragment
+                    and fragment_tokens <= maxlen
+                    and (overlap == 0 or fragment_tokens > overlap)
+                ):
                     raw_remainder = s[match_end:].lstrip()
                     # -- add overlap if configured --
                     if overlap > 0:
                         # -- token-based overlap: find tail with ~overlap tokens --
                         tail = self._get_token_overlap_tail(fragment, overlap)
-                        overlapped_remainder = tail + " " + raw_remainder
-                        return fragment, overlapped_remainder
-                    return fragment, raw_remainder
+                        overlapped_remainder = (
+                            (tail + " " + raw_remainder) if tail else raw_remainder
+                        )
+                        if len(overlapped_remainder) < len(s):
+                            return fragment, overlapped_remainder
+                    elif len(raw_remainder) < len(s):
+                        return fragment, raw_remainder
+                # -- every separator in this whitespace run produces the same fragment and --
+                # -- remainder, so the next candidate can start left of the whole run -- #
+                run_start = match_start
+                while run_start > 0 and s[run_start - 1].isspace():
+                    run_start -= 1
+                skip_from = run_start
 
-        # -- fallback: split on whitespace boundary using binary search to find token limit --
-        # -- find the approximate character position that corresponds to maxlen tokens --
-        low, high = 0, len(s)
-        best_pos = max(overlap + 1, 1)  # -- minimum viable position --
+        # -- fallback: split on a whitespace boundary near the end of the token window --
+        # -- Position zero cannot make progress. If even the first code point exceeds the token
+        # -- budget, `_token_window_end()` retains `1` and tolerates that indivisible overflow.
+        best_pos = window_end
 
-        while low <= high:
-            mid = (low + high) // 2
-            if measure(s[:mid]) <= maxlen:
-                best_pos = mid
-                low = mid + 1
-            else:
-                high = mid - 1
-
-        # -- try to find a whitespace boundary near best_pos, searching backwards --
+        # -- Try whitespace positions right-to-left, but evaluate each whitespace run once: --
+        # -- above position zero every position in a run emits the same candidate (`rstrip` -- #
+        # -- removes the whole trailing run), and slicing a prefix per position makes this -- #
+        # -- scan quadratic on a long indentation run. A run starting at position zero is the -- #
+        # -- one exception: its prefixes are all whitespace, which `_emitted_prefix` keeps as -- #
+        # -- content, so each position there emits a different candidate and is visited one -- #
+        # -- at a time (the window probe keeps their count small, since an all-whitespace -- #
+        # -- prefix is never stripped and overflows within a short length) -- #
         split_pos = best_pos
-        for i in range(best_pos, max(overlap, 0), -1):
-            if i < len(s) and s[i].isspace():
+        i = min(best_pos, len(s) - 1)
+        while i > 0:
+            if not s[i].isspace():
+                i -= 1
+                continue
+            cand_fragment = self._emitted_prefix(s, i)
+            measure_value = measure(cand_fragment)
+            if cand_fragment and measure_value > 0 and (overlap == 0 or measure_value > overlap):
                 split_pos = i
                 break
+            run_start = i
+            while run_start > 0 and s[run_start - 1].isspace():
+                run_start -= 1
+            if run_start > 0:
+                i = run_start - 1
+            else:
+                i -= 1
 
         # -- ensure the fragment still fits after whitespace adjustment --
-        fragment = s[:split_pos].rstrip()
-        if measure(fragment) > maxlen and split_pos > overlap + 1:
-            # -- whitespace boundary pushed us over; use the binary search result directly --
-            fragment = s[:best_pos].rstrip()
+        fragment = self._emitted_prefix(s, split_pos)
+        if not fragment or measure(fragment) > maxlen:
+            fragment = self._emitted_prefix(s, best_pos)
             split_pos = best_pos
 
-        raw_remainder = s[split_pos:].lstrip()
+        if not fragment:
+            fragment = s[: max(1, best_pos)]
+            split_pos = len(fragment)
+
+        is_whitespace_split = split_pos < len(s) and s[split_pos].isspace()
+        # -- A trailing whitespace run is trimmed from the fragment, so the cut has --
+        # -- whitespace on the left even when the next source character is not space -- #
+        left_trimmed = split_pos > len(fragment)
+        # -- A whitespace-only fragment is content here (long code indentation), not a -- #
+        # -- separator, so the rest of that whitespace must stay in the remainder. -- #
+        if is_whitespace_split and fragment.strip():
+            raw_remainder = s[split_pos:].lstrip()
+        else:
+            raw_remainder = s[split_pos:]
 
         if overlap > 0 and fragment:
             tail = self._get_token_overlap_tail(fragment, overlap)
-            overlapped_remainder = tail + " " + raw_remainder
-            return fragment, overlapped_remainder
+            # -- do not fuse words across whitespace the split discarded on either side -- #
+            sep = " " if (is_whitespace_split or left_trimmed) else ""
+            overlapped_remainder = (tail + sep + raw_remainder) if tail else raw_remainder
+            if len(overlapped_remainder) < len(s):
+                return fragment, overlapped_remainder
 
-        return fragment, raw_remainder
+        # -- progress guarantee: remainder must strictly consume content from s --
+        remainder = raw_remainder
+        if len(remainder) >= len(s):
+            # -- fallback to hard back-stop: consume at least one character --
+            remainder = s[max(1, split_pos) :]
+
+        return fragment, remainder
+
+    def _token_window_end(self, s: str, maxlen: int) -> int:
+        """Last prefix length probed as fitting within `maxlen` tokens, at least 1.
+
+        1 is the minimum so position zero cannot cause a non-progressing split; when even
+        `s[:1]` exceeds the budget, `1` is returned and that indivisible overflow is tolerated,
+        matching the fallback in `_split_by_tokens()`.
+
+        Probes by doubling, then binary search, so the number of tokenizer calls is logarithmic
+        in `len(s)`. Prefix token counts are not strictly monotone in prefix length (a trailing
+        partial word can tokenize into more tokens than the completed word), so this is a
+        consistent approximation like the fallback's; callers pad it by a short margin before
+        bounding a search so a fitting candidate just beyond the probe cannot be lost.
+
+        Each probe measures the text a split there would actually emit (see `_emitted_prefix`),
+        not the raw slice. Measuring a raw leading-whitespace prefix as `""` would let the window
+        grow across a long indentation run and make the fallback scan quadratic.
+        """
+        measure = self._opts.measure
+        n = len(s)
+        low, high = 1, 1
+
+        # -- exponential probe: find a prefix length whose emitted text overflows the budget --
+        while high < n:
+            high = min(n, max(2 * high, 256))
+            if measure(self._emitted_prefix(s, high)) > maxlen:
+                break
+            low = high
+
+        if low == n:
+            return n
+
+        # -- refine between the last fitting length and the first overflowing one --
+        while high - low > 1:
+            mid = (low + high) // 2
+            if measure(self._emitted_prefix(s, mid)) <= maxlen:
+                low = mid
+            else:
+                high = mid
+
+        return low
+
+    @staticmethod
+    def _trimmed_prefix(s: str, end: int) -> str:
+        """Text before `end` after the trailing whitespace every split removes."""
+        return s[:end].rstrip()
+
+    @staticmethod
+    def _emitted_prefix(s: str, end: int) -> str:
+        """Text a split at `end` would emit before whitespace trimming.
+
+        Splits strip trailing whitespace, but a prefix made only of whitespace must not become
+        an empty chunk: long code indentation is content and is emitted as-is. No prefix of a
+        non-empty string is empty, which keeps splits making progress.
+        """
+        return _TextSplitter._trimmed_prefix(s, end) or s[:end]
 
     def _get_token_overlap_tail(self, text: str, target_tokens: int) -> str:
         """Extract tail of text containing approximately `target_tokens` tokens.
@@ -1957,45 +3216,56 @@ class _CellAccumulator:
     subtable composed of all those rows that fit in the window.
     """
 
-    def __init__(self, maxlen: int):
+    def __init__(self, maxlen: int, measure: Callable[[str], int] = len):
         self._maxlen = maxlen
+        self._measure = measure
         self._cells: list[HtmlCell] = []
+        self._empty_cell_count = 0
+        self._text = ""
+        self._text_len = self._measure("")
+        self._pending_cell: HtmlCell | None = None
+        self._pending_text = ""
+        self._pending_text_len = self._text_len
 
     def add_cell(self, cell: HtmlCell) -> None:
         """Add `cell` to this accumulation. Caller is responsible for ensuring it will fit."""
         self._cells.append(cell)
+        if cell.text:
+            if self._pending_cell is cell:
+                self._text = self._pending_text
+                self._text_len = self._pending_text_len
+            else:
+                self._text = f"{self._text} {cell.text}" if self._text else cell.text
+                self._text_len = self._measure(self._text)
+        else:
+            self._empty_cell_count += 1
+        self._pending_cell = None
 
     def flush(self) -> Iterator[TextAndHtml]:
         """Generate zero-or-one (text, html) pairs for accumulated sub-sub-table."""
         if not self._cells:
             return
-        text = " ".join(self._iter_cell_texts())
+        text = self._text
         tds_str = "".join(c.html for c in self._cells)
         html = f"<table><tr>{tds_str}</tr></table>"
         self._cells.clear()
+        self._empty_cell_count = 0
+        self._text = ""
+        self._text_len = self._measure("")
+        self._pending_cell = None
         yield text, html
 
     def will_fit(self, cell: HtmlCell) -> bool:
         """True when `cell` will fit within remaining space left by accummulated cells."""
-        return self._remaining_space >= len(cell.text)
-
-    def _iter_cell_texts(self) -> Iterator[str]:
-        """Generate contents of each accumulated cell as a separate string.
-
-        A cell that is empty or contains only whitespace does not generate a string.
-        """
-        for cell in self._cells:
-            if not (text := cell.text):
-                continue
-            yield text
-
-    @property
-    def _remaining_space(self) -> int:
-        """Number of characters remaining when text of accumulated cells is joined."""
-        # -- separators are one space (" ") at the end of each cell's text, including last one to
-        # -- account for space before prospective next cell.
-        separators_len = len(self._cells)
-        return self._maxlen - separators_len - sum(len(c.text) for c in self._cells)
+        if not cell.text:
+            return self._text_len + self._empty_cell_count + 1 <= self._maxlen
+        if self._pending_cell is cell:
+            return self._pending_text_len + self._empty_cell_count <= self._maxlen
+        candidate_text = f"{self._text} {cell.text}" if self._text else cell.text
+        self._pending_cell = cell
+        self._pending_text = candidate_text
+        self._pending_text_len = self._measure(candidate_text)
+        return self._pending_text_len + self._empty_cell_count <= self._maxlen
 
 
 class _RowAccumulator:

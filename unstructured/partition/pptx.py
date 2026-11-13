@@ -6,12 +6,12 @@ unlike the `.ppt` format which was binary and proprietary.
 
 from __future__ import annotations
 
-import io
+import math
 from functools import cached_property
-from tempfile import SpooledTemporaryFile
-from typing import IO, Any, Iterator, Protocol, Sequence
+from typing import IO, Any, Iterator, Protocol, Sequence, cast
 
 import pptx
+from pptx.oxml.ns import qn
 from pptx.presentation import Presentation
 from pptx.shapes.autoshape import Shape
 from pptx.shapes.base import BaseShape
@@ -36,6 +36,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
+from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_email_address,
@@ -47,6 +48,51 @@ from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 DETECTION_ORIGIN = "pptx"
+
+
+def _break_lines(text: str) -> str:
+    """Line breaks (Shift+Enter, `a:br`) as newlines.
+
+    python-pptx reads a line break as a vertical tab (`\\v`), which would otherwise reach the
+    element text.
+    """
+    return text.replace("\v", "\n")
+
+
+def _group_transform(group: Any) -> tuple[int, int, int, int, int, int, int, int] | None:
+    """The `a:xfrm` values of `group` as `(off_x, off_y, ext_cx, ext_cy, chOff_x, chOff_y,
+    chExt_cx, chExt_cy)`.
+
+    A group shape's `a:off`/`a:ext` position it on the slide while its `a:chOff`/`a:chExt` define
+    the coordinate system of the shapes it contains. Returns `None` when any of those values is
+    missing, the child coordinate system has no area, or the group carries a rotation or flip.
+    Those are not part of the translation and scaling this mapping applies, so the caller uses the
+    shape's own coordinates for the whole group instead of a partial box.
+    """
+    grpSpPr = group.find(qn("p:grpSpPr"))
+    xfrm = grpSpPr.find(qn("a:xfrm")) if grpSpPr is not None else None
+    if xfrm is None:
+        return None
+    if xfrm.get("rot") not in (None, "0"):
+        return None
+    if any(xfrm.get(axis, "").strip(" \t\r\n") in ("1", "true") for axis in ("flipH", "flipV")):
+        return None
+    off = xfrm.find(qn("a:off"))
+    ext = xfrm.find(qn("a:ext"))
+    chOff = xfrm.find(qn("a:chOff"))
+    chExt = xfrm.find(qn("a:chExt"))
+    if off is None or ext is None or chOff is None or chExt is None:
+        return None
+    try:
+        off_x, off_y = int(off.get("x")), int(off.get("y"))
+        ext_cx, ext_cy = int(ext.get("cx")), int(ext.get("cy"))
+        ch_off_x, ch_off_y = int(chOff.get("x")), int(chOff.get("y"))
+        ch_ext_cx, ch_ext_cy = int(chExt.get("cx")), int(chExt.get("cy"))
+    except (TypeError, ValueError):
+        return None
+    if ch_ext_cx <= 0 or ch_ext_cy <= 0:
+        return None
+    return off_x, off_y, ext_cx, ext_cy, ch_off_x, ch_off_y, ch_ext_cx, ch_ext_cy
 
 
 def register_picture_partitioner(picture_partitioner: AbstractPicturePartitioner) -> None:
@@ -88,6 +134,7 @@ def partition_pptx(
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
     include_slide_notes: bool | None = None,
+    include_off_slide_shapes: bool = False,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
     strategy: str = PartitionStrategy.FAST,
@@ -105,6 +152,8 @@ def partition_pptx(
         If True, includes a PageBreak element between slides
     include_slide_notes
         If True, includes the slide notes as element
+    include_off_slide_shapes
+        If True, also include text from shapes that are mostly outside the slide.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -121,6 +170,7 @@ def partition_pptx(
         file_path=filename,
         include_page_breaks=include_page_breaks,
         include_slide_notes=include_slide_notes,
+        include_off_slide_shapes=include_off_slide_shapes,
         infer_table_structure=infer_table_structure,
         strategy=strategy,
         starting_page_number=starting_page_number,
@@ -200,7 +250,7 @@ class _PptxPartitioner:
         # -- not all notes slides have a text-frame (it's created on first use) --
         if not notes_text_frame:
             return
-        notes_text = notes_text_frame.text.strip()
+        notes_text = _break_lines(notes_text_frame.text).strip()
 
         # -- not all notes text-frams contain text (if it's all deleted the text-frame remains) --
         if not notes_text:
@@ -222,7 +272,7 @@ class _PptxPartitioner:
             return
 
         for paragraph in shape.text_frame.paragraphs:
-            text = paragraph.text
+            text = _break_lines(paragraph.text)
             if text.strip() == "":
                 continue
 
@@ -232,7 +282,7 @@ class _PptxPartitioner:
             if self._is_bulleted_paragraph(paragraph):
                 yield ListItem(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             elif is_email_address(text):
-                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
+                yield EmailAddress(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             elif is_possible_narrative_text(text):
                 yield NarrativeText(
                     text=text,
@@ -278,7 +328,7 @@ class _PptxPartitioner:
 
         depth = 0
         for paragraph in shape.text_frame.paragraphs:
-            text = paragraph.text
+            text = _break_lines(paragraph.text)
             if text.strip() == "":
                 continue
 
@@ -290,7 +340,11 @@ class _PptxPartitioner:
                     detection_origin=DETECTION_ORIGIN,
                 )
             elif is_email_address(text):
-                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
+                yield EmailAddress(
+                    text=text,
+                    metadata=self._opts.text_metadata(category_depth=depth),
+                    detection_origin=DETECTION_ORIGIN,
+                )
             else:
                 # increment the category depth by the paragraph increment in the shape
                 yield Title(
@@ -324,8 +378,93 @@ class _PptxPartitioner:
 
     def _shape_is_off_slide(self, shape: Shape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
-        # NOTE - skip check if no top or left position (shape displayed top left)
-        return bool((shape.top and shape.left) and (shape.top < 0 or shape.left < 0))
+        if self._opts.include_off_slide_shapes:
+            return False
+        left, top, width, height = self._shape_slide_box(shape)
+        # -- a shape with no position is placed at the top-left of the slide, so it is on-slide --
+        if left is None or top is None:
+            return False
+        slide_width = self._presentation.slide_width
+        slide_height = self._presentation.slide_height
+        if slide_width is None or slide_height is None:
+            return left < 0 or top < 0
+        # -- a zero-area shape is on-slide when its origin is --
+        if not width or not height:
+            return not (0 <= left <= slide_width and 0 <= top <= slide_height)
+        visible_width = max(0, min(left + width, slide_width) - max(left, 0))
+        visible_height = max(0, min(top + height, slide_height) - max(top, 0))
+        return visible_width * visible_height < 0.5 * width * height
+
+    def _shape_slide_box(
+        self, shape: Shape
+    ) -> tuple[float | None, float | None, float | None, float | None]:
+        """The bounding box of `shape` in slide coordinates.
+
+        A shape inside a group shape is positioned in the group's child coordinate system
+        (`a:chOff`/`a:chExt`), which the group's own `a:off`/`a:ext` translate and scale onto the
+        slide. Walks up the group hierarchy and maps the box through each group. A rotated leaf
+        maps to the bounding box of its rotated corners; under nonuniform accumulated scaling it
+        keeps its own box instead, since that combination is order-sensitive. Falls back to the
+        shape's own coordinates when a group does not provide a usable transform (including a
+        rotated or flipped group), preserving the previous behavior for those groups.
+        """
+        shape_left = cast("int | None", shape.left)
+        shape_top = cast("int | None", shape.top)
+        shape_width = cast("int | None", shape.width)
+        shape_height = cast("int | None", shape.height)
+        if shape_left is None or shape_top is None:
+            return shape_left, shape_top, shape_width, shape_height
+
+        scale_x, scale_y = 1.0, 1.0
+        offset_x, offset_y = 0.0, 0.0
+        element = shape._element
+        grouped = False
+        while (parent := element.getparent()) is not None and parent.tag == qn("p:grpSp"):
+            transform = _group_transform(parent)
+            if transform is None:
+                return shape_left, shape_top, shape_width, shape_height
+            off_x, off_y, ext_cx, ext_cy, ch_off_x, ch_off_y, ch_ext_cx, ch_ext_cy = transform
+            group_scale_x = ext_cx / ch_ext_cx
+            group_scale_y = ext_cy / ch_ext_cy
+            offset_x = off_x + (offset_x - ch_off_x) * group_scale_x
+            offset_y = off_y + (offset_y - ch_off_y) * group_scale_y
+            scale_x *= group_scale_x
+            scale_y *= group_scale_y
+            grouped = True
+            element = parent
+
+        if not grouped:
+            return shape_left, shape_top, shape_width, shape_height
+        left = offset_x + shape_left * scale_x
+        top = offset_y + shape_top * scale_y
+        if shape_width is None or shape_height is None:
+            return left, top, shape_width, shape_height
+        rotation = shape.rotation
+        if not rotation:
+            return left, top, shape_width * scale_x, shape_height * scale_y
+        if not math.isclose(scale_x, scale_y, rel_tol=1e-9):
+            # -- nonuniform scaling and rotation do not commute; keep the leaf's own box instead
+            # -- of one computed in an order the group transform does not follow --
+            return shape_left, shape_top, shape_width, shape_height
+        # -- rotation is about the shape's center, so the mapped box is the bounding box of the
+        # -- rotated corners, mapped in turn through the group transforms --
+        radians = math.radians(rotation)
+        cos, sin = math.cos(radians), math.sin(radians)
+        center_x = shape_left + shape_width / 2
+        center_y = shape_top + shape_height / 2
+        half_width, half_height = shape_width / 2, shape_height / 2
+        corners = [
+            (
+                center_x + sign_x * half_width * cos - sign_y * half_height * sin,
+                center_y + sign_x * half_width * sin + sign_y * half_height * cos,
+            )
+            for sign_x in (-1, 1)
+            for sign_y in (-1, 1)
+        ]
+        mapped_xs = [offset_x + corner_x * scale_x for corner_x, _ in corners]
+        mapped_ys = [offset_y + corner_y * scale_y for _, corner_y in corners]
+        left, top = min(mapped_xs), min(mapped_ys)
+        return left, top, max(mapped_xs) - left, max(mapped_ys) - top
 
 
 class PptxPartitionerOptions:
@@ -348,6 +487,7 @@ class PptxPartitionerOptions:
         file_path: str | None,
         include_page_breaks: bool,
         include_slide_notes: bool | None,
+        include_off_slide_shapes: bool = False,
         infer_table_structure: bool,
         strategy: str,
         starting_page_number: int = 1,
@@ -356,9 +496,11 @@ class PptxPartitionerOptions:
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._include_slide_notes = include_slide_notes
+        self._include_off_slide_shapes = include_off_slide_shapes
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
         # -- options object maintains page-number state --
+        self._starting_page_number = starting_page_number
         self._page_counter = starting_page_number - 1
 
     @classmethod
@@ -381,11 +523,16 @@ class PptxPartitionerOptions:
         """When True, also partition any text found in slide notes as part of each slide."""
         return False if self._include_slide_notes is None else self._include_slide_notes
 
+    @cached_property
+    def include_off_slide_shapes(self) -> bool:
+        """When True, include text from shapes that are mostly outside the slide."""
+        return self._include_off_slide_shapes
+
     def increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
         self._page_counter += 1
         # -- no page-break before first page --
-        if self._page_counter < 2:
+        if self._page_counter == self._starting_page_number:
             return
         # -- only emit page-breaks when enabled --
         if self._include_page_breaks:
@@ -449,15 +596,8 @@ class PptxPartitionerOptions:
         if self._file_path:
             return self._file_path
 
-        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
-        # -- exception when Zipfile tries to open it. The pptx format is a zip archive so we need
-        # -- to work around that bug here.
-        if isinstance(self._file, SpooledTemporaryFile):
-            self._file.seek(0)
-            return io.BytesIO(self._file.read())
-
         if self._file:
-            return self._file
+            return rewind_if_spooled(self._file)
 
         raise ValueError(
             "No PPTX document specified, either `filename` or `file` argument must be provided"

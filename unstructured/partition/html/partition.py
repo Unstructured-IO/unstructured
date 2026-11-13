@@ -14,7 +14,7 @@ from unstructured.documents.elements import Element, ElementType
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.partition.html.parser import Flow, html_parser
+from unstructured.partition.html.parser import Flow, Math, html_parser
 from unstructured.partition.html.transformations import (
     ontology_to_unstructured_elements,
     parse_html_to_ontology,
@@ -84,6 +84,7 @@ def partition_html(
         Detect language per element instead of at the document level.
     language_fallback
         Optional callable for short text; called with the text, return ISO 639-3 codes or None.
+        Called only when ``languages`` contains "auto"; explicit languages are kept for short text.
     """
     # -- parser rejects an empty str, nip that edge-case in the bud here --
     if text is not None and text.strip() == "" and not file and not filename and not url:
@@ -260,6 +261,8 @@ class _HtmlPartitioner:
             root = etree.fromstring(html_text, html_parser)
         except ValueError:
             root = etree.fromstring(html_text.encode("utf-8"), html_parser)
+
+        Math._normalize_katex(root)
 
         # -- remove a variety of HTML element types like <script> and <style> that we prefer not
         # -- to encounter while parsing.

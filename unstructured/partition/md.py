@@ -55,6 +55,8 @@ def partition_md(
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
     languages: Optional[list[str]] = None,
+    *,
+    encoding: str | None = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a markdown file into its constituent elements
@@ -74,6 +76,10 @@ def partition_md(
     languages
         The languages present in the document. Use ``["auto"]`` to detect (default when None).
         Use ``[""]`` to disable language detection.
+    encoding
+        The source encoding for filename, file, or URL bytes. When None, local files use
+        best-effort detection and URLs use the HTTP response's encoding. An explicit
+        encoding is decoded strictly and is never replaced by an automatic guess.
 
     Other keyword arguments are forwarded to ``partition_html``. In addition, ``extensions`` may be
     passed to ``markdown.markdown()`` as a list of registered extension names (``str``) and/or
@@ -81,6 +87,10 @@ def partition_md(
     ``["tables", "fenced_code"]``. Pass e.g. ``extensions=["tables"]`` if you need the legacy
     behavior where ``#`` inside unfenced content is parsed as a heading (see #4006).
     """
+    # -- an empty document yields no elements, like the other text-based partitioners --
+    if text == "" and file is None and filename is None and url is None:
+        return []
+
     if text is None:
         text = ""
 
@@ -90,10 +100,10 @@ def partition_md(
     last_modified = get_last_modified_date(filename) if filename else None
 
     if filename is not None:
-        _, text = read_txt_file(filename=filename)
+        _, text = read_txt_file(filename=filename, encoding=encoding)
 
     elif file is not None:
-        _, text = read_txt_file(file=file)
+        _, text = read_txt_file(file=file, encoding=encoding)
 
     elif url is not None:
         response = safe_get(url)
@@ -106,7 +116,7 @@ def partition_md(
                 f"Expected content type text/markdown. Got {content_type}.",
             )
 
-        text = response.text
+        text = response.content.decode(encoding) if encoding else response.text
 
     # -- optional markdown extensions; default matches historical partition_md behavior --
     extensions = _validate_markdown_extensions(

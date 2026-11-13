@@ -14,6 +14,18 @@ from unstructured.partition.md import partition_md
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
+@pytest.mark.parametrize("marker", ["1.", "-"])
+@pytest.mark.parametrize("separator", ["\n", "\n\n"])
+def test_partition_md_recognizes_loose_and_tight_lists(marker: str, separator: str):
+    text = separator.join(f"{marker} list item {word}." for word in ["one", "two", "three"])
+
+    elements = partition_md(text=text, languages=[""])
+
+    assert [e.category for e in elements] == ["ListItem"] * 3
+    assert [e.text for e in elements] == [f"list item {word}." for word in ["one", "two", "three"]]
+    assert [e.metadata.category_depth for e in elements] == [1, 1, 1]
+
+
 def test_partition_md_from_filename():
     filename = example_doc_path("README.md")
     elements = partition_md(filename=filename)
@@ -40,6 +52,15 @@ def test_partition_md_from_text():
 
     assert len(elements) > 0
     assert all(e.metadata.filename is None for e in elements)
+
+
+def test_partition_md_from_text_works_with_empty_string():
+    assert partition_md(text="") == []
+
+
+def test_partition_md_with_whitespace_text_still_validates_extensions():
+    with pytest.raises(ValueError, match="Each entry in 'extensions'"):
+        partition_md(text=" \n\t", extensions=[42])
 
 
 class MockResponse:

@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-import io
 import itertools
 import logging
 import os
-import tempfile
+import re
 import zipfile
 from functools import cached_property
 from typing import IO, Any, Iterator, Protocol, Type
@@ -14,8 +13,12 @@ from typing import IO, Any, Iterator, Protocol, Type
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
+from docx.oxml.ns import nsmap, qn
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
+from docx.oxml.xmlchemy import BaseOxmlElement
+from docx.parts.document import DocumentPart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.table import _Cell, _Row
@@ -23,6 +26,7 @@ from docx.text.hyperlink import Hyperlink
 from docx.text.pagebreak import RenderedPageBreak
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
+from lxml import etree
 from typing_extensions import TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
@@ -48,6 +52,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
+from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -55,9 +60,20 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_us_city_state_zip,
 )
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
+
+_EMPTY_ELEMENTS = (
+    "r hyperlink sdt sdtContent smartTag ins del t delText bookmarkStart bookmarkEnd proofErr"
+    " permStart permEnd commentRangeStart commentRangeEnd lastRenderedPageBreak"
+)
+_CONTENT_XPATH = (
+    ".//w:t[string-length(.) > 0] | .//*[not(ancestor-or-self::w:pPr | ancestor-or-self::w:rPr"
+    f" | ancestor-or-self::w:sdtPr) and not(contains(' {_EMPTY_ELEMENTS} ', concat(' ',"
+    " local-name(), ' ')))]"
+)
 
 STYLE_TO_ELEMENT_MAPPING = {
     "Caption": Text,  # TODO(robinson) - add caption element type
@@ -231,8 +247,16 @@ class DocxPartitionerOptions:
 
     @cached_property
     def document(self) -> Document:
-        """The python-docx `Document` object loaded from file or filename."""
-        return docx.Document(self._docx_file)
+        """The python-docx `Document` object loaded from file or filename.
+
+        Content python-docx would skip because a wrapper element encloses it is lifted into place
+        first; see `_unwrap_nested_content()`.
+        """
+        document = docx.Document(self._docx_file)
+        for part in document.part.package.iter_parts():
+            if isinstance(part, (DocumentPart, HeaderPart, FooterPart)):
+                _unwrap_nested_content(part.element)
+        return document
 
     @cached_property
     def include_page_breaks(self) -> bool:
@@ -346,15 +370,8 @@ class DocxPartitionerOptions:
         if self._file_path:
             return self._file_path
 
-        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
-        # -- exception when Zipfile tries to open it. The docx format is a zip archive so we need
-        # -- to work around that bug here.
-        if isinstance(self._file, tempfile.SpooledTemporaryFile):
-            self._file.seek(0)
-            return io.BytesIO(self._file.read())
-
         assert self._file is not None  # -- assured by `._validate()` --
-        return self._file
+        return rewind_if_spooled(self._file)
 
     def _validate(self) -> DocxPartitionerOptions:
         """Raise on first invalide option, return self otherwise."""
@@ -380,6 +397,10 @@ class _DocxPartitioner:
 
     def __init__(self, opts: DocxPartitionerOptions) -> None:
         self._opts = opts
+        # -- layout-grid cells left for `text_as_html` across all tables of this document --
+        self._table_grid_cells_remaining = env_config.DOCX_TABLE_MAX_CELLS
+        # -- paragraph-style name by style-id, see `._style_name()` --
+        self._style_names: dict[str | None, str] = {}
 
     @classmethod
     def iter_document_elements(cls, opts: DocxPartitionerOptions) -> Iterator[Element]:
@@ -397,32 +418,42 @@ class _DocxPartitioner:
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
-        # -- This implementation composes a collection of iterators into a "combined" iterator
-        # -- return value using `yield from`. You can think of the return value as an Element
-        # -- stream and each `yield from` as "add elements found by this function to the stream".
-        # -- This is functionally analogous to declaring `elements: list[Element] = []` at the top
-        # -- and using `elements.extend()` for the results of each of the function calls, but is
-        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
-        # -- those small lists), is more flexible for later iterator operations like filter,
-        # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
-        # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
-        # -- functions like `._iter_paragraph_elements()` where the "just return when done"
-        # -- characteristic of a generator avoids repeated code to form interim results into lists.
-        for section_idx, section in enumerate(self._document.sections):
-            yield from self._iter_section_page_breaks(section_idx, section)
-            yield from self._iter_section_headers(section)
+        sections = iter(enumerate(self._document.sections))
+        section_idx, section = next(sections)
 
-            for block_item in section.iter_inner_content():
-                # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
-                # -- Paragraph is more common so check that first.
-                if isinstance(block_item, Paragraph):
-                    yield from self._iter_paragraph_elements(block_item)
-                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
-                    block_item, DocxTable
-                ):
-                    yield from self._iter_table_element(block_item)
+        yield from self._iter_section_page_breaks(section_idx, section)
+        yield from self._iter_section_headers(section)
 
-            yield from self._iter_section_footers(section)
+        # -- Iterate document blocks only once. `Section.iter_inner_content()` scans from the start
+        # -- of the document to find each section's boundaries, which becomes prohibitively
+        # -- expensive for documents with many sections and paragraphs.
+        for block_item in self._document.iter_inner_content():
+            # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
+            # -- Paragraph is more common so check that first.
+            if isinstance(block_item, Paragraph):
+                yield from self._iter_paragraph_elements(block_item)
+            elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                block_item, DocxTable
+            ):
+                yield from self._iter_table_element(block_item)
+
+            # -- A paragraph-level sectPr marks the final paragraph governed by the current
+            # -- section. The final section's sectPr lives directly under w:body, so it is handled
+            # -- after the loop.
+            if (
+                isinstance(block_item, Paragraph)
+                and block_item._p.pPr is not None
+                and block_item._p.pPr.sectPr is section._sectPr
+            ):
+                yield from self._iter_section_footers(section)
+                next_section = next(sections, None)
+                if next_section is None:
+                    return
+                section_idx, section = next_section
+                yield from self._iter_section_page_breaks(section_idx, section)
+                yield from self._iter_section_headers(section)
+
+        yield from self._iter_section_footers(section)
 
     def _iter_sectionless_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in a docx `document` that has no sections.
@@ -437,19 +468,19 @@ class _DocxPartitioner:
             elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
                 yield from self._iter_table_element(block_item)
 
-    def _classify_paragraph_to_element(self, paragraph: Paragraph) -> Iterator[Element]:
+    def _classify_paragraph_to_element(
+        self, paragraph: Paragraph, label: str = ""
+    ) -> Iterator[Element]:
         """Generate zero-or-one document element for `paragraph`.
 
         In Word, an empty paragraph is commonly used for inter-paragraph spacing. An empty paragraph
         does not contribute to the document-element stream and will not cause an element to be
         emitted.
+
+        `label` is the auto-numbering label of the numbered paragraph this is, or a fragment of, and
+        is prefixed to the text of whatever element it becomes.
         """
-        text = "".join(
-            e.text
-            for e in paragraph._p.xpath(
-                "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
-            )
-        )
+        text = _paragraph_text(paragraph)
 
         # -- blank paragraphs are commonly used for spacing between paragraphs and do not
         # -- contribute to the document-element stream
@@ -464,14 +495,18 @@ class _DocxPartitioner:
             clean_text = clean_bullets(text).strip()
             if clean_text:
                 yield ListItem(
-                    text=clean_text,
+                    text=self._prefix_label(label, clean_text, metadata),
                     metadata=metadata,
                     detection_origin=DETECTION_ORIGIN,
                 )
             return
 
+        text = self._prefix_label(label, text, metadata)
+
         # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
+        if TextSubCls is ListItem and self._is_numbered_heading_in_list_style(paragraph):
+            TextSubCls = None
         if TextSubCls:
             yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
@@ -485,8 +520,20 @@ class _DocxPartitioner:
         # -- if all that fails we give it the default `Text` element-type --
         yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
-    def _convert_table_to_html(self, table: DocxTable) -> str:
-        """HTML string version of `table`.
+    @staticmethod
+    def _prefix_label(label: str, text: str, metadata: ElementMetadata) -> str:
+        """`text` with `label` in front, and the link offsets in `metadata` moved to match."""
+        if not label:
+            return text
+        if metadata.links:
+            shift = len(label) + 1
+            metadata.links = [
+                {**link, "start_index": link["start_index"] + shift} for link in metadata.links
+            ]
+        return f"{label} {text}"
+
+    def _convert_table_to_html(self, table: DocxTable) -> str | None:
+        """HTML string version of `table`, or `None` when its layout-grid is too large.
 
         Example:
 
@@ -506,7 +553,33 @@ class _DocxPartitioner:
         `is_nested` is used for recursive calls when a nested table is encountered. Certain
         behaviors are different in that case, but the caller can safely ignore that parameter and
         allow it to take its default value.
+
+        The HTML needs a matrix with one entry per layout-grid position. Those counts come from
+        `w:gridBefore`, `w:gridAfter` and `w:gridSpan` values, which a small document can set to
+        millions, so `None` is returned once this document's tables exceed `DOCX_TABLE_MAX_CELLS`
+        grid positions in total. The table's text is still extracted.
         """
+        try:
+            n_grid_cells = sum(_row_grid_width(row) for row in table.rows)
+        except Exception as e:
+            # -- e.g. a `w:gridSpan` value that is not a number; the grid size is unknown, so do
+            # -- not expand it. The table's text is still extracted from its physical cells. --
+            logging.warning(
+                f"Omitting text_as_html for a DOCX table with invalid layout-grid values: {e}"
+            )
+            return None
+        if n_grid_cells > self._table_grid_cells_remaining:
+            logging.warning(
+                f"Omitting text_as_html for a DOCX table spanning {n_grid_cells:,} layout-grid"
+                f" cells: the document's tables exceed DOCX_TABLE_MAX_CELLS"
+                f" ({env_config.DOCX_TABLE_MAX_CELLS:,})."
+            )
+            return None
+        self._table_grid_cells_remaining -= n_grid_cells
+
+        # -- a cell spanning several grid positions is repeated once per position; compute its
+        # -- text once --
+        cell_texts: dict[Any, str] = {}
 
         def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
             """Generate the text of each paragraph or table in `cell` as a separate string.
@@ -519,19 +592,19 @@ class _DocxPartitioner:
                     # -- structure only
                     yield paragraph.text
                 elif isinstance(table := block_item, DocxTable):
-                    seen_tcs: set[Any] = set()
+                    # -- only the text matters, so visit each `tc` once rather than each grid
+                    # -- position; a vMerge="continue" `tc` repeats the cell above it --
                     for row in table.rows:
-                        for text, nested_cell in iter_row_cells(row):
-                            if nested_cell is not None:
-                                if nested_cell._tc in seen_tcs:
-                                    continue
-                                seen_tcs.add(nested_cell._tc)
-                            yield text
+                        for tc in row._tr.tc_lst:
+                            if tc.vMerge != "continue":
+                                yield cell_text(_Cell(tc, table))
 
         def cell_text(cell: _Cell) -> str:
             """The normalized text of `cell`, including that of any table nested in it."""
-            text = " ".join(iter_cell_block_items(cell))
-            return " ".join(text.split())
+            if (text := cell_texts.get(cell._tc)) is None:
+                text = " ".join(iter_cell_block_items(cell))
+                text = cell_texts[cell._tc] = " ".join(text.split())
+            return text
 
         def iter_row_cells(row: _Row) -> Iterator[tuple[str, _Cell | None]]:
             """Generate (cell_text, cell) for each layout-grid position in `row`.
@@ -607,7 +680,18 @@ class _DocxPartitioner:
 
             This includes paragraphs as well as table cell contents.
             """
-            for block_item in hdrftr.iter_inner_content():
+            # -- A corrupt DOCX can reference a header/footer part by a relationship-id that does
+            # -- not resolve to a part. python-docx raises `KeyError` resolving that missing part;
+            # -- treat it like an absent header/footer and contribute no text, but warn so the
+            # -- dropped header/footer is observable rather than silently lost. --
+            try:
+                block_items = list(hdrftr.iter_inner_content())
+            except KeyError as err:
+                logging.warning(
+                    "Skipping a header/footer with an unresolved relationship id %s", err
+                )
+                return
+            for block_item in block_items:
                 if isinstance(block_item, Paragraph):
                     yield block_item.text.strip()
                 # -- can only be a Paragraph or Table so far but more types may come later --
@@ -619,11 +703,101 @@ class _DocxPartitioner:
         return "\n".join(text for text in iter_hdrftr_texts(hdrftr) if text)
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
-        """True when `paragraph` can be identified as a list-item."""
+        """True when `paragraph` can be identified as a list-item.
+
+        A paragraph is a list-item when its text starts with a bullet or it is numbered, directly or
+        by its style. A numbered heading is not one, and neither is a paragraph numbered only by its
+        style when that style maps to another element type.
+        """
         if is_bulleted_text(paragraph.text):
             return True
 
-        return "<w:numPr>" in paragraph._p.xml
+        if "<w:numPr>" in paragraph._p.xml:
+            return not self._is_numbered_heading(paragraph)
+
+        if not self._list_labels.has_style_numbering(paragraph):
+            return False
+
+        style_type = self._style_based_element_type(paragraph)
+        if style_type is not None and style_type is not ListItem:
+            return False
+        return not self._has_outline_level(paragraph)
+
+    def _is_numbered_heading_in_list_style(self, paragraph: Paragraph) -> bool:
+        """True when a numbered heading has a list-mapped style, which must not make it a list-item.
+
+        Its type is then left to the text heuristics, like any other numbered heading.
+        """
+        own_num_ids = paragraph._p.xpath("./w:pPr/w:numPr/w:numId/@w:val")
+        is_numbered = (
+            own_num_ids[0] not in ("", "0")
+            if own_num_ids
+            else self._list_labels.has_style_numbering(paragraph)
+        )
+        return is_numbered and self._is_numbered_heading(paragraph)
+
+    def _is_numbered_heading(self, paragraph: Paragraph) -> bool:
+        """True when a numbered `paragraph` is a heading, by a title style or an outline level.
+
+        A paragraph with no explicit style is in the default style, which is not a title style.
+        """
+        if not paragraph._p.xpath("./w:pPr/w:pStyle"):
+            return self._has_outline_level(paragraph)
+        return self._style_based_element_type(paragraph) is Title or self._has_outline_level(
+            paragraph
+        )
+
+    def _has_outline_level(self, paragraph: Paragraph) -> bool:
+        """True when `paragraph` or its style chain gives it a heading outline level, 0 to 8.
+
+        The nearest `w:outlineLvl` decides; level 9 is body text.
+        """
+        own = paragraph._p.xpath("./w:pPr/w:outlineLvl/@w:val")
+        if own:
+            return self._is_heading_outline_level(own[0])
+        style = self._list_labels.style_of(paragraph)
+        if style is None:
+            return False
+        return self._style_has_outline_level(style)
+
+    @cached_property
+    def _style_outline_levels(self) -> dict[str, bool]:
+        """Whether each style seen so far gives a heading outline level, by style-id."""
+        return {}
+
+    def _style_has_outline_level(self, style: Any) -> bool:
+        """True when the nearest `w:outlineLvl` in the chain starting at `style` is 0 to 8.
+
+        The answer is recorded for every style on the way to it, so a chain is walked only once.
+        """
+        levels = self._style_outline_levels
+        walked: dict[str, None] = {}
+        result = False
+        while style is not None and style.style_id not in walked:
+            if style.style_id in levels:
+                result = levels[style.style_id]
+                break
+            walked[style.style_id] = None
+            level = style.element.xpath("./w:pPr/w:outlineLvl/@w:val")
+            if level:
+                result = self._is_heading_outline_level(level[0])
+                break
+            style = getattr(style, "base_style", None)
+        levels.update(dict.fromkeys(walked, result))
+        return result
+
+    @staticmethod
+    def _is_heading_outline_level(value: str) -> bool:
+        """True when `value` is a `w:outlineLvl` that marks a heading, an integer 0 to 8."""
+        try:
+            return 0 <= int(value) <= 8
+        except ValueError:
+            return False
+
+    @cached_property
+    def _list_labels(self) -> _ListLabels:
+        """Auto-numbering label renderer, holding list counters for this partitioning run."""
+        return _ListLabels(self._document)
 
     def _iter_paragraph_elements(self, paragraph: Paragraph) -> Iterator[Element]:
         """Generate zero-or-more document elements for `paragraph`.
@@ -665,10 +839,13 @@ class _DocxPartitioner:
             if following_paragraph_fragment:
                 yield from iter_paragraph_items(following_paragraph_fragment)
 
+        label = self._list_labels.label(paragraph)
         for item in iter_paragraph_items(paragraph):
             if isinstance(item, Paragraph):
-                yield from self._classify_paragraph_to_element(item)
+                yield from self._classify_paragraph_to_element(item, label)
                 yield from self._iter_paragraph_images(item)
+                if _paragraph_text(item).strip():
+                    label = ""
             else:
                 yield from self._opts.increment_page_number()
 
@@ -793,6 +970,7 @@ class _DocxPartitioner:
 
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
+        self._advance_table_numbering(table)
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table.
         html_table = (
@@ -814,18 +992,42 @@ class _DocxPartitioner:
             ),
         )
 
-    def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
-        """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
+    def _advance_table_numbering(self, table: DocxTable) -> None:
+        """Advance the list counters for each numbered paragraph in `table`, in document order.
+
+        Table text is not labeled, but Word counts its numbered paragraphs like any other.
+        """
         for row in table.rows:
-            try:
-                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
-                # -- table has merged or malformed cells. always wrap in try/except.
-                for cell in row.cells:
-                    for paragraph in cell.paragraphs:
-                        yield from self._iter_paragraph_emphasis(paragraph)
-            except Exception as e:
-                logging.warning(f"Skipping row in _iter_table_emphasis due to: {e}")
-                continue
+            for tc in row._tr.tc_lst:
+                if tc.vMerge == "continue":
+                    continue
+                for block_item in _Cell(tc, table).iter_inner_content():
+                    if isinstance(block_item, Paragraph):
+                        self._list_labels.label(block_item)
+                    else:
+                        self._advance_table_numbering(block_item)
+
+    def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
+        """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`.
+
+        Each cell is visited once, like `._iter_table_texts()`, rather than once per layout-grid
+        position it spans. A paragraph whose formatting cannot be read (e.g. a `w:b` value that is
+        not a boolean) contributes no emphasis, and the rest of the table is unaffected.
+        """
+        for row in table.rows:
+            for tc in row._tr.tc_lst:
+                # -- vMerge="continue" indicates a spanned cell in a vertical merge --
+                if tc.vMerge == "continue":
+                    continue
+                for paragraph in _Cell(tc, table).paragraphs:
+                    # -- collect the paragraph's emphasis before yielding any, so a failure part
+                    # -- way through drops the whole paragraph and leaves no partial entries --
+                    try:
+                        emphases = list(self._iter_paragraph_emphasis(paragraph))
+                    except Exception as e:
+                        logging.warning(f"Skipping emphasis of a DOCX table paragraph due to: {e}")
+                        continue
+                    yield from emphases
 
     def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
         """Generate text of each cell in `table` stripped of leading and trailing whitespace.
@@ -917,6 +1119,9 @@ class _DocxPartitioner:
             link_urls=link_urls or None,
             links=links or None,
             page_number=self._opts.metadata_page_number,
+            # -- `category_depth` is 0 for both `Title` and `Heading 1`, so the style name is the
+            # -- only thing that lets a consumer tell a document title from a top-level heading.
+            style_name=self._style_name(paragraph),
         )
         element_metadata.detection_origin = "docx"
         return element_metadata
@@ -924,20 +1129,38 @@ class _DocxPartitioner:
     def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
         """Determine category depth from paragraph metadata"""
 
+        style_name = self._style_name(paragraph)
+        depth = self._parse_category_depth_by_style_name(style_name)
+        if self._style_based_element_type(paragraph) is Title and (
+            depth > 0 or style_name.startswith("Heading")
+        ):
+            return depth
+
         # Determine category depth from paragraph ilvl xpath
         xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
         if xpath:
             return round(float(xpath[0]))
-
-        # Determine category depth from style name
-        style_name = (paragraph.style and paragraph.style.name) or "Normal"
-        depth = self._parse_category_depth_by_style_name(style_name)
 
         if depth > 0:
             return depth
         else:
             # Check if category depth can be determined from style ilvl
             return self._parse_category_depth_by_style_ilvl()
+
+    def _style_name(self, paragraph: Paragraph) -> str:
+        """Name of the paragraph-style applied to `paragraph`, "Normal" when it has none.
+
+        `Paragraph.style` searches the document's style definitions on every access, and a paragraph
+        with no explicit style (most of them) scans all of them for the default. The name depends
+        only on the paragraph's style-id, so it is looked up once per style-id.
+        """
+        style_id = paragraph._p.style
+        if style_id not in self._style_names:
+            # -- paragraph.style can be None in rare cases, so can style.name. That's going
+            # -- to mean default style which is equivalent to "Normal" for our purposes.
+            style = paragraph.style
+            self._style_names[style_id] = (style and style.name) or "Normal"
+        return self._style_names[style_id]
 
     def _parse_category_depth_by_style_ilvl(self) -> int:
         # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
@@ -993,9 +1216,7 @@ class _DocxPartitioner:
         # https://python-docx.readthedocs.io/en/latest/user/styles-understanding.html \
         # #paragraph-styles-in-default-template
 
-        # -- paragraph.style can be None in rare cases, so can style.name. That's going
-        # -- to mean default style which is equivalent to "Normal" for our purposes.
-        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+        style_name = self._style_name(paragraph)
 
         # NOTE(robinson) - The "Normal" style name will return None since it's not
         # in the mapping. Unknown style names will also return None.
@@ -1007,9 +1228,359 @@ class _DocxPartitioner:
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
 
 
+def _row_grid_width(row: _Row) -> int:
+    """The number of layout-grid positions `row` declares, without expanding any of them.
+
+    A malformed negative count expands to no positions, so it counts as 0 rather than offsetting
+    the positive counts it would otherwise cancel.
+    """
+    tr = row._tr
+    counts = [tr.grid_before, *(tc.grid_span for tc in tr.tc_lst), tr.grid_after]
+    return sum(max(count, 0) for count in counts)
+
+
+_W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+_OFF_VALUES = frozenset(("0", "false", "off"))
+
+_UNWRAPPED_TAGS = frozenset(
+    _W + tag for tag in ("ins", "moveTo", "customXml", "smartTag", "fldSimple", "dir", "bdo")
+)
+
+
+def _unwrap_nested_content(root: BaseOxmlElement) -> None:
+    """Replace each wrapper element under `root` with its content, in place.
+
+    python-docx reads only the `w:p` and `w:tbl` children of the body, a cell, a header or a
+    footer, and only the runs and hyperlinks directly inside a paragraph. Content one level deeper
+    is skipped. That covers:
+
+    - content controls (`w:sdt`), which hold paragraphs, tables, rows, cells or runs in
+      `w:sdtContent`;
+    - insertions and moves made with track changes on (`w:ins`, `w:moveTo`);
+    - custom XML, smart tags, simple fields (`w:fldSimple`, which holds a caption's `SEQ`
+      number) and bidirectional spans (`w:dir`, `w:bdo`).
+
+    Deleted and moved-away content (`w:del`, `w:moveFrom`) is left where it is, where python-docx
+    skips it, so the text read is what Word shows once all revisions are accepted.
+
+    Two content controls keep their old treatment: the automatic table of contents stays unread,
+    and a control still showing its placeholder text is dropped, since that text only tells the
+    reader what to enter.
+    """
+    for wrapper in list(root.iter(_W + "sdt", *_UNWRAPPED_TAGS)):
+        parent = wrapper.getparent()
+        if parent is None:
+            continue
+        if wrapper.tag == _W + "sdt":
+            children = _content_control_children(wrapper)
+        else:
+            children = list(wrapper)
+        if children is None:
+            continue
+        index = parent.index(wrapper)
+        parent[index : index + 1] = children
+
+
+def _content_control_children(sdt: BaseOxmlElement) -> list[BaseOxmlElement] | None:
+    """The elements to put in place of content control `sdt`, or None to leave it as it is.
+
+    `w:showingPlcHdr` is an on/off flag: present without a value, or with any value but "0",
+    "false" or "off", it is on.
+    """
+    properties = sdt.find(_W + "sdtPr")
+    if properties is not None:
+        placeholder_flag = properties.find(_W + "showingPlcHdr")
+        if placeholder_flag is not None and placeholder_flag.get(_W + "val") not in _OFF_VALUES:
+            return []
+        gallery = properties.find(f"{_W}docPartObj/{_W}docPartGallery")
+        if gallery is not None and gallery.get(_W + "val") == "Table of Contents":
+            return None
+    content = sdt.find(_W + "sdtContent")
+    return [] if content is None else list(content)
+
+
 # ================================================================================================
 # SUB-PARTITIONERS
 # ================================================================================================
+
+
+def _paragraph_text(paragraph: Paragraph) -> str:
+    """The text of `paragraph` that becomes element text: its runs, hyperlinks and inline runs."""
+    return "".join(
+        e.text
+        for e in paragraph._p.xpath(
+            "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
+        )
+    )
+
+
+class _ListLabels:
+    """Renders the label Word displays for an auto-numbered paragraph, e.g. "1." or "a)".
+
+    Word stores the numbering definition in `numbering.xml` (bound to a paragraph by `w:numPr`,
+    directly or through its style chain) and computes each label at render time. This object
+    resolves that definition and keeps the running counters, so `.label()` must be called once per
+    numbered paragraph, in document order. It never raises; a paragraph whose numbering cannot be
+    resolved gets no label.
+    """
+
+    def __init__(self, document: Document):
+        try:
+            self._numbering = document.part.numbering_part.element
+        except Exception:
+            self._numbering = None
+        self._nums: dict[str, Any] = {}
+        self._abstracts: dict[str, Any] = {}
+        if self._numbering is not None:
+            for num in self._numbering.findall(qn("w:num")):
+                self._nums.setdefault(num.get(qn("w:numId")), num)
+            for abstract in self._numbering.findall(qn("w:abstractNum")):
+                self._abstracts.setdefault(abstract.get(qn("w:abstractNumId")), abstract)
+        self._levels: dict[tuple[str, int], Any | None] = {}
+        self._styles: dict[str | None, Any] = {}
+        self._counters: dict[str, list[int | None]] = {}
+        self._restarted: set[tuple[str, int]] = set()
+        self._style_num_prs: dict[str | None, tuple[str | None, int | None, str | None]] = {}
+
+    def style_of(self, paragraph: Paragraph) -> Any:
+        """The style of `paragraph`, looked up once per style-id.
+
+        Finding the default style of a paragraph with no explicit style scans every style in the
+        document, so the result is kept.
+        """
+        style_ids = paragraph._p.xpath("./w:pPr/w:pStyle/@w:val")
+        key = style_ids[0] if style_ids else None
+        if key not in self._styles:
+            self._styles[key] = paragraph.style
+        return self._styles[key]
+
+    def has_style_numbering(self, paragraph: Paragraph) -> bool:
+        """True when `paragraph` gets its numbering from its style chain rather than directly."""
+        try:
+            return self._style_num_pr(paragraph)[0] not in (None, "0")
+        except Exception:
+            return False
+
+    def label(self, paragraph: Paragraph) -> str:
+        """The label for `paragraph`, advancing the list counters; "" when it has none.
+
+        An empty paragraph that only holds a section break is not numbered by Word, so it has no
+        label and does not advance the counters.
+        """
+        if self._numbering is None or self._is_section_break_mark(paragraph):
+            return ""
+        try:
+            return self._render_label(paragraph)
+        except Exception:
+            logging.warning("Could not resolve list numbering for a paragraph", exc_info=True)
+            return ""
+
+    @staticmethod
+    def _is_section_break_mark(paragraph: Paragraph) -> bool:
+        """True for an empty paragraph that only holds a section break; Word does not number it.
+
+        A paragraph that also holds any text, even inside a content control, or a drawing, object,
+        field, break or tab is not empty.
+        """
+        return bool(paragraph._p.xpath("./w:pPr/w:sectPr")) and not paragraph._p.xpath(
+            _CONTENT_XPATH
+        )
+
+    def _render_label(self, paragraph: Paragraph) -> str:
+        num_id, ilvl, style_id = self._resolve_num_pr(paragraph)
+        if num_id in (None, "0"):
+            return ""
+        num = self._nums.get(num_id)
+        if num is None:
+            return ""
+        abstract_id = self._val(num, "w:abstractNumId")
+        abstract = self._abstracts.get(abstract_id)
+        if abstract is None:
+            return ""
+
+        if ilvl is None:
+            linked = (
+                self._xpath(abstract, f'./w:lvl[w:pStyle/@w:val="{style_id}"]/@w:ilvl')
+                if style_id is not None
+                else []
+            )
+            ilvl = int(linked[0]) if linked else 0
+        if not 0 <= ilvl <= _MAX_LIST_LEVEL:
+            return ""
+        lvl = self._level(num, abstract, ilvl)
+        if lvl is None:
+            return ""
+
+        counters = self._counters.setdefault(abstract_id, [None] * (_MAX_LIST_LEVEL + 1))
+        has_override = bool(num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride'))
+        if has_override and (num_id, ilvl) not in self._restarted:
+            self._restarted.add((num_id, ilvl))
+            counters[ilvl] = self._level_start(num, lvl, ilvl)
+        elif counters[ilvl] is None:
+            counters[ilvl] = self._level_start(num, lvl, ilvl)
+        else:
+            counters[ilvl] += 1
+        for deeper in range(ilvl + 1, _MAX_LIST_LEVEL + 1):
+            deeper_lvl = self._level(num, abstract, deeper)
+            restart = None if deeper_lvl is None else self._val(deeper_lvl, "w:lvlRestart")
+            if restart is None or (restart != "0" and ilvl < int(restart)):
+                counters[deeper] = None
+
+        if self._val(lvl, "w:numFmt") in ("bullet", "none"):
+            return ""
+
+        def render_placeholder(match: re.Match[str]) -> str:
+            level = int(match.group(1)) - 1
+            if level > ilvl:
+                return ""
+            referenced = self._level(num, abstract, level)
+            if referenced is None:
+                return ""
+            count = counters[level]
+            return self._format_number(
+                self._level_start(num, referenced, level) if count is None else count,
+                self._val(referenced, "w:numFmt") or "decimal",
+            )
+
+        try:
+            return re.sub(r"%(\d)", render_placeholder, self._val(lvl, "w:lvlText") or "").strip()
+        except _UnrenderableLabel:
+            return ""
+
+    def _resolve_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
+        """The `(numId, ilvl, style_id)` in effect for `paragraph`, `None` for any not specified.
+
+        The paragraph's own `w:numPr` takes precedence over that of its style chain. `style_id` is
+        the style that supplied the `numId`.
+        """
+        own_num_id, own_ilvl = self._num_pr_values(paragraph._p.xpath("./w:pPr/w:numPr"))
+        style_num_id, style_ilvl, style_id = self._style_num_pr(paragraph)
+        num_id = own_num_id if own_num_id is not None else style_num_id
+        ilvl = own_ilvl if own_ilvl is not None else style_ilvl
+        return num_id, ilvl, style_id if own_num_id is None else None
+
+    def _style_num_pr(self, paragraph: Paragraph) -> tuple[str | None, int | None, str | None]:
+        """The `(numId, ilvl, style_id)` the paragraph's style chain (`basedOn`) provides.
+
+        This depends only on the paragraph's style-id, so it is resolved once per style-id. See
+        `_DocxPartitioner._style_name()` for why `Paragraph.style` is worth avoiding.
+        """
+        paragraph_style_id = paragraph._p.style
+        if paragraph_style_id not in self._style_num_prs:
+            self._style_num_prs[paragraph_style_id] = self._resolve_style_num_pr(paragraph)
+        return self._style_num_prs[paragraph_style_id]
+
+    def _resolve_style_num_pr(
+        self, paragraph: Paragraph
+    ) -> tuple[str | None, int | None, str | None]:
+        num_id: str | None = None
+        ilvl: int | None = None
+        style_id: str | None = None
+        style = self.style_of(paragraph)
+        seen: set[str] = set()
+        while style is not None and style.style_id not in seen:
+            seen.add(style.style_id)
+            style_num_id, style_ilvl = self._num_pr_values(style.element.xpath("./w:pPr/w:numPr"))
+            if num_id is None and style_num_id is not None:
+                num_id, style_id = style_num_id, style.style_id
+            if ilvl is None:
+                ilvl = style_ilvl
+            style = getattr(style, "base_style", None)
+        return num_id, ilvl, style_id
+
+    def _num_pr_values(self, num_prs: list[Any]) -> tuple[str | None, int | None]:
+        """The `(numId, ilvl)` of the first `w:numPr` in `num_prs`, `None` for any absent."""
+        if not num_prs:
+            return None, None
+        ilvl = self._val(num_prs[0], "w:ilvl")
+        return self._val(num_prs[0], "w:numId"), None if ilvl is None else int(float(ilvl))
+
+    @staticmethod
+    def _val(element: Any, child_tag: str) -> str | None:
+        """The `w:val` attribute of the `child_tag` child of `element`, None when absent."""
+        child = element.find(qn(child_tag))
+        return None if child is None else child.get(qn("w:val"))
+
+    def _level(self, num: Any, abstract: Any, ilvl: int) -> Any | None:
+        """The `w:lvl` definition in effect for `ilvl` of `num`, None when undefined."""
+        key = (num.get(qn("w:numId")), ilvl)
+        if key not in self._levels:
+            found = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:lvl') or self._xpath(
+                abstract, f'./w:lvl[@w:ilvl="{ilvl}"]'
+            )
+            self._levels[key] = found[0] if found else None
+        return self._levels[key]
+
+    @staticmethod
+    def _xpath(element: Any, expression: str) -> list[Any]:
+        """Evaluate `expression` on `element`, which may be a plain lxml element."""
+        return etree.XPath(expression, namespaces=nsmap)(element)
+
+    def _level_start(self, num: Any, lvl: Any, ilvl: int) -> int:
+        """The value level `ilvl` of `num` starts, or restarts, at."""
+        override = num.xpath(f'./w:lvlOverride[@w:ilvl="{ilvl}"]/w:startOverride/@w:val')
+        return int(override[0]) if override else self._start(lvl)
+
+    def _start(self, lvl: Any) -> int:
+        start = self._val(lvl, "w:start")
+        return 1 if start is None else int(start)
+
+    @staticmethod
+    def _format_number(value: int, num_fmt: str) -> str:
+        """`value` rendered in the Word number format `num_fmt`.
+
+        Raises `_UnrenderableLabel` for a format or value this cannot render as Word does.
+        """
+        if not 0 <= value <= _MAX_LIST_NUMBER:
+            raise _UnrenderableLabel
+        if num_fmt == "decimal":
+            return str(value)
+        if num_fmt == "decimalZero":
+            return f"{value:02d}"
+        if num_fmt in ("lowerLetter", "upperLetter") and value > 0:
+            letters = chr(ord("a") + (value - 1) % 26) * ((value - 1) // 26 + 1)
+            return letters if num_fmt == "lowerLetter" else letters.upper()
+        if num_fmt in ("lowerRoman", "upperRoman") and 0 < value < 4000:
+            roman = ""
+            for numeral, size in _ROMAN_NUMERALS:
+                count, value = divmod(value, size)
+                roman += numeral * count
+            return roman.lower() if num_fmt == "lowerRoman" else roman
+        if num_fmt == "ordinal":
+            suffix = (
+                "th"
+                if 10 <= value % 100 <= 20
+                else {1: "st", 2: "nd", 3: "rd"}.get(value % 10, "th")
+            )
+            return f"{value}{suffix}"
+        if num_fmt == "decimalEnclosedCircle":
+            return chr(0x2460 + value - 1) if 1 <= value <= 20 else str(value)
+        raise _UnrenderableLabel
+
+
+class _UnrenderableLabel(Exception):
+    """A list label whose number format or value cannot be rendered the way Word does."""
+
+
+_MAX_LIST_LEVEL = 8
+_MAX_LIST_NUMBER = 32767
+
+_ROMAN_NUMERALS = (
+    ("M", 1000),
+    ("CM", 900),
+    ("D", 500),
+    ("CD", 400),
+    ("C", 100),
+    ("XC", 90),
+    ("L", 50),
+    ("XL", 40),
+    ("X", 10),
+    ("IX", 9),
+    ("V", 5),
+    ("IV", 4),
+    ("I", 1),
+)
 
 
 class _NullPicturePartitioner:

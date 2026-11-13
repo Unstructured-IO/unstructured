@@ -14,7 +14,22 @@ from unstructured.common.html_table import (
     collapse_matrix_of_keyed_cells_to_spans,
     htmlify_matrix_of_cell_texts,
     htmlify_matrix_of_spanned_cell_texts,
+    normalize_html_cell_text,
 )
+
+
+@pytest.mark.parametrize(
+    ("cell_html", "expected"),
+    [
+        ("<td>foo<br/>bar</td>", "foo bar"),
+        ("<td><br/>foo</td>", "foo"),
+        ("<td>foo<br/></td>", "foo"),
+        ("<td><b>foo<br/>bar</b><br/>baz</td>", "foo bar baz"),
+        ("<td><br/></td>", ""),
+    ],
+)
+def test_normalize_html_cell_text(cell_html: str, expected: str):
+    assert normalize_html_cell_text(fragment_fromstring(cell_html)) == expected
 
 
 class Describe_htmlify_matrix_of_cell_texts:
@@ -292,13 +307,23 @@ class DescribeHtmlTable:
             "<table>"
             "  <thead><tr><td>head-from-thead</td></tr></thead>"
             "  <tbody>"
-            "    <tr><th>head-from-th</th></tr>"
+            "    <tr><th>all-th-head-a</th><th>all-th-head-b</th></tr>"
+            "    <tr><td></td><th>head-after-empty-corner</th></tr>"
+            "    <tr><th>sparse-row-head</th><td></td></tr>"
+            "    <tr><th>row-head</th><td>body-value</td></tr>"
             "    <tr><td>body</td></tr>"
             "  </tbody>"
             "</table>"
         )
 
-        assert [row.is_header for row in html_table.iter_rows()] == [True, True, False]
+        assert [row.is_header for row in html_table.iter_rows()] == [
+            True,
+            True,
+            True,
+            True,
+            False,
+            False,
+        ]
 
     def and_it_preserves_source_row_html_before_compactification(self):
         html_table = HtmlTable.from_html_text(
@@ -400,6 +425,14 @@ class DescribeHtmlCell:
     def and_it_preserves_colspan_and_rowspan_on_an_empty_cell(self):
         cell = HtmlCell(fragment_fromstring('<td colspan="2" rowspan="3"></td>'))
         assert cell.html == '<td colspan="2" rowspan="3"/>'
+
+    def and_it_preserves_a_rowspan_of_zero_on_an_empty_cell(self):
+        # -- `rowspan="0"` means "span every remaining row in the row group" and
+        # -- `HtmlCell.rowspan` reports it as `None`; serializing it as a plain `<td/>` silently
+        # -- reports a one-row cell instead, so the declared geometry is lost whenever the cell
+        # -- happens to have no text.
+        cell = HtmlCell(fragment_fromstring('<td rowspan="0"></td>'))
+        assert cell.html == '<td rowspan="0"/>'
 
     @pytest.mark.parametrize(
         ("cell_html", "expected_value"),

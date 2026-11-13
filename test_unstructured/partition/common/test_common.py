@@ -1,5 +1,9 @@
+import io
+import logging
+import os
 import pathlib
 from multiprocessing import Pool
+from tempfile import SpooledTemporaryFile, TemporaryFile
 
 import numpy as np
 import pytest
@@ -15,6 +19,7 @@ from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
     CoordinatesMetadata,
+    ElementMetadata,
     ElementType,
     FigureCaption,
     Header,
@@ -27,6 +32,125 @@ from unstructured.documents.elements import (
     Image as ImageElement,
 )
 from unstructured.partition.common import common
+
+
+def test_rewind_if_spooled_rewinds_without_copying():
+    with SpooledTemporaryFile(max_size=1, mode="w+b") as spooled_file:
+        spooled_file.write(b"sample content")
+
+        result = common.rewind_if_spooled(spooled_file)
+
+        assert result is spooled_file
+        assert result.tell() == 0
+        assert result.read() == b"sample content"
+
+
+@pytest.mark.parametrize("max_size", [0, 1])
+def test_convert_to_bytes_reads_a_SpooledTemporaryFile_and_rewinds_it(max_size: int):
+    with SpooledTemporaryFile(max_size=max_size) as spooled_file:
+        spooled_file.write(b"sample content")
+
+        assert common.convert_to_bytes(spooled_file) == b"sample content"
+        assert spooled_file.tell() == 0
+
+
+def test_convert_to_bytes_reads_any_seekable_binary_stream_and_rewinds_it():
+    with TemporaryFile() as file:
+        file.write(b"sample content")
+
+        assert common.convert_to_bytes(file) == b"sample content"
+        assert file.tell() == 0
+
+
+def test_convert_to_bytes_reads_a_BufferedReader_without_a_path_name():
+    file = io.BufferedReader(io.BytesIO(b"sample content"))
+
+    assert common.convert_to_bytes(file) == b"sample content"
+    assert file.tell() == 0
+
+
+def test_convert_to_bytes_leaves_a_BufferedReader_over_a_file_descriptor_open():
+    with TemporaryFile() as tmp:
+        tmp.write(b"sample content")
+        tmp.flush()
+        file = io.BufferedReader(io.FileIO(tmp.fileno(), "rb", closefd=False))
+
+        assert common.convert_to_bytes(file) == b"sample content"
+        assert file.tell() == 0
+        assert not tmp.closed
+        os.fstat(tmp.fileno())
+
+
+@pytest.mark.parametrize("mode", ["rb", "r"])
+def test_convert_to_bytes_reads_a_file_opened_by_bytes_path_without_moving_it(
+    tmp_path: pathlib.Path, mode: str
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(b"sample content")
+
+    with open(os.fsencode(path), mode) as file:
+        file.read(3)
+        position = file.tell()
+
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+        assert file.tell() == position
+
+
+@pytest.mark.parametrize("text", [False, True])
+def test_convert_to_bytes_reads_a_file_named_by_a_path_object_without_moving_it(
+    tmp_path: pathlib.Path, text: bool
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(b"sample content")
+    reader = io.BufferedReader(io.FileIO(path))
+    file = io.TextIOWrapper(reader, encoding="utf-8") if text else reader
+
+    with file:
+        file.read(3)
+        position = file.tell()
+
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+        assert file.tell() == position
+
+
+@pytest.mark.parametrize("mode", ["rb", "r"])
+def test_convert_to_bytes_reads_a_pipe_that_cannot_seek(mode: str):
+    read_fd, write_fd = os.pipe()
+    with os.fdopen(write_fd, "wb") as writer:
+        writer.write(b"sample content")
+
+    with os.fdopen(read_fd, mode) as file:
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+
+
+def test_convert_to_bytes_keeps_text_already_buffered_from_a_text_pipe():
+    read_fd, write_fd = os.pipe()
+    with os.fdopen(write_fd, "wb") as writer:
+        writer.write("sample content, café".encode("utf-8"))
+
+    with os.fdopen(read_fd, "r", encoding="utf-8") as file:
+        assert file.read(1) == "s"
+
+        assert common.convert_to_bytes(file) == "ample content, café".encode("utf-8")  # pyright: ignore[reportArgumentType]
+
+
+def test_convert_to_bytes_reads_bytes_from_a_text_file_opened_on_a_descriptor(
+    tmp_path: pathlib.Path,
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(b"sample content")
+
+    with os.fdopen(os.open(path, os.O_RDONLY), "r", encoding="utf-8") as file:
+        file.read(3)
+
+        assert common.convert_to_bytes(file) == b"sample content"  # pyright: ignore[reportArgumentType]
+        assert file.tell() == 0
+        assert file.read() == "sample content"
+
+
+def test_convert_to_bytes_raises_for_an_object_that_is_not_a_seekable_stream():
+    with pytest.raises(ValueError, match="Invalid file-like object type"):
+        common.convert_to_bytes(object())  # pyright: ignore[reportArgumentType]
 
 
 class MockPageLayout(layout.PageLayout):
@@ -349,6 +473,40 @@ def test_convert_office_doc_captures_errors(monkeypatch, caplog):
     assert "soffice failed to convert to format docx with code 1" in caplog.text
 
 
+@pytest.mark.parametrize("stream", ["stdout", "stderr"])
+def test_convert_office_doc_survives_non_utf8_soffice_output(stream, monkeypatch, caplog):
+    """A non-UTF-8 console must not abort the call, on either captured stream.
+
+    LibreOffice echoes the input path using the console encoding, which on Windows is the
+    locale codepage rather than UTF-8. A document with a multi-byte name -- `文章.doc` here,
+    echoed as CP932 -- made the strict decode raise, failing a conversion `soffice` had already
+    done. `stderr` goes through the same decode on the failure branch.
+    """
+    from unstructured.partition.common.common import subprocess
+
+    caplog.set_level(logging.INFO, logger="unstructured")
+    # -- "convert 文章.doc -> 文章.docx" as a Japanese console would emit it --
+    non_utf8 = "convert 文章.doc -> 文章.docx".encode("cp932")
+    # -- stdout must stay non-empty in the stderr case or the retry loop spins instead --
+    returncode, stdout, stderr = (
+        (0, non_utf8, b"") if stream == "stdout" else (1, b"soffice ran", non_utf8)
+    )
+
+    def mock_run(*args, **kwargs):
+        return MockRunOutput(returncode, stdout, stderr)
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
+
+    common.convert_office_doc("文章.doc", "fake-directory", target_format="docx")
+
+    # -- the ASCII part survives, the undecodable bytes are shown, and the whole record is
+    # -- still encodable by a handler using the locale codepage --
+    assert "convert" in caplog.text
+    assert ".docx" in caplog.text
+    assert r"\x95\xb6" in caplog.text
+    caplog.text.encode("ascii")
+
+
 def test_convert_office_docs_avoids_concurrent_call_to_soffice():
     paths_to_save = [pathlib.Path(path) for path in ("/tmp/proc1", "/tmp/proc2", "/tmp/proc3")]
     for path in paths_to_save:
@@ -399,6 +557,28 @@ def test_get_page_image_metadata_and_coordinate_system():
     doc = MockDocumentLayout()
     metadata = common.get_page_image_metadata(doc.pages[0])
     assert isinstance(metadata, dict)
+
+
+def test_ocr_data_to_elements_expands_an_inferred_list_element_into_one_element_per_item():
+    """An inferred ``List`` yields one ``ListItem`` per item, each carrying the common metadata."""
+    box = ((0, 0), (30, 0), (30, 12), (0, 12))
+    ocr_data = [
+        {"type": "List", "text": "1. foo\n2. bar", "coordinates": box},
+        {"type": "Title", "text": "a title", "coordinates": box},
+    ]
+
+    elements = common.ocr_data_to_elements(
+        ocr_data=ocr_data,
+        image_size=(100, 100),
+        common_metadata=ElementMetadata(filetype="png"),
+    )
+
+    assert [(element.category, element.text) for element in elements] == [
+        (ElementType.LIST_ITEM, "foo"),
+        (ElementType.LIST_ITEM, "bar"),
+        (ElementType.TITLE, "a title"),
+    ]
+    assert all(element.metadata.filetype == "png" for element in elements)
 
 
 def test_ocr_data_to_elements():
