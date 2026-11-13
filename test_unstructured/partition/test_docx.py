@@ -3030,3 +3030,44 @@ def test_partition_docx_skips_malformed_row_cells():
     assert isinstance(elements, list)
     assert all(hasattr(el, "text") for el in elements)
     assert any(el.text.strip() for el in elements), "Expected some non-empty extracted text"
+
+
+def test_partition_docx_very_long_vertical_merge_keeps_every_row(tmp_path):
+    """A vertically merged cell spanning ~1500 rows must not lose the rows after ~1000.
+
+    python-docx resolves each `vMerge="continue"` cell by recursing to the cell above it, one
+    stack frame per merged row, so `row.cells` used to raise RecursionError inside
+    `_convert_table_to_html` on a long merge. The guard swallowed it and emitted empty cells,
+    silently dropping the remaining rows from `text_as_html` (the plain `Table.text` was never
+    affected). The grid walk now resolves the merge iteratively.
+    """
+    n_rows = 1500
+    document = docx.Document()
+    table = document.add_table(rows=n_rows, cols=2)
+    for i in range(n_rows):
+        table.cell(i, 1).text = f"side-{i}"
+    table.cell(0, 0).text = "MERGEDHEAD"
+
+    # -- merge column 0 across all rows via raw XML; python-docx's own merge helpers walk the
+    # -- span with the same recursion this regression is about --
+    for i, row in enumerate(table.rows):
+        tc = row._tr.tc_lst[0]
+        vmerge = parse_xml(
+            f'<w:vMerge {nsdecls("w")} w:val="restart"/>'
+            if i == 0
+            else f"<w:vMerge {nsdecls('w')}/>"
+        )
+        tc.get_or_add_tcPr().append(vmerge)
+
+    docx_path = tmp_path / "long-vmerge.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    table_element = next(e for e in elements if isinstance(e, Table))
+
+    html = table_element.metadata.text_as_html
+    assert html is not None
+    assert html.count('rowspan="1500"') == 1
+    assert html.count("MERGEDHEAD") == 1
+    for i in range(n_rows):
+        assert f"side-{i}" in html
