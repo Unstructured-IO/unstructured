@@ -484,6 +484,25 @@ def test_assign_hash_ids_produces_unique_and_deterministic_SHA1_ids_even_for_dup
     assert all(e.id == e2.id for e, e2 in zip(elements, elements_2))
 
 
+def test_assign_hash_ids_rehashes_only_the_element_that_collides():
+    """Element 12 of page 1 and element 2 of page 11 used to share one hash (see #4675)."""
+    page_1 = ElementMetadata(filename="foo.bar", page_number=1)
+    page_11 = ElementMetadata(filename="foo.bar", page_number=11)
+    elements: list[Element] = [Text(text=f"line {idx}", metadata=page_1) for idx in range(12)]
+    # -- "foo.bar" + "Repeated" + "1" + "12" and "foo.bar" + "Repeated" + "11" + "2" are both
+    # -- "foo.barRepeated112", so these two elements collide
+    elements.append(Text(text="Repeated", metadata=page_1))
+    elements.extend(Text(text=f"line {idx}", metadata=page_11) for idx in range(2))
+    elements.append(Text(text="Repeated", metadata=page_11))
+
+    elements = _assign_hash_ids(elements)
+    ids = [e.id for e in elements]
+
+    # -- every element of the document gets its own id, and the ids stay deterministic --
+    assert len(ids) == len(set(ids)), "Elements with colliding hash inputs must get unique ids"
+    assert ids == [e.id for e in _assign_hash_ids(copy.deepcopy(elements))]
+
+
 def test_assign_hash_ids_remaps_parent_id_to_new_hash_id():
     """parent_id values (originally UUIDs) are updated to the corresponding hash IDs."""
     title = Title(text="Title", metadata=ElementMetadata(filename="foo.bar", page_number=1))

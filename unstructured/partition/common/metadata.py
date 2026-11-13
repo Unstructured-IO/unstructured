@@ -318,11 +318,16 @@ def _assign_hash_ids(elements: list[Element]) -> list[Element]:
     # -- generate sequence number for each element on a page --
     page_seq_counts = {}
     id_mapping = {}
+    # -- re-hash a second collision on the same hash input so every element gets its own id
+    used_ids: set[str] = set()
     for element in elements:
         page_number = element.metadata.page_number
         seq_on_page_counter = page_seq_counts.get(page_number, 0)
         original_id = element.id
-        element.id_to_hash(seq_on_page_counter)
+        rehash = 0
+        while element.id_to_hash(seq_on_page_counter, rehash=rehash) in used_ids:
+            rehash += 1
+        used_ids.add(element.id)
         id_mapping[original_id] = element.id
         page_seq_counts[page_number] = seq_on_page_counter + 1
 
