@@ -1,11 +1,15 @@
 import codecs
 import warnings
-from typing import IO, Optional, Tuple, Union
+from email.message import Message
+from typing import IO, TYPE_CHECKING, Optional, Tuple, Union
 
 from charset_normalizer import detect, from_bytes
 
 from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.common.common import convert_to_bytes
+
+if TYPE_CHECKING:
+    import requests
 
 ENCODE_REC_THRESHOLD = 0.8
 
@@ -207,3 +211,31 @@ def read_txt_file(
         raise FileNotFoundError("No filename was specified")
 
     return formatted_encoding, file_text
+
+
+def read_response_text(response: "requests.Response", encoding: Optional[str] = None) -> str:
+    """Return the body of an HTTP `response` as text.
+
+    An explicit `encoding` is decoded strictly, as `read_txt_file()` does. Otherwise the charset
+    declared in the Content-Type header is used, the same as `response.text`.
+
+    When the header declares no charset, `requests` reads any `text/*` type as ISO-8859-1 (the
+    RFC 2616 default), which turns UTF-8 into mojibake. A body that is valid UTF-8 is read as
+    UTF-8 instead, the same as a file, and any other body is still read by `response.text`.
+    Statistical detection is not used here: without a declared charset it can misread Latin-1
+    text that ISO-8859-1 gets right.
+    """
+    if encoding:
+        return read_txt_file(file=response.content, encoding=encoding)[1]
+
+    # NOTE(tanishqbaweja): `response.encoding` is ISO-8859-1 both when the header declares that
+    # charset and when it declares none, so read the charset from the header itself.
+    header = Message()
+    header["Content-Type"] = response.headers.get("Content-Type", "")
+    if not header.get_content_charset():
+        try:
+            return response.content.decode("utf-8-sig")
+        except UnicodeDecodeError:
+            pass
+
+    return response.text
