@@ -8,9 +8,10 @@ import io
 import itertools
 import re
 from functools import cached_property
-from typing import IO, Any, Callable, Iterator, NoReturn
+from typing import IO, Any, Callable, Iterator, NoReturn, cast
 
 import pandas as pd
+from pandas.io.common import get_handle
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.common.html_table import HtmlTable
@@ -600,8 +601,10 @@ class _CsvPartitioningContext:
         File is guaranteed to be at read position 0 when called.
         """
         if self._file_path:
-            with open(self._file_path, "rb") as f:
-                yield f
+            # -- like `pd.read_csv(filename)`, decompress a file named e.g. "x.csv.gz"; the
+            # -- sniff, the size check, and the read each get their own decompressing handle --
+            with get_handle(self._file_path, "rb", compression="infer", is_text=False) as handles:
+                yield cast(IO[bytes], handles.handle)
         else:
             file = self._file
             assert file is not None  # -- guaranteed by `._validate()` --

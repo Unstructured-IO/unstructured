@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import bz2
+import gzip
 import io
+import lzma
 from pathlib import Path
 
 import pandas as pd
@@ -650,3 +653,42 @@ def test_partition_csv_reads_a_line_break_in_a_quoted_cell_as_whitespace_not_an_
         "<tr><td>Alice</td><td>1 Main St Springfield</td></tr>"
         "<tr><td>Bob</td><td>x&lt;y &amp; z</td></tr></table>"
     )
+
+
+def test_partition_csv_decompresses_a_compressed_filename(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = tmp_path / "table.csv.gz"
+    with gzip.open(file_path, "wb") as f:
+        f.write(b"a,b\n1,2\n")
+
+    (table,) = partition_csv(str(file_path))
+
+    assert table.text == "a b 1 2"
+
+    # -- the size check measures the decompressed content --
+    monkeypatch.setenv("CSV_MAX_CELLS", "3")
+    with pytest.raises(UnprocessableEntityError, match="CSV_MAX_CELLS"):
+        partition_csv(str(file_path))
+
+
+@pytest.mark.parametrize(
+    ("suffix", "open_compressed"),
+    [(".gz", gzip.open), (".bz2", bz2.open), (".xz", lzma.open)],
+)
+def test_partition_csv_decompresses_a_filename_named_for_its_compression(
+    tmp_path: Path, suffix: str, open_compressed
+):
+    file_path = tmp_path / f"table.csv{suffix}"
+    with open_compressed(file_path, "wb") as f:
+        f.write(b"a,b\n1,2\n")
+
+    assert partition_csv(str(file_path))[0].text == "a b 1 2"
+
+
+def test_partition_csv_produces_no_elements_for_an_empty_compressed_file(tmp_path: Path):
+    file_path = tmp_path / "table.csv.gz"
+    with gzip.open(file_path, "wb"):
+        pass
+
+    assert partition_csv(str(file_path)) == []
