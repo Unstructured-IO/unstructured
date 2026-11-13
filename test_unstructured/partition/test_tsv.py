@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import gzip
 import io
 from pathlib import Path
@@ -550,3 +551,59 @@ def test_partition_tsv_reads_a_repeated_header_label_as_written(tmp_path: Path):
         "<table><tr><td>name</td><td>name</td><td>age</td></tr>"
         "<tr><td>Alice</td><td>Bob</td><td>30</td></tr></table>"
     )
+
+
+def test_partition_tsv_keeps_a_multiline_quoted_header_cell_whole(tmp_path: Path):
+    # -- the first line alone is not the whole header record, so the labels are left as read
+    # -- and no text of the header cell that spans lines is lost --
+    file_path = tmp_path / "multiline-header.tsv"
+    file_path.write_text('name\tname\t"address\nline"\n1\t2\t3\n')
+
+    element = partition_tsv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name name.1 address line 1 2 3"
+
+
+def test_partition_tsv_keeps_an_empty_header_record_off_the_data_rows(tmp_path: Path):
+    # -- a line of only tabs is a header record of empty cells, not a blank line, so its
+    # -- "Unnamed" labels are not replaced by the values of the first data row --
+    file_path = tmp_path / "empty-header.tsv"
+    file_path.write_text("\t\nA\tA\n")
+
+    element = partition_tsv(str(file_path), include_header=True)[0]
+
+    assert element.text == "Unnamed: 0 Unnamed: 1 A A"
+
+
+def test_partition_tsv_leaves_labels_alone_when_a_header_field_exceeds_the_field_size_limit(
+    tmp_path: Path,
+):
+    # -- a header field longer than the csv module's field-size limit is read by Pandas but
+    # -- cannot be re-parsed for label restoration, which gives up rather than fail the read;
+    # -- the limit it can exceed is the ambient one, which on this path is the csv module's
+    # -- default unless other code has changed it --
+    file_path = tmp_path / "long-header-field.tsv"
+    file_path.write_text('name\tname\t"' + "x" * 2048 + '"\n1\t2\t3\n')
+
+    ambient_limit = csv.field_size_limit()
+    csv.field_size_limit(1024)
+    try:
+        element = partition_tsv(str(file_path), include_header=True)[0]
+    finally:
+        csv.field_size_limit(ambient_limit)
+
+    assert element.text.startswith("name name.1 ")
+    assert element.text.endswith(" 1 2 3")
+
+
+def test_partition_tsv_leaves_labels_alone_when_a_blank_prefix_is_too_long_to_peek(
+    tmp_path: Path,
+):
+    # -- the header line is peeked within a bounded chunk budget, so a header further behind a
+    # -- blank prefix than that is not peeked and its labels stay as Pandas wrote them --
+    file_path = tmp_path / "long-blank-prefix.tsv"
+    file_path.write_text("\n" * (2 * 1024 * 1024) + "name\tname\tage\nA\tB\t30\n")
+
+    element = partition_tsv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name name.1 age A B 30"

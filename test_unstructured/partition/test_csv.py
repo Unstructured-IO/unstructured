@@ -707,3 +707,30 @@ def test_partition_csv_leaves_the_labels_alone_when_a_quoted_header_cell_spans_l
     element = partition_csv(file=io.BytesIO(data), include_header=True)[0]
 
     assert element.text == "a b a v1 v2"
+
+
+def test_partition_csv_keeps_an_empty_header_record_off_the_data_rows(tmp_path: Path):
+    # -- the sniff reads a line of only tabs as blank, but the read keeps it as the header
+    # -- record of empty cells, so its "Unnamed" labels are not replaced by data-row values --
+    file_path = tmp_path / "empty-header.csv"
+    file_path.write_text("\t\nA\tA\n")
+
+    element = partition_csv(str(file_path), include_header=True)[0]
+
+    assert element.text == "Unnamed: 0 Unnamed: 1 A A"
+
+
+def test_a_bounded_header_peek_reads_no_more_than_its_chunk_budget(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 1024)
+    data = b"\n" * 40_000 + b"name\tname\nA\tB\n"
+    reader = csv_module._LoneCarriageReturnReader(io.BytesIO(data), None)
+
+    # -- the budget is given up on, not read past, and no more than it stays queued --
+    assert csv_module._peek_header_line(reader, "\t") == ""
+    n_queued_chars = sum(len(chunk) for chunk in reader._chunks)
+    assert n_queued_chars <= (csv_module._HEADER_PEEK_MAX_CHUNKS + 1) * 1024
+
+    # -- an unbounded peek still finds the line, and the chunks stay queued for the read --
+    assert reader.peek_first_non_blank_line() == "name\tname\n"
