@@ -575,25 +575,30 @@ def test_partition_tsv_keeps_an_empty_header_record_off_the_data_rows(tmp_path: 
     assert element.text == "Unnamed: 0 Unnamed: 1 A A"
 
 
-def test_partition_tsv_leaves_labels_alone_when_a_header_field_exceeds_the_field_size_limit(
+def test_partition_tsv_restores_labels_whatever_the_ambient_field_size_limit(
     tmp_path: Path,
 ):
-    # -- a header field longer than the csv module's field-size limit is read by Pandas but
-    # -- cannot be re-parsed for label restoration, which gives up rather than fail the read;
-    # -- the limit it can exceed is the ambient one, which on this path is the csv module's
-    # -- default unless other code has changed it --
+    # -- the header record is split for restoration without the csv module, so a field past
+    # -- the ambient field-size limit no longer leaves Pandas' renamed labels standing, and the
+    # -- table text does not depend on whether an earlier partition raised that limit --
     file_path = tmp_path / "long-header-field.tsv"
     file_path.write_text('name\tname\t"' + "x" * 2048 + '"\n1\t2\t3\n')
 
     ambient_limit = csv.field_size_limit()
     csv.field_size_limit(1024)
     try:
-        element = partition_tsv(str(file_path), include_header=True)[0]
+        element_at_a_low_limit = partition_tsv(str(file_path), include_header=True)[0]
     finally:
         csv.field_size_limit(ambient_limit)
+    element_at_the_ambient_limit = partition_tsv(str(file_path), include_header=True)[0]
 
-    assert element.text.startswith("name name.1 ")
-    assert element.text.endswith(" 1 2 3")
+    assert element_at_a_low_limit.text.startswith("name name ")
+    assert element_at_a_low_limit.text.endswith(" 1 2 3")
+    assert element_at_a_low_limit.text == element_at_the_ambient_limit.text
+    assert (
+        element_at_a_low_limit.metadata.text_as_html
+        == element_at_the_ambient_limit.metadata.text_as_html
+    )
 
 
 def test_partition_tsv_leaves_labels_alone_when_a_blank_prefix_is_too_long_to_peek(

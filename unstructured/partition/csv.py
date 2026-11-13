@@ -161,18 +161,15 @@ def _restore_repeated_header_labels(
 
     The header record is parsed from `first_line`, the first line the read itself would not
     skip, peeked by `_peek_header_line()`. The labels are left as Pandas wrote them when that
-    line does not hold a whole record, when a field outgrows the csv module's field-size limit,
-    or when the peek gave up and returned "".
+    line does not hold a whole record, or when the peek gave up and returned "". The record is
+    split by `_split_header_record()`, which does not consult the csv module's process-wide
+    field-size limit, so the labels do not depend on what an earlier partition set it to.
     """
     if header != 0 or len(sep) != 1 or not first_line:
         return dataframe
     if not _record_is_complete(first_line, sep):
         return dataframe
-    try:
-        fields = next(csv.reader([first_line], delimiter=sep), [])
-    except csv.Error:
-        # -- a field longer than the csv module's limit, which the Pandas read itself accepted --
-        return dataframe
+    fields = _split_header_record(first_line, sep)
     labels = [field for field in fields if field != ""]
     if len(labels) == len(set(labels)) or len(fields) != len(dataframe.columns):
         return dataframe
@@ -244,6 +241,59 @@ def _record_is_complete(line: str, sep: str) -> bool:
         else:
             at_field_start = False
     return not in_quotes and not quote_pending
+
+
+def _split_header_record(line: str, sep: str) -> list[str]:
+    """The fields of `line`, split the way the csv module would split them, without its limit.
+
+    The record is whole within the line, as `_record_is_complete()` has checked, so no field
+    spans lines and the only line ending is the one the line ends with, which is not field text.
+    A field is opened by a quote only at its start, a pair of quotes inside a quoted field is one
+    literal quote, and a character after the quote closing a field is literal text of it.
+
+    Splitting the record here rather than through the csv module keeps the restored labels the
+    same whatever the process-wide field-size limit happens to be: `csv.reader` raises on a
+    field past that limit, `partition_csv()` raises the limit to 10 MiB while `partition_tsv()`
+    leaves it as it stood, so the labels of a file whose Pandas read succeeded would otherwise
+    depend on whether a CSV was partitioned first in the process.
+    """
+    if line.endswith("\n"):
+        line = line[:-1]
+    if line.endswith("\r"):
+        line = line[:-1]
+    if not line:
+        return []
+    fields: list[str] = []
+    field: list[str] = []
+    in_quotes = False
+    quote_pending = False  # -- the char before was a quote inside a quoted field --
+    at_field_start = True
+    for char in line:
+        if in_quotes:
+            if quote_pending:
+                quote_pending = False
+                if char == '"':
+                    field.append('"')  # -- `""` inside a quoted field is one literal quote --
+                    continue
+                in_quotes = False  # -- the quote closed the field; `char` follows it --
+            elif char == '"':
+                quote_pending = True
+                continue
+            else:
+                field.append(char)
+                continue
+        if at_field_start and char == '"':
+            in_quotes, at_field_start = True, False
+            continue
+        if char == sep:
+            fields.append("".join(field))
+            field = []
+            at_field_start = True
+            continue
+        field.append(char)  # -- a quote outside a quoted field is literal text --
+        at_field_start = False
+    fields.append("".join(field))
+    return fields
 
 
 def check_cell_count(

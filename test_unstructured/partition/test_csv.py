@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import csv
 import io
+import itertools
 from pathlib import Path
 
 import pandas as pd
@@ -718,6 +720,25 @@ def test_partition_csv_keeps_an_empty_header_record_off_the_data_rows(tmp_path: 
     element = partition_csv(str(file_path), include_header=True)[0]
 
     assert element.text == "Unnamed: 0 Unnamed: 1 A A"
+
+
+def test_the_header_record_splitter_agrees_with_the_csv_module():
+    # -- the header record is split for restoration by an in-module scanner, so the labels do
+    # -- not depend on the csv module's process-wide field-size limit; over every record that
+    # -- scanner can be reached with (whole within one line, so no field spans lines) it splits
+    # -- a record exactly as the csv module would --
+    for sep in ("\t", ","):
+        no_record: list[str] = []
+        alphabet = ("a", sep, '"', " ")
+        for length in range(8):
+            for chars in itertools.product(alphabet, repeat=length):
+                for suffix in ("", "\n", "\r\n"):
+                    line = "".join(chars) + suffix
+                    if not csv_module._record_is_complete(line, sep):
+                        continue
+                    assert csv_module._split_header_record(line, sep) == next(
+                        csv.reader([line], delimiter=sep), no_record
+                    )
 
 
 def test_a_bounded_header_peek_reads_no_more_than_its_chunk_budget(
