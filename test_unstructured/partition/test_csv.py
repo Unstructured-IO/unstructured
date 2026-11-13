@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import bz2
+import csv
 import gzip
 import io
+import itertools
 import lzma
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -764,3 +767,194 @@ def test_read_whole_lines_chunk_fallback_stops_only_past_the_limit():
     # -- the sample keeps every whole line up to and past the limit, so an exact
     # -- boundary keeps one more line than io.BytesIO.readlines(3) --
     assert _read_whole_lines(_UnsupportedLineReads(b"ab\ncd\n"), 3) == [b"ab\n", b"cd\n"]
+
+
+def test_partition_csv_reads_a_repeated_header_label_as_written(tmp_path: Path):
+    file_path = tmp_path / "repeated-labels.csv"
+    file_path.write_text("name,name,age\nAlice,Bob,30\n")
+
+    element = partition_csv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name name age Alice Bob 30"
+    assert element.metadata.text_as_html == (
+        "<table><tr><td>name</td><td>name</td><td>age</td></tr>"
+        "<tr><td>Alice</td><td>Bob</td><td>30</td></tr></table>"
+    )
+
+
+def test_partition_csv_keeps_a_genuinely_suffixed_label_when_labels_repeat(tmp_path: Path):
+    file_path = tmp_path / "genuine-suffix.csv"
+    file_path.write_text("name,name,name.1\nAlice,Bob,Cara\n")
+
+    element = partition_csv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name name name.1 Alice Bob Cara"
+
+
+def test_partition_csv_restores_a_repeated_label_without_touching_unnamed_cells(
+    tmp_path: Path,
+):
+    file_path = tmp_path / "repeated-with-blank.csv"
+    file_path.write_text("name,,name\nAlice,Bob,Cara\n")
+
+    element = partition_csv(str(file_path), include_header=True)[0]
+
+    assert element.text == "name Unnamed: 1 name Alice Bob Cara"
+
+
+def test_partition_csv_reads_a_quoted_repeated_header_label_as_written():
+    element = partition_csv(file=io.BytesIO(b'"name","name"\nAlice,Bob\n'), include_header=True)[0]
+
+    assert element.text == "name name Alice Bob"
+
+
+def test_partition_csv_reads_a_repeated_header_label_with_crlf_endings_as_written():
+    data = b"name,name\r\nAlice,Bob\r\n"
+
+    element = partition_csv(file=io.BytesIO(data), include_header=True)[0]
+
+    assert element.text == "name name Alice Bob"
+
+
+def test_partition_csv_leaves_the_labels_alone_when_a_quoted_header_cell_spans_lines():
+    # -- the first line alone is not the whole header record, so its fields cannot be compared
+    # -- with the columns and the labels are left as read --
+    data = b'"a\nb",a\nv1,v2\n'
+
+    element = partition_csv(file=io.BytesIO(data), include_header=True)[0]
+
+    assert element.text == "a b a v1 v2"
+
+
+def test_partition_csv_keeps_an_empty_header_record_off_the_data_rows(tmp_path: Path):
+    # -- the sniff reads a line of only tabs as blank, but the read keeps it as the header
+    # -- record of empty cells, so its "Unnamed" labels are not replaced by data-row values --
+    file_path = tmp_path / "empty-header.csv"
+    file_path.write_text("\t\nA\tA\n")
+
+    element = partition_csv(str(file_path), include_header=True)[0]
+
+    assert element.text == "Unnamed: 0 Unnamed: 1 A A"
+
+
+def test_the_header_record_splitter_agrees_with_the_csv_module():
+    # -- the header record is split for restoration by an in-module scanner, so the labels do
+    # -- not depend on the csv module's process-wide field-size limit; over every record that
+    # -- scanner can be reached with (whole within one line, so no field spans lines) it splits
+    # -- a record exactly as the csv module would --
+    for sep in ("\t", ","):
+        no_record: list[str] = []
+        alphabet = ("a", sep, '"', " ")
+        for length in range(8):
+            for chars in itertools.product(alphabet, repeat=length):
+                for suffix in ("", "\n", "\r\n"):
+                    line = "".join(chars) + suffix
+                    if not csv_module._record_is_complete(line, sep):
+                        continue
+                    assert csv_module._split_header_record(line, sep) == next(
+                        csv.reader([line], delimiter=sep), no_record
+                    )
+
+
+def test_a_bounded_header_peek_reads_no_more_than_its_chunk_budget(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 1024)
+    data = b"\n" * 40_000 + b"name\tname\nA\tB\n"
+    reader = csv_module._LoneCarriageReturnReader(io.BytesIO(data), None)
+
+    # -- the budget is given up on, not read past, and no more than it stays queued --
+    assert csv_module._peek_header_line(reader, "\t") == ""
+    n_queued_chars = sum(len(chunk) for chunk in reader._chunks)
+    assert n_queued_chars <= (csv_module._HEADER_PEEK_MAX_CHUNKS + 1) * 1024
+
+    # -- an unbounded peek still finds the line, and the chunks stay queued for the read --
+    assert reader.peek_first_non_blank_line() == "name\tname\n"
+
+
+@pytest.mark.parametrize(("prefix", "field_length"), [("", 80), ("\n" * 80, 1), ("\n" * 80, 80)])
+@pytest.mark.parametrize("suffix", ["", "\n"])
+def test_a_bounded_header_peek_counts_prefilled_text(
+    monkeypatch: pytest.MonkeyPatch, prefix: str, suffix: str, field_length: int
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 32)
+    monkeypatch.setattr(csv_module, "_HEADER_PEEK_MAX_CHUNKS", 2)
+    text = prefix + "name\tname\t" + "\u00e9" * field_length + suffix
+    reader = csv_module._LoneCarriageReturnReader(io.BytesIO(text.encode()), None)
+    assert reader.peek_first_non_blank_line() == text[len(prefix) :]
+    queued = tuple(reader._chunks)
+    copied = reader._chars_copied
+
+    assert csv_module._peek_header_line(reader, "\t") == ""
+    assert reader._chars_copied - copied <= 64
+    assert tuple(reader._chunks) == queued
+    assert reader.read() == text
+
+
+@pytest.mark.parametrize("prefill", [False, True])
+@pytest.mark.parametrize("length", [63, 64, 65])
+def test_a_bounded_header_peek_applies_the_same_text_boundary_to_prefilled_input(
+    monkeypatch: pytest.MonkeyPatch, prefill: bool, length: int
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 32)
+    monkeypatch.setattr(csv_module, "_HEADER_PEEK_MAX_CHUNKS", 2)
+    text = "name\tname\t" + "x" * (length - len("name\tname\t") - 1) + "\n"
+    reader = csv_module._LoneCarriageReturnReader(io.BytesIO(text.encode()), None)
+    if prefill:
+        assert reader.peek_first_non_blank_line() == text
+
+    assert csv_module._peek_header_line(reader, "\t") == (text if length <= 64 else "")
+    assert reader.read() == text
+
+
+@pytest.mark.parametrize("duplicate", [False, True])
+def test_partition_csv_does_not_split_an_oversized_sniffed_header(
+    monkeypatch: pytest.MonkeyPatch, mocker: MockFixture, duplicate: bool
+):
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 32)
+    monkeypatch.setattr(csv_module, "_HEADER_PEEK_MAX_CHUNKS", 2)
+    second_label = "name" if duplicate else "other"
+    long_label = "\u00e9" * 80
+    text = f"name\t{second_label}\t{long_label}\nA\tB\tC\n"
+    sniff = mocker.spy(csv_module, "_sniff_delimiter")
+    split = mocker.spy(csv_module, "_split_header_record")
+
+    element = partition_csv(file=io.BytesIO(text.encode()), include_header=True)[0]
+
+    assert sniff.call_count == 2
+    assert all(call.args[0].startswith("name\t") for call in sniff.call_args_list)
+    split.assert_not_called()
+    expected_second = "name.1" if duplicate else "other"
+    assert element.text == f"name {expected_second} {long_label} A B C"
+    assert f"<td>{expected_second}</td>" in element.metadata.text_as_html
+
+
+def test_partition_csv_headerless_sniffed_read_does_not_hold_the_first_record(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # -- the context's sniffer only tries ",;|", so a tab-delimited file is sniffed again by the
+    # -- read itself, without a header: the sample that sniff joins is a whole data record of any
+    # -- size, so it must stay a temporary and no local of read_delimited_text() may still hold
+    # -- it while pd.read_csv() builds the data-frame --
+    monkeypatch.setattr(csv_module, "_CSV_CHUNK_CHARS", 32)
+    first_record = "x" * 4096 + "\ty\tz\n"
+    read_csv_ = pd.read_csv
+    held_during_the_read: list[str] = []
+    read_kwargs: dict[str, object] = {}
+
+    def read_csv_keeping_only_the_parse(*args, **kwargs):
+        caller_locals = sys._getframe(1).f_locals
+        held_during_the_read[:] = [
+            value for value in caller_locals.values() if isinstance(value, str) and len(value) > 64
+        ]
+        read_kwargs.update(kwargs)
+        return read_csv_(*args, **kwargs)
+
+    monkeypatch.setattr(pd, "read_csv", read_csv_keeping_only_the_parse)
+
+    element = partition_csv(file=io.BytesIO((first_record + "a\tb\tc\n").encode()))[0]
+
+    assert read_kwargs.get("sep") == "\t"
+    assert read_kwargs.get("engine") == "python"
+    assert held_during_the_read == []
+    assert element.text == "x" * 4096 + " y z a b c"
