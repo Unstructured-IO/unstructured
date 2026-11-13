@@ -248,7 +248,7 @@ def zoom_image(image: PILImage.Image, zoom: float = 1) -> PILImage.Image:
         # no zoom but still does dilation and erosion
         zoom = 1
     new_image = cv2.resize(
-        cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR),
+        np.array(image.convert("RGB")),
         None,
         fx=zoom,
         fy=zoom,
