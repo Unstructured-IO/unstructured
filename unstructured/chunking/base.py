@@ -598,6 +598,12 @@ class _MetadataOnlyImage(Image):
                 continue
             if strategy is CS.FIRST:
                 self.field_values.setdefault(name, [value])
+            elif strategy is CS.MIN:
+                kept = self.field_values.setdefault(name, [value])
+                kept[0] = min(kept[0], value)
+            elif strategy is CS.MAX:
+                kept = self.field_values.setdefault(name, [value])
+                kept[0] = max(kept[0], value)
             elif strategy is CS.LIST_CONCATENATE:
                 self.field_values.setdefault(name, [[]])[0].extend(value)
             elif strategy is CS.LIST_UNIQUE:
@@ -1066,6 +1072,10 @@ class _Chunker:
                 strategy = field_consolidation_strategies.get(field_name)
                 if strategy is CS.FIRST:
                     yield field_name, values[0]
+                elif strategy is CS.MIN:
+                    yield field_name, min(values)
+                elif strategy is CS.MAX:
+                    yield field_name, max(values)
                 # -- concatenate lists from each element that had one, in order --
                 elif strategy is CS.LIST_CONCATENATE:
                     yield field_name, sum(values, cast("list[Any]", []))
