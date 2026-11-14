@@ -264,6 +264,17 @@ _UNEVALUATED_FORMULA_CELLS_NAMED = 10
 # -- a missing one --
 _STRING_RESULT_CELL_TYPES = frozenset({"str", "s", "inlineStr"})
 
+# -- content types a spreadsheet's main workbook part can carry: workbook and template, each
+# -- with and without macros --
+_WORKBOOK_CONTENT_TYPES = frozenset(
+    {
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.template.main+xml",
+        "application/vnd.ms-excel.sheet.macroEnabled.main+xml",
+        "application/vnd.ms-excel.template.macroEnabled.main+xml",
+    }
+)
+
 
 def _warn_on_formula_cells_without_saved_results(file_bytes: bytes) -> None:
     """Warn for each worksheet whose formula cells read as empty for lack of a saved result.
@@ -311,7 +322,11 @@ def _iter_worksheet_members(zip_file: zipfile.ZipFile) -> Iterator[tuple[str, st
     rather than by the directory its part happens to sit in, and its target is resolved against
     the workbook part, as a reader resolves it.
     """
-    relationships = etree.fromstring(zip_file.read("xl/_rels/workbook.xml.rels"))
+    workbook_name = _workbook_member_name(zip_file)
+    workbook_dir, workbook_file = posixpath.split(workbook_name)
+    rels_name = posixpath.join(workbook_dir, "_rels", f"{workbook_file}.rels")
+
+    relationships = etree.fromstring(zip_file.read(rels_name))
     members_by_rel_id: dict[str, str] = {}
     for relationship in relationships.iter("{*}Relationship"):
         if relationship.get("TargetMode") == "External":
@@ -319,16 +334,35 @@ def _iter_worksheet_members(zip_file: zipfile.ZipFile) -> Iterator[tuple[str, st
         if not (relationship.get("Type") or "").endswith("/worksheet"):
             continue
         target = relationship.get("Target") or ""
-        member = target[1:] if target.startswith("/") else posixpath.normpath(f"xl/{target}")
+        if target.startswith("/"):
+            member = target[1:]
+        else:
+            member = posixpath.normpath(posixpath.join(workbook_dir, target))
         members_by_rel_id[relationship.get("Id") or ""] = member
 
     member_names = set(zip_file.namelist())
-    workbook = etree.fromstring(zip_file.read("xl/workbook.xml"))
+    workbook = etree.fromstring(zip_file.read(workbook_name))
     for sheet in workbook.iter("{*}sheet"):
         rel_id = next((v for k, v in sheet.attrib.items() if k.endswith("}id")), "")
         member = members_by_rel_id.get(rel_id, "")
         if member in member_names:
             yield sheet.get("name") or "", member
+
+
+def _workbook_member_name(zip_file: zipfile.ZipFile) -> str:
+    """The zip-member name of the workbook part, as a reader discovers it.
+
+    The package manifest names the part, and a writer is free to put it anywhere; the
+    conventional `xl/workbook.xml` is only the common choice. Reading the manifest keeps the
+    diagnostic on the same part openpyxl partitions, so a relocated workbook is still
+    diagnosed. A package that overrides nothing because it redefines the default content type
+    for XML leaves the conventional name as the only candidate.
+    """
+    content_types = etree.fromstring(zip_file.read("[Content_Types].xml"))
+    for override in content_types.iter("{*}Override"):
+        if (override.get("ContentType") or "") in _WORKBOOK_CONTENT_TYPES:
+            return (override.get("PartName") or "").lstrip("/")
+    return "xl/workbook.xml"
 
 
 def _worksheet_holds_no_formula_tag(zip_file: zipfile.ZipFile, member_name: str) -> bool:
