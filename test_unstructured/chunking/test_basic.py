@@ -13,6 +13,7 @@ import pytest
 from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
 from unstructured.chunking.basic import chunk_elements
 from unstructured.documents.elements import (
+    CodeSnippet,
     CompositeElement,
     ElementMetadata,
     Table,
@@ -235,6 +236,32 @@ def test_it_does_not_emit_a_chunk_holding_only_the_overlap_when_overlap_all_spli
         "nsectetur.\n\nIn rhoncus ipsum sed lectus porta",
         "tus porta volutpat, ut aliquet magna.",
     ]
+
+
+def test_high_overlap_does_not_emit_a_carried_prefix_as_a_chunk():
+    chunks = chunk_elements(
+        [Text("abcdefghij"), Text("klmnopqrstuvwxyz")],
+        max_characters=11,
+        overlap=10,
+        overlap_all=True,
+    )
+
+    assert chunks[0].text == "abcdefghij"
+    assert chunks[1].text == "klmnopqrstu"
+    assert all(len(chunk.text) <= 11 for chunk in chunks)
+    assert chunks[-1].text.endswith("z")
+
+
+def test_whitespace_in_a_code_snippet_does_not_amplify_chunks():
+    chunks = chunk_elements(
+        [CodeSnippet("x" * 999 + " " * 1000 + "z")],
+        max_characters=1000,
+        overlap=999,
+    )
+
+    assert len(chunks) == 2
+    assert chunks[0].text == "x" * 999
+    assert chunks[-1].text.endswith("z")
 
 
 # ------------------------------------------------------------------------------------------------

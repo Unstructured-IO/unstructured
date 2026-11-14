@@ -5905,10 +5905,19 @@ class Describe_TextSplitter:
         split = _TextSplitter(opts)
         text = "nsectetur.\n\nIn rhoncus ipsum sed lectus porta volutpat, ut aliquet magna."
 
-        s, remainder = split(text)
+        s, remainder = split(text, len("nsectetur.\n\n"))
 
         assert s == "nsectetur.\n\nIn rhoncus ipsum sed lectus porta"
         assert remainder == "tus porta volutpat, ut aliquet magna."
+
+    def it_keeps_a_short_genuine_fragment(self):
+        split = _TextSplitter(ChunkingOptions(max_characters=11, overlap=10))
+        text = "abcdefghij" + " " * 20 + "z"
+
+        fragment, remainder = split(text)
+
+        assert fragment == "abcdefghij"
+        assert remainder == "bcdefghij z"
 
 
 class Describe_CellAccumulator:
