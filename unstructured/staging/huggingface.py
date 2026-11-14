@@ -40,6 +40,9 @@ def chunk_by_attention_window(
     """Splits a string of text into chunks that will fit into a model's attention
     window.
 
+    Counts tokens after joining segments so that separators and tokenization across segment
+    boundaries are included in the attention window budget.
+
     Parameters
     ----------
     text: The raw input text for the model
@@ -63,13 +66,10 @@ def chunk_by_attention_window(
     max_chunk_size = max_input_size - buffer
 
     split_text: List[str] = split_function(text)
-    num_splits = len(split_text)
-
     chunks: List[str] = []
     chunk_text = ""
-    chunk_size = 0
 
-    for i, segment in enumerate(split_text):
+    for segment in split_text:
         tokens = tokenizer.tokenize(segment)
         num_tokens = len(tokens)
         if num_tokens > max_chunk_size:
@@ -81,18 +81,14 @@ def chunk_by_attention_window(
                 f"error is: \n\n{segment}",
             )
 
-        if chunk_size + num_tokens > max_chunk_size:
-            chunks.append(chunk_text + chunk_separator.strip())
-            chunk_text = ""
-            chunk_size = 0
-
-        # NOTE(robinson) - To avoid the separator appearing at the beginning of the string
-        if chunk_size > 0:
-            chunk_text += chunk_separator
-        chunk_text += segment
-        chunk_size += num_tokens
-
-        if i == (num_splits - 1) and len(chunk_text) > 0:
+        candidate = chunk_separator.join((chunk_text, segment)) if chunk_text else segment
+        if len(tokenizer.tokenize(candidate)) > max_chunk_size:
             chunks.append(chunk_text)
+            chunk_text = segment
+        else:
+            chunk_text = candidate
+
+    if chunk_text:
+        chunks.append(chunk_text)
 
     return chunks
