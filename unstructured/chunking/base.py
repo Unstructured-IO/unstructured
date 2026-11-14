@@ -8,7 +8,7 @@ import heapq
 import itertools
 import uuid
 from functools import cached_property, lru_cache
-from typing import Any, Callable, DefaultDict, Iterable, Iterator, NamedTuple, Sequence, cast
+from typing import Any, Callable, DefaultDict, Iterable, Iterator, NamedTuple, Sequence
 
 import regex
 from lxml.etree import ParserError, tostring
@@ -1068,7 +1068,7 @@ class _Chunker:
                     yield field_name, values[0]
                 # -- concatenate lists from each element that had one, in order --
                 elif strategy is CS.LIST_CONCATENATE:
-                    yield field_name, sum(values, cast("list[Any]", []))
+                    yield field_name, [item for value in values for item in value]
                 # -- union lists from each element, preserving order of appearance --
                 elif strategy is CS.LIST_UNIQUE:
                     # -- Python 3.7+ maintains dict insertion order --
@@ -1080,10 +1080,11 @@ class _Chunker:
                 # -- records, preserving first-seen order --
                 elif strategy is CS.DICT_LIST_UNIQUE:
                     merged: dict[str, list[Any]] = {}
+                    record_ids: dict[str, set[Any]] = {}
                     for value in values:
                         for key, records in value.items():
                             seen = merged.setdefault(key, [])
-                            seen_ids = {tuple(sorted(r.items())) for r in seen}
+                            seen_ids = record_ids.setdefault(key, set())
                             for record in records:
                                 record_id = tuple(sorted(record.items()))
                                 if record_id not in seen_ids:
