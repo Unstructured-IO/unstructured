@@ -167,7 +167,7 @@ class HtmlPartitionerOptions:
                     f"Error status code on GET of provided URL: {response.status_code}"
                 )
             content_type = response.headers.get("Content-Type", "")
-            if not content_type.startswith("text/html"):
+            if content_type.partition(";")[0].strip().lower() != "text/html":
                 raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
             return response.text

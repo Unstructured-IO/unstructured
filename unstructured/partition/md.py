@@ -111,7 +111,7 @@ def partition_md(
             raise ValueError(f"URL return an error: {response.status_code}")
 
         content_type = response.headers.get("Content-Type", "")
-        if not content_type.startswith("text/markdown"):
+        if content_type.partition(";")[0].strip().lower() != "text/markdown":
             raise ValueError(
                 f"Expected content type text/markdown. Got {content_type}.",
             )
