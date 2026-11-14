@@ -144,7 +144,7 @@ def _audio_suffix(file: IO[bytes], metadata_filename: str | None) -> str:
     3. ".wav" as a safe fallback recognised by all STT backends.
     """
     for name in (metadata_filename, getattr(file, "name", None)):
-        if name:
+        if name and not isinstance(name, int):
             suffix = Path(name).suffix
             if suffix:
                 return suffix
