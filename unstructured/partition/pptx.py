@@ -153,7 +153,8 @@ def partition_pptx(
     include_slide_notes
         If True, includes the slide notes as element
     include_off_slide_shapes
-        If True, also include text from shapes that are mostly outside the slide.
+        If True, also include text, tables, and pictures from shapes that are mostly outside
+        the slide. Picture content is extracted only when a picture partitioner is registered.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -262,6 +263,9 @@ class _PptxPartitioner:
 
     def _iter_picture_elements(self, picture: Picture) -> Iterator[Element]:
         """Generate elements derived from the image in `picture`."""
+        if self._shape_is_off_slide(picture):
+            return
+
         # -- delegate this job to the pluggable Picture partitioner --
         PicturePartitionerCls = self._opts.picture_partitioner
         yield from PicturePartitionerCls.iter_elements(picture, self._opts)
@@ -301,6 +305,9 @@ class _PptxPartitioner:
 
         An empty table does not produce an element.
         """
+        if self._shape_is_off_slide(graphfrm):
+            return
+
         if not (rows := list(graphfrm.table.rows)):
             return
 
@@ -376,7 +383,7 @@ class _PptxPartitioner:
         """The python-pptx `Presentation` object loaded from the provided source file."""
         return pptx.Presentation(self._opts.pptx_file)
 
-    def _shape_is_off_slide(self, shape: Shape) -> bool:
+    def _shape_is_off_slide(self, shape: BaseShape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
         if self._opts.include_off_slide_shapes:
             return False
@@ -396,7 +403,7 @@ class _PptxPartitioner:
         return visible_width * visible_height < 0.5 * width * height
 
     def _shape_slide_box(
-        self, shape: Shape
+        self, shape: BaseShape
     ) -> tuple[float | None, float | None, float | None, float | None]:
         """The bounding box of `shape` in slide coordinates.
 
