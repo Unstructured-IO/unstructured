@@ -9,7 +9,7 @@ from unstructured.cleaners.core import (
     auto_paragraph_grouper,
     clean_bullets,
 )
-from unstructured.documents.coordinates import CoordinateSystem
+from unstructured.documents.coordinates import CoordinateSystem, Orientation
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -177,7 +177,10 @@ def _get_height_percentage(
     coordinates: tuple[tuple[float, float], ...],
     coordinate_system: CoordinateSystem,
 ) -> float:
+    """Average vertical position measured from the top of the page."""
     avg_y = sum(coordinate[1] for coordinate in coordinates) / len(coordinates)
+    if coordinate_system.orientation is Orientation.CARTESIAN:
+        avg_y = coordinate_system.height - avg_y
     return avg_y / coordinate_system.height
 
 
