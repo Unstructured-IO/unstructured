@@ -77,22 +77,20 @@ def partition_audio(
     mime_type = _audio_mime_type(filename, file, metadata_filename)
     set_partition_document_type_from_mime(mime_type)
 
-    audio_path: str
-    if filename is not None:
-        audio_path = filename
-    else:
-        assert file is not None  # guaranteed by exactly_one()
-        file.seek(0)
-        suffix = _audio_suffix(file, metadata_filename)
-        with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
-            shutil.copyfileobj(file, tmp)
-            audio_path = tmp.name
-
+    audio_path: str | None = filename
     try:
+        if audio_path is None:
+            assert file is not None  # guaranteed by exactly_one()
+            file.seek(0)
+            suffix = _audio_suffix(file, metadata_filename)
+            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+                audio_path = tmp.name
+                shutil.copyfileobj(file, tmp)
+
         agent = SpeechToTextAgent.get_agent(stt_agent)
         segments = agent.transcribe_segments(audio_path, language=language)
     finally:
-        if filename is None and is_temp_file_path(audio_path):
+        if filename is None and audio_path is not None and is_temp_file_path(audio_path):
             Path(audio_path).unlink(missing_ok=True)
 
     if not segments:
