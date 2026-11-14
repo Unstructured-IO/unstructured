@@ -28,7 +28,6 @@ MIME-types. Additional differentiators are planned, one for `application/x-ole-s
 
 from __future__ import annotations
 
-import codecs
 import contextlib
 import functools
 import importlib.util
@@ -207,6 +206,112 @@ def is_ndjson_processable(
         return False
 
 
+_MAX_ENCODING_UNIT_BYTES = 4
+
+# -- the reasons a codec gives for finding the END OF DATA inside a character rather than a byte
+# -- sequence it rejects outright; only these describe a read cut at the boundary --
+_INCOMPLETE_SEQUENCE_REASONS = frozenset(
+    {"unexpected end of data", "truncated data", "incomplete multibyte sequence"}
+)
+
+
+def _decode_prefix(content: bytes, encoding: str) -> str | None:
+    """Decode `content` when its tail may be cut inside a character.
+
+    Withholds exactly the trailing bytes the declared codec reports as an unfinished sequence,
+    so the codec keeps deciding BOM handling and byte order exactly as it does for a whole file,
+    and no decodable byte is dropped. An `eof_reached=True` call is never a boundary split and
+    skips this.
+
+    The withheld length is measured from the END of `content`, never from an offset the codec
+    reports: a BOM-stripping codec such as ``utf-8-sig`` reports offsets relative to the buffer
+    AFTER the BOM it consumed, so applying one to the original bytes deletes that many valid
+    bytes ahead of the cut and can take a CSV delimiter with them. Trimming the tail keeps the
+    whole prefix, BOM included, in front of the plain codec.
+
+    Returns `None` when `content` is not a truncated form of `encoding`. Bytes a codec rejects as
+    invalid are not a split character: trimming them would delete a complete character together
+    with valid punctuation and skip the fallback that decodes them, so only the incomplete-end
+    reasons count, and only within one encoding unit of the end. Anything further from the end is
+    a wrong encoding rather than a boundary split.
+    """
+    try:
+        return content.decode(encoding=encoding)
+    except UnicodeDecodeError as error:
+        if error.reason not in _INCOMPLETE_SEQUENCE_REASONS:
+            return None
+    except UnicodeError:
+        return None
+
+    for withheld in range(1, _MAX_ENCODING_UNIT_BYTES + 1):
+        remainder = content[: len(content) - withheld]
+        # -- a whole read that is one unfinished character has nothing to classify --
+        if not remainder:
+            return None
+        try:
+            return remainder.decode(encoding=encoding)
+        except UnicodeDecodeError as error:
+            # -- still inside the character: withhold one more byte, but never past a byte the
+            # -- codec rejects outright, and never further than one encoding unit --
+            if error.reason not in _INCOMPLETE_SEQUENCE_REASONS:
+                return None
+        except UnicodeError:
+            return None
+    return None
+
+
+def _read_prefix(file: IO, limit: int) -> str | bytes:
+    """Read up to `limit` objects from `file`, continuing past short reads.
+
+    A `read(n)` on a raw or adapter stream may return fewer than `n` objects while more data
+    remains, so a single short read does not establish EOF. Taking one for EOF declared a prefix
+    that ended inside a multi-byte character complete, and the decode then reported a valid
+    document as malformed.
+    """
+    chunks: list[str | bytes] = []
+    remaining = limit
+    while remaining > 0:
+        chunk = file.read(remaining)
+        if not chunk:
+            # -- nothing at all: hand back the empty read so the caller keeps its text/bytes type
+            if not chunks:
+                return chunk
+            break
+        chunks.append(chunk)
+        remaining -= len(chunk)
+    if chunks and isinstance(chunks[0], bytes):
+        return b"".join(cast(list[bytes], chunks))
+    return "".join(cast(list[str], chunks))
+
+
+def _decode_head_bytes(content: bytes, encoding: str, eof_reached: bool) -> str:
+    """Decode the leading bytes of a text file into the text used for classification.
+
+    `encoding` is the encoding asserted by the caller, or "utf-8" when the caller asserted none.
+    A strict decode that fails only because a multi-byte character was split at the read boundary
+    is retried with the incomplete trailing bytes withheld, which keeps the declared codec's BOM
+    and byte-order handling in charge: an incremental decoder re-runs BOM detection over a prefix
+    that no longer carries one, so it refuses the BOM-less native-endian UTF-16/32 the plain codec
+    accepts. When the declared encoding is simply wrong, character-set detection takes over --
+    the same fallback the file-path branch uses, told whether the bytes are a prefix so a sequence
+    cut at the boundary is not a failure. Decoding
+    with `errors="ignore"` instead silently strips every undecodable character, corrupting the
+    text for non-UTF-8 payloads such as S3/GCS objects and API uploads (issue #4434).
+
+    Raises:
+        UnprocessableEntityError when no common encoding can decode the content.
+    """
+    try:
+        return content.decode(encoding=encoding)
+    except (UnicodeDecodeError, UnicodeError):
+        if not eof_reached:
+            prefix_text = _decode_prefix(content, encoding)
+            if prefix_text is not None:
+                return prefix_text
+        _, file_text = detect_file_encoding(file=content, final=eof_reached)
+        return file_text
+
+
 class _FileTypeDetector:
     """Determines file type from a variety of possible inputs."""
 
@@ -287,8 +392,12 @@ class _FileTypeDetector:
         """Disambiguate JSON/NDJSON file-type based on file contents.
 
         Reads at most `_JSON_DISAMBIGUATION_MAX_CHARS` (+1, plus one probe past that to
-        distinguish an exact-size payload from a truncated one) and restores a caller-owned
-        file-like object to read position 0. A ".ndjson" source extension wins over a
+        distinguish an exact-size payload from a truncated one), continuing past short reads
+        because only an empty read establishes EOF, and restores a caller-owned file-like object
+        to read position 0. The read is decoded using the declared encoding,
+        falling back to character-set detection when that cannot decode the content -- the same
+        fallback `text_head` uses -- so a non-UTF-8 payload is not silently stripped of
+        characters. A ".ndjson" source extension wins over a
         whole-payload JSON parse: a one-record ".ndjson" is also valid one-value JSON, but the
         extension says it is NDJSON, so it classifies as `FileType.NDJSON` whenever the content is
         NDJSON-shaped (each non-blank line a valid JSON value). (An asserted "application/x-ndjson"
@@ -308,7 +417,7 @@ class _FileTypeDetector:
         `NaN`) is never classified as parseable JSON/NDJSON.
         """
         with self._ctx.open() as file:
-            head = file.read(_JSON_DISAMBIGUATION_MAX_CHARS + 1)
+            head = _read_prefix(file, _JSON_DISAMBIGUATION_MAX_CHARS + 1)
             # -- an exact-MAX+1 payload is fully in hand; only a further successful read means
             # -- the payload was actually truncated --
             truncated = len(head) > _JSON_DISAMBIGUATION_MAX_CHARS and bool(file.read(1))
@@ -316,10 +425,13 @@ class _FileTypeDetector:
             # -- detect-then-partition --
             file.seek(0)
 
+        # -- decode the read instead of assuming the declared encoding; `errors="ignore"` here
+        # -- silently stripped undecodable characters and misclassified non-UTF-8 payloads,
+        # -- such as UTF-16 JSON written by Windows tooling --
         file_text = (
             head
             if isinstance(head, str)
-            else head.decode(encoding=self._ctx.encoding, errors="ignore")
+            else _decode_head_bytes(head, self._ctx.encoding, eof_reached=not truncated)
         )
 
         # -- an explicit NDJSON signal wins over a whole-payload JSON parse, but only when the
@@ -698,27 +810,7 @@ class _FileTypeDetectionContext:
             file.seek(0)
             if isinstance(content, str):
                 return content
-            try:
-                return content.decode(encoding=self.encoding)
-            except (UnicodeDecodeError, UnicodeError):
-                # A multi-byte character split at the 4096-byte read boundary
-                # raises UnicodeDecodeError even though the content is validly
-                # encoded. Decode incrementally with final=eof_reached so an
-                # incomplete trailing sequence is buffered when more content
-                # follows, while a genuinely truncated stream still falls
-                # through to character-set detection.
-                decoder = codecs.getincrementaldecoder(self.encoding)()
-                try:
-                    return decoder.decode(content, final=eof_reached)
-                except (UnicodeDecodeError, UnicodeError):
-                    # Use the same fallback character-set detection as the
-                    # file-path branch. Decoding with errors="ignore" silently
-                    # stripped undecodable characters and corrupted the text
-                    # head for non-UTF-8 streams (S3/GCS objects, API uploads)
-                    # — issue #4434. `final=eof_reached` for the same reason as above,
-                    # e.g. a UTF-16 surrogate pair split at the boundary.
-                    _, file_text = detect_file_encoding(file=content, final=eof_reached)
-                    return file_text[:4096]
+            return _decode_head_bytes(content, self.encoding, eof_reached)[:4096]
 
         file_path = self.file_path
         assert file_path is not None  # -- guaranteed by `._validate` --
