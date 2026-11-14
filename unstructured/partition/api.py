@@ -252,13 +252,14 @@ def partition_multiple_via_api(
     Parameters
     ----------
     filenames
-        A list of strings defining the target filename paths.
+        A nonempty list of strings defining the target filename paths. Specify exactly one
+        of filenames and files.
     content_types
         A list of strings defining the file contents in MIME types.
     files
-        A list of file-like object using "rb" mode --> open(filename, "rb").
-    metadata_filename
-        When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
+        A nonempty sequence of file-like objects using "rb" mode --> open(filename, "rb").
+    metadata_filenames
+        When files is not None, the filenames to store in element metadata, one per file.
     api_url
         The URL for the Unstructured API. Defaults to the hosted Unstructured API.
     api_key
@@ -267,6 +268,10 @@ def partition_multiple_via_api(
         Additional parameters to pass to the data field of the request to the Unstructured API.
         For example the `strategy` parameter.
     """
+    exactly_one(filenames=filenames, files=files)
+    if not (filenames if filenames is not None else files):
+        raise ValueError("At least one document must be specified in filenames or files.")
+
     headers = {
         "ACCEPT": "application/json",
         "UNSTRUCTURED-API-KEY": api_key,
@@ -286,7 +291,7 @@ def partition_multiple_via_api(
         )
 
     if filenames is not None:
-        if content_types and len(content_types) != len(filenames):
+        if content_types is not None and len(content_types) != len(filenames):
             raise ValueError("content_types and filenames must have the same length.")
 
         with contextlib.ExitStack() as stack:
@@ -306,7 +311,7 @@ def partition_multiple_via_api(
             )
 
     elif files is not None:
-        if content_types and len(content_types) != len(files):
+        if content_types is not None and len(content_types) != len(files):
             raise ValueError("content_types and files must have the same length.")
 
         if not metadata_filenames:
