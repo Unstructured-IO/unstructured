@@ -127,6 +127,8 @@ def partition_md(
 
     html_kwargs: dict[str, Any] = {
         "text": html,
+        # Preserve provenance without making an empty conversion fetch the URL as HTML.
+        "url": url if html.strip() else None,
         "metadata_filename": metadata_filename or filename,
         "metadata_file_type": FileType.MD,
         "metadata_last_modified": metadata_last_modified or last_modified,
