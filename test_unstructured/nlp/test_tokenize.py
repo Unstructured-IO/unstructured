@@ -153,3 +153,14 @@ def _count_pipeline_runs(monkeypatch) -> dict[str, int]:
 
     monkeypatch.setattr(tokenize, "_get_nlp", lambda: CountingNlp())
     return runs
+
+
+def test_sent_tokenize_splits_on_danda_and_double_danda():
+    assert tokenize.sent_tokenize("हिंदी सबसे अधिक बोली जाने वाली भाषा है। गंगा पवित्र नदी है।") == [
+        "हिंदी सबसे अधिक बोली जाने वाली भाषा है।",
+        "गंगा पवित्र नदी है।",
+    ]
+    assert tokenize.sent_tokenize("राम वन को गए॥ सीता साथ गईं॥") == [
+        "राम वन को गए॥",
+        "सीता साथ गईं॥",
+    ]

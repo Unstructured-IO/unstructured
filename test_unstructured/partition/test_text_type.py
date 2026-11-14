@@ -336,3 +336,49 @@ def test_is_email_address(text, expected):
 def test_under_non_alpha_ratio_zero_divide():
     # Threw an error before changes
     text_type.under_non_alpha_ratio(" ")
+
+
+# -- Hindi and Bengali: vowel signs are Unicode combining marks, not letters, and the danda (।)
+# -- ends a sentence. --
+HINDI_PARAGRAPHS = [
+    "भारत एक विशाल देश है। इसकी राजधानी नई दिल्ली है।",
+    "हिंदी सबसे अधिक बोली जाने वाली भाषा है। गंगा पवित्र नदी है।",
+    "हिमालय उत्तर में स्थित है। वह बहुत ऊँचा है।",
+    "मुंबई देश की आर्थिक राजधानी मानी जाती है। यहाँ फिल्में बनती हैं।",
+    "दिल्ली में सरकार की बैठकें होती हैं। संसद भी यहीं है।",
+    "किसान खेतों में मेहनत करते हैं। वे अनाज उगाते हैं।",
+]
+BENGALI_PARAGRAPHS = [
+    "বাংলা একটি সুন্দর ভাষা। এটি অনেক মানুষ বলে।",
+    "কলকাতা পশ্চিমবঙ্গের রাজধানী। এখানে অনেক মানুষ থাকে।",
+    "রবীন্দ্রনাথ ঠাকুর নোবেল পুরস্কার পেয়েছিলেন। তিনি কবি ছিলেন।",
+]
+
+
+def test_under_non_alpha_ratio_counts_vowel_signs_as_letters():
+    # -- "हिंदी" is 2 base letters and 3 combining marks --
+    assert text_type.under_non_alpha_ratio("हिंदी") is False
+
+
+@pytest.mark.parametrize("text", HINDI_PARAGRAPHS + BENGALI_PARAGRAPHS)
+def test_under_non_alpha_ratio_is_false_for_hindi_and_bengali_paragraphs(text):
+    assert text_type.under_non_alpha_ratio(text) is False
+
+
+def test_exceeds_cap_ratio_is_false_for_a_hindi_sentence_whose_words_all_have_vowel_signs():
+    assert text_type.exceeds_cap_ratio("हिंदी सबसे अधिक बोली जाने वाली भाषा है।") is False
+
+
+def test_sentence_count_splits_hindi_sentences_on_danda():
+    text = "हिंदी सबसे अधिक बोली जाने वाली भाषा है। गंगा पवित्र नदी है।"
+    assert text_type.sentence_count(text) == 2
+
+
+@pytest.mark.parametrize("text", HINDI_PARAGRAPHS + BENGALI_PARAGRAPHS)
+def test_is_possible_narrative_text_for_hindi_and_bengali_paragraphs(text):
+    assert text_type.is_possible_narrative_text(text) is True
+
+
+@pytest.mark.parametrize("text", ["हिंदी", "परिचय"])
+def test_is_possible_title_for_short_hindi_headings(text):
+    assert text_type.is_possible_title(text) is True

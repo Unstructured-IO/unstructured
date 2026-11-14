@@ -722,3 +722,28 @@ def test_partition_text_detects_more_than_3_languages():
     )
     langs = [e.metadata.languages[0] for e in elements if e.metadata.languages]
     assert len(langs) > 10
+
+
+@pytest.mark.parametrize(
+    "paragraphs",
+    [
+        [
+            "भारत एक विशाल देश है। इसकी राजधानी नई दिल्ली है।",
+            "हिंदी सबसे अधिक बोली जाने वाली भाषा है। गंगा पवित्र नदी है।",
+            "हिमालय उत्तर में स्थित है। वह बहुत ऊँचा है।",
+            "मुंबई देश की आर्थिक राजधानी मानी जाती है। यहाँ फिल्में बनती हैं।",
+            "दिल्ली में सरकार की बैठकें होती हैं। संसद भी यहीं है।",
+            "किसान खेतों में मेहनत करते हैं। वे अनाज उगाते हैं।",
+        ],
+        [
+            "বাংলা একটি সুন্দর ভাষা। এটি অনেক মানুষ বলে।",
+            "কলকাতা পশ্চিমবঙ্গের রাজধানী। এখানে অনেক মানুষ থাকে।",
+            "রবীন্দ্রনাথ ঠাকুর নোবেল পুরস্কার পেয়েছিলেন। তিনি কবি ছিলেন।",
+        ],
+    ],
+    ids=["hindi", "bengali"],
+)
+def test_partition_text_classifies_hindi_and_bengali_paragraphs_as_narrative_text(paragraphs):
+    elements = partition_text(text="\n\n".join(paragraphs))
+
+    assert elements == [NarrativeText(text=paragraph) for paragraph in paragraphs]

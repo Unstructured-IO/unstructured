@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import re
+import unicodedata
 from typing import Final, List, Optional
 
 from unstructured.cleaners.core import remove_punctuation
@@ -22,6 +23,19 @@ from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s\-,.!?_\/]+")
 NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
+
+
+# NOTE(shlokbam): Vowel signs, viramas and anusvaras in Indic scripts such as Devanagari and
+# Bengali are combining marks, not letters, so `"हिंदी".isalpha()` is False. Treat them as
+# part of the word they belong to.
+def _is_letter_or_mark(char: str) -> bool:
+    """True if `char` is a letter or a combining mark (Unicode category M*)."""
+    return char.isalpha() or unicodedata.category(char).startswith("M")
+
+
+def _is_word(token: str) -> bool:
+    """True if `token` has at least one letter and consists only of letters and combining marks."""
+    return any(char.isalpha() for char in token) and all(_is_letter_or_mark(char) for char in token)
 
 
 def is_possible_narrative_text(
@@ -259,7 +273,7 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     for char in text:
         if not char.isspace():
             total_count += 1
-            if char.isalpha():
+            if char.isalpha() or unicodedata.category(char)[0] == "M":
                 alpha_count += 1
 
     return ((alpha_count / total_count) < threshold) if total_count > 0 else False
@@ -291,7 +305,7 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     # ex. world_tokenize("ITEM 1. Financial Statements (Unaudited)")
     #     = ['ITEM', '1', '.', 'Financial', 'Statements', '(', 'Unaudited', ')'],
     # however, "ITEM 1. Financial Statements (Unaudited)" is Title, not NarrativeText
-    tokens = [tk for tk in word_tokenize(text) if tk.isalpha()]
+    tokens = [tk for tk in word_tokenize(text) if _is_word(tk)]
 
     # NOTE(jay-ylee) - If word_tokenize(text) is empty, return must be True to
     # avoid being misclassified as Narrative Text.
