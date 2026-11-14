@@ -867,7 +867,11 @@ class PreChunk:
         trailing whitespace.
         """
         overlap = self._opts.inter_chunk_overlap
-        return self._text[-overlap:].strip() if overlap else ""
+        if not overlap:
+            return ""
+        if self._opts.use_token_counting:
+            return _token_overlap_tail(self._text, overlap, self._opts.measure).strip()
+        return self._text[-overlap:].strip()
 
     def _iter_text_segments(self) -> Iterator[str]:
         """Generate overlap text and each element text segment in order.
@@ -2822,6 +2826,43 @@ class _HtmlTableSplitter:
         return rows[0] if rows else None
 
 
+def _token_overlap_tail(text: str, target_tokens: int, measure: Callable[[str], int]) -> str:
+    """Extract tail of text containing approximately `target_tokens` tokens.
+
+    Uses binary search to find the character position from which the tail contains
+    approximately the specified number of tokens. Adjusts to word boundaries to avoid
+    splitting words.
+    """
+    # -- if the entire text has fewer tokens than target, return all of it --
+    if measure(text) <= target_tokens:
+        return text.strip()
+
+    # -- binary search to find the character position that yields ~target_tokens --
+    low, high = 0, len(text)
+
+    while low < high:
+        mid = (low + high) // 2
+        tail = text[mid:]
+        token_count = measure(tail)
+        if token_count > target_tokens:
+            low = mid + 1
+        else:
+            high = mid
+
+    # -- adjust to word boundary: search forward for whitespace then skip it --
+    pos = low
+    while pos < len(text) and not text[pos].isspace():
+        pos += 1
+    while pos < len(text) and text[pos].isspace():
+        pos += 1
+
+    # -- if we've moved too far, fall back to just stripping leading whitespace --
+    if pos >= len(text):
+        return text[low:].lstrip()
+
+    return text[pos:]
+
+
 class _TextSplitter:
     """Provides a text-splitting function configured on construction.
 
@@ -3114,40 +3155,10 @@ class _TextSplitter:
     def _get_token_overlap_tail(self, text: str, target_tokens: int) -> str:
         """Extract tail of text containing approximately `target_tokens` tokens.
 
-        Uses binary search to find the character position from which the tail contains
-        approximately the specified number of tokens. Adjusts to word boundaries to avoid
-        splitting words.
+        Delegates to module-level `_token_overlap_tail` so token overlap logic is
+        shared between `_TextSplitter` and `PreChunk.overlap_tail`.
         """
-        measure = self._opts.measure
-
-        # -- if the entire text has fewer tokens than target, return all of it --
-        if measure(text) <= target_tokens:
-            return text.strip()
-
-        # -- binary search to find the character position that yields ~target_tokens --
-        low, high = 0, len(text)
-
-        while low < high:
-            mid = (low + high) // 2
-            tail = text[mid:]
-            token_count = measure(tail)
-            if token_count > target_tokens:
-                low = mid + 1
-            else:
-                high = mid
-
-        # -- adjust to word boundary: search forward for whitespace then skip it --
-        pos = low
-        while pos < len(text) and not text[pos].isspace():
-            pos += 1
-        while pos < len(text) and text[pos].isspace():
-            pos += 1
-
-        # -- if we've moved too far, fall back to just stripping leading whitespace --
-        if pos >= len(text):
-            return text[low:].lstrip()
-
-        return text[pos:]
+        return _token_overlap_tail(text, target_tokens, self._opts.measure)
 
     @cached_property
     def _patterns(self) -> tuple[tuple[regex.Pattern[str], int], ...]:
