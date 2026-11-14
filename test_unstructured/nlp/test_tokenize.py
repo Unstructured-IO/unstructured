@@ -1,3 +1,12 @@
+import contextlib
+import os
+import subprocess
+import sys
+import sysconfig
+from pathlib import Path
+
+import pytest
+
 from unstructured.nlp import tokenize
 
 
@@ -153,3 +162,200 @@ def _count_pipeline_runs(monkeypatch) -> dict[str, int]:
 
     monkeypatch.setattr(tokenize, "_get_nlp", lambda: CountingNlp())
     return runs
+
+
+def _model_is_missing(*_args, **_kwargs):
+    """Stand-in for `spacy.load` when the pinned model is not installed."""
+    raise OSError("no such model")
+
+
+def _model_load_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Make `spacy.load` and the install lock cheap, so only the decision is under test."""
+    monkeypatch.setattr(tokenize, "spacy", type("FakeSpacy", (), {"load": _model_is_missing}))
+    monkeypatch.setattr(tokenize, "FileLock", lambda *args, **kwargs: contextlib.nullcontext())
+
+
+def test_auto_install_can_be_disabled(monkeypatch: pytest.MonkeyPatch):
+    """Air-gapped deployments must be able to fail instead of downloading at runtime."""
+    installs = []
+
+    _model_load_fails(monkeypatch)
+    monkeypatch.setenv("UNSTRUCTURED_SPACY_AUTO_INSTALL", "false")
+    monkeypatch.setattr(tokenize, "_install_spacy_model", lambda: installs.append("installed"))
+
+    with pytest.raises(RuntimeError, match="UNSTRUCTURED_SPACY_AUTO_INSTALL"):
+        tokenize._load_spacy_model()
+
+    assert installs == []
+
+
+def test_the_install_lock_sits_beside_the_model_it_guards():
+    """The lock has to be found by every worker that writes this destination."""
+    lock = Path(tokenize._install_lock_path())
+
+    assert lock.parent == Path(sysconfig.get_paths()["purelib"])
+    assert lock.name == f"{tokenize._SPACY_MODEL_NAME}.install.lock"
+
+
+@pytest.mark.parametrize("temp_dir", ["tmp/4321", "tmp/8765"])
+def test_the_install_lock_does_not_follow_the_process_temp_dir(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, temp_dir: str
+):
+    """`GLOBAL_WORKING_DIR_ENABLED` gives each process group its own `tempfile` directory.
+
+    A lock derived from `tempfile.gettempdir()` would then be a different file in every worker
+    while they all install into the same site-packages, so two workers could replace the model
+    directory under each other. Whatever the running configuration did to `tempfile` -- and
+    whether the configuration module was imported before or after this one -- the lock has to
+    resolve to one path. This is the import-order half of the regression: the path is a function
+    of the destination alone, so there is no order to get wrong.
+    """
+    fake_tempdir = str(tmp_path / temp_dir)
+    monkeypatch.setattr(tokenize.tempfile, "tempdir", fake_tempdir, raising=False)
+    monkeypatch.setattr(tokenize.tempfile, "gettempdir", lambda: fake_tempdir, raising=False)
+    assert tokenize.tempfile.gettempdir() == fake_tempdir
+
+    assert tokenize._install_lock_path() == str(
+        Path(sysconfig.get_paths()["purelib"]) / f"{tokenize._SPACY_MODEL_NAME}.install.lock"
+    )
+
+
+def test_auto_install_disabled_never_takes_the_install_lock(monkeypatch: pytest.MonkeyPatch):
+    """Nothing is installed, so the opt-out must not queue behind other installers.
+
+    It also keeps a read-only site-packages from turning the opt-out into a permission error,
+    since taking the lock creates the file next to the model.
+    """
+    locks = []
+
+    _model_load_fails(monkeypatch)
+    monkeypatch.setattr(
+        tokenize,
+        "FileLock",
+        lambda *args, **kwargs: locks.append(args[0]) or contextlib.nullcontext(),
+    )
+    monkeypatch.setenv("UNSTRUCTURED_SPACY_AUTO_INSTALL", "false")
+
+    with pytest.raises(RuntimeError, match="UNSTRUCTURED_SPACY_AUTO_INSTALL"):
+        tokenize._load_spacy_model()
+
+    assert locks == []
+
+
+def test_auto_install_stays_the_default(monkeypatch: pytest.MonkeyPatch):
+    """Without the variable the pinned model is still fetched, as it was before."""
+    installs = []
+
+    def record_and_fail() -> None:
+        installs.append(tokenize._SPACY_MODEL_URL)
+        raise RuntimeError("download failed")
+
+    _model_load_fails(monkeypatch)
+    monkeypatch.setattr(tokenize, "_install_spacy_model", record_and_fail)
+    monkeypatch.delenv("UNSTRUCTURED_SPACY_AUTO_INSTALL", raising=False)
+
+    with pytest.raises(RuntimeError, match="download failed"):
+        tokenize._load_spacy_model()
+
+    assert installs == [tokenize._SPACY_MODEL_URL]
+
+
+_WORKER_SCRIPT = """
+import json
+import os
+import sys
+import sysconfig
+import time
+from pathlib import Path
+
+sys.path.insert(0, os.environ["WORKER_REPO"])
+
+from unstructured.nlp import tokenize  # noqa: E402
+
+cache = Path(os.environ["WORKER_CACHE"])
+log = Path(os.environ["WORKER_LOG"])
+real_paths = sysconfig.get_paths
+
+
+def shared_paths(*args, **kwargs):
+    # -- every worker resolves the installation destination to the same directory --
+    paths = dict(real_paths(*args, **kwargs))
+    paths["purelib"] = os.environ["WORKER_SITE"]
+    paths["platlib"] = os.environ["WORKER_SITE"]
+    return paths
+
+
+tokenize.sysconfig.get_paths = shared_paths
+
+
+def load(name, **kwargs):
+    if (cache / "installed").exists():
+        return "model"
+    raise OSError("model is not installed")
+
+
+def install():
+    started = time.time()
+    (cache / "installing").write_text(os.environ["WORKER_NAME"])
+    time.sleep(0.5)
+    if (cache / "installing").read_text() != os.environ["WORKER_NAME"]:
+        raise AssertionError("two workers installed at the same time")
+    (cache / "installed").write_text("1")
+    log.write_text(json.dumps({"started": started, "finished": time.time()}))
+
+
+tokenize.spacy = type("FakeSpacy", (), {"load": staticmethod(load)})
+tokenize._install_spacy_model = install
+assert tokenize._load_spacy_model() == "model"
+"""
+
+
+def _start_worker(name: str, tmp_path: Path, site: Path, cache: Path, logs: Path):
+    """Start one worker with its own process group and its own temporary directory."""
+    workdir = tmp_path / f"tmp-{name}"
+    workdir.mkdir(exist_ok=True)
+    env = dict(os.environ)
+    env.pop("UNSTRUCTURED_SPACY_AUTO_INSTALL", None)
+    env["TMPDIR"] = str(workdir)
+    env["TEMP"] = str(workdir)
+    env["TMP"] = str(workdir)
+    env["WORKER_NAME"] = name
+    env["WORKER_SITE"] = str(site)
+    env["WORKER_CACHE"] = str(cache)
+    env["WORKER_LOG"] = str(logs / f"{name}.json")
+    env["WORKER_REPO"] = str(Path(__file__).resolve().parents[2])
+    if os.name == "nt":
+        kwargs = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+    else:
+        kwargs = {"start_new_session": True}
+    return subprocess.Popen(
+        [sys.executable, "-c", _WORKER_SCRIPT],
+        env=env,
+        cwd=env["WORKER_REPO"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        **kwargs,
+    )
+
+
+def test_the_install_lock_serializes_separate_process_groups(tmp_path: Path):
+    """Two workers with different temporary directories install the model once.
+
+    `GLOBAL_WORKING_DIR_ENABLED` gives every process group its own `tempfile` directory, so a
+    lock derived from the temporary directory is a different file in every worker while they all
+    install into the same site-packages. The second worker has to wait for the first one and then
+    load the installed model instead of installing again.
+    """
+    site = tmp_path / "site-packages"
+    site.mkdir()
+    cache = tmp_path / "installation"
+    cache.mkdir()
+    logs = tmp_path / "logs"
+    logs.mkdir()
+
+    workers = [_start_worker(name, tmp_path, site, cache, logs) for name in ("first", "second")]
+    output = [worker.communicate(timeout=180)[0].decode() for worker in workers]
+
+    assert [worker.returncode for worker in workers] == [0, 0], output
+    installs = list(logs.iterdir())
+    assert len(installs) == 1, "exactly one worker may install, got " + repr(output)
