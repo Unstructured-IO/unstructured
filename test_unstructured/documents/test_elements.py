@@ -818,6 +818,51 @@ def test_hash_ids_are_unique_when_a_page_is_not_contiguous_in_the_element_list()
     assert len(ids) == len(set(ids)), "Recalculated IDs must be unique."
 
 
+def test_hash_ids_are_unique_when_page_and_sequence_digits_concatenate_the_same():
+    # -- GIVEN -- element 12 of page 1 and element 2 of page 11 feed the same hash input:
+    # -- "doc.pdf" + text + "1" + "12" and "doc.pdf" + text + "11" + "2" are both
+    # -- "doc.pdfRepeated112", so both elements used to hash to the same id (see #4675) --
+    elements: list[Element] = [
+        Text(text=f"page one line {idx}", metadata=ElementMetadata(page_number=1))
+        for idx in range(12)
+    ]
+    elements.append(Text(text="Repeated", metadata=ElementMetadata(page_number=1)))
+    elements.extend(
+        Text(text=f"page eleven line {idx}", metadata=ElementMetadata(page_number=11))
+        for idx in range(2)
+    )
+    elements.append(Text(text="Repeated", metadata=ElementMetadata(page_number=11)))
+
+    # -- WHEN --
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+
+    # -- THEN -- every element of the document gets its own id --
+    ids = [element.id for element in updated_elements]
+    assert len(ids) == 16, "Expected one id per element"
+    assert len(ids) == len(set(ids)), "Colliding hash inputs must produce unique ids."
+
+
+def test_hash_ids_keep_their_value_when_no_collision_occurs():
+    # -- GIVEN -- a document without colliding hash inputs --
+    elements: list[Element] = [
+        Text(text="Section", metadata=ElementMetadata(filename="doc.pdf", page_number=1)),
+        Text(text="Body", metadata=ElementMetadata(filename="doc.pdf", page_number=1)),
+    ]
+
+    # -- WHEN --
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+
+    # -- THEN -- the ids are the plain hash of filename + text + page number + sequence number,
+    # -- so documents that are already unique keep the ids they had before the collision fix --
+    expected = [
+        Text(text="Section", metadata=ElementMetadata(filename="doc.pdf", page_number=1)),
+        Text(text="Body", metadata=ElementMetadata(filename="doc.pdf", page_number=1)),
+    ]
+    assert [element.id for element in updated_elements] == [
+        element.id_to_hash(idx) for idx, element in enumerate(expected)
+    ]
+
+
 def test_hash_ids_are_unique_for_duplicate_elements():
     # GIVEN
     parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))

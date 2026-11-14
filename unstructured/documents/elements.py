@@ -604,6 +604,16 @@ class ConsolidationStrategy(enum.Enum):
 _P = ParamSpec("_P")
 
 
+def _unique_hash_id(element: Element, sequence_number: int, used_ids: set[str]) -> str:
+    """Set `element.id` to a hash-id unused by this document and return it. See #4675."""
+    element_id, rehash = element.id_to_hash(sequence_number), 0
+    while element_id in used_ids:
+        rehash += 1
+        element_id = element.id_to_hash(sequence_number, rehash=rehash)
+    used_ids.add(element_id)
+    return element_id
+
+
 def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
     """Converts `id` and `parent_id` of elements from UUIDs to hashes.
 
@@ -629,8 +639,11 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
         page_seq_counts[page_number] = page_seq_pairs[-1] + 1
 
     # -- assign hash IDs to elements --
+    # -- the four hash-fields are concatenated without a separator, so page 1 element 12 and page
+    # -- 11 element 2 feed the same input; re-hash only on collision to keep other ids unchanged
+    used_ids: set[str] = set()
     old_to_new_mapping = {
-        element.id: element.id_to_hash(seq_on_page_counter)
+        element.id: _unique_hash_id(element, seq_on_page_counter, used_ids)
         for element, seq_on_page_counter in zip(elements, page_seq_pairs)
     }
 
@@ -813,7 +826,7 @@ class Element(abc.ABC):
 
         return new_coordinates
 
-    def id_to_hash(self, sequence_number: int) -> str:
+    def id_to_hash(self, sequence_number: int, rehash: int = 0) -> str:
         """Calculates and assigns a deterministic hash as an ID.
 
         The hash ID is based on element's text, sequence number on page,
@@ -821,10 +834,13 @@ class Element(abc.ABC):
 
         Args:
             sequence_number: index on page
+            rehash: collision counter that salts the hash, so a clash with another element of the
+                same document gets its own id
 
         Returns: new ID value
         """
         data = f"{self.metadata.filename}{self.text}{self.metadata.page_number}{sequence_number}"
+        data += "" if rehash == 0 else f"|{rehash}"
         self._element_id = hashlib.sha256(data.encode()).hexdigest()[:32]
         return self.id
 
