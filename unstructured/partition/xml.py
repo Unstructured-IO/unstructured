@@ -139,6 +139,9 @@ def _get_leaf_elements(
     if xml_path is not None:
         # -- the root's start, after any comment or processing instruction ahead of it --
         element = next(node for event, node in element_iterator if event == "start")
+        # -- XPath needs the whole tree, not just what lxml has read so far --
+        for _ in element_iterator:
+            pass
         matches = [match for match in etree.XPath(xml_path)(element) if isinstance(match.tag, str)]
         selected = set(matches)
         for match in matches:
