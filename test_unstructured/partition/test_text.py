@@ -195,6 +195,57 @@ def test_partition_text_reads_a_bulleted_list_that_follows_its_lead_in_line(
     assert partition_text(text=text) == expected
 
 
+def test_partition_text_treats_a_lone_carriage_return_as_a_line_break(tmp_path):
+    """A CR-only file splits like LF. LF, CRLF, and a CR inside LF text do not change."""
+    lf_paragraphs = "Hello world.\n\nSecond paragraph.\n"
+    lf_lines = "one\ntwo\nthree\n"
+    crlf_paragraphs = "Hello world.\r\n\r\nSecond paragraph.\r\n"
+    wrapped = (
+        "The big brown fox\nwas walking down the lane.\n\nAt the end of the lane,\n"
+        "the fox met a bear."
+    )
+
+    lone_cr = partition_text(text="Hello world.\r\rSecond paragraph.\r")
+    assert lone_cr == partition_text(text=lf_paragraphs)
+    assert all("\r" not in element.text for element in lone_cr)
+    assert partition_text(text="one\rtwo\rthree\r") == partition_text(text=lf_lines)
+    assert partition_text(text=wrapped.replace("\n", "\r")) == partition_text(text=wrapped)
+    assert partition_text(text=crlf_paragraphs) == partition_text(text=lf_paragraphs)
+    assert [
+        element.text for element in partition_text(text="Hello\rworld.\n\nSecond paragraph.\n")
+    ] == [
+        "Hello\rworld.",
+        "Second paragraph.",
+    ]
+    assert [
+        element.text
+        for element in partition_text(text="Keep\rthis\n\nNext", paragraph_grouper=False)
+    ] == ["Keep\rthis", "Next"]
+
+    path = tmp_path / "classic-mac.txt"
+    path.write_bytes(b"Hello world.\r\rSecond paragraph.\r")
+    from_file = partition_text(filename=str(path))
+    assert [(type(element), element.text) for element in from_file] == [
+        (type(element), element.text) for element in lone_cr
+    ]
+
+
+def test_partition_text_keeps_a_carriage_return_outside_a_custom_line_split():
+    """line_split decides which characters break. A CR outside that set stays in the text."""
+    line_split = re.compile(r"\s*[\n\f]\s*")
+
+    elements = partition_text(
+        text="Items:\n• first\rkept\f• second\n",
+        paragraph_grouper=functools.partial(group_broken_paragraphs, line_split=line_split),
+    )
+
+    assert [(type(element), element.text) for element in elements] == [
+        (Title, "Items:"),
+        (ListItem, "first\rkept"),
+        (ListItem, "second"),
+    ]
+
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
