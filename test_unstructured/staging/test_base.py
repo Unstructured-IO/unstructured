@@ -832,6 +832,19 @@ def test_create_file_from_elements_propagates_formula_markdown_style():
     assert plain == "x = 1"
 
 
+def test_create_file_from_elements_writes_text_file_from_an_iterator(tmp_path: pathlib.Path):
+    """The text branch must not consume `elements` twice; an iterator is empty the second time."""
+    path = str(tmp_path / "out.txt")
+
+    content = base.create_file_from_elements(
+        iter([Title("Report"), Text("Body line.")]), output_format="text", filename=path
+    )
+
+    assert content == "Report\nBody line."
+    with open(path) as f:
+        assert f.read() == "Report\nBody line."
+
+
 def test_elements_to_md_file_output():
     """Test elements_to_md function with file output."""
 
