@@ -964,6 +964,12 @@ class _Chunker:
         # -- emit first chunk --
         if self._prefix_len and not self._opts.use_token_counting:
             s, remainder = split(self._text, self._prefix_len)
+            # A retry without the synthetic prefix can expose a whitespace-only split.
+            # Keep first-chunk metadata for the first fragment actually emitted.
+            while not s and remainder:
+                s, remainder = split(remainder)
+            if not s:
+                return
         else:
             s, remainder = split(self._text)
         # -- each chunk split from a very large element would repeat it in `.orig_elements` --

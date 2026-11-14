@@ -264,6 +264,18 @@ def test_whitespace_in_a_code_snippet_does_not_amplify_chunks():
     assert chunks[-1].text.endswith("z")
 
 
+def test_carried_prefix_followed_by_leading_code_whitespace_has_no_empty_chunk():
+    chunks = chunk_elements(
+        [Text("abcdefghij"), CodeSnippet(" " * 50 + "z")],
+        max_characters=50,
+        overlap=10,
+        overlap_all=True,
+    )
+
+    assert [chunk.text for chunk in chunks] == ["abcdefghij", "z"]
+    assert not chunks[1].metadata.is_continuation
+
+
 # ------------------------------------------------------------------------------------------------
 # UNIT TESTS
 # ------------------------------------------------------------------------------------------------
