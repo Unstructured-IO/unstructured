@@ -958,50 +958,33 @@ def convert_to_coco(
     categories = [{"id": i + 1, "name": cat} for i, cat in enumerate(categories)]
     coco_dataset["categories"] = categories
     # Handle Annotations
-    annotations = [
-        {
-            "id": el["element_id"],
-            "category_id": [x["id"] for x in categories if x["name"] == el["type"]][0],
-            "bbox": (
-                [
-                    float(el["metadata"].get("coordinates")["points"][0][0]),
-                    float(el["metadata"].get("coordinates")["points"][0][1]),
-                    float(
-                        abs(
-                            el["metadata"].get("coordinates")["points"][0][0]
-                            - el["metadata"].get("coordinates")["points"][2][0]
-                        )
-                    ),
-                    float(
-                        abs(
-                            el["metadata"].get("coordinates")["points"][0][1]
-                            - el["metadata"].get("coordinates")["points"][1][1]
-                        )
-                    ),
-                ]
-                if el["metadata"].get("coordinates")
-                else []
-            ),
-            "area": (
-                (
-                    float(
-                        abs(
-                            el["metadata"].get("coordinates")["points"][0][0]
-                            - el["metadata"].get("coordinates")["points"][2][0]
-                        )
-                    )
-                    * float(
-                        abs(
-                            el["metadata"].get("coordinates")["points"][0][1]
-                            - el["metadata"].get("coordinates")["points"][1][1]
-                        )
-                    )
+    annotations = []
+    for el in element_dicts:
+        bbox = []
+        if coordinates := el["metadata"].get("coordinates"):
+            metadata = CoordinatesMetadata.from_dict(coordinates)
+            system, points = metadata.system, metadata.points
+            assert system is not None
+            assert points is not None
+            if not isinstance(system, PixelSpace):
+                points = system.convert_multiple_coordinates_to_new_system(
+                    PixelSpace(system.width, system.height), points
                 )
-                if el["metadata"].get("coordinates")
-                else None
-            ),
-        }
-        for el in element_dicts
-    ]
+            x_values, y_values = zip(*points)
+            left, top = min(x_values), min(y_values)
+            bbox = [
+                float(left),
+                float(top),
+                float(max(x_values) - left),
+                float(max(y_values) - top),
+            ]
+        annotations.append(
+            {
+                "id": el["element_id"],
+                "category_id": [x["id"] for x in categories if x["name"] == el["type"]][0],
+                "bbox": bbox,
+                "area": bbox[2] * bbox[3] if bbox else None,
+            }
+        )
     coco_dataset["annotations"] = annotations
     return coco_dataset
