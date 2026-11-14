@@ -560,6 +560,22 @@ def test_elements_to_html_tags_by_page(mocker: MockerFixture, elements: list[Ele
         assert el.string == f"test-element-{i}"
 
 
+def test_elements_to_html_tags_by_page_uses_the_real_page_numbers() -> None:
+    elements: list[Element] = [
+        Title("On page five", metadata=ElementMetadata(page_number=5)),
+        Title("On page three", metadata=ElementMetadata(page_number=3)),
+        Title("Also on page five", metadata=ElementMetadata(page_number=5)),
+    ]
+
+    result = _elements_to_html_tags_by_page(elements)
+
+    assert [tag["data-page_number"] for tag in result] == [5, 3]
+    assert [[child.get_text() for child in tag.contents] for tag in result] == [
+        ["On page five", "Also on page five"],
+        ["On page three"],
+    ]
+
+
 def test_group_elements_by_page(caplog: pytest.LogCaptureFixture, elements: list[Element]) -> None:
     result = group_elements_by_page(elements)
     assert len(result) == 3
