@@ -577,6 +577,29 @@ def test_partition_email_passes_on_the_exact_bytes_of_an_attachment_of_an_attach
     assert received[file_name] == ATTACHMENT_BYTES
 
 
+@pytest.mark.parametrize("file_name", ["binary.png", "7bit.png", "base64.png"])
+def test_partition_email_passes_on_the_exact_bytes_of_an_attachment_of_a_multipart_attachment(
+    request: FixtureRequest, multipart_attachment_email: io.BytesIO, file_name: str
+):
+    """A non-Base64 file in a `multipart/*` attachment keeps its CR and LF bytes.
+
+    Whatever its Content-Transfer-Encoding. The Base64-encoded file is the control.
+    """
+    received: dict[str | None, bytes] = {}
+
+    def partition_(file: IO[bytes], **kwargs: Any) -> list[Element]:
+        received[kwargs["metadata_filename"]] = file.read()
+        return []
+
+    function_mock(request, "unstructured.partition.auto.partition", side_effect=partition_)
+
+    partition_email(file=multipart_attachment_email, process_attachments=True)
+
+    bundle = email.message_from_bytes(received["bundle.eml"], policy=email.policy.default)
+    (leaf,) = [part for part in bundle.walk() if part.get_filename() == file_name]
+    assert leaf.get_payload(decode=True) == ATTACHMENT_BYTES
+
+
 def test_partition_email_skips_a_WEBP_attachment_when_image_dependencies_are_not_installed(
     request: FixtureRequest, caplog: LogCaptureFixture, webp_attachment_email: io.BytesIO
 ):
@@ -955,6 +978,48 @@ def nested_attached_emails() -> io.BytesIO:
         b'Content-Disposition: attachment; filename="level-1.eml"\r\n'
         b"\r\n" + level_1 + b"\r\n"
         b"--level-0--\r\n"
+    )
+
+
+@pytest.fixture()
+def multipart_attachment_email() -> io.BytesIO:
+    """An email with a `multipart/mixed` attachment that holds `ATTACHMENT_BYTES` three times.
+
+    Sent with Content-Transfer-Encoding "binary", with no Content-Transfer-Encoding header and in
+    Base64. Built from bytes, since `EmailMessage` would choose its own transfer-encoding.
+    """
+    attachment_base64 = base64.b64encode(ATTACHMENT_BYTES)
+    return io.BytesIO(
+        b"From: alice@example.com\r\n"
+        b"Subject: Bundle\r\n"
+        b"MIME-Version: 1.0\r\n"
+        b'Content-Type: multipart/mixed; boundary="outer"\r\n'
+        b"\r\n"
+        b"--outer\r\n"
+        b"Content-Type: text/plain\r\n"
+        b"\r\n"
+        b"This is the email.\r\n"
+        b"--outer\r\n"
+        b'Content-Type: multipart/mixed; boundary="inner"\r\n'
+        b'Content-Disposition: attachment; filename="bundle.eml"\r\n'
+        b"\r\n"
+        b"--inner\r\n"
+        b"Content-Type: image/png\r\n"
+        b'Content-Disposition: attachment; filename="binary.png"\r\n'
+        b"Content-Transfer-Encoding: binary\r\n"
+        b"\r\n" + ATTACHMENT_BYTES + b"\r\n"
+        b"--inner\r\n"
+        b"Content-Type: image/png\r\n"
+        b'Content-Disposition: attachment; filename="7bit.png"\r\n'
+        b"\r\n" + ATTACHMENT_BYTES + b"\r\n"
+        b"--inner\r\n"
+        b"Content-Type: image/png\r\n"
+        b'Content-Disposition: attachment; filename="base64.png"\r\n'
+        b"Content-Transfer-Encoding: base64\r\n"
+        b"\r\n" + attachment_base64 + b"\r\n"
+        b"--inner--\r\n"
+        b"\r\n"
+        b"--outer--\r\n"
     )
 
 
