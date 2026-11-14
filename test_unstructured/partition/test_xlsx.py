@@ -807,6 +807,73 @@ def test_partition_xlsx_formula_warning_follows_a_worksheet_outside_the_usual_di
     assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
 
 
+def test_partition_xlsx_formula_warning_finds_a_relocated_workbook_part(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- the package manifest names the workbook part, so a writer may call it anything; reading
+    # -- the conventional path left this workbook's relationships unreadable and undiagnosed --
+    relocated = _repackaged(
+        _budget_workbook_file(),
+        {
+            "xl/workbook.xml": lambda content: ("xl/book.xml", content),
+            "xl/_rels/workbook.xml.rels": lambda content: ("xl/_rels/book.xml.rels", content),
+            "[Content_Types].xml": lambda content: (
+                "[Content_Types].xml",
+                content.replace(b'PartName="/xl/workbook.xml"', b'PartName="/xl/book.xml"'),
+            ),
+            "_rels/.rels": lambda content: (
+                "_rels/.rels",
+                content.replace(b'Target="xl/workbook.xml"', b'Target="xl/book.xml"'),
+            ),
+        },
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        elements = partition_xlsx(file=relocated)
+
+    assert elements == [Table("Item Amount Rent 1000 Power 450"), Title("Total")]
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_resolves_a_worksheet_against_the_workbook_part(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- a relative worksheet target resolves against the directory holding the workbook part,
+    # -- which is not always `xl/`; assuming it was pointed the diagnostic at nothing --
+    relocated = _repackaged(
+        _budget_workbook_file(),
+        {
+            "xl/workbook.xml": lambda content: ("book/workbook.xml", content),
+            "xl/worksheets/sheet1.xml": lambda content: ("book/sheets/sheet1.xml", content),
+            "xl/_rels/workbook.xml.rels": lambda content: (
+                "book/_rels/workbook.xml.rels",
+                content.replace(
+                    b'Target="/xl/worksheets/sheet1.xml"', b'Target="sheets/sheet1.xml"'
+                ),
+            ),
+            "[Content_Types].xml": lambda content: (
+                "[Content_Types].xml",
+                content.replace(
+                    b'PartName="/xl/workbook.xml"', b'PartName="/book/workbook.xml"'
+                ).replace(
+                    b'PartName="/xl/worksheets/sheet1.xml"',
+                    b'PartName="/book/sheets/sheet1.xml"',
+                ),
+            ),
+            "_rels/.rels": lambda content: (
+                "_rels/.rels",
+                content.replace(b'Target="xl/workbook.xml"', b'Target="book/workbook.xml"'),
+            ),
+        },
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        elements = partition_xlsx(file=relocated)
+
+    assert elements == [Table("Item Amount Rent 1000 Power 450"), Title("Total")]
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+
+
 def test_partition_xlsx_formula_warning_keeps_quiet_about_a_cached_empty_string(
     caplog: pytest.LogCaptureFixture,
 ):
