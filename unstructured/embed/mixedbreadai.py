@@ -116,7 +116,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         batch_size = BATCH_SIZE
         batch_itr = range(0, len(texts), batch_size)
 
-        responses = []
+        embeddings = []
         client = self.config.get_client()
         for i in batch_itr:
             batch = texts[i : i + batch_size]
@@ -128,8 +128,11 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
                 request_options=self._request_options,
                 input=batch,
             )
-            responses.append(response)
-        return [item.embedding for response in responses for item in response.data]
+            ordered = sorted(response.data, key=lambda item: item.index)
+            if [item.index for item in ordered] != list(range(len(batch))):
+                raise ValueError("Mixedbread AI response indices must match the input batch.")
+            embeddings.extend(item.embedding for item in ordered)
+        return embeddings
 
     @staticmethod
     def _add_embeddings_to_elements(

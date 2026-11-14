@@ -17,7 +17,9 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
         input,
     ):
         mock_response = mocker.MagicMock()
-        mock_response.data = [mocker.MagicMock(embedding=[i, i + 1]) for i in range(len(input))]
+        mock_response.data = [
+            mocker.MagicMock(index=i, embedding=[i, i + 1]) for i in range(len(input))
+        ]
         return mock_response
 
     mock_client.embeddings.side_effect = mock_embeddings
