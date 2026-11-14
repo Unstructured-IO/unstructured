@@ -332,7 +332,7 @@ def partition_multiple_via_api(
         response_list = response.json()
         # NOTE(robinson) - this check is because if only one filename is passed, the return
         # type from the API is a list of objects instead of a list of lists
-        if not isinstance(response_list[0], list):
+        if not response_list or not isinstance(response_list[0], list):
             response_list = [response_list]
 
         for document in response_list:
