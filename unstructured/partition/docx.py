@@ -494,6 +494,7 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
+                self._trim_list_item_links(text, clean_text, metadata)
                 yield ListItem(
                     text=self._prefix_label(label, clean_text, metadata),
                     metadata=metadata,
@@ -519,6 +520,31 @@ class _DocxPartitioner:
 
         # -- if all that fails we give it the default `Text` element-type --
         yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+
+    @staticmethod
+    def _trim_list_item_links(text: str, clean_text: str, metadata: ElementMetadata) -> None:
+        """Keep hyperlink ranges aligned after removing a bullet and surrounding whitespace."""
+        if not metadata.links or clean_text == text:
+            return
+        # -- cleaning only removes a prefix and trailing whitespace; using lengths also works
+        # -- when the retained text repeats characters from the discarded prefix.
+        end = len(text.rstrip())
+        start = end - len(clean_text)
+        links: list[Link] = []
+        for link in metadata.links:
+            link_start = max(start, link["start_index"])
+            link_end = min(end, link["start_index"] + len(link["text"] or ""))
+            if link_start < link_end:
+                links.append(
+                    Link(
+                        text=text[link_start:link_end],
+                        url=link["url"],
+                        start_index=link_start - start,
+                    )
+                )
+        metadata.links = links or None
+        metadata.link_texts = [link["text"] or "" for link in links] or None
+        metadata.link_urls = [link["url"] for link in links] or None
 
     @staticmethod
     def _prefix_label(label: str, text: str, metadata: ElementMetadata) -> str:
