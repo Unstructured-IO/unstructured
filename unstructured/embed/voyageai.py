@@ -40,7 +40,7 @@ class VoyageAIEmbeddingConfig(EmbeddingConfig):
     api_key: SecretStr
     model_name: str
     show_progress_bar: bool = False
-    batch_size: Optional[int] = Field(default=None)
+    batch_size: Optional[int] = Field(default=None, gt=0)
     truncation: Optional[bool] = Field(default=None)
     output_dimension: Optional[int] = Field(default=None)
 
@@ -100,6 +100,7 @@ class VoyageAIEmbeddingEncoder(BaseEmbeddingEncoder):
             return
 
         max_tokens_per_batch = self.config.get_token_limit()
+        max_batch_size = min(self.config.batch_size or MAX_BATCH_SIZE, MAX_BATCH_SIZE)
         current_batch: List[str] = []
         current_batch_tokens = 0
 
@@ -112,7 +113,7 @@ class VoyageAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
             # Check if adding this text would exceed limits
             if current_batch and (
-                len(current_batch) >= MAX_BATCH_SIZE
+                len(current_batch) >= max_batch_size
                 or (current_batch_tokens + n_tokens > max_tokens_per_batch)
             ):
                 # Yield the current batch and start a new one
