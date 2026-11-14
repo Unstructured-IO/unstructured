@@ -1708,7 +1708,7 @@ def test_partition_docx_from_file_prefers_metadata_filename_when_provided():
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_docx_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
+def test_partition_docx_from_file_path_prefers_embedded_last_modified(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
         "unstructured.partition.docx.get_last_modified_date", return_value=filesystem_last_modified
@@ -1716,14 +1716,14 @@ def test_partition_docx_from_file_path_gets_last_modified_from_filesystem(mocker
 
     elements = partition_docx(example_doc_path("fake.docx"))
 
-    assert elements[0].metadata.last_modified == filesystem_last_modified
+    assert elements[0].metadata.last_modified == "2013-12-23T23:15:00+00:00"
 
 
-def test_partition_docx_from_file_gets_last_modified_None():
+def test_partition_docx_from_file_gets_embedded_last_modified():
     with open(example_doc_path("simple.docx"), "rb") as f:
         elements = partition_docx(file=f)
 
-    assert elements[0].metadata.last_modified is None
+    assert elements[0].metadata.last_modified == "2013-12-23T23:15:00+00:00"
 
 
 def test_partition_docx_from_file_path_prefers_metadata_last_modified(mocker: MockFixture):
@@ -2455,6 +2455,10 @@ class DescribeDocxPartitionerOptions:
         opts_args["file_path"] = "a/b/document.docx"
         get_last_modified_date_.return_value = "2024-04-02T20:32:35"
         opts = DocxPartitionerOptions(**opts_args)
+        opts.document = docx.Document()
+        opts.document.core_properties._element.remove(
+            opts.document.core_properties._element.find(qn("dcterms:modified"))
+        )
 
         last_modified = opts.last_modified
 
@@ -2464,9 +2468,11 @@ class DescribeDocxPartitionerOptions:
     def but_it_falls_back_to_None_for_the_last_modified_date_when_no_file_path_is_provided(
         self, opts_args: dict[str, Any]
     ):
-        file = io.BytesIO(b"abcdefg")
-        opts_args["file"] = file
         opts = DocxPartitionerOptions(**opts_args)
+        opts.document = docx.Document()
+        opts.document.core_properties._element.remove(
+            opts.document.core_properties._element.find(qn("dcterms:modified"))
+        )
 
         assert opts.last_modified is None
 

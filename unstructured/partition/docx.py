@@ -13,6 +13,8 @@ from typing import IO, Any, Iterator, Protocol, Type
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.opc.parts.coreprops import CorePropertiesPart
 from docx.oxml.ns import nsmap, qn
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
@@ -185,7 +187,8 @@ def partition_docx(
         The filename to use for the metadata. Relevant because partition_doc converts the document
         to .docx before partition. We want the original source filename in the metadata.
     metadata_last_modified
-        The last modified date for the document.
+        Override the last modified date for the document. Otherwise, use its embedded core-property
+        modification date, falling back to the source file's modification date when available.
     starting_page_number
         Assign this number to the first page of this document and increment the page number from
         there.
@@ -283,6 +286,19 @@ class DocxPartitionerOptions:
     @cached_property
     def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
+        # -- Access the existing part directly: Document.core_properties creates one with the
+        # -- current time when it is absent, which is not the source document's modification date.
+        package = self.document.part.package
+        try:
+            part = package.part_related_by(RT.CORE_PROPERTIES)
+            if isinstance(part, CorePropertiesPart):
+                modified = part.core_properties.modified
+                if modified is not None:
+                    return modified.isoformat(timespec="seconds")
+        except (KeyError, TypeError, ValueError, OverflowError):
+            # -- Missing or malformed optional dates must not prevent text extraction.
+            pass
+
         if not self._file_path:
             return None
 
