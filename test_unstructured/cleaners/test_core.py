@@ -252,6 +252,41 @@ At the end of the lane the fox met a friendly bear."""
     )
 
 
+def test_blank_line_grouper_splits_on_the_default_blank_line():
+    text = """The big red fox
+is walking down the lane.
+
+At the end of the lane
+the fox met a friendly bear."""
+
+    assert (
+        core.blank_line_grouper(text)
+        == """The big red fox is walking down the lane.
+
+At the end of the lane the fox met a friendly bear."""
+    )
+
+
+def test_blank_line_grouper_splits_on_the_paragraph_split_it_is_given():
+    text = """The big red fox
+
+is walking down the lane.
+
+
+At the end of the lane
+
+the fox met a friendly bear."""
+
+    para_split_re = re.compile(r"(\s*\n\s*){3}")
+
+    assert (
+        core.blank_line_grouper(text, paragraph_split=para_split_re)
+        == """The big red fox is walking down the lane.
+
+At the end of the lane the fox met a friendly bear."""
+    )
+
+
 def test_group_broken_paragraphs_with_bullets():
     text = """○The big red fox
 is walking down the lane.
