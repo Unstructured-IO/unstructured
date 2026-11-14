@@ -11,6 +11,7 @@ from functools import cached_property
 from typing import IO, Any, Iterator, Protocol, Sequence, cast
 
 import pptx
+from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 from pptx.oxml.ns import qn
 from pptx.presentation import Presentation
 from pptx.shapes.autoshape import Shape
@@ -28,6 +29,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     EmailAddress,
+    Link,
     ListItem,
     NarrativeText,
     PageBreak,
@@ -141,6 +143,9 @@ def partition_pptx(
     **kwargs: Any,
 ) -> list[Element]:
     """Partition PowerPoint document in .pptx format into its document elements.
+
+    External click hyperlinks in title and body paragraphs are retained in link metadata,
+    with character offsets into the emitted element text. Internal slide actions remain text.
 
     Parameters
     ----------
@@ -277,7 +282,7 @@ class _PptxPartitioner:
                 continue
 
             level = paragraph.level or 0
-            metadata = self._opts.text_metadata(category_depth=level)
+            metadata = self._paragraph_metadata(paragraph, category_depth=level)
 
             if self._is_bulleted_paragraph(paragraph):
                 yield ListItem(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
@@ -291,7 +296,7 @@ class _PptxPartitioner:
                 )
             elif is_possible_title(text):
                 # If text is a title but not the title shape increment the category depth)
-                metadata = self._opts.text_metadata(category_depth=level + 1)
+                metadata.category_depth = level + 1
                 yield Title(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             else:
                 yield Text(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
@@ -336,23 +341,69 @@ class _PptxPartitioner:
                 bullet_depth = paragraph.level or 0
                 yield ListItem(
                     text=text,
-                    metadata=self._opts.text_metadata(category_depth=bullet_depth),
+                    metadata=self._paragraph_metadata(paragraph, category_depth=bullet_depth),
                     detection_origin=DETECTION_ORIGIN,
                 )
             elif is_email_address(text):
                 yield EmailAddress(
                     text=text,
-                    metadata=self._opts.text_metadata(category_depth=depth),
+                    metadata=self._paragraph_metadata(paragraph, category_depth=depth),
                     detection_origin=DETECTION_ORIGIN,
                 )
             else:
                 # increment the category depth by the paragraph increment in the shape
                 yield Title(
                     text=text,
-                    metadata=self._opts.text_metadata(category_depth=depth),
+                    metadata=self._paragraph_metadata(paragraph, category_depth=depth),
                     detection_origin=DETECTION_ORIGIN,
                 )
                 depth += 1  # Cannot enumerate because we want to skip empty paragraphs
+
+    def _paragraph_metadata(self, paragraph: _Paragraph, category_depth: int) -> ElementMetadata:
+        """Paragraph metadata with external click links aligned to the emitted text.
+
+        Walk the same runs, fields and breaks used by `paragraph.text`. Looking for a run's
+        visible text in the paragraph would misplace repeated labels and skip field/break offsets.
+        Adjacent runs sharing a target form one link even when their formatting differs.
+        """
+        metadata = self._opts.text_metadata(category_depth=category_depth)
+        links: list[Link] = []
+        offset = 0
+        active_url: str | None = None
+        active_start = 0
+        active_parts: list[str] = []
+
+        for item in paragraph._p.content_children:
+            text = _break_lines(item.text)
+            if not text:
+                continue
+            rPr = item.find(qn("a:rPr"))
+            hlink = rPr.find(qn("a:hlinkClick")) if rPr is not None else None
+            rel_id = hlink.get(qn("r:id")) if hlink is not None else None
+            rel = paragraph.part.rels.get(rel_id) if rel_id else None
+            url = (
+                rel.target_ref
+                if rel is not None and rel.is_external and rel.reltype == RT.HYPERLINK
+                else None
+            )
+            if url != active_url:
+                if active_url:
+                    links.append(
+                        Link(text="".join(active_parts), url=active_url, start_index=active_start)
+                    )
+                active_url, active_start, active_parts = url, offset, []
+            if url:
+                active_parts.append(text)
+            offset += len(text)
+
+        if active_url:
+            links.append(Link(text="".join(active_parts), url=active_url, start_index=active_start))
+        if links:
+            metadata.links = links
+            metadata.link_texts = [link["text"] or "" for link in links]
+            metadata.link_urls = [link["url"] for link in links]
+            metadata.link_start_indexes = [link["start_index"] for link in links]
+        return metadata
 
     def _order_shapes(self, slide: Slide) -> tuple[Shape | None, Sequence[BaseShape]]:
         """Orders the shapes on `slide` from top to bottom and left to right.
