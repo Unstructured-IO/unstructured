@@ -42,6 +42,7 @@ def stage_for_prodigy(
 ) -> PRODIGY_TYPE:
     """
     Converts the document to the JSON format required for use with Prodigy.
+    Copies each metadata dictionary before adding the element's ID.
     ref: https://prodi.gy/docs/api-loaders#input
     """
 
@@ -49,6 +50,7 @@ def stage_for_prodigy(
 
     prodigy_data: PRODIGY_TYPE = []
     for element, metadatum in zip(elements, validated_metadata):
+        metadatum = metadatum.copy()
         if isinstance(element.id, str):
             metadatum["id"] = element.id
         data: Dict[str, Union[str, Dict[str, str]]] = {"text": element.text, "meta": metadatum}
