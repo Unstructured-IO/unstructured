@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import re
 from typing import IO, Any, Optional
 
 import markdown
+from markdown.blockprocessors import HashHeaderProcessor
 from markdown.extensions import Extension
 
 from unstructured.documents.elements import Element
@@ -44,6 +46,24 @@ def _validate_markdown_extensions(extensions: Any) -> list[Any]:
                 f"instance, got {type(item).__name__}: {item!r}"
             )
     return extensions
+
+
+class _IndentedHashHeaderProcessor(HashHeaderProcessor):
+    """Recognize ATX headings that are indented by up to three spaces.
+
+    CommonMark allows `` ## Heading`` to be indented by one to three spaces, but Python-Markdown
+    only matches a `#` in the first column and would leave such a heading as plain text. Four or
+    more spaces still make an indented code block, as before.
+    """
+
+    RE = re.compile(r"(?:^|\n)[ ]{0,3}(?P<level>#{1,6})(?P<header>(?:\\.|[^\\])*?)#*(?:\n|$)")
+
+
+class _IndentedHeadingExtension(Extension):
+    def extendMarkdown(self, md: markdown.Markdown) -> None:
+        md.parser.blockprocessors.register(
+            _IndentedHashHeaderProcessor(md.parser), "hashheader", 70
+        )
 
 
 @partition_runtime_telemetry("md")
@@ -123,7 +143,7 @@ def partition_md(
         kwargs.pop("extensions", _DEFAULT_MARKDOWN_EXTENSIONS)
     )
 
-    html = markdown.markdown(text, extensions=extensions)
+    html = markdown.markdown(text, extensions=[*extensions, _IndentedHeadingExtension()])
 
     html_kwargs: dict[str, Any] = {
         "text": html,

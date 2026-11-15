@@ -418,3 +418,25 @@ def test_partition_md_tables_only_differs_from_default_for_code_fence():
     tables_only_els = partition_md(text=text, extensions=["tables"])
     assert default_el.category == ElementType.CODE_SNIPPET
     assert any(e.category == ElementType.TITLE for e in tables_only_els)
+
+
+def test_partition_md_recognizes_headings_indented_up_to_three_spaces():
+    text = "# Title\n\n ## Chapter 1\n\n   ### Section\n\n Body text here."
+
+    elements = partition_md(text=text)
+
+    assert [(e.text, e.metadata.category_depth) for e in elements[:3]] == [
+        ("Title", 0),
+        ("Chapter 1", 1),
+        ("Section", 2),
+    ]
+    assert elements[1].metadata.parent_id == elements[0].id
+    assert elements[2].metadata.parent_id == elements[1].id
+    assert elements[3].metadata.parent_id == elements[2].id
+
+
+def test_partition_md_keeps_four_space_indented_hash_line_as_code():
+    elements = partition_md(text="Intro paragraph.\n\n    # not a heading\n")
+
+    assert all(e.text != "not a heading" for e in elements)
+    assert not any(e.metadata.category_depth is not None for e in elements)
