@@ -8,6 +8,51 @@ from unstructured.documents.elements import ElementMetadata, Image, Text
 
 
 @pytest.mark.parametrize("chunk", [chunk_elements, chunk_by_title])
+@pytest.mark.parametrize(
+    "field_name",
+    ["link_texts", "link_urls", "emphasized_text_contents", "emphasized_text_tags"],
+)
+@pytest.mark.parametrize("value", ["ab", ("a", "b"), "", ()])
+def test_consolidation_rejects_non_list_concatenated_metadata(chunk, field_name, value):
+    elements = [
+        Text("first", metadata=ElementMetadata(**{field_name: ["before"]})),
+        Text("second", metadata=ElementMetadata(**{field_name: value})),
+    ]
+
+    with pytest.raises(TypeError):
+        chunk(elements, max_characters=1000, include_orig_elements=False)
+
+
+@pytest.mark.parametrize("chunk", [chunk_elements, chunk_by_title])
+@pytest.mark.parametrize(
+    "field_name",
+    ["link_texts", "link_urls", "emphasized_text_contents", "emphasized_text_tags"],
+)
+def test_consolidation_accepts_list_subclasses_without_mutating_sources(chunk, field_name):
+    class MetadataList(list):
+        pass
+
+    first = MetadataList(["a", "a"])
+    last = MetadataList(["b"])
+    elements = [
+        Text("first", metadata=ElementMetadata(**{field_name: first})),
+        Text("second", metadata=ElementMetadata(**{field_name: []})),
+        Text("third"),
+        Text("fourth", metadata=ElementMetadata(**{field_name: last})),
+    ]
+
+    result = getattr(
+        chunk(elements, max_characters=1000, include_orig_elements=False)[0].metadata,
+        field_name,
+    )
+
+    assert result == ["a", "a", "b"]
+    result.append("downstream")
+    assert first == ["a", "a"]
+    assert last == ["b"]
+
+
+@pytest.mark.parametrize("chunk", [chunk_elements, chunk_by_title])
 def test_provenance_consolidation_inspects_each_record_a_bounded_number_of_times(chunk):
     inspections = 0
 

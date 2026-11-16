@@ -1068,6 +1068,9 @@ class _Chunker:
                     yield field_name, values[0]
                 # -- concatenate lists from each element that had one, in order --
                 elif strategy is CS.LIST_CONCATENATE:
+                    # -- retain list-concatenation type checks without copying growing prefixes --
+                    if any(not isinstance(value, list) for value in values):
+                        raise TypeError(f"Expected a list for metadata field {field_name!r}")
                     yield field_name, [item for value in values for item in value]
                 # -- union lists from each element, preserving order of appearance --
                 elif strategy is CS.LIST_UNIQUE:
