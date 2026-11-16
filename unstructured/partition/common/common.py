@@ -405,11 +405,20 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
     if isinstance(file, BytesIO):
         return file.getvalue()
 
-    if isinstance(file, (TextIOWrapper, BufferedReader)) and isinstance(
-        getattr(file, "name", None), (str, bytes, os.PathLike)
+    if (
+        isinstance(file, (TextIOWrapper, BufferedReader))
+        and isinstance(getattr(file, "name", None), (str, bytes, os.PathLike))
+        and file.seekable()
     ):
-        with open(file.name, "rb") as f:
-            return f.read()
+        # -- a stream's path can be replaced, removed, or relative to an old cwd;
+        # -- read the open handle and preserve the caller's position instead --
+        position = file.tell()
+        try:
+            file.seek(0)
+            source = file.buffer if isinstance(file, TextIOWrapper) else file
+            return source.read()
+        finally:
+            file.seek(position)
 
     if callable(getattr(file, "read", None)) and callable(getattr(file, "seek", None)):
         # -- a pipe or socket cannot be rewound, so its remaining content is read once --
