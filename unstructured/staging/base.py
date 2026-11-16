@@ -884,21 +884,25 @@ def filter_element_types(
     include_element_types: Optional[Sequence[type[Element]]] = None,
     exclude_element_types: Optional[Sequence[type[Element]]] = None,
 ) -> list[Element]:
-    """Filters document elements by element type"""
+    """Filter document elements by exactly one included or excluded type sequence.
+
+    An empty include sequence selects no elements; an empty exclude sequence
+    excludes nothing. Only `None` means the corresponding option was not supplied.
+    """
     exactly_one(
         include_element_types=include_element_types,
         exclude_element_types=exclude_element_types,
     )
 
     filtered_elements: list[Element] = []
-    if include_element_types:
+    if include_element_types is not None:
         for element in elements:
             if type(element) in include_element_types:
                 filtered_elements.append(element)
 
         return filtered_elements
 
-    elif exclude_element_types:
+    elif exclude_element_types is not None:
         for element in elements:
             if type(element) not in exclude_element_types:
                 filtered_elements.append(element)
