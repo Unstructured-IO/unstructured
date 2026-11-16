@@ -1,3 +1,4 @@
+import tracemalloc
 from unittest.mock import patch
 
 import pytest
@@ -397,3 +398,22 @@ def test_under_non_alpha_ratio_does_not_count_emoji_marks_as_letters(text):
 @pytest.mark.parametrize("text", EMOJI_LINES)
 def test_is_possible_title_is_false_for_emoji_lines(text):
     assert text_type.is_possible_title(text) is False
+
+
+def test_letter_checks_use_bounded_memory_on_long_input():
+    # -- about 5 MB of mixed Hindi, Latin with combining accents, emoji and punctuation --
+    unit = "हिंदी सबसे अधिक बोली जाने वाली भाषा है। Café e\u0301 ⭐️ 1️⃣ 42, — "
+    text = unit * (5_000_000 // len(unit.encode()))
+    word = "हिंदी" * 200_000
+
+    tracemalloc.start()
+    try:
+        ratio_result = text_type.under_non_alpha_ratio(text)
+        word_result = text_type._is_word(word)
+        _, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+
+    assert ratio_result is False
+    assert word_result is True
+    assert peak < 100_000

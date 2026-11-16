@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 import re
 import unicodedata
-from typing import Final, List, Optional
+from typing import Final, Iterator, List, Optional
 
 from unstructured.cleaners.core import remove_punctuation
 from unstructured.logger import trace_logger
@@ -29,30 +29,30 @@ NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
 # Bengali are combining marks, not letters, so `"हिंदी".isalpha()` is False. Treat them as
 # part of the word they belong to. A mark counts only when it is attached to a letter, so the
 # variation selector (U+FE0F) and keycap (U+20E3) marks in emoji like "⭐️" and "1️⃣" do not.
-def _letter_flags(text: str) -> List[bool]:
-    """For each non-space character of `text`, whether it counts as a letter.
+def _iter_letter_flags(text: str) -> Iterator[bool]:
+    """Yield, for each non-space character of `text`, whether it counts as a letter.
 
     A letter counts. A combining mark (Unicode category M*) counts only when the previous
-    non-space character is a letter or a mark that counts. Anything else does not count.
+    non-space character counted. Anything else does not count. Only that one flag is kept, so
+    memory use does not grow with the length of `text`.
     """
-    flags: List[bool] = []
+    category = unicodedata.category
+    counts = False
     for char in text:
         if char.isspace():
             continue
         if char.isalpha():
-            flags.append(True)
-        elif unicodedata.category(char).startswith("M"):
-            flags.append(bool(flags) and flags[-1])
-        else:
-            flags.append(False)
-    return flags
+            counts = True
+        elif category(char)[0] != "M":
+            counts = False
+        yield counts
 
 
 def _is_word(token: str) -> bool:
     """True if `token` is letters and the combining marks attached to them, starting with a
     letter."""
-    flags = _letter_flags(token)
-    return bool(flags) and all(flags)
+    flags = _iter_letter_flags(token)
+    return next(flags, False) and all(flags)
 
 
 def is_possible_narrative_text(
@@ -285,8 +285,13 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     if not text:
         return False
 
-    flags = _letter_flags(text)
-    return (sum(flags) / len(flags) < threshold) if flags else False
+    alpha_count = 0
+    total_count = 0
+    for counts in _iter_letter_flags(text):
+        total_count += 1
+        alpha_count += counts
+
+    return ((alpha_count / total_count) < threshold) if total_count > 0 else False
 
 
 def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
