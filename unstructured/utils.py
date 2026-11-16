@@ -270,25 +270,40 @@ def calculate_largest_ngram_percentage(
         - A set containing the shared n-grams found during the calculation.
         - A string representation of the size of the largest shared n-grams found.
     """
-    shared_ngrams: set[tuple[str, ...]] = set()
-    if len(first_string.split()) < len(second_string.split()):
-        n = len(first_string.split()) - 1
-    else:
-        n = len(second_string.split()) - 1
+    first_length, second_length = len(first_string.split()), len(second_string.split())
+    if first_length >= second_length:
         first_string, second_string = second_string, first_string
-    ngram_percentage = 0
-    # Start from the biggest ngram possible (`n`) until the ngram_percentage is >0.0% or n == 0
-    while not ngram_percentage:
-        ngram_percentage, shared_ngrams = calculate_shared_ngram_percentage(
-            first_string,
-            second_string,
-            n,
+    maximum = min(first_length, second_length) - 1
+    if maximum <= 0:
+        percentage, shared_ngrams = calculate_shared_ngram_percentage(
+            first_string, second_string, maximum
         )
-        if n == 0:
+        return round(percentage, 2), shared_ngrams, str(maximum + 1)
+
+    # A common n-gram also contains a common (n-1)-gram. First bracket the longest common
+    # length, starting near the maximum so nearly identical paragraphs still finish quickly.
+    lower, upper = 0, maximum + 1
+    percentage, shared_ngrams = 0, set()
+    probe, step = maximum, 1
+    while probe > 0:
+        value, common = calculate_shared_ngram_percentage(first_string, second_string, probe)
+        if value:
+            lower, percentage, shared_ngrams = probe, value, common
             break
+        upper = probe
+        probe = max(0, probe - step)
+        step *= 2
+
+    # Only lengths inside this bracket remain undecided; avoid rebuilding every shorter
+    # n-gram set for long paragraphs with little or no shared text.
+    while upper - lower > 1:
+        probe = (lower + upper) // 2
+        value, common = calculate_shared_ngram_percentage(first_string, second_string, probe)
+        if value:
+            lower, percentage, shared_ngrams = probe, value, common
         else:
-            n -= 1
-    return round(ngram_percentage, 2), shared_ngrams, str(n + 1)
+            upper = probe
+    return round(percentage, 2), shared_ngrams, str(lower or 1)
 
 
 def is_parent_box(parent_target: Box, child_target: Box, add: float = 0.0) -> bool:
