@@ -430,6 +430,7 @@ convert_to_dict = elements_to_dicts
 
 
 def _emit_image_markdown(text: str, url: str) -> str:
+    """Render a literal image caption and source URL as a Markdown image."""
     # Captions are literal text, not Markdown or already-encoded HTML entities.
     alt_text = re.sub(r"([\\`*_\[\]])", r"\\\1", html.escape(text, quote=False))
     alt_text = alt_text.replace("\r", "&#13;").replace("\n", "&#10;")
