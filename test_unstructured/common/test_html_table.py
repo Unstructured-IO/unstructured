@@ -358,6 +358,37 @@ class DescribeHtmlTable:
 class DescribeHtmlRow:
     """Unit-test suite for `unstructured.common.html_table.HtmlRow`."""
 
+    @pytest.mark.parametrize(
+        "non_cell",
+        [
+            "<!-- layout marker -->",
+            "<?layout marker?>",
+            '<template rowspan="100" colspan="100">hidden</template>',
+            '<script rowspan="100" colspan="100">hidden</script>',
+        ],
+    )
+    def it_uses_only_direct_table_cells_for_text_and_spans(self, non_cell: str):
+        row = HtmlRow(
+            fragment_fromstring(
+                f"<tr>{non_cell}<th>Header</th>{non_cell}"
+                '<td rowspan="3"><b>Body</b></td><td/>'
+                f"{non_cell}</tr>"
+            )
+        )
+
+        assert [cell.text for cell in row.iter_cells()] == ["Header", "Body", ""]
+        assert list(row.iter_cell_texts()) == ["Header", "Body"]
+        assert row.text_len == len("Header Body")
+        assert row.max_rowspan == 3
+        clipped = row.row_clipped_to_rows(2)
+        assert [cell.rowspan for cell in clipped.iter_cells()] == [1, 2, 1]
+        assert list(clipped.iter_cell_texts()) == ["Header", "Body"]
+        assert [cell.rowspan for cell in row.iter_cells()] == [1, 3, 1]
+        non_cell_spans = "./template/@rowspan | ./script/@rowspan"
+        assert fragment_fromstring(clipped.html).xpath(non_cell_spans) == fragment_fromstring(
+            row.html
+        ).xpath(non_cell_spans)
+
     def it_can_serialize_the_row_to_html(self):
         assert HtmlRow(fragment_fromstring("<tr><td>a</td><td>b</td><td/></tr>")).html == (
             "<tr><td>a</td><td>b</td><td/></tr>"
