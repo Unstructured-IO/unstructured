@@ -19,6 +19,7 @@ from unstructured.documents.elements import (
     EmailAddress,
     ListItem,
     NarrativeText,
+    Text,
     Title,
 )
 from unstructured.file_utils.model import FileType
@@ -747,3 +748,8 @@ def test_partition_text_classifies_hindi_and_bengali_paragraphs_as_narrative_tex
     elements = partition_text(text="\n\n".join(paragraphs))
 
     assert elements == [NarrativeText(text=paragraph) for paragraph in paragraphs]
+
+
+@pytest.mark.parametrize("text", ["⭐️⭐️⭐️⭐️⭐️", "1️⃣ 2️⃣ 3️⃣"])
+def test_partition_text_keeps_emoji_only_lines_as_text(text):
+    assert partition_text(text=text) == [Text(text=text)]

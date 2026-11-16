@@ -382,3 +382,18 @@ def test_is_possible_narrative_text_for_hindi_and_bengali_paragraphs(text):
 @pytest.mark.parametrize("text", ["हिंदी", "परिचय"])
 def test_is_possible_title_for_short_hindi_headings(text):
     assert text_type.is_possible_title(text) is True
+
+
+# -- Emoji carry combining marks too: U+FE0F (variation selector, Mn) and U+20E3 (keycap, Me).
+# -- They are not attached to a letter, so they do not count as letters. --
+EMOJI_LINES = ["⭐️⭐️⭐️⭐️⭐️", "1️⃣ 2️⃣ 3️⃣", "✅️ ✅️ ✅️", "⚠️"]
+
+
+@pytest.mark.parametrize("text", EMOJI_LINES)
+def test_under_non_alpha_ratio_does_not_count_emoji_marks_as_letters(text):
+    assert text_type.under_non_alpha_ratio(text) is True
+
+
+@pytest.mark.parametrize("text", EMOJI_LINES)
+def test_is_possible_title_is_false_for_emoji_lines(text):
+    assert text_type.is_possible_title(text) is False

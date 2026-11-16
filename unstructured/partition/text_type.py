@@ -27,15 +27,32 @@ NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
 
 # NOTE(shlokbam): Vowel signs, viramas and anusvaras in Indic scripts such as Devanagari and
 # Bengali are combining marks, not letters, so `"हिंदी".isalpha()` is False. Treat them as
-# part of the word they belong to.
-def _is_letter_or_mark(char: str) -> bool:
-    """True if `char` is a letter or a combining mark (Unicode category M*)."""
-    return char.isalpha() or unicodedata.category(char).startswith("M")
+# part of the word they belong to. A mark counts only when it is attached to a letter, so the
+# variation selector (U+FE0F) and keycap (U+20E3) marks in emoji like "⭐️" and "1️⃣" do not.
+def _letter_flags(text: str) -> List[bool]:
+    """For each non-space character of `text`, whether it counts as a letter.
+
+    A letter counts. A combining mark (Unicode category M*) counts only when the previous
+    non-space character is a letter or a mark that counts. Anything else does not count.
+    """
+    flags: List[bool] = []
+    for char in text:
+        if char.isspace():
+            continue
+        if char.isalpha():
+            flags.append(True)
+        elif unicodedata.category(char).startswith("M"):
+            flags.append(bool(flags) and flags[-1])
+        else:
+            flags.append(False)
+    return flags
 
 
 def _is_word(token: str) -> bool:
-    """True if `token` has at least one letter and consists only of letters and combining marks."""
-    return any(char.isalpha() for char in token) and all(_is_letter_or_mark(char) for char in token)
+    """True if `token` is letters and the combining marks attached to them, starting with a
+    letter."""
+    flags = _letter_flags(token)
+    return bool(flags) and all(flags)
 
 
 def is_possible_narrative_text(
@@ -268,15 +285,8 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     if not text:
         return False
 
-    alpha_count = 0
-    total_count = 0
-    for char in text:
-        if not char.isspace():
-            total_count += 1
-            if char.isalpha() or unicodedata.category(char)[0] == "M":
-                alpha_count += 1
-
-    return ((alpha_count / total_count) < threshold) if total_count > 0 else False
+    flags = _letter_flags(text)
+    return (sum(flags) / len(flags) < threshold) if flags else False
 
 
 def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
