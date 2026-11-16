@@ -2804,7 +2804,7 @@ class _HtmlTableSplitter:
 
     @staticmethod
     def _as_header_row_html(row: HtmlRow, max_rowspan: int) -> str:
-        """Serialize `row` preserving source HTML while converting direct-child `<td>` to `<th>`.
+        """Serialize `row` preserving source cells while converting direct-child `<td>` to `<th>`.
 
         Clips any cell's `rowspan` down to `max_rowspan` -- the number of header rows actually
         being prepended -- so a repeated header can never claim rows beyond its own synthetic
@@ -2817,7 +2817,10 @@ class _HtmlTableSplitter:
         if tr is None:
             return row.html_clipped_to_rows(max_rowspan)
 
-        for cell in tr:
+        for cell in list(tr):
+            if cell.tag not in ("td", "th"):
+                tr.remove(cell)
+                continue
             rowspan = HtmlCell(cell).rowspan
             if rowspan is None or rowspan > max_rowspan:
                 if max_rowspan <= 1:

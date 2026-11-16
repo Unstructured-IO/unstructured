@@ -183,6 +183,12 @@ class HtmlTable:
         # -- compactification strips those details --
         rows = cast("list[HtmlElement]", table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
         source_row_htmls = tuple(etree.tostring(tr, encoding=str) for tr in rows)
+        # -- exclude ignored row children from working HTML as well as cell-text sizing; the
+        # -- original row markup remains available in `source_row_htmls` --
+        for tr in rows:
+            for child in list(tr):
+                if child.tag not in ("td", "th"):
+                    tr.remove(child)
         header_row_idxs = set()
         for idx, tr in enumerate(rows):
             cells = cast("list[HtmlElement]", tr.xpath("./th | ./td"))

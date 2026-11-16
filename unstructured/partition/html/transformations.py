@@ -533,7 +533,8 @@ def extract_tag_and_ontology_class_from_tag(
     """
     Extracts the HTML tag and corresponding ontology class
     from a BeautifulSoup Tag object. The CSS class is prioritized over
-    the HTML tag. If not recognized soup.name and UnstructuredText is returned.
+    the HTML tag for the ontology class, while structural table-cell tags are preserved.
+    If not recognized soup.name and UnstructuredText is returned.
 
     Args:
         soup (Tag): The BeautifulSoup Tag object to extract information from.
@@ -551,14 +552,14 @@ def extract_tag_and_ontology_class_from_tag(
         )
 
     # Scenario 2: HTML tag incorrect, CSS class correct
-    # Fallback to css name selector and overwrite html tag
+    # Fallback to css name selector without replacing structural table-cell tags
     if (
         not element_class
         and soup.attrs.get("class")
         and soup.attrs["class"][0] in CSS_CLASS_TO_ELEMENT_TYPE_MAP
     ):
         element_class = CSS_CLASS_TO_ELEMENT_TYPE_MAP.get(soup.attrs["class"][0])
-        html_tag = element_class().allowed_tags[0]
+        html_tag = soup.name if soup.name in ("td", "th") else element_class().allowed_tags[0]
 
     # Scenario 3: <input> elements, handled explicitly based on their 'type' attribute
     if not element_class and soup.name == "input":
