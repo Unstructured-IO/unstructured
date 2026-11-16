@@ -617,15 +617,14 @@ def elements_to_ndjson(
     filename: Optional[str] = None,
     encoding: str = "utf-8",
 ) -> str:
-    """Serialize `elements` to a JSON array.
+    """Serialize `elements` to newline-delimited JSON.
 
     Also writes the JSON to `filename` if it is provided, encoded using `encoding`.
 
     The JSON is returned as a string.
     """
-    # -- serialize `elements` as a JSON array (str) --
-    precision_adjusted_elements = _fix_metadata_field_precision(elements)
-    element_dicts = elements_to_dicts(precision_adjusted_elements)
+    # -- round and serialize one element at a time, without retaining the whole copied graph --
+    element_dicts = (_fix_metadata_field_precision((element,))[0].to_dict() for element in elements)
     ndjson_str = ndjson_dumps(element_dicts, sort_keys=True)
 
     if filename is not None:
