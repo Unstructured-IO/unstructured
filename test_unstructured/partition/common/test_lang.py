@@ -224,6 +224,22 @@ def test_detect_languages_handles_spelled_out_languages():
     assert languages == ["spa"]
 
 
+@pytest.mark.parametrize(
+    ("languages", "expected"),
+    [
+        (["en-US"], ["eng"]),
+        (["pt-BR"], ["por"]),
+        (["zh-CN"], ["zho"]),
+        (["en-GB", "fr-CA"], ["eng", "fra"]),
+    ],
+)
+def test_detect_languages_reads_region_qualified_language_tags(
+    languages: list[str], expected: list[str]
+):
+    text = "This text is long enough to skip the short text rule."
+    assert detect_languages(text, languages) == expected
+
+
 def test_detect_languages_short_text_fallback_returns_none():
     """Short ASCII text with language_fallback returning None leaves language unspecified."""
     result = detect_languages(
