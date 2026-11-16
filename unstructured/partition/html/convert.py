@@ -5,7 +5,7 @@ from typing import Any, Optional, Union
 
 from bs4 import BeautifulSoup, Tag
 
-from unstructured.documents.elements import Element, ElementType
+from unstructured.documents.elements import CheckBox, Element, ElementType
 from unstructured.documents.html_sanitization import sanitize_html_fragment
 
 logger = logging.getLogger(__name__)
@@ -173,6 +173,11 @@ class InputElementHtml(ElementHtml):
 class CheckboxElementHtml(InputElementHtml):
     def _inject_html_element_attrs(self, element_html: Tag) -> None:
         element_html["type"] = "checkbox"
+        if isinstance(self.element, CheckBox):
+            if self.element.checked:
+                element_html["checked"] = "true"
+            else:
+                element_html.attrs.pop("checked", None)
 
 
 class CheckboxCheckedElementHtml(InputElementHtml):
@@ -284,9 +289,14 @@ def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[Elemen
 def _elements_to_html_tags(
     elements: list[Element], exclude_binary_image_data: bool = False
 ) -> list[Tag]:
-    elements_html = [
-        TYPE_TO_HTML_MAP.get(element.category, ElementHtml)(element) for element in elements
-    ]
+    elements_html: list[ElementHtml] = []
+    for element in elements:
+        renderer = (
+            CheckboxElementHtml
+            if isinstance(element, CheckBox)
+            else TYPE_TO_HTML_MAP.get(element.category, ElementHtml)
+        )
+        elements_html.append(renderer(element))
     elements_html = _elements_to_html_tags_by_parent(elements_html)
     return [
         element_html.get_html_element(exclude_binary_image_data=exclude_binary_image_data)
