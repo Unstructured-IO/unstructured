@@ -77,10 +77,15 @@ def deckerd_table_to_html(cells: List[Dict[str, Any]]) -> str:
         A string with the html content of the table.
     """
     transformer_cells = []
-    # determine which cells are in header. Consider row 0 as header
-    # but spans may make it larger
+    # Start with row 0, then include every span that begins inside the header.
+    # Sorting lets each extension admit later cells without rescanning the table.
     first_row_cells = [cell for cell in cells if cell["y"] == 0]
     header_length = max(cell["h"] for cell in first_row_cells)
+    for cell in sorted(cells, key=lambda cell: cell["y"]):
+        if cell["y"] >= header_length:
+            break
+        if cell["y"] >= 0:
+            header_length = max(header_length, cell["y"] + cell["h"])
     header_rows = set(range(header_length))
     for cell in cells:
         cell_data = {
