@@ -40,7 +40,10 @@ class DataSourceMetadata:
     permissions_data: Optional[list[dict[str, Any]]] = None
 
     def to_dict(self):
-        return {key: value for key, value in self.__dict__.items() if value is not None}
+        """Serialize populated fields without sharing mutable values with this metadata."""
+        return copy.deepcopy(
+            {key: value for key, value in self.__dict__.items() if value is not None}
+        )
 
     @classmethod
     def from_dict(cls, input_dict: dict[str, Any]):
