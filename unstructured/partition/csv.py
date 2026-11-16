@@ -219,8 +219,9 @@ def _record_is_complete(line: str, sep: str) -> bool:
     """Whether `line` holds a whole delimited record, with no quoted field left open in it.
 
     A quoted header cell holding a line break spans physical lines, so the first line alone
-    does not hold the whole record. The record is whole only when the line ends outside a
-    quoted field and not just after a quote inside one, which may yet be escaped or closing.
+    does not hold the whole record. A line without a terminator is returned by the header
+    peek only at EOF, where a pending quote closes its field. The bounded peek returns an
+    empty string instead of a partial line if it exhausts its budget.
     """
     in_quotes = quote_pending = False
     at_field_start = True
@@ -242,7 +243,7 @@ def _record_is_complete(line: str, sep: str) -> bool:
             at_field_start = True
         else:
             at_field_start = False
-    return not in_quotes and not quote_pending
+    return not in_quotes or quote_pending
 
 
 def _split_header_record(line: str, sep: str) -> list[str]:
