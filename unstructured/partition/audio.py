@@ -52,6 +52,10 @@ def partition_audio(
         chunk. These bounds describe the contributing segments, including any gaps between
         them. If one segment is split across text chunks, each fragment retains that segment's
         full interval; word-level timestamps are not inferred.
+        With ``overlap_all=True``, the range also covers the source of the overlap text. A
+        metadata-only run that produces no text carries its time bounds into the next pre-chunk;
+        all fragments split from that pre-chunk retain the combined bounds. A terminal run with
+        no following text produces no chunk. Only the time bounds are carried across that boundary.
 
     Parameters
     ----------

@@ -632,6 +632,37 @@ class _MetadataOnlyImage(Image):
                 raise NotImplementedError(f"metadata field {name!r} has no consolidation strategy")
 
 
+class _SegmentTimeRange(NamedTuple):
+    """Source-segment bounds, without carrying unrelated element metadata."""
+
+    start: float | None = None
+    end: float | None = None
+
+    def merge(self, other: _SegmentTimeRange) -> _SegmentTimeRange:
+        """Return the enclosing range, retaining zero and independently absent bounds."""
+        starts = (value for value in (self.start, other.start) if value is not None)
+        ends = (value for value in (self.end, other.end) if value is not None)
+        return _SegmentTimeRange(min(starts, default=None), max(ends, default=None))
+
+    @classmethod
+    def from_element(cls, element: Element) -> _SegmentTimeRange:
+        """Read bounds from an ordinary element or a compressed empty-image run."""
+        if isinstance(element, _MetadataOnlyImage):
+            return cls(
+                element.field_values.get("segment_start_seconds", [None])[0],
+                element.field_values.get("segment_end_seconds", [None])[0],
+            )
+        return cls(element.metadata.segment_start_seconds, element.metadata.segment_end_seconds)
+
+
+class _SegmentTimeSpan(NamedTuple):
+    """The text offsets covered by one source interval in an overlap prefix."""
+
+    start: int
+    end: int
+    time_range: _SegmentTimeRange
+
+
 class PreChunkBuilder:
     """An element accumulator suitable for incrementally forming a pre-chunk.
 
@@ -654,6 +685,8 @@ class PreChunkBuilder:
 
         # -- overlap is only between pre-chunks so starts empty --
         self._overlap_prefix: str = ""
+        self._overlap_time_spans: tuple[_SegmentTimeSpan, ...] = ()
+        self._carried_time_range = _SegmentTimeRange()
         # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
         self._text_segments: list[str] = []
         # -- combined length of text-segments, not including separators --
@@ -668,6 +701,7 @@ class PreChunkBuilder:
             and _element_is_table_family(element)
         ):
             self._overlap_prefix = ""
+            self._overlap_time_spans = ()
             self._text_segments = []
             self._text_len = 0
 
@@ -700,7 +734,13 @@ class PreChunkBuilder:
             return
 
         # -- copy element list, don't use original or it may change contents as builder proceeds --
-        pre_chunk = PreChunk(elements, self._overlap_prefix, self._opts)
+        pre_chunk = PreChunk(
+            elements,
+            self._overlap_prefix,
+            self._opts,
+            overlap_time_spans=self._overlap_time_spans,
+            carried_time_range=self._carried_time_range,
+        )
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
         overlap_for_next = pre_chunk.overlap_tail
@@ -712,6 +752,18 @@ class PreChunkBuilder:
         ):
             overlap_for_next = ""
         self._reset_state(overlap_for_next)
+        self._overlap_time_spans = pre_chunk.overlap_time_spans if overlap_for_next else ()
+        # -- textless pre-chunks emit nothing; retain only their time bounds for the next one --
+        emits_empty_table = (
+            self._opts.skip_table_chunking
+            and len(pre_chunk._elements) == 1
+            and isinstance(pre_chunk._elements[0], Table)
+        )
+        self._carried_time_range = (
+            pre_chunk.segment_time_range
+            if not pre_chunk._text and not emits_empty_table
+            else _SegmentTimeRange()
+        )
         yield pre_chunk
 
     def will_fit(self, element: Element) -> bool:
@@ -804,16 +856,29 @@ class PreChunk:
     """
 
     def __init__(
-        self, elements: Iterable[Element], overlap_prefix: str, opts: ChunkingOptions
+        self,
+        elements: Iterable[Element],
+        overlap_prefix: str,
+        opts: ChunkingOptions,
+        *,
+        overlap_time_spans: tuple[_SegmentTimeSpan, ...] = (),
+        carried_time_range: _SegmentTimeRange = _SegmentTimeRange(),
     ) -> None:
         self._elements = list(elements)
         self._overlap_prefix = overlap_prefix
         self._opts = opts
+        self._overlap_time_spans = overlap_time_spans
+        self._carried_time_range = carried_time_range
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PreChunk):
             return False
-        return self._overlap_prefix == other._overlap_prefix and self._elements == other._elements
+        return (
+            self._overlap_prefix == other._overlap_prefix
+            and self._elements == other._elements
+            and self._overlap_time_spans == other._overlap_time_spans
+            and self._carried_time_range == other._carried_time_range
+        )
 
     def can_combine(self, pre_chunk: PreChunk) -> bool:
         """True when `pre_chunk` can be combined with this one without exceeding size limits."""
@@ -841,6 +906,8 @@ class PreChunk:
             self._elements + other_pre_chunk._elements,
             overlap_prefix=self._overlap_prefix,
             opts=self._opts,
+            overlap_time_spans=self._overlap_time_spans,
+            carried_time_range=self._carried_time_range.merge(other_pre_chunk._carried_time_range),
         )
 
     def iter_chunks(self) -> Iterator[CompositeElement | Table | TableChunk]:
@@ -851,6 +918,21 @@ class PreChunk:
         into two or more chunks that each fit the chunking window.
         """
 
+        supplemental_range = self._carried_time_range
+        for span in self._overlap_time_spans:
+            supplemental_range = supplemental_range.merge(span.time_range)
+        for chunk in self._iter_chunks():
+            time_range = _SegmentTimeRange.from_element(chunk).merge(supplemental_range)
+            if time_range != _SegmentTimeRange.from_element(chunk):
+                # -- skip_table_chunking may return the caller's original Table --
+                chunk = copy.copy(chunk)
+                chunk.metadata = copy.copy(chunk.metadata)
+                chunk.metadata.segment_start_seconds = time_range.start
+                chunk.metadata.segment_end_seconds = time_range.end
+            yield chunk
+
+    def _iter_chunks(self) -> Iterator[CompositeElement | Table | TableChunk]:
+        """Generate chunks before adding overlap and textless-run time bounds."""
         # -- a one-table-only pre-chunk is handled specially, by `TablePreChunk`, mainly because
         # -- it may need to be split into multiple `TableChunk` elements and that operation is
         # -- quite specialized.
@@ -875,23 +957,61 @@ class PreChunk:
         overlap = self._opts.inter_chunk_overlap
         return self._text[-overlap:].strip() if overlap else ""
 
-    def _iter_text_segments(self) -> Iterator[str]:
-        """Generate overlap text and each element text segment in order.
+    @cached_property
+    def segment_time_range(self) -> _SegmentTimeRange:
+        """Bounds for this pre-chunk, including incoming textless-run metadata."""
+        time_range = self._carried_time_range
+        for element in self._elements:
+            time_range = time_range.merge(_SegmentTimeRange.from_element(element))
+        for span in self._overlap_time_spans:
+            time_range = time_range.merge(span.time_range)
+        return time_range
 
-        Empty text segments are not included. CodeSnippet elements preserve their
-        original whitespace (including newlines) to maintain code formatting.
-        """
+    @cached_property
+    def overlap_time_spans(self) -> tuple[_SegmentTimeSpan, ...]:
+        """Time provenance clipped to the actual overlap tail, relative to that tail."""
+        if not self.overlap_tail:
+            return ()
+        untrimmed = self._text[-self._opts.inter_chunk_overlap :]
+        start = max(0, len(self._text) - self._opts.inter_chunk_overlap)
+        start += len(untrimmed) - len(untrimmed.lstrip())
+        end = start + len(self.overlap_tail)
+        spans = list(self._overlap_time_spans)
+        offset = len(self._overlap_prefix)
+        for text, element in self._iter_element_text_segments():
+            if offset:
+                offset += len(self._opts.text_separator)
+            time_range = _SegmentTimeRange.from_element(element)
+            if time_range != _SegmentTimeRange():
+                spans.append(_SegmentTimeSpan(offset, offset + len(text), time_range))
+            offset += len(text)
+        return tuple(
+            _SegmentTimeSpan(
+                max(span.start, start) - start, min(span.end, end) - start, span.time_range
+            )
+            for span in spans
+            if span.start < end and span.end > start
+        )
+
+    def _iter_element_text_segments(self) -> Iterator[tuple[str, Element]]:
+        """Generate normalized text and its source, retaining CodeSnippet whitespace."""
+        for element in self._elements:
+            if not element.text:
+                continue
+            text = (
+                element.text
+                if isinstance(element, CodeSnippet)
+                else " ".join(element.text.strip().split())
+            )
+            if text:
+                yield text, element
+
+    def _iter_text_segments(self) -> Iterator[str]:
+        """Generate overlap text and each non-empty element text segment in order."""
         if self._overlap_prefix:
             yield self._overlap_prefix
-        for e in self._elements:
-            if e.text and len(e.text):
-                # -- preserve all whitespace for code snippets to maintain formatting --
-                if isinstance(e, CodeSnippet):
-                    yield e.text
-                else:
-                    text = " ".join(e.text.strip().split())
-                    if text:
-                        yield text
+        for text, _ in self._iter_element_text_segments():
+            yield text
 
     @cached_property
     def _text(self) -> str:
