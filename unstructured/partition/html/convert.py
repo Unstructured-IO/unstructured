@@ -6,7 +6,7 @@ from typing import Any, Optional, Union
 from bs4 import BeautifulSoup, Tag
 
 from unstructured.documents.elements import Element, ElementType
-from unstructured.documents.html_sanitization import sanitize_html_fragment
+from unstructured.documents.html_sanitization import is_data_url, sanitize_html_fragment
 
 logger = logging.getLogger(__name__)
 
@@ -101,8 +101,10 @@ class ImageElementHtml(ElementHtml):
             element_html["src"] = (
                 f"data:{image_mime_type};base64,{self.element.metadata.image_base64}"
             )
-        elif self.element.metadata.image_url:
-            element_html["src"] = self.element.metadata.image_url
+        elif (image_url := self.element.metadata.image_url) and (
+            not exclude_binary_image_data or not is_data_url(image_url)
+        ):
+            element_html["src"] = image_url
         element_html["alt"] = self.element.text
 
 
@@ -332,6 +334,18 @@ def elements_to_html(
     exclude_binary_image_data: bool = False,
     no_group_by_page: bool = False,
 ) -> str:
+    """Render elements as HTML, preserving literal image references subject to sanitization.
+
+    Generated image sources prefer embedded bytes unless ``exclude_binary_image_data`` is True.
+    Otherwise ``metadata.image_url`` supplies the source; the exclusion also suppresses ``data:``
+    image URLs. Explicit ``text_as_html`` retains its existing precedence.
+
+    Relative image URLs remain relative to the exported document, so moving the output can change
+    which resource they identify. No source base is inferred from ``metadata.url``, filenames or
+    directories; those fields do not capture redirects or an HTML ``<base href>``. Callers needing
+    the same resource at another output location should supply absolute image URLs, or embedded
+    image data when binary output is enabled. This also applies to local and mixed-source elements.
+    """
     soup = BeautifulSoup(HTML_TEMPLATE, HTML_PARSER)
     if soup.body is None:
         raise ValueError("Body tag not found in the HTML template")
