@@ -363,7 +363,8 @@ class ElementMetadata:
 
     def __getattr__(self, attr_name: str) -> None:
         """Only called when attribute doesn't exist."""
-        if attr_name in self._known_field_names:
+        # The annotations already support membership without a per-instance copy.
+        if attr_name in self.__annotations__:
             return None
         raise AttributeError(f"'ElementMetadata' object has no attribute '{attr_name}'")
 
@@ -426,7 +427,7 @@ class ElementMetadata:
         instance by assignment are not. Note this is a *snapshot* and will not reflect changes that
         occur after this call.
         """
-        known_field_names = self._known_field_names
+        known_field_names = self.__annotations__
         return MappingProxyType(
             {
                 field_name: field_value
