@@ -101,6 +101,8 @@ class ImageElementHtml(ElementHtml):
             element_html["src"] = (
                 f"data:{image_mime_type};base64,{self.element.metadata.image_base64}"
             )
+        elif self.element.metadata.image_url:
+            element_html["src"] = self.element.metadata.image_url
         element_html["alt"] = self.element.text
 
 
