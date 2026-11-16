@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+from io import BufferedReader
 from typing import IO, Any, Optional, Sequence
 
 import requests
@@ -10,7 +11,7 @@ from unstructured_client.utils import retries
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
-from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.common import convert_to_bytes, exactly_one
 from unstructured.staging.base import elements_from_dicts, elements_from_json
 from unstructured.telemetry import partition_runtime_telemetry
 
@@ -111,7 +112,9 @@ def partition_via_api(
                 "If file is specified in partition_via_api, "
                 "metadata_filename must be specified as well.",
             )
-        files = shared.Files(content=file, file_name=metadata_filename)
+        # The SDK validates streams as BufferedReader rather than the full binary IO interface.
+        content = file if isinstance(file, BufferedReader) else convert_to_bytes(file)
+        files = shared.Files(content=content, file_name=metadata_filename)
 
     req = operations.PartitionRequest(
         partition_parameters=shared.PartitionParameters(files=files, **request_kwargs)
