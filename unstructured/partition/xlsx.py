@@ -104,7 +104,10 @@ def partition_xlsx(
     for page_number, (sheet_name, sheet) in enumerate(
         opts.sheets.items(), start=starting_page_number
     ):
-        if not opts.find_subtable:
+        # Header-only sheets have no populated data cells for component detection.
+        if not opts.find_subtable or (
+            opts.include_header and sheet.empty and len(sheet.columns) > 0
+        ):
             text, html = _render_table(sheet, opts)
 
             metadata = ElementMetadata(
