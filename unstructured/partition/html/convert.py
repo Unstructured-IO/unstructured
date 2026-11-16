@@ -263,22 +263,53 @@ def _group_element_children(children: list[ElementHtml]) -> list[ElementHtml]:
 
 
 def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[ElementHtml]:
-    parent_to_children_map: dict[str, list[ElementHtml]] = defaultdict(list)
+    """Build a renderable parent forest, retaining elements with missing or cyclic parents."""
     elements_by_id: dict[str, ElementHtml] = {}
     for element in elements:
         elements_by_id.setdefault(element.element.id, element)
-        if element.element.metadata.parent_id is not None:
-            parent_to_children_map[element.element.metadata.parent_id].append(element)
-    for parent_id, children in parent_to_children_map.items():
-        grouped_children = _group_element_children(children)
-        parent = elements_by_id.get(parent_id)
-        if parent is None:
+
+    parents: dict[ElementHtml, ElementHtml | None] = {}
+    for element in elements:
+        parent_id = element.element.metadata.parent_id
+        parents[element] = elements_by_id.get(parent_id) if parent_id is not None else None
+    _break_parent_cycles(parents)
+
+    parent_to_children_map: dict[ElementHtml, list[ElementHtml]] = defaultdict(list)
+    missing_parent_ids: set[str] = set()
+    for element, parent in parents.items():
+        parent_id = element.element.metadata.parent_id
+        if parent is not None:
+            parent_to_children_map[parent].append(element)
+        elif (
+            parent_id is not None
+            and parent_id not in elements_by_id
+            and parent_id not in missing_parent_ids
+        ):
             logger.warning(
                 f"Parent element with id {parent_id} not found. Rendering children as roots."
             )
-            continue
-        parent.set_children(grouped_children)
-    return [el for el in elements if el.element.metadata.parent_id not in elements_by_id]
+            missing_parent_ids.add(parent_id)
+    for parent, children in parent_to_children_map.items():
+        parent.set_children(_group_element_children(children))
+    return [element for element in elements if parents[element] is None]
+
+
+def _break_parent_cycles(parents: dict[ElementHtml, ElementHtml | None]) -> None:
+    """Remove one render-time parent edge per cycle without changing source metadata."""
+    resolved: set[ElementHtml] = set()
+    for element in parents:
+        path: set[ElementHtml] = set()
+        current: ElementHtml | None = element
+        while current is not None and current not in resolved:
+            if current in path:
+                parents[current] = None
+                logger.warning(
+                    f"Cycle in parent IDs at element {current.element.id}. Rendering it as a root."
+                )
+                break
+            path.add(current)
+            current = parents[current]
+        resolved.update(path)
 
 
 def _elements_to_html_tags(
