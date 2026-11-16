@@ -34,7 +34,7 @@ from unstructured.documents.elements import (
     assign_and_map_hash_ids,
 )
 from unstructured.partition.json import partition_json
-from unstructured.staging.base import elements_from_base64_gzipped_json
+from unstructured.staging.base import elements_from_base64_gzipped_json, elements_from_dicts
 
 
 @pytest.mark.parametrize("element", [Element(), Text(text=""), CheckBox()])
@@ -122,6 +122,68 @@ def test_non_text_elements_are_serializable_to_text():
     assert element.text is not None
     assert element.text == ""
     assert str(element) == ""
+
+
+@pytest.mark.parametrize("control_type", ["checkbox", "radio"])
+@pytest.mark.parametrize("checked", [False, True])
+def test_CheckBox_control_type_round_trips_without_changing_legacy_fields(control_type, checked):
+    control = CheckBox(element_id="answer", checked=checked, control_type=control_type)
+    expected = {
+        "type": "CheckBox",
+        "element_id": "answer",
+        "text": "",
+        "metadata": {},
+        "checked": checked,
+    }
+    if control_type == "radio":
+        expected["control_type"] = "radio"
+
+    serialized = control.to_dict()
+    assert serialized == expected
+    restored = elements_from_dicts(json.loads(json.dumps([serialized])))[0]
+    assert restored == control
+    assert restored.control_type == control_type
+    assert restored.to_dict() == expected
+
+
+@pytest.mark.parametrize("checked", [False, True])
+def test_CheckBox_legacy_dict_defaults_to_checkbox(checked):
+    legacy = {
+        "type": "CheckBox",
+        "element_id": "answer",
+        "text": "",
+        "metadata": {},
+        "checked": checked,
+    }
+
+    restored = elements_from_dicts([legacy])[0]
+
+    assert restored.control_type == "checkbox"
+    assert restored == CheckBox(checked=checked)
+    assert restored.to_dict() == legacy
+
+
+@pytest.mark.parametrize("checked", [False, True])
+def test_CheckBox_equality_distinguishes_radio_buttons(checked):
+    checkbox = CheckBox(checked=checked)
+    radio = CheckBox(checked=checked, control_type="radio")
+
+    assert checkbox != radio
+    assert radio != checkbox
+    assert checkbox == CheckBox(checked=checked, control_type="checkbox")
+    assert radio == CheckBox(checked=checked, control_type="radio")
+
+
+@pytest.mark.parametrize("control_type", [None, "text", "Radio", True])
+@pytest.mark.parametrize("deserialize", [False, True])
+def test_CheckBox_rejects_unsupported_control_types(control_type, deserialize):
+    with pytest.raises(ValueError, match="control_type must be 'checkbox' or 'radio'"):
+        if deserialize:
+            elements_from_dicts(
+                [{"type": "CheckBox", "checked": False, "control_type": control_type}]
+            )
+        else:
+            CheckBox(control_type=control_type)
 
 
 def test_apply_raises_if_func_does_not_produce_string():

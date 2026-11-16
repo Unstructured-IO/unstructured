@@ -171,9 +171,28 @@ class InputElementHtml(ElementHtml):
 
 
 class CheckboxElementHtml(InputElementHtml):
+    def get_text_as_html(self) -> Union[Tag, None]:
+        """Reuse the first source tag only when it is an input.
+
+        A CheckBox represents one control. A non-input root is replaced with a new input without
+        changing the original ``text_as_html`` metadata or separately represented child elements.
+        """
+        element_html = super().get_text_as_html()
+        if (
+            isinstance(self.element, CheckBox)
+            and element_html is not None
+            and element_html.name != "input"
+        ):
+            return None
+        return element_html
+
     def _inject_html_element_attrs(self, element_html: Tag) -> None:
         element_html["type"] = "checkbox"
         if isinstance(self.element, CheckBox):
+            element_html["type"] = self.element.control_type
+            element_html["class"] = (
+                "RadioButton" if self.element.control_type == "radio" else "Checkbox"
+            )
             if self.element.checked:
                 element_html["checked"] = "true"
             else:

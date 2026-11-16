@@ -221,7 +221,12 @@ def elements_from_dicts(element_dicts: Iterable[dict[str, Any]]) -> list[Element
             elements.append(TableChunk(text=item["text"], element_id=element_id, metadata=metadata))
         elif item.get("type") == "CheckBox":
             elements.append(
-                CheckBox(checked=item["checked"], element_id=element_id, metadata=metadata)
+                CheckBox(
+                    checked=item["checked"],
+                    element_id=element_id,
+                    metadata=metadata,
+                    control_type=item.get("control_type", "checkbox"),
+                )
             )
 
     return elements
