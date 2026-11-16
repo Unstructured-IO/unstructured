@@ -322,10 +322,9 @@ def auto_paragraph_grouper(
     the document is considered a blank-line grouping type
     and passed on to blank_line_grouper function
     """
-    lines = line_split.split(text)
-    max_line_count = min(len(lines), max_line_count)
+    lines = line_split.split(text, maxsplit=max(0, max_line_count))[:max_line_count]
     line_count, empty_line_count = 0, 0
-    for line in lines[:max_line_count]:
+    for line in lines:
         line_count += 1
         if not line.strip():
             empty_line_count += 1
