@@ -57,6 +57,7 @@ class ElementHtml(ABC):
     def _wrap_html_fragment(
         self, soup: BeautifulSoup, element_html: Tag, rendered_html: Tag, nodes: list[PageElement]
     ) -> Tag:
+        """Keep all fragment nodes around the rendered root without losing its children."""
         if not nodes:
             return rendered_html
         has_root_text = any(type(node) is NavigableString and node.strip() for node in nodes)
