@@ -390,6 +390,9 @@ class ElementMetadata:
         meta_dict = copy.deepcopy(meta_dict)
         self = ElementMetadata()
         for field_name, field_value in meta_dict.items():
+            # Optional fields may be explicitly null instead of omitted from serialized data.
+            if field_value is None:
+                continue
             if field_name == "coordinates":
                 self.coordinates = CoordinatesMetadata.from_dict(field_value)
             elif field_name == "data_source":
