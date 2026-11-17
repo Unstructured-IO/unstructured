@@ -656,10 +656,15 @@ class _DocxPartitioner:
                                 yield "", None
                             offset += span
                             continue
+                        # -- A resolved continuation emits `origin` across its whole span,
+                        # -- so every column it covers now displays that origin. Track it
+                        # -- for all of them, not just the starting column: a non-starting
+                        # -- column would otherwise keep an origin from an older row and a
+                        # -- later orphan continuation there would re-emit stale text. --
                     else:
                         origin = tc
-                        for col in range(offset, offset + span):
-                            vmerge_origins[col] = tc
+                    for col in range(offset, offset + span):
+                        vmerge_origins[col] = origin
                     origin_cell = _Cell(origin, table)
                     for _ in range(span):
                         yield cell_text(origin_cell), origin_cell

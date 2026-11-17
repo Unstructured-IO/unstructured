@@ -3163,6 +3163,56 @@ def test_partition_docx_unresolved_spanned_continuation_clears_stale_origins(tmp
     assert "SHOULD_NOT_APPEAR" not in html
 
 
+def test_partition_docx_resolved_spanned_continuation_clears_stale_origins(tmp_path):
+    """A resolved multi-column continuation must update every covered column's origin.
+
+    A `vMerge="continue"` cell spanning several grid columns whose starting column DOES
+    have an origin emits that origin across its whole span. Every covered column must be
+    tracked to that same origin: a non-starting column would otherwise keep an origin
+    from several rows above, and a later orphan continuation there re-emits stale text.
+    This is the resolved counterpart of
+    `test_partition_docx_unresolved_spanned_continuation_clears_stale_origins`.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    # -- set texts while cells are addressable via the grid API --
+    table.cell(0, 0).text = "LEFT"
+    table.cell(0, 1).text = "OLD"
+    table.cell(1, 0).text = "B0"
+    table.cell(1, 1).text = "B1"
+    table.cell(2, 0).text = "C0"
+    table.cell(2, 1).text = "C1"
+
+    # -- row 0: col0 and col1 each start their own vertical merge (LEFT and OLD). --
+    r0 = table.rows[0]._tr
+    r0.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>'))
+    r0.tc_lst[1].get_or_add_tcPr().append(parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>'))
+
+    # -- row 1: one tc spanning both columns (gridSpan=2), a continuation starting at
+    # -- col0. col0 has origin LEFT, so this is RESOLVED and emits LEFT in both positions;
+    # -- both columns must now track LEFT, not leave col1 pointing at the older OLD. --
+    r1 = table.rows[1]._tr
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="2"/>'))
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+    r1.remove(r1.tc_lst[1])
+
+    # -- row 2 omits col0; its col1 continuation must not pick up the stale OLD. --
+    r2 = table.rows[2]._tr
+    r2.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    r2.remove(r2.tc_lst[1])
+    r2.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+
+    docx_path = tmp_path / "resolved-spanned.docx"
+    document.save(str(docx_path))
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    html = next(e for e in elements if isinstance(e, Table)).metadata.text_as_html
+    # -- OLD appears only in its own origin row; the later continuation is blank. --
+    assert html.count("OLD") == 1
+    # -- row 1 emits LEFT across both spanned columns; row 2's col1 is an empty position. --
+    assert html.count("LEFT") == 2
+    assert re.search(r"<tr><td\s*/></tr>", html)
+
+
 def test_row_grid_width_normalizes_nonpositive_grid_span():
     """_row_grid_width must charge the same positions the HTML iterator emits.
 
