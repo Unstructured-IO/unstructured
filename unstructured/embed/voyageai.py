@@ -40,7 +40,14 @@ class VoyageAIEmbeddingConfig(EmbeddingConfig):
     api_key: SecretStr
     model_name: str
     show_progress_bar: bool = False
-    batch_size: Optional[int] = Field(default=None, gt=0)
+    batch_size: Optional[int] = Field(
+        default=None,
+        gt=0,
+        description=(
+            "Maximum texts per request for non-contextual models. Contextual models retain "
+            "their existing token and chunk-count boundaries to preserve shared context."
+        ),
+    )
     truncation: Optional[bool] = Field(default=None)
     output_dimension: Optional[int] = Field(default=None)
 
@@ -100,7 +107,10 @@ class VoyageAIEmbeddingEncoder(BaseEmbeddingEncoder):
             return
 
         max_tokens_per_batch = self.config.get_token_limit()
-        max_batch_size = min(self.config.batch_size or MAX_BATCH_SIZE, MAX_BATCH_SIZE)
+        max_batch_size = MAX_BATCH_SIZE
+        # A smaller request size must not split chunks that share contextual embeddings.
+        if not self._is_context_model():
+            max_batch_size = min(self.config.batch_size or MAX_BATCH_SIZE, MAX_BATCH_SIZE)
         current_batch: List[str] = []
         current_batch_tokens = 0
 

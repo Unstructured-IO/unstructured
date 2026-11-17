@@ -12,42 +12,81 @@ from unstructured.embed.voyageai import (
 )
 
 
-@pytest.mark.parametrize("model_name", ["voyage-3.5", "voyage-context-3"])
 @pytest.mark.parametrize("batch_size", [1, 2, 4])
-def test_document_requests_honor_configured_batch_size(mocker, model_name, batch_size):
+def test_document_requests_honor_configured_batch_size(mocker, batch_size):
     client = Mock()
     client.tokenize.return_value = [[1] for _ in range(7)]
     client.embed.side_effect = lambda **kwargs: SimpleNamespace(
         embeddings=[[float(text)] for text in kwargs["texts"]]
     )
-    client.contextualized_embed.side_effect = lambda **kwargs: SimpleNamespace(
-        results=[SimpleNamespace(embeddings=[[float(text)] for text in kwargs["inputs"][0]])]
-    )
     mocker.patch.object(VoyageAIEmbeddingConfig, "get_client", return_value=client)
     encoder = VoyageAIEmbeddingEncoder(
         config=VoyageAIEmbeddingConfig(
-            api_key="unused", model_name=model_name, batch_size=batch_size
+            api_key="unused", model_name="voyage-3.5", batch_size=batch_size
         )
     )
     elements = [Text(str(index)) for index in range(7)]
 
     result = encoder.embed_documents(elements)
 
-    calls = (
-        client.contextualized_embed.call_args_list
-        if model_name == "voyage-context-3"
-        else client.embed.call_args_list
-    )
-    batches = [
-        call.kwargs["inputs"][0] if model_name == "voyage-context-3" else call.kwargs["texts"]
-        for call in calls
-    ]
+    batches = [call.kwargs["texts"] for call in client.embed.call_args_list]
     assert [len(batch) for batch in batches] == [
         min(batch_size, len(elements) - start) for start in range(0, len(elements), batch_size)
     ]
     assert [text for batch in batches for text in batch] == [element.text for element in elements]
     assert all(result[index] is element for index, element in enumerate(elements))
     assert [element.embeddings for element in result] == [[float(index)] for index in range(7)]
+    client.contextualized_embed.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("batch_size", "token_counts", "expected_batch_lengths"),
+    [
+        pytest.param(1, [1, 1], [2], id="two-chunks-with-size-one"),
+        pytest.param(2, [1] * 5, [5], id="small-limit-keeps-neighbors"),
+        pytest.param(None, [1, 1], [2], id="default-group-control"),
+        pytest.param(1, [16_000, 16_000, 1], [2, 1], id="existing-token-boundary"),
+        pytest.param(
+            1,
+            [1] * (MAX_BATCH_SIZE + 1),
+            [MAX_BATCH_SIZE, 1],
+            id="existing-chunk-count-boundary",
+        ),
+    ],
+)
+def test_contextual_requests_preserve_existing_groups(
+    mocker, batch_size, token_counts, expected_batch_lengths
+):
+    client = Mock()
+    client.tokenize.return_value = [[1] * count for count in token_counts]
+    client.contextualized_embed.side_effect = lambda **kwargs: SimpleNamespace(
+        results=[SimpleNamespace(embeddings=[[float(text)] for text in kwargs["inputs"][0]])]
+    )
+    mocker.patch.object(VoyageAIEmbeddingConfig, "get_client", return_value=client)
+    encoder = VoyageAIEmbeddingEncoder(
+        config=VoyageAIEmbeddingConfig(
+            api_key="unused", model_name="voyage-context-3", batch_size=batch_size
+        )
+    )
+    elements = [Text(str(index)) for index in range(len(token_counts))]
+    texts = [element.text for element in elements]
+
+    result = encoder.embed_documents(elements)
+
+    expected_inputs = []
+    start = 0
+    for length in expected_batch_lengths:
+        expected_inputs.append([texts[start : start + length]])
+        start += length
+    assert [call.kwargs["inputs"] for call in client.contextualized_embed.call_args_list] == (
+        expected_inputs
+    )
+    client.tokenize.assert_called_once_with(texts, model="voyage-context-3")
+    client.embed.assert_not_called()
+    assert all(result[index] is element for index, element in enumerate(elements))
+    assert [element.embeddings for element in result] == [
+        [float(index)] for index in range(len(elements))
+    ]
 
 
 @pytest.mark.parametrize("batch_size", [None, MAX_BATCH_SIZE * 2])
