@@ -49,6 +49,9 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
     def __post_init__(self):
         self.initialize()
 
+    def initialize(self):
+        """Clients are created lazily by embedding operations."""
+
     def num_of_dimensions(self):
         exemplary_embedding = self.get_exemplary_embedding()
         return np.shape(exemplary_embedding)
