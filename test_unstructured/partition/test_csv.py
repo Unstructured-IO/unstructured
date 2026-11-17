@@ -8,8 +8,10 @@ import gzip
 import io
 import itertools
 import lzma
+import socket
 import sys
 from pathlib import Path
+from typing import NoReturn
 
 import pandas as pd
 import pytest
@@ -489,19 +491,6 @@ class Describe_CsvPartitioningContext:
         with pytest.raises(ValueError, match="either file-path or file-like object must be prov"):
             _CsvPartitioningContext()._validate()
 
-    @pytest.mark.parametrize(
-        "url",
-        [
-            "https://example.com/documents/stanley-cups.csv",
-            "s3://unstructured-test/csv/stanley-cups.csv",
-        ],
-    )
-    def and_it_raises_when_the_file_path_is_a_URL(self, url: str):
-        # -- pandas `get_handle()` would fetch a URL on each read, bypassing the scheme,
-        # -- redirect, and private-address checks applied to `partition(url=...)` --
-        with pytest.raises(ValueError, match="filename must be a local file path"):
-            _CsvPartitioningContext(file_path=url)._validate()
-
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
@@ -973,9 +962,45 @@ def test_partition_csv_headerless_sniffed_read_does_not_hold_the_first_record(
     assert element.text == "x" * 4096 + " y z a b c"
 
 
-def test_partition_csv_rejects_a_URL_filename_without_fetching_it() -> None:
-    # -- port 1 has no listener, so an unguarded call would surface a network error from the
-    # -- fetch attempt rather than this ValueError; a remote document goes through
-    # -- `partition(url=...)`, whose fetch applies the safe-HTTP checks --
-    with pytest.raises(ValueError, match="use partition"):
-        partition_csv("http://127.0.0.1:1/documents/stanley-cups.csv")
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "http://127.0.0.1:1/documents/stanley-cups.csv",
+        "https://example.com/documents/stanley-cups.csv.gz",
+        "s3://unstructured-test/csv/stanley-cups.csv",
+        "file:///nonexistent/stanley-cups.csv",
+    ],
+)
+def test_partition_csv_looks_up_a_URL_filename_locally_and_never_fetches_it(
+    monkeypatch: pytest.MonkeyPatch, filename: str
+) -> None:
+    # -- any fetch would resolve its host first --
+    def no_network(*args: object, **kwargs: object) -> NoReturn:
+        raise AssertionError("partition_csv() reached for the network")
+
+    monkeypatch.setattr(socket, "getaddrinfo", no_network)
+
+    with pytest.raises(FileNotFoundError, match=r"pass its address as `url` to `partition\(\)`"):
+        partition_csv(filename)
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="':' is not allowed in a Windows file name")
+def test_partition_csv_reads_a_local_file_whose_name_looks_like_a_URL(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    file_path = tmp_path / "https:" / "example.com" / "table.csv.gz"
+    file_path.parent.mkdir(parents=True)
+    with gzip.open(file_path, "wb") as f:
+        f.write(b"a,b\n1,2\n")
+    monkeypatch.chdir(tmp_path)
+
+    (table,) = partition_csv("https://example.com/table.csv.gz")
+
+    assert table.text == "a b 1 2"
+    assert table.metadata.filename == "table.csv.gz"
+
+
+def test_partition_csv_rejects_both_a_filename_and_a_file() -> None:
+    with open(example_doc_path("stanley-cups.csv"), "rb") as f:
+        with pytest.raises(ValueError, match="Exactly one of filename and file must be specified"):
+            partition_csv(example_doc_path("stanley-cups.csv"), file=f)

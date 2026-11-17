@@ -5,8 +5,10 @@ from __future__ import annotations
 import csv
 import gzip
 import io
+import socket
+import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, NoReturn
 
 import pandas as pd
 import pytest
@@ -249,6 +251,44 @@ def test_partition_tsv_decompresses_a_compressed_filename(
     monkeypatch.setenv("CSV_MAX_CELLS", "3")
     with pytest.raises(UnprocessableEntityError, match="CSV_MAX_CELLS"):
         partition_tsv(str(file_path))
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "http://127.0.0.1:1/documents/stanley-cups.tsv",
+        "https://example.com/documents/stanley-cups.tsv.gz",
+        "s3://unstructured-test/tsv/stanley-cups.tsv",
+        "file:///nonexistent/stanley-cups.tsv",
+    ],
+)
+def test_partition_tsv_looks_up_a_URL_filename_locally_and_never_fetches_it(
+    monkeypatch: pytest.MonkeyPatch, filename: str
+):
+    # -- any fetch would resolve its host first --
+    def no_network(*args: object, **kwargs: object) -> NoReturn:
+        raise AssertionError("partition_tsv() reached for the network")
+
+    monkeypatch.setattr(socket, "getaddrinfo", no_network)
+
+    with pytest.raises(FileNotFoundError, match=r"pass its address as `url` to `partition\(\)`"):
+        partition_tsv(filename)
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="':' is not allowed in a Windows file name")
+def test_partition_tsv_reads_a_local_file_whose_name_looks_like_a_URL(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    file_path = tmp_path / "https:" / "example.com" / "table.tsv.gz"
+    file_path.parent.mkdir(parents=True)
+    with gzip.open(file_path, "wb") as f:
+        f.write(b"a\tb\n1\t2\n")
+    monkeypatch.chdir(tmp_path)
+
+    (table,) = partition_tsv("https://example.com/table.tsv.gz")
+
+    assert table.text == "a b 1 2"
+    assert table.metadata.filename == "table.tsv.gz"
 
 
 def test_partition_tsv_reads_a_stream_that_cannot_seek():

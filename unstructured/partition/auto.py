@@ -63,15 +63,19 @@ def partition(
     Parameters
     ----------
     filename
-        A string defining the target filename path.
+        The path of a local file. It must name an existing file on the local filesystem, so a
+        value such as "https://host/x.csv" raises `FileNotFoundError` unless a local file has
+        that name. Use `url` for a remote document.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     encoding
         The character-encoding used to decode the input bytes when drawn from `filename` or `file`.
         Defaults to "utf-8".
     url
-        The url for a remote document. Pass in content_type if you want partition to treat
-        the document as a specific content_type.
+        The url for a remote document. It is fetched once, with the checks of
+        `unstructured.safe_http.safe_get()`, and the response is partitioned like `file`. Pass in
+        content_type if you want partition to treat the document as a specific content_type.
+        Exactly one of `filename`, `file`, and `url` must be provided.
     headers
         The headers to be used in conjunction with the HTTP request if URL is set.
     ssl_verify

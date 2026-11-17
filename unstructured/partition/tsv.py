@@ -5,8 +5,6 @@ import shutil
 import tempfile
 from typing import IO, Any, Iterator, Optional, cast
 
-from pandas.io.common import get_handle
-
 from unstructured.chunking import add_chunking_strategy
 from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Element, ElementMetadata, Table
@@ -19,6 +17,7 @@ from unstructured.partition.common.metadata import apply_metadata, get_last_modi
 from unstructured.partition.csv import (
     check_cell_count,
     dataframe_to_html,
+    open_file_path,
     read_delimited_text,
 )
 from unstructured.telemetry import partition_runtime_telemetry
@@ -42,9 +41,13 @@ def partition_tsv(
     Parameters
     ----------
     filename
-        A string defining the target filename path.
+        The path of a local TSV file. It is always read from the local filesystem, never fetched:
+        a value such as "https://host/x.tsv" is looked up as a file of that name. A file named
+        for its compression, e.g. "x.tsv.gz", is read decompressed. To partition a remote
+        document, pass its address as `url` to `partition()`.
     file
-        A file-like object using "rb" mode --> open(filename, "rb").
+        A file-like object using "rb" mode --> open(filename, "rb"). Exactly one of `filename`
+        and `file` must be provided.
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html.
     infer_table_structure
@@ -59,11 +62,10 @@ def partition_tsv(
     header = 0 if include_header else None
 
     if filename:
-        # -- like `pd.read_csv(filename)`, decompress a file named e.g. "x.tsv.gz"; the size check
-        # -- and the read each get their own decompressing handle on the same content --
-        with _open_decompressed(filename) as f:
+        # -- the size check and the read each open the local file afresh --
+        with open_file_path(filename) as f:
             check_cell_count(f, "\t", None, header=include_header)
-        with _open_decompressed(filename) as f:
+        with open_file_path(filename) as f:
             dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
     else:
         assert file is not None
@@ -90,13 +92,6 @@ def partition_tsv(
     metadata.detection_origin = DETECTION_ORIGIN
 
     return [Table(text=html_table.text, metadata=metadata)]
-
-
-@contextlib.contextmanager
-def _open_decompressed(filename: str) -> Iterator[IO[bytes]]:
-    """Open `filename` for reading bytes, decompressed as its extension (e.g. ".gz") implies."""
-    with get_handle(filename, "rb", compression="infer", is_text=False) as handles:
-        yield cast(IO[bytes], handles.handle)
 
 
 @contextlib.contextmanager
