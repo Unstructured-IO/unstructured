@@ -1330,6 +1330,15 @@ class Describe_FileTypeDetectionContext:
         assert len(text_head) == 188
         assert text_head.startswith("This is a test document to use for unit tests.\n\n    Doyle")
 
+    def it_strips_only_the_leading_utf8_bom_and_not_a_later_literal_ufeff_char(self):
+        """Only one BOM can ever be produced by decoding; a 2nd U+FEFF is real content."""
+        file = io.BytesIO(b"\xef\xbb\xbf\xef\xbb\xbf{}")
+        ctx = _FileTypeDetectionContext(file=file)
+
+        text_head = ctx.text_head
+
+        assert text_head == "﻿{}"
+
     def and_it_accommodates_a_utf_32_encoded_file_like_object(self):
         with open(example_doc_path("fake-text-utf-32.txt"), "rb") as f:
             file = io.BytesIO(f.read())
@@ -1520,6 +1529,18 @@ def test_json_content_type_is_disambiguated_for_ndjson():
     file_buffer.name = "filename.pdf"
     predicted_type = detect_filetype(file=file_buffer, content_type="application/json")
     assert predicted_type == FileType.NDJSON
+
+
+def test_it_identifies_json_with_a_leading_utf8_bom_and_no_extension():
+    json_bytes = b"\xef\xbb\xbf" + json.dumps([{"example": "data"}]).encode("utf-8")
+
+    file_buffer = io.BytesIO(json_bytes)
+    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    assert predicted_type == FileType.JSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer)
+    assert predicted_type == FileType.JSON
 
 
 def test_office_files_when_document_archive_has_non_standard_prefix():
