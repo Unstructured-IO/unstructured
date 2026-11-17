@@ -135,7 +135,11 @@ def element_from_text(
             coordinate_system=coordinate_system,
         )
     elif is_email_address(text):
-        return EmailAddress(text=text)
+        return EmailAddress(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif is_us_city_state_zip(text):
         return Address(
             text=text,
