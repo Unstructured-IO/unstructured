@@ -3115,6 +3115,54 @@ def test_partition_docx_vmerge_origin_not_reused_across_column_gap(tmp_path):
     assert re.search(r"<tr><td\s*/><td>A2</td></tr>", html)
 
 
+def test_partition_docx_unresolved_spanned_continuation_clears_stale_origins(tmp_path):
+    """An unresolved multi-column continuation must not leave a stale origin behind.
+
+    A `vMerge="continue"` cell spanning several grid columns whose starting column has
+    no origin is malformed: it emits blanks for every covered column. Those columns
+    must all have their tracked origins cleared, otherwise a later orphan continuation
+    in one of them resolves to text from several rows above. This is the multi-column
+    extension of the single-column gap case in
+    `test_partition_docx_vmerge_origin_not_reused_across_column_gap`.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    # -- set texts while cells are addressable via the grid API --
+    table.cell(0, 0).text = "OLD"
+    table.cell(0, 1).text = "A0"
+    table.cell(1, 0).text = "B0"
+    table.cell(1, 1).text = "B1"
+    table.cell(2, 0).text = "SHOULD_NOT_APPEAR"
+    table.cell(2, 1).text = "A2"
+
+    # -- row 0 omits col0 (gridBefore=1); its remaining tc holds OLD and starts a merge. --
+    r0 = table.rows[0]._tr
+    r0.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    r0.remove(r0.tc_lst[1])
+    r0.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>'))
+
+    # -- row 1 is a two-column continuation (gridSpan=2) starting at col0, which has no
+    # -- origin; col1 still holds the OLD origin. Both columns must be cleared. --
+    r1 = table.rows[1]._tr
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="2"/>'))
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+    r1.remove(r1.tc_lst[1])
+
+    # -- row 2 omits col0; its col1 continuation has no fresh origin and must not get OLD. --
+    r2 = table.rows[2]._tr
+    r2.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    r2.remove(r2.tc_lst[1])
+    r2.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+
+    docx_path = tmp_path / "spanned-orphan.docx"
+    document.save(str(docx_path))
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    html = next(e for e in elements if isinstance(e, Table)).metadata.text_as_html
+    # -- OLD appears only once, in its origin row; the later orphan continuation is blank. --
+    assert html.count("OLD") == 1
+    assert "SHOULD_NOT_APPEAR" not in html
+
+
 def test_row_grid_width_normalizes_nonpositive_grid_span():
     """_row_grid_width must charge the same positions the HTML iterator emits.
 
@@ -3125,8 +3173,12 @@ def test_row_grid_width_normalizes_nonpositive_grid_span():
     document = docx.Document()
     table = document.add_table(rows=1, cols=1)
     tc = table.rows[0]._tr.tc_lst[0]
-    tc.get_or_add_tcPr().append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="0"/>'))
+    tc_pr = tc.get_or_add_tcPr()
+    tc_pr.append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="0"/>'))
     assert _row_grid_width(table.rows[0]) == 1
-    negative_tc = table.rows[0]._tr.tc_lst[0]
-    negative_tc.get_or_add_tcPr()[0].set(qn("w:val"), "-2")
+    # -- select the property by qualified name, not by child index, so the test
+    # -- cannot silently mutate a different tcPr child if the XML layout changes. --
+    (grid_span,) = tc_pr.findall(qn("w:gridSpan"))
+    grid_span.set(qn("w:val"), "-2")
+    assert grid_span.get(qn("w:val")) == "-2"
     assert _row_grid_width(table.rows[0]) == 1

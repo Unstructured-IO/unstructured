@@ -643,6 +643,15 @@ class _DocxPartitioner:
                         # -- plain-text and emphasis walkers, which skip every continue tc.
                         origin = vmerge_origins.get(offset)
                         if origin is None:
+                            # -- This continuation is unresolved: its starting column has no
+                            # -- origin in the row above. It emits blanks for every column it
+                            # -- covers, so none of those columns may retain an origin from
+                            # -- older rows -- otherwise a later orphan "continue" in one of
+                            # -- them resolves to stale text several rows up. Drop them here
+                            # -- (the end-of-row pruning only removes columns this row did
+                            # -- NOT cover, which is the opposite set for a spanned cell). --
+                            for col in range(offset, offset + span):
+                                vmerge_origins.pop(col, None)
                             for _ in range(span):
                                 yield "", None
                             offset += span
