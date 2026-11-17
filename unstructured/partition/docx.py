@@ -8,17 +8,19 @@ import os
 import re
 import zipfile
 from functools import cached_property
-from typing import IO, Any, Iterator, Protocol, Type
+from typing import IO, Any, Iterable, Iterator, Protocol, Type
 
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.oxml.ns import nsmap, qn
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.parts.document import DocumentPart
 from docx.parts.hdrftr import FooterPart, HeaderPart
+from docx.parts.story import StoryPart
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.table import _Cell, _Row
@@ -159,6 +161,7 @@ def partition_docx(
     *,
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
+    include_notes: bool = True,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
     strategy: str | None = None,
@@ -175,6 +178,11 @@ def partition_docx(
     include_page_breaks
         When True, add a `PageBreak` element to the element-stream when a page-break is detected in
         the document. Note that not all DOCX files include page-break information.
+    include_notes
+        Include referenced footnotes and endnotes after their first referring paragraph or table.
+        Note paragraphs are Footer elements and note tables retain their structure. Their
+        `header_footer_type` is "footnote" or "endnote", and `parent_id` identifies the referring
+        element when present. Note parts do not provide reliable physical page numbers.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -194,6 +202,7 @@ def partition_docx(
         file=file,
         file_path=filename,
         include_page_breaks=include_page_breaks,
+        include_notes=include_notes,
         infer_table_structure=infer_table_structure,
         starting_page_number=starting_page_number,
         strategy=strategy,
@@ -224,12 +233,14 @@ class DocxPartitionerOptions:
         file_path: str | None,
         include_page_breaks: bool,
         infer_table_structure: bool,
+        include_notes: bool = True,
         starting_page_number: int = 1,
         strategy: str | None = None,
     ):
         self._file = file
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
+        self.include_notes = include_notes
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
         # -- options object maintains page-number state --
@@ -401,6 +412,7 @@ class _DocxPartitioner:
         self._table_grid_cells_remaining = env_config.DOCX_TABLE_MAX_CELLS
         # -- paragraph-style name by style-id, see `._style_name()` --
         self._style_names: dict[str | None, str] = {}
+        self._emitted_notes: set[tuple[str, str]] = set()
 
     @classmethod
     def iter_document_elements(cls, opts: DocxPartitionerOptions) -> Iterator[Element]:
@@ -435,7 +447,7 @@ class _DocxPartitioner:
             elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
                 block_item, DocxTable
             ):
-                yield from self._iter_table_element(block_item)
+                yield from self._iter_table_with_notes(block_item)
 
             # -- A paragraph-level sectPr marks the final paragraph governed by the current
             # -- section. The final section's sectPr lives directly under w:body, so it is handled
@@ -466,7 +478,86 @@ class _DocxPartitioner:
                 yield from self._iter_paragraph_elements(block_item)
             # -- can only be a Paragraph or Table so far but more types may come later --
             elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
-                yield from self._iter_table_element(block_item)
+                yield from self._iter_table_with_notes(block_item)
+
+    @cached_property
+    def _notes(self) -> dict[tuple[str, str], tuple[StoryPart, BaseOxmlElement]]:
+        """Normal notes indexed within their part, preserving its own link relationships."""
+        notes: dict[tuple[str, str], tuple[StoryPart, BaseOxmlElement]] = {}
+        kinds = {RT.FOOTNOTES: "footnote", RT.ENDNOTES: "endnote"}
+        for relationship in self._document.part.rels.values():
+            kind = kinds.get(relationship.reltype)
+            if kind is None or relationship.is_external:
+                continue
+            source = relationship.target_part
+            try:
+                part = StoryPart.load(
+                    source.partname, source.content_type, source.blob, source.package
+                )
+            except etree.XMLSyntaxError:
+                logging.warning("Skipping malformed DOCX %s part: %s", kind, source.partname)
+                continue
+            for rel in source.rels.values():
+                part.load_rel(
+                    rel.reltype,
+                    rel.target_ref if rel.is_external else rel.target_part,
+                    rel.rId,
+                    rel.is_external,
+                )
+            _unwrap_nested_content(part.element)
+            for note in part.element:
+                if note.tag != qn(f"w:{kind}") or note.get(qn("w:type")) not in (None, "normal"):
+                    continue
+                note_id = note.get(qn("w:id"))
+                if note_id is not None:
+                    notes[kind, note_id] = part, note
+        return notes
+
+    def _iter_referenced_notes(
+        self, element: BaseOxmlElement, parent_id: str | None
+    ) -> Iterator[Element]:
+        if not self._opts.include_notes or not self._notes:
+            return
+        for reference in element.xpath(
+            ".//*[self::w:footnoteReference or self::w:endnoteReference]"
+            "[not(ancestor::w:del or ancestor::w:moveFrom)]"
+        ):
+            kind = "footnote" if reference.tag == qn("w:footnoteReference") else "endnote"
+            note_id = reference.get(qn("w:id"))
+            if note_id is None:
+                continue
+            key = kind, note_id
+            if key in self._emitted_notes or key not in self._notes:
+                continue
+            self._emitted_notes.add(key)
+            part, note = self._notes[key]
+            for block in note:
+                if isinstance(block, CT_P):
+                    paragraph = Paragraph(block, part)
+                    text = _paragraph_text(paragraph)
+                    if not text.strip():
+                        continue
+                    elements: Iterable[Element] = [
+                        Footer(
+                            text,
+                            metadata=self._paragraph_metadata(paragraph),
+                            detection_origin=DETECTION_ORIGIN,
+                        )
+                    ]
+                elif isinstance(block, CT_Tbl):
+                    elements = self._iter_table_element(DocxTable(block, part))
+                else:
+                    continue
+                for note_element in elements:
+                    note_element.metadata.header_footer_type = kind
+                    note_element.metadata.parent_id = parent_id
+                    note_element.metadata.page_number = None
+                    yield note_element
+
+    def _iter_table_with_notes(self, table: DocxTable) -> Iterator[Element]:
+        for element in self._iter_table_element(table):
+            yield element
+            yield from self._iter_referenced_notes(table._tbl, element.id)
 
     def _classify_paragraph_to_element(
         self, paragraph: Paragraph, label: str = ""
@@ -842,7 +933,11 @@ class _DocxPartitioner:
         label = self._list_labels.label(paragraph)
         for item in iter_paragraph_items(paragraph):
             if isinstance(item, Paragraph):
-                yield from self._classify_paragraph_to_element(item, label)
+                parent_id = None
+                for element in self._classify_paragraph_to_element(item, label):
+                    parent_id = element.id
+                    yield element
+                yield from self._iter_referenced_notes(item._p, parent_id)
                 yield from self._iter_paragraph_images(item)
                 if _paragraph_text(item).strip():
                     label = ""
