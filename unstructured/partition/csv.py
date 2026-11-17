@@ -114,8 +114,8 @@ def open_file_path(file_path: str) -> Iterator[IO[bytes]]:
     if _URL_PREFIX.match(path) and not os.path.exists(path):
         raise FileNotFoundError(
             errno.ENOENT,
-            "No such local file; `filename` is a local file path, to partition a remote document"
-            " pass its address as `url` to `partition()`",
+            "No such local file; `filename` is a local file path. To partition a remote"
+            " document, pass its HTTP(S) address as `url` to `partition()`, or download it first",
             path,
         )
     with (
