@@ -632,12 +632,21 @@ class _DocxPartitioner:
                 # -- A malformed row can still raise (e.g. `ValueError` from a tc wider than the
                 # -- grid accounts for); that still skips the rest of the row, as before.
                 offset = row.grid_cols_before
+                covered_cols: set[int] = set()
                 for tc in row._tr.tc_lst:
                     span = max(tc.grid_span, 1)
+                    covered_cols.update(range(offset, offset + span))
                     if tc.vMerge == "continue":
-                        # -- fall back to the tc itself when no origin was tracked for this
-                        # -- column (a malformed document), rather than losing the position --
-                        origin = vmerge_origins.get(offset, tc)
+                        # -- resolve to the tracked origin, as python-docx would by recursing
+                        # -- upward. A "continue" with no origin in the row above is malformed;
+                        # -- emit an empty position rather than its own text, matching the
+                        # -- plain-text and emphasis walkers, which skip every continue tc.
+                        origin = vmerge_origins.get(offset)
+                        if origin is None:
+                            for _ in range(span):
+                                yield "", None
+                            offset += span
+                            continue
                     else:
                         origin = tc
                         for col in range(offset, offset + span):
@@ -649,6 +658,14 @@ class _DocxPartitioner:
             except Exception as e:
                 logging.warning(f"Skipping cell in _convert_table_to_html due to: {e}")
                 yield "", None
+            # -- An origin is only valid for the row immediately below it: a merged cell
+            # -- continues from the cell above in the same column. When a row omits a
+            # -- leading/trailing column (gridBefore/gridAfter) or is malformed, that
+            # -- column has no cell in this row, so a later orphan "continue" must not
+            # -- resolve back to a stale origin several rows up. Drop origins for every
+            # -- column this row did not cover. --
+            for col in set(vmerge_origins) - covered_cols:
+                del vmerge_origins[col]
 
             # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
             for _ in range(row.grid_cols_after):
@@ -1258,8 +1275,10 @@ def _row_grid_width(row: _Row) -> int:
     the positive counts it would otherwise cancel.
     """
     tr = row._tr
-    counts = [tr.grid_before, *(tc.grid_span for tc in tr.tc_lst), tr.grid_after]
-    return sum(max(count, 0) for count in counts)
+    # -- cell spans are normalized to >=1 to match iter_row_cells (gridSpan<=0 still
+    # -- expands to one position); leading/trailing omissions charge max(count, 0). --
+    cell_positions = sum(max(tc.grid_span, 1) for tc in tr.tc_lst)
+    return max(tr.grid_before, 0) + cell_positions + max(tr.grid_after, 0)
 
 
 _W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"

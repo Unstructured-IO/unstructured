@@ -53,6 +53,7 @@ from unstructured.documents.elements import (
 from unstructured.partition.docx import (
     DocxPartitionerOptions,
     _DocxPartitioner,
+    _row_grid_width,
     partition_docx,
     register_picture_partitioner,
 )
@@ -3069,5 +3070,63 @@ def test_partition_docx_very_long_vertical_merge_keeps_every_row(tmp_path):
     assert html is not None
     assert html.count('rowspan="1500"') == 1
     assert html.count("MERGEDHEAD") == 1
-    for i in range(n_rows):
-        assert f"side-{i}" in html
+    # -- check exact ordered side-cell values, not substrings ("side-1" also matches side-10) --
+    side_cells = [
+        c.strip()
+        for c in re.findall(r"<td[^>]*>(.*?)</td>", html, re.DOTALL)
+        if c.strip().startswith("side-")
+    ]
+    assert side_cells == [f"side-{i}" for i in range(n_rows)]
+
+
+def test_partition_docx_vmerge_origin_not_reused_across_column_gap(tmp_path):
+    """A vMerge origin must not survive a row that omits its column (gridBefore/After).
+
+    A resume cell (vMerge="continue") with no origin in the immediately preceding row is
+    malformed; it must emit an empty position (like the plain-text walkers), never a stale
+    origin from rows above and never its own text.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    table.cell(0, 0).text = "OLD"
+    table.cell(0, 1).text = "A0"
+    table.cell(1, 1).text = "MID"
+    table.cell(2, 0).text = "CURRENT"
+    table.cell(2, 1).text = "A2"
+    # -- row 0 col 0 is the merge origin; row 2 col 0 is an orphan continuation --
+    table.rows[0]._tr.tc_lst[0].get_or_add_tcPr().append(
+        parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>')
+    )
+    table.rows[2]._tr.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+    # -- row 1 omits column 0 (leading gap) --
+    tr1 = table.rows[1]._tr
+    tr1.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    tr1.remove(tr1.tc_lst[0])
+    docx_path = tmp_path / "gap.docx"
+    document.save(str(docx_path))
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    html = next(e for e in elements if isinstance(e, Table)).metadata.text_as_html
+    # -- The orphan continuation must not reuse the stale "OLD" origin (the regression),
+    # -- and must not surface its own text either: the plain-text and emphasis walkers skip
+    # -- every vMerge="continue" tc, so HTML emits an empty position to stay consistent.
+    assert html.count("OLD") == 1
+    assert "CURRENT" not in html
+    # -- third row first cell is empty (self-closing <td/>); the row still has both positions --
+    assert re.search(r"<tr><td\s*/><td>A2</td></tr>", html)
+
+
+def test_row_grid_width_normalizes_nonpositive_grid_span():
+    """_row_grid_width must charge the same positions the HTML iterator emits.
+
+    A gridSpan of 0 or less still expands to one position in iter_row_cells, so the
+    budget guard must count one position too; otherwise many such cells bypass
+    DOCX_TABLE_MAX_CELLS.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=1, cols=1)
+    tc = table.rows[0]._tr.tc_lst[0]
+    tc.get_or_add_tcPr().append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="0"/>'))
+    assert _row_grid_width(table.rows[0]) == 1
+    negative_tc = table.rows[0]._tr.tc_lst[0]
+    negative_tc.get_or_add_tcPr()[0].set(qn("w:val"), "-2")
+    assert _row_grid_width(table.rows[0]) == 1
