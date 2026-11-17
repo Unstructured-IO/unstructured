@@ -21,6 +21,7 @@ from typing import IO, Any, Final, Iterator, cast
 from dateutil import parser
 
 from unstructured.documents.elements import Element, ElementMetadata
+from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import EXPECTED_ATTACHMENT_ERRORS
@@ -38,6 +39,22 @@ VALID_CONTENT_SOURCES: Final[tuple[str, ...]] = ("text/html", "text/plain")
 # -- escapes with a backslash --
 _SPECIALS_RE: Final[re.Pattern[str]] = re.compile(r'[][\\()<>@,:;".]')
 _ESCAPES_RE: Final[re.Pattern[str]] = re.compile(r'[\\"]')
+
+
+def _part_content(part: MIMEPart) -> str | bytes | Message:
+    """Read MIME content, detecting text encoding if its charset name is unknown."""
+    try:
+        return part.get_content()
+    except LookupError:
+        # A charset label is only meaningful for text. Keep errors from unsupported
+        # non-text content handlers visible rather than treating binary data as text.
+        if part.get_content_maintype() != "text":
+            raise
+        payload = part.get_payload(decode=True)
+        if not isinstance(payload, bytes):
+            raise
+        _, content = detect_file_encoding(file=payload)
+        return content
 
 
 def _format_address(name: str, address: str) -> str:
@@ -383,7 +400,7 @@ class _EmailPartitioner:
             return
 
         content_type = body_part.get_content_type()
-        content = body_part.get_content()
+        content = _part_content(body_part)
         assert isinstance(content, str)
 
         if content_type == "text/html":
@@ -484,7 +501,7 @@ class _AttachmentPartitioner:
         if self._attachment.get_content_type().startswith("multipart/"):
             return self._serialized_multipart_bytes
 
-        content = self._attachment.get_content()
+        content = _part_content(self._attachment)
 
         if isinstance(content, str):
             return content.encode("utf-8")
