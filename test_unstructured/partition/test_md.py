@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any
 from unittest.mock import patch
 
@@ -440,3 +441,31 @@ def test_partition_md_keeps_four_space_indented_hash_line_as_code():
 
     assert all(e.text != "not a heading" for e in elements)
     assert not any(e.metadata.category_depth is not None for e in elements)
+
+
+def test_partition_md_does_not_pull_indented_hash_out_of_a_block():
+    list_els = partition_md(text="1. step\n   ## Notes\n2. next\n")
+    tag_els = partition_md(text="Tags for this post:\n  #python #ml\n")
+
+    assert [e.category for e in list_els] == ["ListItem", "ListItem"]
+    assert all(e.category != ElementType.TITLE for e in tag_els)
+    assert len(tag_els) == 1
+
+
+def test_partition_md_keeps_hashheader_processor_passed_through_extensions():
+    from markdown.blockprocessors import HashHeaderProcessor
+    from markdown.extensions import Extension
+
+    class StrictHashHeaderProcessor(HashHeaderProcessor):
+        RE = re.compile(r"(?:^|\n)(?P<level>#{1,6}) (?P<header>(?:\\.|[^\\])*?)#*(?:\n|$)")
+
+    class StrictExt(Extension):
+        def extendMarkdown(self, md):
+            md.parser.blockprocessors.register(
+                StrictHashHeaderProcessor(md.parser), "hashheader", 70
+            )
+
+    elements = partition_md(text="#nospace\n", extensions=["tables", StrictExt()])
+
+    assert [e.text for e in elements] == ["#nospace"]
+    assert elements[0].category != ElementType.TITLE

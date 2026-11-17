@@ -56,11 +56,14 @@ class _IndentedHashHeaderProcessor(HashHeaderProcessor):
     more spaces still make an indented code block, as before.
     """
 
-    RE = re.compile(r"(?:^|\n)[ ]{0,3}(?P<level>#{1,6})(?P<header>(?:\\.|[^\\])*?)#*(?:\n|$)")
+    RE = re.compile(r"(?:^[ ]{0,3}|\n)(?P<level>#{1,6})(?P<header>(?:\\.|[^\\])*?)#*(?:\n|$)")
 
 
 class _IndentedHeadingExtension(Extension):
     def extendMarkdown(self, md: markdown.Markdown) -> None:
+        # Keep a "hashheader" processor that a caller registered through `extensions=`.
+        if type(md.parser.blockprocessors["hashheader"]) is not HashHeaderProcessor:
+            return
         md.parser.blockprocessors.register(
             _IndentedHashHeaderProcessor(md.parser), "hashheader", 70
         )
