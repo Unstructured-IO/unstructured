@@ -260,9 +260,22 @@ def _reject_encrypted_workbook(file_bytes: bytes) -> None:
 # -- the most unevaluated formula cells one warning names before eliding the rest --
 _UNEVALUATED_FORMULA_CELLS_NAMED = 10
 
-# -- cell types whose cached result is a string, where an empty `<v>` is a blank result and not
-# -- a missing one --
-_STRING_RESULT_CELL_TYPES = frozenset({"str", "s", "inlineStr"})
+# -- the one cell type whose cached `<v>` is the formula's own string result, so that an empty
+# -- one is a blank result rather than a missing one. A `t="s"` cell's `<v>` is an index into
+# -- the shared-string table and a `t="inlineStr"` cell keeps its text in `<is>`, so neither
+# -- has a result to read from an empty `<v>` --
+_CALCULATED_STRING_CELL_TYPE = "str"
+
+# -- the SpreadsheetML main namespace, and the empty one a generator may leave a part in. An
+# -- element outside both belongs to some other vocabulary, such as an extension list's --
+_SPREADSHEET_NAMESPACES = frozenset(
+    {"", "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+)
+
+# -- control characters are escaped out of a worksheet title before it reaches a log message,
+# -- so that a title holding a newline cannot spread one warning over several lines of a
+# -- plain-text log --
+_CONTROL_CHARACTER_ESCAPES = {c: f"\\x{c:02x}" for c in (*range(0x20), 0x7F)}
 
 # -- content types a spreadsheet's main workbook part can carry: workbook and template, each
 # -- with and without macros --
@@ -288,7 +301,8 @@ def _warn_on_formula_cells_without_saved_results(file_bytes: bytes) -> None:
     """
     try:
         with zipfile.ZipFile(io.BytesIO(file_bytes)) as zip_file:
-            for sheet_title, member_name in _iter_worksheet_members(zip_file):
+            for sheet_title, member_name in _worksheet_members(zip_file):
+                title = sheet_title.translate(_CONTROL_CHARACTER_ESCAPES)
                 try:
                     if _worksheet_holds_no_formula_tag(zip_file, member_name):
                         continue
@@ -296,7 +310,7 @@ def _warn_on_formula_cells_without_saved_results(file_bytes: bytes) -> None:
                 except Exception:
                     # -- one unreadable worksheet leaves the others diagnosed --
                     logger.debug(
-                        f"formula-cell diagnostic failed on worksheet '{sheet_title}'",
+                        f"formula-cell diagnostic failed on worksheet '{title}'",
                         exc_info=True,
                     )
                     continue
@@ -306,7 +320,7 @@ def _warn_on_formula_cells_without_saved_results(file_bytes: bytes) -> None:
                 if count > len(named_cells):
                     named += f" and {count - len(named_cells)} more"
                 logger.warning(
-                    f"worksheet '{sheet_title}': {count} formula cell(s) have no saved"
+                    f"worksheet '{title}': {count} formula cell(s) have no saved"
                     f" result and are read as empty: {named}. Recalculate and save the"
                     f" workbook to include the computed values."
                 )
@@ -314,21 +328,50 @@ def _warn_on_formula_cells_without_saved_results(file_bytes: bytes) -> None:
         logger.debug("formula-cell diagnostic failed", exc_info=True)
 
 
-def _iter_worksheet_members(zip_file: zipfile.ZipFile) -> Iterator[tuple[str, str]]:
-    """Generate `(title, zip-member name)` for each worksheet, in workbook order.
+def _iter_part_elements(
+    zip_file: zipfile.ZipFile, member_name: str, tag: str
+) -> Iterator[etree._Element]:
+    """Generate each `tag` element of a package part, holding one of them at a time.
+
+    The part is streamed and each element is dropped, along with the siblings already read,
+    before the next is produced, so the whole part is never resident as a tree. The parser
+    resolves no entities, loads no DTD, and reaches no network: lxml resolves internal
+    entities by default, and openpyxl disables that for the same parts, so a package
+    carrying an internal DTD cannot make this expand text the ordinary reader never reads.
+    """
+    with zip_file.open(member_name) as stream:
+        for _, element in etree.iterparse(
+            stream,
+            events=("end",),
+            tag=tag,
+            resolve_entities=False,
+            load_dtd=False,
+            no_network=True,
+            huge_tree=False,
+        ):
+            yield element
+            element.clear()
+            parent = element.getparent()
+            if parent is not None:
+                while element.getprevious() is not None:
+                    del parent[0]
+
+
+def _worksheet_members(zip_file: zipfile.ZipFile) -> list[tuple[str, str]]:
+    """`(title, zip-member name)` for each worksheet, in workbook order.
 
     The mapping comes from the workbook part and its relationships alone, so no shared-string,
     style, or external-link parts are read. A worksheet is recognized by its relationship type
     rather than by the directory its part happens to sit in, and its target is resolved against
-    the workbook part, as a reader resolves it.
+    the workbook part, as a reader resolves it. The list is complete before it is returned, so
+    none of the manifest parsing is still resident while the worksheets are scanned.
     """
     workbook_name = _workbook_member_name(zip_file)
     workbook_dir, workbook_file = posixpath.split(workbook_name)
     rels_name = posixpath.join(workbook_dir, "_rels", f"{workbook_file}.rels")
 
-    relationships = etree.fromstring(zip_file.read(rels_name))
     members_by_rel_id: dict[str, str] = {}
-    for relationship in relationships.iter("{*}Relationship"):
+    for relationship in _iter_part_elements(zip_file, rels_name, "{*}Relationship"):
         if relationship.get("TargetMode") == "External":
             continue
         if not (relationship.get("Type") or "").endswith("/worksheet"):
@@ -341,12 +384,13 @@ def _iter_worksheet_members(zip_file: zipfile.ZipFile) -> Iterator[tuple[str, st
         members_by_rel_id[relationship.get("Id") or ""] = member
 
     member_names = set(zip_file.namelist())
-    workbook = etree.fromstring(zip_file.read(workbook_name))
-    for sheet in workbook.iter("{*}sheet"):
+    worksheets: list[tuple[str, str]] = []
+    for sheet in _iter_part_elements(zip_file, workbook_name, "{*}sheet"):
         rel_id = next((v for k, v in sheet.attrib.items() if k.endswith("}id")), "")
         member = members_by_rel_id.get(rel_id, "")
         if member in member_names:
-            yield sheet.get("name") or "", member
+            worksheets.append((sheet.get("name") or "", member))
+    return worksheets
 
 
 def _workbook_member_name(zip_file: zipfile.ZipFile) -> str:
@@ -358,8 +402,7 @@ def _workbook_member_name(zip_file: zipfile.ZipFile) -> str:
     diagnosed. A package that overrides nothing because it redefines the default content type
     for XML leaves the conventional name as the only candidate.
     """
-    content_types = etree.fromstring(zip_file.read("[Content_Types].xml"))
-    for override in content_types.iter("{*}Override"):
+    for override in _iter_part_elements(zip_file, "[Content_Types].xml", "{*}Override"):
         if (override.get("ContentType") or "") in _WORKBOOK_CONTENT_TYPES:
             return (override.get("PartName") or "").lstrip("/")
     return "xl/workbook.xml"
@@ -395,32 +438,45 @@ class _UnevaluatedFormulaCellFinder:
     dropped rather than read as elements. Only populated cells carry events, so the cost follows
     the cells in the file and not the sheet's declared dimensions. A cell or row without a
     stored reference takes the position implied by its predecessor, as consumers read it.
+
+    Each element counts only in the SpreadsheetML namespace and only where the schema puts it,
+    so an extension list's own `<f>` or `<v>` is read as the foreign content it is. No cell text
+    is kept: whether the cached value holds any is all the diagnostic asks of it. A document type
+    declaration is refused rather than parsed, since lxml expands internal entities for a parse
+    target whatever the parser is told, and a worksheet has no use for a DTD.
     """
 
     def __init__(self) -> None:
         self.count = 0
         self.named_cells: list[str] = []
-        self._in_sheet_data = False
+        self._depth = 0
+        self._sheet_data_depth = -1
+        self._cell_depth = -1
+        self._result_depth = -1
         self._row_num = 0
         self._column_idx = 0
         self._reference = ""
         self._cell_type = ""
-        self._in_cell = False
         self._has_formula = False
-        self._value_seen = False
-        self._in_value = False
-        self._value_text = ""
+        self._result_tag = ""
+        self._result_has_text = False
+
+    def doctype(self, name: str, pubid: str, system: str) -> None:
+        raise ValueError("worksheet carries a document type declaration")
 
     def start(self, tag: str, attrib: dict[str, str]) -> None:
-        name = tag.rpartition("}")[2]
-        if name == "sheetData":
-            self._in_sheet_data = True
-        elif not self._in_sheet_data:
+        self._depth += 1
+        namespace, _, name = tag.rpartition("}")
+        if namespace.lstrip("{") not in _SPREADSHEET_NAMESPACES:
             return
-        elif name == "row":
+        if name == "sheetData":
+            self._sheet_data_depth = self._depth
+        elif self._sheet_data_depth < 0:
+            return
+        elif name == "row" and self._depth == self._sheet_data_depth + 1:
             self._row_num = int(attrib.get("r") or self._row_num + 1)
             self._column_idx = 0
-        elif name == "c":
+        elif name == "c" and self._depth == self._sheet_data_depth + 2:
             reference = attrib.get("r")
             if reference:
                 self._column_idx = column_index_from_string(reference.rstrip("0123456789"))
@@ -429,32 +485,36 @@ class _UnevaluatedFormulaCellFinder:
                 reference = f"{get_column_letter(self._column_idx)}{self._row_num}"
             self._reference = reference
             self._cell_type = attrib.get("t") or ""
-            self._in_cell = True
-            self._has_formula = self._value_seen = False
-        elif not self._in_cell:
+            self._cell_depth = self._depth
+            self._has_formula = self._result_has_text = False
+            self._result_tag = ""
+        elif self._depth != self._cell_depth + 1:
             return
         elif name == "f":
             self._has_formula = True
-        elif name == "v":
-            self._value_seen = self._in_value = True
-            self._value_text = ""
+        elif name in ("v", "is"):
+            self._result_tag = name
+            self._result_has_text = False
+            self._result_depth = self._depth
 
     def data(self, text: str) -> None:
-        if self._in_value:
-            self._value_text += text
+        if self._result_depth >= 0 and text:
+            self._result_has_text = True
 
     def end(self, tag: str) -> None:
-        name = tag.rpartition("}")[2]
-        if name == "sheetData":
-            self._in_sheet_data = False
-        elif name == "v":
-            self._in_value = False
-        elif name == "c" and self._in_cell:
-            self._in_cell = False
-            if self._has_formula and not self._holds_a_saved_result():
-                self.count += 1
-                if len(self.named_cells) < _UNEVALUATED_FORMULA_CELLS_NAMED:
-                    self.named_cells.append(self._reference)
+        namespace, _, name = tag.rpartition("}")
+        if namespace.lstrip("{") in _SPREADSHEET_NAMESPACES:
+            if name in ("v", "is") and self._depth == self._result_depth:
+                self._result_depth = -1
+            elif name == "c" and self._depth == self._cell_depth:
+                self._cell_depth = -1
+                if self._has_formula and not self._holds_a_saved_result():
+                    self.count += 1
+                    if len(self.named_cells) < _UNEVALUATED_FORMULA_CELLS_NAMED:
+                        self.named_cells.append(self._reference)
+            elif name == "sheetData" and self._depth == self._sheet_data_depth:
+                self._sheet_data_depth = -1
+        self._depth -= 1
 
     def close(self) -> tuple[int, list[str]]:
         return self.count, self.named_cells
@@ -463,13 +523,18 @@ class _UnevaluatedFormulaCellFinder:
         """True when the cell carries a cached value, blank results included.
 
         A writer that does not calculate omits the value or stores it empty, and such a cell
-        reads as empty for want of a result. A calculating writer can legitimately cache the
-        empty string a formula returned, which the cell's string type tells apart from the
-        other two: that value is the result, so no recalculation would recover anything.
+        reads as empty for want of a result. A result that is present but empty is only a
+        cached one where an empty one is what the formula returned: in `<is>`, which holds an
+        inline string itself, and in a `t="str"` cell's `<v>`, which holds a calculated string.
+        A `t="s"` cell's `<v>` holds an index into the shared-string table, and an empty one
+        indexes nothing, so the result is missing however the table reads -- including when the
+        entry an index does name is itself the empty string, which is a saved result.
         """
-        if not self._value_seen:
+        if not self._result_tag:
             return False
-        return bool(self._value_text) or self._cell_type in _STRING_RESULT_CELL_TYPES
+        if self._result_has_text or self._result_tag == "is":
+            return True
+        return self._cell_type == _CALCULATED_STRING_CELL_TYPE
 
 
 def _find_unevaluated_formula_cells(

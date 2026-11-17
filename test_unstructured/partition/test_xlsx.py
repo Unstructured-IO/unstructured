@@ -947,6 +947,238 @@ def test_partition_xlsx_formula_warning_retains_no_worksheet_xml_outside_the_row
     assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
 
 
+def _cell_rewrite(replacement: bytes) -> io.BytesIO:
+    """The budget workbook with its formula cell replaced by `replacement`."""
+    return _repackaged(
+        _budget_workbook_file(),
+        {
+            "xl/worksheets/sheet1.xml": lambda content: (
+                "xl/worksheets/sheet1.xml",
+                content.replace(b'<c r="B4"><f>SUM(B2:B3)</f><v></v></c>', replacement),
+            )
+        },
+    )
+
+
+def test_partition_xlsx_formula_warning_reads_past_a_foreign_cell_value(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- a cell may carry an extension list, whose contents belong to another vocabulary and can
+    # -- use the same local names. Reading a foreign <v> as the cached result let an extension
+    # -- silence the warning for a cell that still has no saved value.
+    with_extension = _cell_rewrite(
+        b'<c r="B4"><f>SUM(B2:B3)</f><v></v>'
+        b'<extLst><ext uri="{FCE6A71B}" xmlns:x14="http://example.invalid/x14">'
+        b"<x14:v>999</x14:v></ext></extLst></c>"
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=with_extension)
+
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+    assert "B4" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_retains_no_extension_text(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- extension content is not bounded by the coordinate sample or the cell count, so reading
+    # -- its text into the cell's value accumulated it; the diagnostic now keeps only whether a
+    # -- cached value holds any text at all.
+    with_bulky_extension = _cell_rewrite(
+        b'<c r="B4"><f>SUM(B2:B3)</f><v></v>'
+        b'<extLst><ext uri="{FCE6A71B}" xmlns:x14="http://example.invalid/x14">'
+        b"<x14:v>" + b"9" * 2_000_000 + b"</x14:v></ext></extLst></c>"
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=with_bulky_extension)
+
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_reports_an_empty_shared_string_cache(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- a t="s" cell's <v> is an index into the shared-string table, so an empty one indexes
+    # -- nothing and the result is missing. Only a t="str" cell caches a calculated string, and
+    # -- only there is an empty <v> the result itself.
+    empty_index = _cell_rewrite(b'<c r="B4" t="s"><f>INDEX(A:A,1)</f><v></v></c>')
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=empty_index)
+
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+    assert "B4" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_reports_an_empty_inline_string_cache(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- an inline string lives in <is>, so an empty <v> on such a cell caches nothing either --
+    empty_inline = _cell_rewrite(b'<c r="B4" t="inlineStr"><f>A1&amp;""</f><v></v></c>')
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=empty_inline)
+
+    assert "worksheet 'Sheet': 1 formula cell(s) have no saved result" in caplog.text
+
+
+_SHARED_STRINGS_CONTENT_TYPE = (
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"
+)
+_SHARED_STRINGS_RELATIONSHIP = (
+    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings"
+)
+
+
+def _shared_string_workbook(strings: list[str], cell_xml: bytes) -> io.BytesIO:
+    """The budget workbook given a shared-string table, its formula cell replaced.
+
+    openpyxl writes every string inline, so a `t="s"` cell has to be assembled: the table part,
+    the workbook relationship that names it, and the content-type override all have to be there
+    for a reader to resolve an index.
+    """
+    source = zipfile.ZipFile(_budget_workbook_file())
+    table = (
+        '<?xml version="1.0"?>'
+        '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"'
+        f' count="{len(strings)}" uniqueCount="{len(strings)}">'
+        + "".join(f"<si><t>{string}</t></si>" for string in strings)
+        + "</sst>"
+    ).encode()
+
+    repackaged = io.BytesIO()
+    with zipfile.ZipFile(repackaged, "w") as destination:
+        for item in source.infolist():
+            name, content = item.filename, source.read(item.filename)
+            if name == "xl/worksheets/sheet1.xml":
+                content = content.replace(b'<c r="B4"><f>SUM(B2:B3)</f><v></v></c>', cell_xml)
+            elif name == "xl/_rels/workbook.xml.rels":
+                content = content.replace(
+                    b"</Relationships>",
+                    f'<Relationship Id="rIdSst" Type="{_SHARED_STRINGS_RELATIONSHIP}"'
+                    ' Target="sharedStrings.xml"/></Relationships>'.encode(),
+                )
+            elif name == "[Content_Types].xml":
+                content = content.replace(
+                    b"</Types>",
+                    f'<Override PartName="/xl/sharedStrings.xml"'
+                    f' ContentType="{_SHARED_STRINGS_CONTENT_TYPE}"/></Types>'.encode(),
+                )
+            destination.writestr(name, content)
+        destination.writestr("xl/sharedStrings.xml", table)
+    repackaged.seek(0)
+    return repackaged
+
+
+def test_partition_xlsx_formula_warning_keeps_quiet_about_a_zero_shared_string_index(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- zero is a valid index, and the falsy one, so it has to read as a saved result --
+    first_index = _shared_string_workbook(
+        ["Alpha"], b'<c r="B4" t="s"><f>INDEX(A:A,1)</f><v>0</v></c>'
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        (table,) = partition_xlsx(file=first_index)
+
+    assert table.text == "Item Amount Rent 1000 Power 450 Total Alpha"
+    assert "formula cell" not in caplog.text
+
+
+def test_partition_xlsx_formula_warning_keeps_quiet_about_an_index_naming_an_empty_string(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- the entry an index names may itself be the empty string, which is a saved result; the
+    # -- index is present, so the diagnostic never has to read the table to know that --
+    with_empty_entry = _shared_string_workbook(
+        ["Alpha", ""], b'<c r="B4" t="s"><f>IF(1,"",A2)</f><v>1</v></c>'
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        elements = partition_xlsx(file=with_empty_entry)
+
+    # -- the cell does read as empty, and its row does fall out, but recalculating would not
+    # -- change that: the empty string is the result the writer saved --
+    assert elements == [Table("Item Amount Rent 1000 Power 450"), Title("Total")]
+    assert "formula cell" not in caplog.text
+
+
+def test_partition_xlsx_formula_warning_keeps_quiet_about_a_cached_inline_string(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- an inline string's <is> is the cached result, so a cell holding one needs no warning --
+    cached_inline = _cell_rewrite(
+        b'<c r="B4" t="inlineStr"><f>A1&amp;""</f><is><t>Total</t></is></c>'
+    )
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=cached_inline)
+
+    assert "formula cell" not in caplog.text
+
+
+def test_partition_xlsx_formula_warning_refuses_a_worksheet_carrying_a_dtd(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- lxml resolves internal entities by default, and does so for a parse target whatever the
+    # -- parser is told, so a worksheet declaring a DTD could expand text this second pass reads
+    # -- after the DataFrames are already resident. A worksheet has no use for a DTD, so one is
+    # -- refused; the sheet goes undiagnosed and the rest of the workbook does not.
+    workbook = openpyxl.Workbook()
+    sheet_one = workbook.active
+    sheet_one.append(["Item", "Amount"])
+    sheet_one.append(["Total", "=SUM(B1:B1)"])
+    workbook.create_sheet("Rates")["A1"] = "=1+1"
+    file = io.BytesIO()
+    workbook.save(file)
+    file.seek(0)
+
+    entity = b'<!DOCTYPE worksheet [<!ENTITY padding "' + b"A" * 1_000 + b'">]>'
+    with_dtd = _repackaged(
+        file,
+        {
+            "xl/worksheets/sheet1.xml": lambda content: (
+                "xl/worksheets/sheet1.xml",
+                content.replace(b"<worksheet", entity + b"<worksheet", 1),
+            )
+        },
+    )
+
+    with caplog.at_level(logging.DEBUG, logger="unstructured"):
+        elements = partition_xlsx(file=with_dtd)
+
+    assert elements == [Table("Item Amount"), Title("Total")]
+    assert "formula-cell diagnostic failed on worksheet 'Sheet'" in caplog.text
+    assert "worksheet 'Sheet': 1 formula cell(s)" not in caplog.text
+    assert "worksheet 'Rates': 1 formula cell(s) have no saved result" in caplog.text
+
+
+def test_partition_xlsx_formula_warning_escapes_control_characters_in_a_worksheet_title(
+    caplog: pytest.LogCaptureFixture,
+):
+    # -- openpyxl's title validation allows a newline and a tab, and the title reaches the log
+    # -- message; unescaped, one warning reads as several records in a plain-text log sink --
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.title = "Q1\n2026 WARNING forged\tline"
+    worksheet.append(["Item", "Amount"])
+    worksheet.append(["Total", "=SUM(B1:B1)"])
+    file = io.BytesIO()
+    workbook.save(file)
+    file.seek(0)
+
+    with caplog.at_level(logging.WARNING, logger="unstructured"):
+        partition_xlsx(file=file)
+
+    (record,) = [r for r in caplog.records if "formula cell(s)" in r.getMessage()]
+    message = record.getMessage()
+    assert "\n" not in message
+    assert "\t" not in message
+    assert "worksheet 'Q1\\x0a2026 WARNING forged\\x09line'" in message
+
+
 # ================================================================================================
 # OTHER ARGS
 # ================================================================================================
