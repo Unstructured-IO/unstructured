@@ -83,7 +83,7 @@ def test_clean_ordered_bullets(text, expected):
         ("She had a ﬂower in her hair.", "She had a flower in her hair."),
         ("The coﬃn was placed in the grave.", "The coffin was placed in the grave."),
         ("The buﬄe zone was clearly marked.", "The buffle zone was clearly marked."),
-        ("The craﬅsman worked with dedication.", "The craftsman worked with dedication."),
+        ("The laﬅ chapter was the best.", "The last chapter was the best."),
         ("The symbol ʪ is very rare.", "The symbol ls is very rare."),
         ("The word 'cœur' means 'heart' in French.", "The word 'coeur' means 'heart' in French."),
         ("The word 'Œuvre' refers to the works", "The word 'OEuvre' refers to the works"),
