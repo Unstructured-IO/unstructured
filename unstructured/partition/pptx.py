@@ -36,6 +36,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
+from unstructured.logger import logger
 from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
@@ -134,6 +135,7 @@ def partition_pptx(
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
     include_slide_notes: bool | None = None,
+    include_chart_data: bool = True,
     include_off_slide_shapes: bool = False,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
@@ -152,6 +154,10 @@ def partition_pptx(
         If True, includes a PageBreak element between slides
     include_slide_notes
         If True, includes the slide notes as element
+    include_chart_data
+        If True, include chart titles and cached category-chart data as tables. Category labels,
+        series names and raw numeric values are read from the presentation; external workbooks
+        are not opened. XY/scatter and bubble data are not interpreted as category tables.
     include_off_slide_shapes
         If True, also include text from shapes that are mostly outside the slide.
     infer_table_structure
@@ -170,6 +176,7 @@ def partition_pptx(
         file_path=filename,
         include_page_breaks=include_page_breaks,
         include_slide_notes=include_slide_notes,
+        include_chart_data=include_chart_data,
         include_off_slide_shapes=include_off_slide_shapes,
         infer_table_structure=infer_table_structure,
         strategy=strategy,
@@ -214,6 +221,9 @@ class _PptxPartitioner:
                 if shape.has_table:
                     assert isinstance(shape, GraphicFrame)
                     yield from self._iter_table_element(shape)
+                elif shape.has_chart:
+                    assert isinstance(shape, GraphicFrame)
+                    yield from self._iter_chart_elements(shape)
                 elif shape.has_text_frame:
                     assert isinstance(shape, Shape)
                     if shape == title_shape:
@@ -223,8 +233,48 @@ class _PptxPartitioner:
                 elif isinstance(shape, Picture):
                     yield from self._iter_picture_elements(shape)
 
-                # -- otherwise ditch it, this would include charts, connectors (lines),
+                # -- otherwise ditch it, this would include connectors (lines),
                 # -- and free-form shapes (squiggly lines). Lines don't have text.
+
+    def _iter_chart_elements(self, shape: GraphicFrame) -> Iterator[Element]:
+        """Read chart titles and category data from the chart's local cache."""
+        if not self._opts.include_chart_data or self._shape_is_off_slide(shape):
+            return
+        chart = shape.chart
+        if chart.has_title and chart.chart_title.has_text_frame:
+            title = _break_lines(chart.chart_title.text_frame.text).strip()
+            if title:
+                yield Title(
+                    text=title,
+                    metadata=self._opts.text_metadata(),
+                    detection_origin=DETECTION_ORIGIN,
+                )
+        for index in range(len(chart.plots)):
+            try:
+                plot = chart.plots[index]
+                labels = plot.categories.flattened_labels
+                if not labels:
+                    continue
+                series = list(plot.series)
+                values = [item.values for item in series]
+            except (ValueError, NotImplementedError) as error:
+                logger.warning("Skipping unsupported PPTX chart plot: %s", error)
+                continue
+            depth = max(len(label) for label in labels)
+            headers = ["Category"] if depth == 1 else [f"Category {i + 1}" for i in range(depth)]
+            rows = [headers + [item.name for item in series]]
+            for index in range(max(len(labels), *(len(value) for value in values))):
+                label = list(labels[index]) if index < len(labels) else []
+                row = label + [""] * (depth - len(label))
+                for value in values:
+                    cell = value[index] if index < len(value) else None
+                    row.append("" if cell is None else str(cell))
+                rows.append(row)
+            html_table = HtmlTable.from_html_text(htmlify_matrix_of_cell_texts(rows))
+            metadata = self._opts.table_metadata(
+                html_table.html if self._opts.infer_table_structure else None
+            )
+            yield Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
     def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
         """True when `paragraph` has a bullet-charcter prefix.
@@ -376,7 +426,7 @@ class _PptxPartitioner:
         """The python-pptx `Presentation` object loaded from the provided source file."""
         return pptx.Presentation(self._opts.pptx_file)
 
-    def _shape_is_off_slide(self, shape: Shape) -> bool:
+    def _shape_is_off_slide(self, shape: BaseShape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
         if self._opts.include_off_slide_shapes:
             return False
@@ -396,7 +446,7 @@ class _PptxPartitioner:
         return visible_width * visible_height < 0.5 * width * height
 
     def _shape_slide_box(
-        self, shape: Shape
+        self, shape: BaseShape
     ) -> tuple[float | None, float | None, float | None, float | None]:
         """The bounding box of `shape` in slide coordinates.
 
@@ -487,6 +537,7 @@ class PptxPartitionerOptions:
         file_path: str | None,
         include_page_breaks: bool,
         include_slide_notes: bool | None,
+        include_chart_data: bool = True,
         include_off_slide_shapes: bool = False,
         infer_table_structure: bool,
         strategy: str,
@@ -496,6 +547,7 @@ class PptxPartitionerOptions:
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._include_slide_notes = include_slide_notes
+        self._include_chart_data = include_chart_data
         self._include_off_slide_shapes = include_off_slide_shapes
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
@@ -522,6 +574,11 @@ class PptxPartitionerOptions:
     def include_slide_notes(self) -> bool:
         """When True, also partition any text found in slide notes as part of each slide."""
         return False if self._include_slide_notes is None else self._include_slide_notes
+
+    @cached_property
+    def include_chart_data(self) -> bool:
+        """When True, include chart titles and locally cached category data."""
+        return self._include_chart_data
 
     @cached_property
     def include_off_slide_shapes(self) -> bool:
