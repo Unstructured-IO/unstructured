@@ -48,6 +48,8 @@ class ElementHtml(ABC):
         element_html.string = self.element.text
 
     def get_text_as_html(self) -> Union[Tag, None]:
+        if not self.element.metadata.text_as_html:
+            return None
         element_html = BeautifulSoup(self.element.metadata.text_as_html or "", HTML_PARSER).find()
         if not isinstance(element_html, Tag):
             return None
@@ -288,8 +290,13 @@ def _elements_to_html_tags(
         TYPE_TO_HTML_MAP.get(element.category, ElementHtml)(element) for element in elements
     ]
     elements_html = _elements_to_html_tags_by_parent(elements_html)
+    if not elements_html:
+        return []
+    soup = BeautifulSoup("", HTML_PARSER)
     return [
-        element_html.get_html_element(exclude_binary_image_data=exclude_binary_image_data)
+        element_html.get_html_element(
+            _soup=soup, exclude_binary_image_data=exclude_binary_image_data
+        )
         for element_html in elements_html
     ]
 
