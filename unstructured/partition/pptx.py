@@ -134,6 +134,7 @@ def partition_pptx(
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
     include_slide_notes: bool | None = None,
+    include_hidden_slides: bool = True,
     include_off_slide_shapes: bool = False,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
@@ -152,6 +153,10 @@ def partition_pptx(
         If True, includes a PageBreak element between slides
     include_slide_notes
         If True, includes the slide notes as element
+    include_hidden_slides
+        If False, skip slides marked hidden, including their notes and pictures. Page numbers
+        retain the original slide positions, including any starting_page_number offset.
+        Defaults to True to retain content from all slides.
     include_off_slide_shapes
         If True, also include text from shapes that are mostly outside the slide.
     infer_table_structure
@@ -170,6 +175,7 @@ def partition_pptx(
         file_path=filename,
         include_page_breaks=include_page_breaks,
         include_slide_notes=include_slide_notes,
+        include_hidden_slides=include_hidden_slides,
         include_off_slide_shapes=include_off_slide_shapes,
         infer_table_structure=infer_table_structure,
         strategy=strategy,
@@ -204,8 +210,18 @@ class _PptxPartitioner:
         # -- functions like `._iter_shape_elements()` where the "just return when done"
         # -- characteristic of a generator avoids repeated code to form interim results into lists.
 
+        previous_page: int | None = None
         for slide in self._presentation.slides:
-            yield from self._opts.increment_page_number()
+            page_breaks = list(self._opts.increment_page_number())
+            if not self._opts.include_hidden_slides and slide._element.get("show", "true").strip(
+                " \t\r\n"
+            ) in ("0", "false"):
+                continue
+            if previous_page is not None:
+                for page_break in page_breaks:
+                    page_break.metadata.page_number = previous_page
+                    yield page_break
+            previous_page = self._opts.page_number
             yield from self._iter_maybe_slide_notes(slide)
 
             title_shape, shapes = self._order_shapes(slide)
@@ -487,6 +503,7 @@ class PptxPartitionerOptions:
         file_path: str | None,
         include_page_breaks: bool,
         include_slide_notes: bool | None,
+        include_hidden_slides: bool = True,
         include_off_slide_shapes: bool = False,
         infer_table_structure: bool,
         strategy: str,
@@ -496,6 +513,7 @@ class PptxPartitionerOptions:
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._include_slide_notes = include_slide_notes
+        self._include_hidden_slides = include_hidden_slides
         self._include_off_slide_shapes = include_off_slide_shapes
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
@@ -522,6 +540,11 @@ class PptxPartitionerOptions:
     def include_slide_notes(self) -> bool:
         """When True, also partition any text found in slide notes as part of each slide."""
         return False if self._include_slide_notes is None else self._include_slide_notes
+
+    @cached_property
+    def include_hidden_slides(self) -> bool:
+        """When True, include slides marked hidden in the presentation."""
+        return self._include_hidden_slides
 
     @cached_property
     def include_off_slide_shapes(self) -> bool:
