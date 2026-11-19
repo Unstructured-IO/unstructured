@@ -50,7 +50,13 @@ STT_AGENT_MODULES_WHITELIST = os.getenv(
     "unstructured.partition.utils.speech_to_text.whisper_stt",
 ).split(",")
 
-UNSTRUCTURED_INCLUDE_DEBUG_METADATA = os.getenv("UNSTRUCTURED_INCLUDE_DEBUG_METADATA", False)
+UNSTRUCTURED_INCLUDE_DEBUG_METADATA = os.getenv(
+    "UNSTRUCTURED_INCLUDE_DEBUG_METADATA", ""
+).lower() in (
+    "true",
+    "1",
+    "t",
+)
 
 # this field is defined by unstructured_pytesseract
 TESSERACT_TEXT_HEIGHT = "height"
