@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import csv
+import html
 import io
 import json
 import re
@@ -10,6 +11,7 @@ import zlib
 from copy import copy
 from datetime import datetime
 from typing import Any, Iterable, Iterator, Optional, Sequence, cast
+from urllib.parse import quote
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -427,6 +429,17 @@ convert_to_isd = elements_to_dicts
 convert_to_dict = elements_to_dicts
 
 
+def _emit_image_markdown(text: str, url: str) -> str:
+    """Render a literal image caption and source URL as a Markdown image."""
+    # Captions are literal text, not Markdown or already-encoded HTML entities.
+    alt_text = re.sub(r"([\\`*_\[\]])", r"\\\1", html.escape(text, quote=False))
+    alt_text = alt_text.replace("\r", "&#13;").replace("\n", "&#10;")
+    # Preserve URL delimiters and existing percent escapes, but encode characters
+    # that can end a Markdown destination or introduce whitespace into it.
+    destination = html.escape(quote(url, safe=":/?#[]@!$&'*,;=%+"), quote=False)
+    return f"![{alt_text}]({destination})"
+
+
 def element_to_md(
     element: Element,
     exclude_binary_image_data: bool = False,
@@ -450,13 +463,15 @@ def element_to_md(
             and metadata.image_mime_type is None
             and not exclude_binary_image_data
         ):
-            return f"![{text}](data:image/*;base64,{metadata.image_base64})"
+            return _emit_image_markdown(text, f"data:image/*;base64,{metadata.image_base64}")
         case Image(metadata=metadata, text=text) if (
             metadata.image_base64 is not None and not exclude_binary_image_data
         ):
-            return f"![{text}](data:{metadata.image_mime_type};base64,{metadata.image_base64})"
+            return _emit_image_markdown(
+                text, f"data:{metadata.image_mime_type};base64,{metadata.image_base64}"
+            )
         case Image(metadata=metadata, text=text) if metadata.image_url is not None:
-            return f"![{text}]({metadata.image_url})"
+            return _emit_image_markdown(text, metadata.image_url)
         case _:
             return element.text
 
