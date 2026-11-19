@@ -12,6 +12,7 @@ from typing import Any, Iterator, cast
 
 import pptx
 import pytest
+from PIL import Image as PILImage
 from pptx.oxml import parse_xml
 from pptx.oxml.ns import nsdecls
 from pptx.shapes.picture import Picture
@@ -35,6 +36,7 @@ from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
     PageBreak,
+    Table,
     Text,
     Title,
 )
@@ -928,6 +930,73 @@ def test_partition_pptx_malformed():
 
 
 # == image sub-partitioning behaviors =====================================================
+
+
+@pytest.mark.parametrize("kind", ["table", "picture"])
+@pytest.mark.parametrize("include_off_slide_shapes", [False, True])
+@pytest.mark.parametrize(
+    ("left", "top", "visible"),
+    [
+        (-2, 1, False),
+        (-1.1, 1, False),
+        (9.1, 1, False),
+        (1, 7.1, False),
+        (-1, 1, True),
+        (0, 0, True),
+    ],
+)
+def test_partition_pptx_applies_visibility_to_tables_and_pictures(
+    tmp_path: pathlib.Path,
+    monkeypatch: pytest.MonkeyPatch,
+    kind: str,
+    include_off_slide_shapes: bool,
+    left: float,
+    top: float,
+    visible: bool,
+):
+    """Serialized non-text shapes obey the same visible-area policy as text boxes."""
+    filename = tmp_path / "nontext-visibility.pptx"
+    presentation = pptx.Presentation()
+    presentation.slide_width = Inches(10)
+    presentation.slide_height = Inches(7.5)
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+    picture_calls: list[str] = []
+
+    class RecordingPicturePartitioner:
+        @classmethod
+        def iter_elements(cls, picture: Picture, opts: PptxPartitionerOptions) -> Iterator[Element]:
+            picture_calls.append(picture.name)
+            yield Image(picture.name, metadata=opts.text_metadata())
+
+    monkeypatch.setattr(
+        PptxPartitionerOptions, "_PicturePartitionerCls", RecordingPicturePartitioner
+    )
+    if kind == "table":
+        shape = slide.shapes.add_table(1, 1, Inches(left), Inches(top), Inches(2), Inches(2))
+        shape.table.cell(0, 0).text = "Table content"
+        expected_text = "Table content"
+    else:
+        image = io.BytesIO()
+        PILImage.new("RGB", (2, 2)).save(image, format="PNG")
+        image.seek(0)
+        shape = slide.shapes.add_picture(image, Inches(left), Inches(top), Inches(2), Inches(2))
+        shape.name = "Picture content"
+        expected_text = "Picture content"
+    presentation.save(str(filename))
+
+    elements = partition_pptx(
+        filename=str(filename), include_off_slide_shapes=include_off_slide_shapes
+    )
+
+    accepted = visible or include_off_slide_shapes
+    assert [element.text for element in elements] == ([expected_text] if accepted else [])
+    assert picture_calls == ([expected_text] if kind == "picture" and accepted else [])
+    if accepted:
+        assert isinstance(elements[0], Table if kind == "table" else Image)
+        assert elements[0].metadata.page_number == 1
+        assert elements[0].metadata.filename == filename.name
+        if kind == "table":
+            assert "Table content" in elements[0].metadata.text_as_html
 
 
 def test_partition_pptx_generates_no_Image_elements_by_default():
