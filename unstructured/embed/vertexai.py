@@ -33,10 +33,15 @@ class VertexAIEmbeddingConfig(EmbeddingConfig):
     )
     def get_client(self) -> "VertexAIEmbeddings":
         """Creates a Langchain VertexAI python client to embed elements."""
+        from google.oauth2 import service_account
         from langchain_google_vertexai import VertexAIEmbeddings
 
-        self.register_application_credentials()
-        vertexai_client = VertexAIEmbeddings(model_name=self.model_name)
+        credentials = service_account.Credentials.from_service_account_info(
+            json.loads(self.api_key.get_secret_value())
+        )
+        vertexai_client = VertexAIEmbeddings(
+            model_name=self.model_name, credentials=credentials, project=credentials.project_id
+        )
         return vertexai_client
 
 
