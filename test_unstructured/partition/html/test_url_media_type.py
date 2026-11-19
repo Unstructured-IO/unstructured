@@ -7,6 +7,7 @@ from threading import Thread
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 import pytest
+import requests
 
 from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType
@@ -21,6 +22,23 @@ XHTML = (
     "<table><tr><td>Revenue</td><td>120</td></tr></table>"
     "</body></html>"
 )
+HTML_MEDIA_TYPES = (
+    "text/html",
+    "text/html; charset=utf-8",
+    "Text/HTML; charset=utf-8",
+    "TEXT/HTML ; charset=utf-8",
+    "application/xhtml+xml",
+    "application/xhtml+xml; charset=utf-8",
+    'Application/XHTML+XML; charset="utf-8"',
+)
+NON_HTML_MEDIA_TYPES = (
+    "text/htmlish",
+    "text/html+xml",
+    "application/xhtml+xml-extra",
+    "text/plain",
+    "",
+)
+RESPONSE_MEDIA_TYPES = {value: value for value in (*HTML_MEDIA_TYPES, *NON_HTML_MEDIA_TYPES)}
 
 
 @pytest.fixture
@@ -28,10 +46,14 @@ def html_server(monkeypatch) -> Iterator[str]:
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             params = parse_qs(urlsplit(self.path).query, keep_blank_values=True)
+            requested_type = params.get("type", [None])[0]
+            if requested_type is not None and requested_type not in RESPONSE_MEDIA_TYPES:
+                self.send_error(400)
+                return
             status = int(params.get("status", ["200"])[0])
             self.send_response(status)
-            if "type" in params:
-                self.send_header("Content-Type", params["type"][0])
+            if requested_type is not None:
+                self.send_header("Content-Type", RESPONSE_MEDIA_TYPES[requested_type])
             payload = XHTML.encode("utf-8")
             self.send_header("Content-Length", str(len(payload)))
             self.end_headers()
@@ -53,18 +75,7 @@ def html_server(monkeypatch) -> Iterator[str]:
         thread.join()
 
 
-@pytest.mark.parametrize(
-    "media_type",
-    [
-        "text/html",
-        "text/html; charset=utf-8",
-        "Text/HTML; charset=utf-8",
-        "TEXT/HTML ; charset=utf-8",
-        "application/xhtml+xml",
-        "application/xhtml+xml; charset=utf-8",
-        'Application/XHTML+XML; charset="utf-8"',
-    ],
-)
+@pytest.mark.parametrize("media_type", HTML_MEDIA_TYPES)
 def test_html_url_accepts_registered_html_media_types(html_server, media_type):
     url = f"{html_server}?{urlencode({'type': media_type})}"
 
@@ -79,9 +90,7 @@ def test_html_url_accepts_registered_html_media_types(html_server, media_type):
     assert all(element.metadata.url == url for element in elements)
 
 
-@pytest.mark.parametrize(
-    "media_type", ["text/htmlish", "text/html+xml", "application/xhtml+xml-extra", "text/plain", ""]
-)
+@pytest.mark.parametrize("media_type", NON_HTML_MEDIA_TYPES)
 def test_html_url_rejects_non_html_media_types(html_server, media_type):
     url = f"{html_server}?{urlencode({'type': media_type})}"
 
@@ -98,6 +107,17 @@ def test_html_url_still_rejects_failed_xhtml_responses(html_server):
     url = f"{html_server}?{urlencode({'type': 'application/xhtml+xml', 'status': 503})}"
     with pytest.raises(ValueError, match="503"):
         partition_html(url=url, languages=["eng"])
+
+
+@pytest.mark.parametrize("line_break", ["\r\n", "\r", "\n"])
+def test_html_server_rejects_response_header_injection(html_server, line_break):
+    media_type = f"text/html{line_break}X-Injected: yes"
+    url = f"{html_server}?{urlencode({'type': media_type})}"
+
+    response = requests.get(url, timeout=5)
+
+    assert response.status_code == 400
+    assert "X-Injected" not in response.headers
 
 
 @pytest.mark.parametrize("extension", [".xhtml", ".xht"])
