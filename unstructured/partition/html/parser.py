@@ -81,6 +81,7 @@ from collections import defaultdict, deque
 from functools import cached_property
 from types import MappingProxyType
 from typing import Any, Iterable, Iterator, Mapping, NamedTuple, Sequence, cast
+from urllib.parse import unquote
 
 from lxml import etree
 from typing_extensions import TypeAlias
@@ -536,7 +537,10 @@ class Pre(BlockItem):
 class ImageBlock(Flow):
     """Custom element-class for `<img>` elements."""
 
-    BASE64_IMAGE_REGEX = re.compile(r"^data:(image/[^;]+);base64,(.*)")
+    BASE64_IMAGE_REGEX = re.compile(
+        r"^data:(image/[^;,]+)(?:;[^,;=]+=[^,;]*)*; *base64,(.*)",
+        re.IGNORECASE | re.DOTALL | re.ASCII,
+    )
 
     def iter_elements(self) -> Iterator[Element]:
         """Generate an Image element based on `src`, `data-src`, and `alt`."""
@@ -547,8 +551,8 @@ class ImageBlock(Flow):
             return
 
         mime_match = self.BASE64_IMAGE_REGEX.match(img_src)
-        img_mime_type = mime_match.group(1) if mime_match else None
-        img_base64 = mime_match.group(2) if mime_match else None
+        img_mime_type = mime_match.group(1).strip().lower() if mime_match else None
+        img_base64 = unquote(mime_match.group(2).split("#", 1)[0]) if mime_match else None
         img_url = None if img_base64 else img_src
 
         yield Image(
