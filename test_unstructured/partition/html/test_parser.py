@@ -14,8 +14,10 @@ from unstructured.documents.elements import (
     Address,
     CodeSnippet,
     Element,
+    Image,
     ListItem,
     NarrativeText,
+    Table,
     Text,
     Title,
 )
@@ -23,6 +25,7 @@ from unstructured.partition.html.parser import (
     Annotation,
     DefaultElement,
     Flow,
+    ListItemBlock,
     Math,
     Phrasing,
     RemovedPhrasing,
@@ -422,17 +425,24 @@ class DescribeListItemBlock:
     @pytest.mark.parametrize(
         "content",
         [
-            "<p>first paragraph</p><p>second paragraph</p>",
-            "prefix<p>paragraph text</p>",
-            "<p>paragraph text</p>suffix",
-            "<b>prefix</b><p>paragraph text</p>",
-            "<div><p>first paragraph</p><p>second paragraph</p></div>",
+            "<span><p>first paragraph</p><p>second paragraph</p></span>",
             "<div><span><p>first paragraph</p><p>second paragraph</p></span></div>",
             "<ul><li>nested item</li></ul>",
+            "<ul><li>nested item</li></ul><p>following paragraph</p>",
             "<pre>  code\n  block</pre>",
+            "<pre>code</pre><p>following paragraph</p>",
             "<h2>heading text</h2>",
+            "<h2>heading text</h2><p>following paragraph</p>",
             "<table><tr><td>cell text</td></tr></table>",
+            "<table><tr><td>cell text</td></tr></table><p>following paragraph</p>",
             '<img src="https://example.com/image.png" alt="picture">',
+            '<img src="https://example.com/image.png" alt="picture"><p>following paragraph</p>',
+            '<div><img src="https://example.com/image.png" alt="picture"></div><p>following</p>',
+            "<div><h2>heading text</h2><p>inside wrapper</p></div><p>following paragraph</p>",
+            "<div><span><p>inside span</p></span></div><p>following paragraph</p>",
+            '<div><span><p></p></span><math alttext="x+y"></math></div><p>following paragraph</p>',
+            '<img src=""><p>following paragraph</p>',
+            "<ul></ul><p>following paragraph</p>",
             "<figure>ignored text</figure>",
             "<p> </p>",
             "plain list item",
@@ -447,6 +457,206 @@ class DescribeListItemBlock:
 
         assert actual == expected
         assert [e.metadata.to_dict() for e in actual] == [e.metadata.to_dict() for e in expected]
+
+    @pytest.mark.parametrize(
+        ("content", "expected_item_text", "expected_child_texts"),
+        [
+            ("<p>lead</p><p>second</p>", "lead", ["second"]),
+            ("<p>lead</p><p>second</p><p>third</p>", "lead", ["second", "third"]),
+            ("lead<p>second</p>", "lead", ["second"]),
+            ("<b>lead</b><p>second</p>", "lead", ["second"]),
+            ("<p>lead</p>tail", "lead", ["tail"]),
+            ("<p>lead</p>tail<p>second</p>", "lead", ["tail", "second"]),
+            ("<div>lead</div><div>second</div>", "lead", ["second"]),
+            ("<blockquote>lead</blockquote><p>second</p>", "lead", ["second"]),
+            ("<div><p>lead</p><p>second</p></div>", "lead", ["second"]),
+            (
+                "<div><div><p>lead</p></div><p>second</p></div><p>third</p>",
+                "lead",
+                ["second", "third"],
+            ),
+            ("<div><p>lead</p>inner tail</div>outer tail", "lead", ["inner tail", "outer tail"]),
+            ("<p> </p><p>lead</p><p>second</p>", "lead", ["second"]),
+            ("<div> </div><p>lead</p><p>second</p>", "lead", ["second"]),
+            ("<figure>ignored</figure><p>lead</p><p>second</p>", "lead", ["second"]),
+            ("<figure>ignored</figure>lead<p>second</p>", "lead", ["second"]),
+            ("<div><p> </p></div><p>lead</p><p>second</p>", "lead", ["second"]),
+            ("<p><span> </span><br></p><p>lead</p><p>second</p>", "lead", ["second"]),
+            ("<p>A</p><p>second</p>", "A", ["second"]),
+            ("<p>* lead</p><p>second</p>", "* lead", ["second"]),
+        ],
+    )
+    def it_emits_leading_text_as_list_item_and_links_the_other_blocks_to_it(
+        self, content: str, expected_item_text: str, expected_child_texts: list[str]
+    ):
+        root = etree.fromstring(f"<ul><li>{content}</li></ul>", html_parser)
+
+        item, *children = root.find("body").iter_elements()
+
+        assert item == ListItem(expected_item_text)
+        assert item.metadata.category_depth == 1
+        assert item.metadata.parent_id is None
+        assert [e.text for e in children] == expected_child_texts
+        assert all(not isinstance(e, ListItem) for e in children)
+        assert all(e.metadata.parent_id == item.id for e in children)
+
+    def it_does_not_collapse_or_reclassify_continuation_blocks(self):
+        root = etree.fromstring(
+            "<ul><li><p>lead</p>"
+            '<img src="https://example.com/image.png" alt="picture">'
+            "<table><tr><td>cell text</td></tr></table>"
+            "<pre>  code\n  block</pre>"
+            "</li></ul>",
+            html_parser,
+        )
+
+        item, image, table, code = root.find("body").iter_elements()
+
+        assert item == ListItem("lead")
+        assert image == Image("picture")
+        assert image.metadata.image_url == "https://example.com/image.png"
+        assert table == Table("cell text")
+        assert table.metadata.text_as_html == "<table><tr><td>cell text</td></tr></table>"
+        assert code == CodeSnippet("  code\n  block")
+        assert [e.metadata.parent_id for e in (image, table, code)] == [item.id] * 3
+
+    def it_keeps_a_literal_bullet_in_a_continuation_block_as_a_list_item(self):
+        root = etree.fromstring("<ul><li><p>lead</p><p>* literal</p></li></ul>", html_parser)
+
+        item, continuation = root.find("body").iter_elements()
+
+        assert continuation == ListItem("literal")
+        assert continuation.metadata.parent_id == item.id
+
+    def it_links_each_block_to_the_list_item_that_contains_it(self):
+        root = etree.fromstring(
+            "<ul><li><p>outer</p>"
+            "<ul><li><p>inner</p><p>inner continuation</p>"
+            "<ul><li>innermost</li></ul></li></ul>"
+            "<p>outer continuation</p></li>"
+            "<li>next</li></ul>",
+            html_parser,
+        )
+
+        outer, inner, inner_continuation, innermost, outer_continuation, next_item = root.find(
+            "body"
+        ).iter_elements()
+
+        assert [e.metadata.category_depth for e in (outer, inner, innermost, next_item)] == [
+            1,
+            2,
+            3,
+            1,
+        ]
+        assert outer.metadata.parent_id is None
+        assert inner.metadata.parent_id == outer.id
+        assert inner_continuation.metadata.parent_id == inner.id
+        assert innermost.metadata.parent_id == inner.id
+        assert outer_continuation.metadata.parent_id == outer.id
+        assert next_item.metadata.parent_id is None
+
+    def it_leaves_a_heading_after_leading_text_and_its_section_to_the_hierarchy_rules(self):
+        root = etree.fromstring(
+            "<ul><li><p>lead</p><p>second</p><h2>heading</h2><p>section text</p></li></ul>",
+            html_parser,
+        )
+
+        item, second, heading, section_text = root.find("body").iter_elements()
+
+        assert item == ListItem("lead")
+        assert second.metadata.parent_id == item.id
+        assert heading == Title("heading")
+        assert heading.metadata.parent_id is None
+        assert section_text.metadata.parent_id is None
+
+    def it_retains_annotations_on_the_leading_text_and_on_continuation_blocks(self):
+        root = etree.fromstring(
+            '<ul><li><p><a href="https://example.com/1">link</a> <b>bold</b></p>'
+            '<p><a href="https://example.com/2">other</a> <i>italic</i></p></li></ul>',
+            html_parser,
+        )
+
+        item, continuation = root.find("body").iter_elements()
+
+        assert item == ListItem("link bold")
+        assert item.metadata.link_urls == ["https://example.com/1"]
+        assert item.metadata.emphasized_text_contents == ["bold"]
+        assert item.metadata.emphasized_text_tags == ["b"]
+        assert continuation.text == "other italic"
+        assert continuation.metadata.link_urls == ["https://example.com/2"]
+        assert continuation.metadata.emphasized_text_contents == ["italic"]
+        assert continuation.metadata.emphasized_text_tags == ["i"]
+
+    def it_records_the_page_number_of_each_block_when_an_item_crosses_a_page_boundary(self):
+        root = etree.fromstring(
+            '<ul data-page-number="1"><li><p data-page-number="2">lead</p>'
+            '<p data-page-number="3">second</p></li></ul>',
+            html_parser,
+        )
+
+        item, continuation = root.find("body").iter_elements()
+
+        assert item.metadata.page_number == 2
+        assert continuation.metadata.page_number == 3
+        assert continuation.metadata.parent_id == item.id
+
+    def it_does_not_link_text_following_the_list_to_the_last_item(self):
+        root = etree.fromstring(
+            "<div><ul><li><p>lead</p><p>second</p></li></ul>after list<p>following</p></div>",
+            html_parser,
+        )
+
+        item, second, after_list, following = root.find("body").iter_elements()
+
+        assert second.metadata.parent_id == item.id
+        assert after_list.metadata.parent_id is None
+        assert following.metadata.parent_id is None
+
+    @pytest.mark.parametrize(
+        ("opening", "closing"),
+        [
+            # -- no text at any level, each item falls back to the normal traversal --
+            ("<ul><li>", "</li></ul>"),
+            ("<ul><li><div>", "</div></li></ul>"),
+            ("<ul><li><p> </p>", "</li></ul>"),
+            ("<ul><li><figure>ignored</figure>", "</li></ul>"),
+            # -- text at each level --
+            ("<ul><li>text", "</li></ul>"),
+            ("<ul><li><p>text</p>", "</li></ul>"),
+        ],
+    )
+    @pytest.mark.parametrize(
+        "leaf", ['<img src="https://example.com/image.png" alt="picture">', "leaf text", ""]
+    )
+    def it_visits_each_list_item_once_however_deeply_lists_are_nested(
+        self, monkeypatch: pytest.MonkeyPatch, opening: str, closing: str, leaf: str
+    ):
+        # -- deep enough to expose repeated traversal, shallow enough to fail fast if it happens --
+        depth = 10
+        root = etree.fromstring(opening * depth + leaf + closing * depth, html_parser)
+        iter_elements = ListItemBlock.iter_elements
+        visits: list[ListItemBlock] = []
+
+        def counting_iter_elements(self: ListItemBlock):
+            visits.append(self)
+            return iter_elements(self)
+
+        monkeypatch.setattr(ListItemBlock, "iter_elements", counting_iter_elements)
+
+        list(root.find("body").iter_elements())
+
+        assert len(visits) == depth
+
+    def it_generates_the_same_elements_on_repeated_traversal(self):
+        root = etree.fromstring("<ul><li><p>lead</p>tail<p>second</p></li></ul>", html_parser)
+        li = root.xpath(".//li")[0]
+
+        first = list(li.iter_elements())
+        second = list(li.iter_elements())
+
+        assert first == second
+        assert [e.text for e in second] == ["lead", "tail", "second"]
+        assert all(e.metadata.parent_id == second[0].id for e in second[1:])
 
 
 class DescribeFlow:
