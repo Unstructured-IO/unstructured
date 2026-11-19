@@ -621,9 +621,9 @@ def catch_overlapping_and_nested_bboxes(
         zip(pages_of_bboxes, text_labels, text_content),
         start=1,
     ):
-        page_bboxes_combinations = list(combinations(page_bboxes, 2))
-        page_labels_combinations = list(combinations(page_labels, 2))
-        text_content_combinations = list(combinations(page_text, 2))
+        page_bboxes_combinations = combinations(page_bboxes, 2)
+        page_labels_combinations = combinations(page_labels, 2)
+        text_content_combinations = combinations(page_text, 2)
 
         for box_pair, label_pair, text_pair in zip(
             page_bboxes_combinations,
