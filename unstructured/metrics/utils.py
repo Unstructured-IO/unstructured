@@ -146,22 +146,15 @@ def _uniquity_file(file_list, target_filename) -> str:
     """
     original_filename, extension = target_filename.rsplit(".", 1)
     pattern = rf"^{re.escape(original_filename)}(?: \((\d+)\))?\.{re.escape(extension)}$"
-    duplicated_files = sorted([f for f in file_list if re.match(pattern, f)], key=_sorting_key)
-
-    numbers = []
-    for file in duplicated_files:
-        match = re.search(r"\((\d+)\)", file)
-        if match:
-            numbers.append(int(match.group(1)))
-
-    numbers.sort()
+    numbers = {
+        int(match.group(1))
+        for file in file_list
+        if (match := re.match(pattern, file)) and match.group(1) is not None
+    }
 
     counter = 1
-    for number in numbers:
-        if number == counter:
-            counter += 1
-        else:
-            break
+    while counter in numbers:
+        counter += 1
 
     return original_filename + " (" + str(counter) + ")." + extension
 
