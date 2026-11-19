@@ -257,7 +257,7 @@ class ObjectDetectionEvalProcessor:
                     page_elements.append([x1, y1, x2, y2, confidence, class_idx])
                 else:
                     page_elements.append([class_idx, x1, y1, x2, y2])
-            page_tensor = torch.tensor(page_elements)
+            page_tensor = torch.tensor(page_elements).reshape(-1, 6 if prediction else 5)
             pages_list.append(page_tensor)
 
         return pages_list
