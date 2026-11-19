@@ -183,7 +183,7 @@ class ElementMetadata:
     image_path: Optional[str]
     image_base64: Optional[str]
     image_mime_type: Optional[str]
-    # -- specific to DOCX which has distinct primary, first-page, and even-page header/footers --
+    # -- DOCX primary/first-page/even-page headers and footers, or footnote/endnote content --
     header_footer_type: Optional[str]
     # -- used in chunks only, when chunk must be split mid-text to fit window --
     is_continuation: Optional[bool]
