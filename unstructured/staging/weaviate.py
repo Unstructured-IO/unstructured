@@ -1,3 +1,4 @@
+import re
 from typing import Any, Dict, List, TypedDict
 
 from unstructured.documents.elements import ElementMetadata, Text
@@ -87,6 +88,10 @@ def create_unstructured_weaviate_class(class_name: str = "UnstructuredDocument")
 
 
 def _annotation_to_weaviate_data_type(annotation: str):
+    if annotation.startswith("Optional[") and annotation.endswith("]"):
+        annotation = annotation[len("Optional[") : -1]
+    if array_type := re.fullmatch(r"(?:list|List)\[(str|int|float|date)\]", annotation):
+        return [f"{_annotation_to_weaviate_data_type(array_type[1])[0]}[]"]
     if "str" in annotation:
         return ["text"]
     elif "int" in annotation:
