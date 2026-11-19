@@ -521,6 +521,12 @@ class ConsolidationStrategy(enum.Enum):
     FIRST = "first"
     """Use the first value encountered, omit if not present in any elements."""
 
+    MIN = "min"
+    """Use the minimum non-None value, omit if not present in any elements."""
+
+    MAX = "max"
+    """Use the maximum non-None value, omit if not present in any elements."""
+
     STRING_CONCATENATE = "string_concatenate"
     """Combine the values of this field across elements. Only suitable for fields of `str` type."""
 
@@ -591,12 +597,8 @@ class ConsolidationStrategy(enum.Enum):
             "chunk_index": cls.DROP,  # -- added by chunking, not before --
             "num_carried_over_header_rows": cls.DROP,  # -- added by chunking, not before --
             "url": cls.FIRST,
-            # TODO: ideally a chunk spanning multiple audio segments would keep min(start) and
-            # max(end) across its constituent elements. ConsolidationStrategy currently has no
-            # MIN/MAX variants, so DROP is the safe fallback for now. Add MIN/MAX strategies
-            # and switch these to cls.MIN / cls.MAX when that work is done.
-            "segment_start_seconds": cls.DROP,
-            "segment_end_seconds": cls.DROP,
+            "segment_start_seconds": cls.MIN,
+            "segment_end_seconds": cls.MAX,
             "key_value_pairs": cls.DROP,  # -- only occurs in FormKeysValues --
         }
 

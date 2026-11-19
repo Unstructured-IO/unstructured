@@ -14,6 +14,7 @@ from unstructured.chunking.base import (
     ChunkingOptions,
     PreChunkCombiner,
     PreChunker,
+    _iter_pre_chunk_outputs,
     is_on_next_page,
     is_title,
 )
@@ -194,11 +195,7 @@ def _iter_chunks_by_title(
         PreChunker.iter_pre_chunks(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
 
-    for pre_chunk in pre_chunks:
-        yield from pre_chunk.iter_chunks()
-        # -- release the emitted pre-chunk before advancing, as basic chunking does, so the
-        # -- elements held at a transition are the combiner's inherent two pre-chunks, not three
-        del pre_chunk
+    yield from _iter_pre_chunk_outputs(pre_chunks)
 
 
 class _ByTitleChunkingOptions(ChunkingOptions):

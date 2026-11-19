@@ -48,10 +48,14 @@ def partition_audio(
     ``pip install "unstructured[audio]"``.
 
     .. note::
-        **Chunking drops segment timestamps.** When elements are merged by a chunking
-        strategy, ``segment_start_seconds`` and ``segment_end_seconds`` are currently
-        discarded (consolidation strategy ``DROP``). If audio timeline alignment matters
-        for your use-case, consume the un-chunked elements directly.
+        Chunking retains the earliest start and latest end of the source segments in each
+        chunk. These bounds describe the contributing segments, including any gaps between
+        them. If one segment is split across text chunks, each fragment retains that segment's
+        full interval; word-level timestamps are not inferred.
+        With ``overlap_all=True``, the range also covers the source of the overlap text. A
+        pre-chunk that emits no output carries its own time bounds into the next emitting
+        pre-chunk; all fragments split from that pre-chunk retain the combined bounds. A terminal
+        run with no following output produces no chunk. Only time bounds cross that boundary.
 
     Parameters
     ----------

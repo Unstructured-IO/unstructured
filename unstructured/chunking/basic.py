@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from typing import Iterable, Iterator, Optional
 
-from unstructured.chunking.base import ChunkingOptions, PreChunker
+from unstructured.chunking.base import ChunkingOptions, PreChunker, _iter_pre_chunk_outputs
 from unstructured.documents.elements import Element
 
 
@@ -176,12 +176,7 @@ def _iter_chunk_elements(
     elements: Iterable[Element], opts: _BasicChunkingOptions
 ) -> Iterator[Element]:
     """Lazy implementation of actual basic chunking, shared with `_chunk_elements`."""
-    for pre_chunk in PreChunker.iter_pre_chunks(elements, opts):
-        yield from pre_chunk.iter_chunks()
-        # -- release the emitted pre-chunk before advancing. The loop variable would otherwise
-        # -- keep its elements alive while the next pre-chunk fills, so a streaming caller would
-        # -- hold two pre-chunks' worth of elements at each transition instead of one.
-        del pre_chunk
+    yield from _iter_pre_chunk_outputs(PreChunker.iter_pre_chunks(elements, opts))
 
 
 class _BasicChunkingOptions(ChunkingOptions):
