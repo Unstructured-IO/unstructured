@@ -183,6 +183,12 @@ class HtmlTable:
         # -- compactification strips those details --
         rows = cast("list[HtmlElement]", table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
         source_row_htmls = tuple(etree.tostring(tr, encoding=str) for tr in rows)
+        # -- exclude ignored row children from working HTML as well as cell-text sizing; the
+        # -- original row markup remains available in `source_row_htmls` --
+        for tr in rows:
+            for child in list(tr):
+                if child.tag not in ("td", "th"):
+                    tr.remove(child)
         header_row_idxs = set()
         for idx, tr in enumerate(rows):
             cells = cast("list[HtmlElement]", tr.xpath("./th | ./td"))
@@ -300,7 +306,7 @@ class HtmlRow:
         return etree.tostring(self._tr, encoding=str)
 
     def iter_cells(self) -> Iterator[HtmlCell]:
-        for td in self._tr:
+        for td in self._tr.iterchildren("td", "th"):
             yield HtmlCell(td)
 
     @property
@@ -327,7 +333,7 @@ class HtmlRow:
 
         A cell that is empty or contains only whitespace does not generate a string.
         """
-        for td in self._tr:
+        for td in self._tr.iterchildren("td", "th"):
             text = normalize_html_cell_text(td)
             if not text:
                 continue
@@ -358,7 +364,7 @@ class HtmlRow:
         removed, when the correction is `1`); everything else is preserved unchanged.
         """
         tr = copy.deepcopy(self._tr)
-        for td in tr:
+        for td in tr.iterchildren("td", "th"):
             rowspan = HtmlCell(td).rowspan
             if rowspan is not None and rowspan <= max_rowspan:
                 continue  # -- already fits; leave this cell untouched --
