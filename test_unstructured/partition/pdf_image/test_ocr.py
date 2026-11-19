@@ -673,3 +673,78 @@ def test_pass_down_agents(mock_ocr_get_instance, mocker, mock_page):
         "language": "eng",
         "ocr_agent_module": OCR_AGENT_TESSERACT,
     }
+
+
+# -- progress reporting (#2351) ---------------------------------------------------------------
+
+
+def _echo_page_layout(**kwargs):
+    return kwargs["page_layout"]
+
+
+def test_process_file_with_ocr_reports_one_ocr_event_per_pdf_page(mocker):
+    from unstructured.partition.pdf_image.ocr import PILImage
+    from unstructured.partition.utils.progress import STAGE_OCR
+
+    image_paths = ["page-1.png", "page-2.png", "page-3.png"]
+    mocker.patch.object(ocr, "convert_pdf_to_image", return_value=image_paths)
+    mocker.patch.object(PILImage, "open", return_value=Image.new("RGB", (10, 10)))
+    mocker.patch.object(ocr, "supplement_page_layout_with_ocr", side_effect=_echo_page_layout)
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [MagicMock(PageLayout) for _ in image_paths]
+    events = []
+
+    ocr.process_file_with_ocr("foo.pdf", doc, [], is_image=False, progress_callback=events.append)
+
+    assert [(event.stage, event.pages_done, event.total_pages) for event in events] == [
+        (STAGE_OCR, 1, 3),
+        (STAGE_OCR, 2, 3),
+        (STAGE_OCR, 3, 3),
+    ]
+
+
+def test_process_file_with_ocr_reports_one_ocr_event_per_image(mocker):
+    from unstructured.partition.pdf_image.ocr import PILImage
+    from unstructured.partition.utils.progress import STAGE_OCR
+
+    mocker.patch.object(PILImage, "open", return_value=Image.new("RGB", (10, 10)))
+    mocker.patch.object(ocr, "supplement_page_layout_with_ocr", side_effect=_echo_page_layout)
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [MagicMock(PageLayout)]
+    events = []
+
+    ocr.process_file_with_ocr("foo.png", doc, [], is_image=True, progress_callback=events.append)
+
+    assert [(event.stage, event.pages_done, event.total_pages) for event in events] == [
+        (STAGE_OCR, 1, 1)
+    ]
+
+
+def test_process_file_with_ocr_emits_nothing_by_default(mocker):
+    from unstructured.partition.pdf_image.ocr import PILImage
+
+    mocker.patch.object(PILImage, "open", return_value=Image.new("RGB", (10, 10)))
+    mocker.patch.object(ocr, "supplement_page_layout_with_ocr", side_effect=_echo_page_layout)
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [MagicMock(PageLayout)]
+
+    with patch("tqdm.auto.tqdm") as tqdm_cls:
+        ocr.process_file_with_ocr("foo.png", doc, [], is_image=True)
+
+    tqdm_cls.assert_not_called()
+
+
+def test_process_data_with_ocr_forwards_progress_arguments(mocker):
+    callback = MagicMock()
+    process_file = mocker.patch.object(ocr, "process_file_with_ocr")
+
+    ocr.process_data_with_ocr(
+        b"not really a pdf",
+        MagicMock(DocumentLayout),
+        [],
+        progress_callback=callback,
+        show_progress=True,
+    )
+
+    assert process_file.call_args.kwargs["progress_callback"] is callback
+    assert process_file.call_args.kwargs["show_progress"] is True
