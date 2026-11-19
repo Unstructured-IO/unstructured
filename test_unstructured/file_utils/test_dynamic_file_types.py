@@ -98,11 +98,15 @@ def test_registration_keeps_builtin_members_and_their_values_unchanged():
         assert pickle.loads(pickle.dumps(builtin)) is builtin
 
 
-@pytest.mark.parametrize("name", ["TXT", "txt", "from_mime_type", "_member_map_"])
+@pytest.mark.parametrize(
+    "name",
+    ["TXT", "txt", "from_mime_type", "_member_map_", "name", "value", "__members__", "__iter__"],
+)
 def test_conflicting_registrations_raise_without_changing_the_registry(name):
     members = dict(FileType.__members__)
     values = FileType._value2member_map_.copy()
     ordered_members = list(FileType)
+    member_properties = [(member, member.name, member.value) for member in ordered_members]
 
     with pytest.raises(ValueError):
         create_file_type(name, canonical_mime_type=CUSTOM_MIME)
@@ -111,6 +115,9 @@ def test_conflicting_registrations_raise_without_changing_the_registry(name):
     assert FileType._value2member_map_ == values
     assert list(FileType) == ordered_members
     assert FileType.TXT is members["TXT"]
+    for member, original_name, original_value in member_properties:
+        assert member.name == original_name
+        assert member.value == original_value
 
 
 def test_custom_type_detection_aliases_and_partitioner_registration_keep_working():
