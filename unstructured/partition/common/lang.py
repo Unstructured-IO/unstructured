@@ -483,7 +483,10 @@ def detect_languages(
     if languages and "auto" not in languages:
         for lang in languages:
             str_lang = TESSERACT_LANGUAGES_AND_CODES.get(lang.lower(), lang)
-            language = _get_iso639_language_object(str_lang[:3])
+            # -- a region-qualified tag like "en-US" or "pt-BR" names its language in the part
+            # -- before the hyphen; slicing the whole tag would give "en-", which matches nothing --
+            primary_subtag = str_lang.split("-")[0]
+            language = _get_iso639_language_object(primary_subtag[:3])
             if language:
                 doc_languages.append(language.part3)
 
