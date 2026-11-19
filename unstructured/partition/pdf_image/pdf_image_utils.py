@@ -214,8 +214,8 @@ def save_elements(
                 finally:
                     image.close()
                 try:
-                    # PNG images with transparency need conversion before JPEG encoding.
-                    if cropped_image.mode == "RGBA":
+                    # Alpha and palette PNG modes need conversion before JPEG encoding.
+                    if cropped_image.mode in ("RGBA", "LA", "P"):
                         converted_image = cropped_image.convert("RGB")
                         cropped_image.close()
                         cropped_image = converted_image
