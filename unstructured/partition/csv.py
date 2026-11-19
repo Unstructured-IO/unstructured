@@ -8,9 +8,11 @@ import io
 import itertools
 import re
 from functools import cached_property, partial
-from typing import IO, Any, Callable, Iterator, NoReturn
+from typing import IO, Any, Callable, Iterator, NoReturn, cast
+from urllib.parse import urlparse
 
 import pandas as pd
+from pandas.io.common import get_handle
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.common.html_table import HtmlTable
@@ -219,8 +221,9 @@ def _record_is_complete(line: str, sep: str) -> bool:
     """Whether `line` holds a whole delimited record, with no quoted field left open in it.
 
     A quoted header cell holding a line break spans physical lines, so the first line alone
-    does not hold the whole record. The record is whole only when the line ends outside a
-    quoted field and not just after a quote inside one, which may yet be escaped or closing.
+    does not hold the whole record. A line without a terminator is returned by the header
+    peek only at EOF, where a pending quote closes its field. The bounded peek returns an
+    empty string instead of a partial line if it exhausts its budget.
     """
     in_quotes = quote_pending = False
     at_field_start = True
@@ -242,7 +245,7 @@ def _record_is_complete(line: str, sep: str) -> bool:
             at_field_start = True
         else:
             at_field_start = False
-    return not in_quotes and not quote_pending
+    return not in_quotes or quote_pending
 
 
 def _split_header_record(line: str, sep: str) -> list[str]:
@@ -718,6 +721,48 @@ def _first_record_width(
     return n_delimiters + 1, iter(())
 
 
+def _read_whole_lines(file: IO[bytes], limit: int) -> list[bytes]:
+    """The first whole lines of `file`, each keeping its terminator, as `readlines(limit)`.
+
+    A reader with no line reads of its own is sampled by chunk reads instead: a zstd stream
+    raises `io.UnsupportedOperation` from `readlines()` without consuming any bytes, so each
+    chunk is scanned once for line breaks, fragments of an incomplete line are retained until
+    the line is completed or the stream ends, and the sample stops after the first whole line
+    that passes `limit`, the same whole lines `readlines()` leaves a limit-truncated line out
+    of.
+    """
+    try:
+        return file.readlines(limit)
+    except io.UnsupportedOperation:
+        pass
+    lines: list[bytes] = []
+    pending: list[bytes] = []  # -- fragments of a line that continues in the next chunk --
+    total = 0
+    while True:
+        chunk = file.read(_CSV_CHUNK_CHARS)
+        if not chunk:
+            # -- end of file: a last line with no terminator is whole, not truncated --
+            if pending:
+                lines.append(b"".join(pending))
+            return lines
+        start = 0
+        while True:
+            end = chunk.find(b"\n", start)
+            if end < 0:
+                # -- an unterminated line, perhaps continued in the next chunk --
+                tail = chunk[start:]
+                if tail:
+                    pending.append(tail)
+                break
+            line = b"".join(pending) + chunk[start : end + 1]
+            pending.clear()
+            lines.append(line)
+            total += len(line)
+            if total > limit:
+                return lines
+            start = end + 1
+
+
 class _CsvPartitioningContext:
     """Encapsulates the partitioning-run details.
 
@@ -768,7 +813,7 @@ class _CsvPartitioningContext:
         with self.open() as file:
             # -- read whole lines, sniffer can be confused by a trailing partial line --
             data = "\n".join(
-                ln.decode(self._encoding or "utf-8") for ln in file.readlines(num_bytes)
+                ln.decode(self._encoding or "utf-8") for ln in _read_whole_lines(file, num_bytes)
             )
 
         try:
@@ -810,8 +855,10 @@ class _CsvPartitioningContext:
         File is guaranteed to be at read position 0 when called.
         """
         if self._file_path:
-            with open(self._file_path, "rb") as f:
-                yield f
+            # -- like `pd.read_csv(filename)`, decompress a file named e.g. "x.csv.gz"; the
+            # -- sniff, the size check, and the read each get their own decompressing handle --
+            with get_handle(self._file_path, "rb", compression="infer", is_text=False) as handles:
+                yield cast(IO[bytes], handles.handle)
         else:
             file = self._file
             assert file is not None  # -- guaranteed by `._validate()` --
@@ -824,4 +871,14 @@ class _CsvPartitioningContext:
         """Raise on invalid argument values."""
         if self._file_path is None and self._file is None:
             raise ValueError("either file-path or file-like object must be provided")
+        if self._file_path and urlparse(self._file_path).scheme and "://" in self._file_path:
+            # -- a URL is not a filename: `get_handle()` would fetch it separately for the
+            # -- delimiter sniff, the cell-count check, and the read, with none of the scheme,
+            # -- redirect, and private-address checks applied to a `partition(url=...)` fetch;
+            # -- the `"://"` test keeps a Windows drive-letter path (e.g. "C:\\dir\\f.csv")
+            # -- out, since urlparse() reports a drive letter as its scheme --
+            raise ValueError(
+                f"filename must be a local file path, got URL {self._file_path!r};"
+                " use partition(url=...) to partition a remote document"
+            )
         return self
