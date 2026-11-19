@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import IO, Any, Optional
 
 import markdown
@@ -24,6 +25,38 @@ def optional_decode(contents: str | bytes) -> str:
 DETECTION_ORIGIN: str = "md"
 
 _DEFAULT_MARKDOWN_EXTENSIONS: list[str] = ["tables", "fenced_code"]
+
+# -- a YAML front-matter block: a `---` line at the very start of the document, closed by a
+# -- `---` or `...` line --
+_FRONT_MATTER_RE = re.compile(
+    r"\A\ufeff?---[ \t]*\r?\n(?P<body>.*?)^(?:---|\.\.\.)[ \t]*(?:\r?\n|\Z)",
+    re.DOTALL | re.MULTILINE,
+)
+_YAML_KEY_RE = re.compile(r"[A-Za-z0-9_][\w .-]*:(?:\s|$)")
+
+
+def _strip_front_matter(text: str) -> str:
+    """Return `text` without a leading YAML front-matter block, as used by static site generators.
+
+    Python-Markdown has no notion of front matter, so the block would be rendered as a thematic
+    break plus a paragraph, or as a setext heading when the block has one line. The block is removed
+    only when its first content line is a YAML `key:`, so a document that starts with a thematic
+    break followed by ordinary text is not changed.
+    """
+    match = _FRONT_MATTER_RE.match(text)
+    if match is None:
+        return text
+    first_line = next(
+        (
+            line.strip()
+            for line in match.group("body").splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        ),
+        None,
+    )
+    if first_line is None or not _YAML_KEY_RE.match(first_line):
+        return text
+    return text[match.end() :]
 
 
 def _validate_markdown_extensions(extensions: Any) -> list[Any]:
@@ -86,6 +119,9 @@ def partition_md(
     configured ``markdown.extensions.Extension`` instances. The default is
     ``["tables", "fenced_code"]``. Pass e.g. ``extensions=["tables"]`` if you need the legacy
     behavior where ``#`` inside unfenced content is parsed as a heading (see #4006).
+
+    A YAML front-matter block at the start of the document (``---`` ... ``---``), as used by
+    Jekyll, Hugo, Docusaurus and similar tools, is not part of the content and is skipped.
     """
     # -- an empty document yields no elements, like the other text-based partitioners --
     if text == "" and file is None and filename is None and url is None:
@@ -123,7 +159,7 @@ def partition_md(
         kwargs.pop("extensions", _DEFAULT_MARKDOWN_EXTENSIONS)
     )
 
-    html = markdown.markdown(text, extensions=extensions)
+    html = markdown.markdown(_strip_front_matter(text), extensions=extensions)
 
     html_kwargs: dict[str, Any] = {
         "text": html,

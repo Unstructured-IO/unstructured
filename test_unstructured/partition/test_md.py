@@ -418,3 +418,41 @@ def test_partition_md_tables_only_differs_from_default_for_code_fence():
     tables_only_els = partition_md(text=text, extensions=["tables"])
     assert default_el.category == ElementType.CODE_SNIPPET
     assert any(e.category == ElementType.TITLE for e in tables_only_els)
+
+
+# -- YAML front matter --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "front_matter",
+    [
+        # -- one line: without stripping, this became a setext heading that parented the body --
+        "---\ntitle: Getting started\n---\n",
+        "---\ntitle: Getting started\nsidebar_position: 2\ntags: [setup, install]\n---\n",
+        "---\r\ntitle: Getting started\r\n---\r\n",
+        "﻿---\ntitle: Getting started\n---\n",
+        "---\n# a YAML comment\nlayout: post\n...\n",
+    ],
+)
+def test_partition_md_skips_yaml_front_matter(front_matter: str):
+    body = "\n## Install\n\nInstall the package and run the server.\n"
+
+    elements = partition_md(text=front_matter + body)
+
+    assert [(e.category, e.text) for e in elements] == [
+        (ElementType.TITLE, "Install"),
+        (ElementType.NARRATIVE_TEXT, "Install the package and run the server."),
+    ]
+    assert elements[1].metadata.parent_id == elements[0].id
+
+
+def test_partition_md_keeps_a_leading_thematic_break_that_is_not_front_matter():
+    elements = partition_md(text="---\nIntroduction\n---\n\nThe body of the document.\n")
+
+    assert [e.text for e in elements] == ["Introduction", "The body of the document."]
+
+
+def test_partition_md_keeps_a_front_matter_like_block_that_is_not_at_the_start():
+    elements = partition_md(text="# Notes\n\n---\ntitle: kept\n---\n")
+
+    assert "title: kept" in [e.text for e in elements]
