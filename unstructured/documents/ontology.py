@@ -22,7 +22,7 @@ from enum import Enum
 from typing import Any, List, Optional
 
 from bs4 import BeautifulSoup
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr
 
 from unstructured.documents.html_sanitization import is_safe_tag, sanitize_attributes
 
@@ -45,6 +45,11 @@ class ElementTypeEnum(str, Enum):
 
 
 class OntologyElement(BaseModel):
+    # Parsed text nodes are already decoded. Only collapsed HTML fragments need
+    # another HTML parse in `to_text()`. Keep the legacy behavior for ontology
+    # elements constructed directly, where `text` can contain markup.
+    _text_is_html: bool = PrivateAttr(default=True)
+
     text: Optional[str] = Field("", description="Text content of the element")
     css_class_name: Optional[str] = Field(
         default_factory=lambda: "", description="CSS class associated with the element"
@@ -119,7 +124,7 @@ class OntologyElement(BaseModel):
         # -- HTML-escaped for safety -- reparsing that escaped output would surface
         # -- the markup as literal text instead of stripping it. --
         raw_text = self.text or ""
-        if "<" in raw_text:
+        if self._text_is_html and "<" in raw_text:
             text = BeautifulSoup(raw_text, "html.parser").get_text().strip()
         else:
             text = raw_text.strip()
