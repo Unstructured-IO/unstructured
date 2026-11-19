@@ -7,6 +7,7 @@ class Source(Enum):
     OCR_TESSERACT = "ocr_tesseract"
     OCR_PADDLE = "ocr_paddle"
     OCR_GOOGLEVISION = "ocr_googlevision"
+    OCR_MINICPM = "ocr_minicpm"
 
 
 class OCRMode(Enum):
@@ -33,12 +34,14 @@ OCR_AGENT_PADDLE = "unstructured.partition.utils.ocr_models.paddle_ocr.OCRAgentP
 OCR_AGENT_GOOGLEVISION = (
     "unstructured.partition.utils.ocr_models.google_vision_ocr.OCRAgentGoogleVision"
 )
+OCR_AGENT_MINICPM = "unstructured.partition.utils.ocr_models.minicpm_ocr.OCRAgentMiniCPM"
 
 OCR_AGENT_MODULES_WHITELIST = os.getenv(
     "OCR_AGENT_MODULES_WHITELIST",
     "unstructured.partition.utils.ocr_models.tesseract_ocr,"
     "unstructured.partition.utils.ocr_models.paddle_ocr,"
-    "unstructured.partition.utils.ocr_models.google_vision_ocr",
+    "unstructured.partition.utils.ocr_models.google_vision_ocr,"
+    "unstructured.partition.utils.ocr_models.minicpm_ocr",
 ).split(",")
 
 # Speech-to-text agent (used by partition_audio)
