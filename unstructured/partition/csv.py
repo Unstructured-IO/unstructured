@@ -69,10 +69,14 @@ def partition_csv(
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
-        check_cell_count(file, ctx.delimiter, ctx.encoding, header=ctx.header is not None)
+        n_columns = check_cell_count(file, ctx.delimiter, ctx.encoding)
     with ctx.open() as file:
         dataframe = read_delimited_text(
-            file, sep=ctx.delimiter, header=ctx.header, encoding=ctx.encoding
+            file,
+            sep=ctx.delimiter,
+            header=ctx.header,
+            encoding=ctx.encoding,
+            n_columns=n_columns,
         )
 
     if not len(dataframe.columns):
@@ -105,7 +109,12 @@ def dataframe_to_html(dataframe: pd.DataFrame, *, header: bool) -> str:
 
 
 def read_delimited_text(
-    file: IO[bytes], *, sep: str | None, header: int | None, encoding: str | None
+    file: IO[bytes],
+    *,
+    sep: str | None,
+    header: int | None,
+    encoding: str | None,
+    n_columns: int | None = None,
 ) -> pd.DataFrame:
     """Read delimited text from `file` into a data-frame, with each lone "\r" made a "\n".
 
@@ -119,12 +128,19 @@ def read_delimited_text(
     When `sep` is `None` the delimiter is sniffed by `_sniff_delimiter()` from the first non-blank
     line, the same way `check_cell_count()` measures it, rather than leaving Pandas to sniff its
     own.
+
+    `n_columns` is the width `check_cell_count()` measures. Pandas otherwise takes the width of the
+    table from its first record (or header): it fails on a later, wider record, and when data rows
+    are wider than the header it silently makes their first fields the row index. Given the width,
+    every record is read whole and a shorter one is padded with empty cells. A header is then the
+    first row, labeled the way Pandas labels a header row, and a repeated label is restored as
+    written the same way `_restore_repeated_header_labels()` restores it.
     """
     reader = _LoneCarriageReturnReader(file, encoding)
     # -- each cell is read as the text the file holds: by default Pandas empties a cell that says
     # -- "N/A", "NULL" or "None", turns a column of whole numbers with one empty cell into floats
     # -- (12 reads "12.0") and drops the leading zeros of a code such as "007" --
-    cells_as_written = {"dtype": str, "keep_default_na": False}
+    cells_as_written: dict[str, Any] = {"dtype": str, "keep_default_na": False}
     # -- the first non-blank line is peeked once for the sniff, the way it always has been: the
     # -- sample the sniff joins is a whole record of any size, so it is passed as a temporary
     # -- rather than held through the read. A repeated header label is restored from the first
@@ -133,23 +149,40 @@ def read_delimited_text(
     try:
         if sep is None:
             sep = _sniff_delimiter(_normalize_line_endings(reader.peek_first_non_blank_line()))
-            if header == 0:
-                # -- a line the sniff skipped can hold the header record: re-peek with the
-                # -- sniffed delimiter, now that it is known --
-                first_line = _peek_header_line(reader, sep)
             # -- the C engine does not sniff, so keep the Python engine this path has always used --
-            dataframe = pd.read_csv(
-                reader, sep=sep, header=header, engine="python", **cells_as_written
-            )
-        else:
-            if header == 0:
-                first_line = _peek_header_line(reader, sep)
+            cells_as_written["engine"] = "python"
+        if header == 0:
+            # -- on a sniffed read, a line the sniff skipped can hold the header record, so the
+            # -- header line is peeked with the delimiter, now that it is known --
+            first_line = _peek_header_line(reader, sep)
+        if not n_columns:
             dataframe = pd.read_csv(reader, sep=sep, header=header, **cells_as_written)
+        else:
+            # -- no `index_col=False`: with it the Python engine drops the fields of a record
+            # -- wider than `names`; without it both engines raise, so a width measured short
+            # -- cannot lose text --
+            dataframe = pd.read_csv(
+                reader, sep=sep, header=None, names=range(n_columns), **cells_as_written
+            )
     except pd.errors.EmptyDataError:
         # -- an empty file, or one of only blank lines, has no columns; the partitioners turn that
         # -- into no elements, the same as partitioning an empty text, markdown or HTML file --
         return pd.DataFrame()
-    return _restore_repeated_header_labels(dataframe, first_line=first_line, sep=sep, header=header)
+    if not n_columns:
+        return _restore_repeated_header_labels(
+            dataframe, first_line=first_line, sep=sep, header=header
+        )
+
+    # -- the Python engine pads a short record with `None`, which `to_html()` writes as "None" --
+    dataframe = dataframe.fillna("")
+    if header is None:
+        return dataframe
+    header_cells = dataframe.iloc[0].tolist()
+    labels = _header_labels(header_cells, sep)
+    fields = _repeated_header_fields(first_line, sep)
+    if fields is not None and _is_header_record(fields, header_cells):
+        labels = [cell if cell != "" else label for cell, label in zip(header_cells, labels)]
+    return dataframe.iloc[1:].set_axis(labels, axis=1)
 
 
 def _restore_repeated_header_labels(
@@ -163,24 +196,49 @@ def _restore_repeated_header_labels(
     header cell keeps the "Unnamed: n" label Pandas gives it, which is what `partition_csv()`
     and `partition_tsv()` have always emitted.
 
-    The header record is parsed from `first_line`, the first line the read itself would not
-    skip, peeked by `_peek_header_line()`. The labels are left as Pandas wrote them when that
-    line does not hold a whole record, or when the peek gave up and returned "". The record is
-    split by `_split_header_record()`, which does not consult the csv module's process-wide
-    field-size limit, so the labels do not depend on what an earlier partition set it to.
+    The header record is the one `_repeated_header_fields()` reads from `first_line`.
     """
-    if header != 0 or len(sep) != 1 or not first_line:
+    if header != 0:
         return dataframe
-    if not _record_is_complete(first_line, sep):
-        return dataframe
-    fields = _split_header_record(first_line, sep)
-    labels = [field for field in fields if field != ""]
-    if len(labels) == len(set(labels)) or len(fields) != len(dataframe.columns):
+    fields = _repeated_header_fields(first_line, sep)
+    if fields is None or len(fields) != len(dataframe.columns):
         return dataframe
     dataframe.columns = [
         field if field != "" else label for field, label in zip(fields, dataframe.columns)
     ]
     return dataframe
+
+
+def _repeated_header_fields(first_line: str, sep: str) -> list[str] | None:
+    """The fields of the header record in `first_line` when a label repeats in it, else `None`.
+
+    `first_line` is the first line the read itself would not skip, peeked by
+    `_peek_header_line()`. There are no fields to restore when that line does not hold a whole
+    record, or when the peek gave up and returned "". The record is split by
+    `_split_header_record()`, which does not consult the csv module's process-wide field-size
+    limit, so the labels do not depend on what an earlier partition set it to.
+    """
+    if len(sep) != 1 or not first_line:
+        return None
+    if not _record_is_complete(first_line, sep):
+        return None
+    fields = _split_header_record(first_line, sep)
+    labels = [field for field in fields if field != ""]
+    if len(labels) == len(set(labels)):
+        return None
+    return fields
+
+
+def _is_header_record(fields: list[str], header_cells: list[str]) -> bool:
+    """Whether `fields`, split from the peeked header line, are the record read as the header.
+
+    `header_cells` is the first row of a read given the table's width, so it holds the header
+    record padded with empty cells to that width. Labels are restored from the peeked line only
+    when its fields are exactly that record, so a line the read skipped, or read differently,
+    never relabels the columns.
+    """
+    n_fields = len(fields)
+    return header_cells[:n_fields] == fields and not any(header_cells[n_fields:])
 
 
 # -- the most chunks a header peek fills looking for the header line, bounding what it retains
@@ -301,27 +359,51 @@ def _split_header_record(line: str, sep: str) -> list[str]:
     return fields
 
 
-def check_cell_count(
-    file: IO[bytes], delimiter: str | None, encoding: str | None, *, header: bool = False
-) -> None:
-    """Raise `UnprocessableEntityError` when `file` would span more than `CSV_MAX_CELLS` cells.
+def _header_labels(cells: list[str], sep: str) -> list[str]:
+    """The column labels Pandas reads from a header row of `cells`.
 
-    Pandas sizes the data-frame by the first record and pads every shorter record out to that
-    width, so a tiny file whose first line is a long run of delimiters can span millions of cells.
-    The span is measured here before Pandas allocates anything, reading `file` in fixed-size chunks
-    from its current position, with each line ending counted as one "\n", and the scan stops as
-    soon as the limit is passed:
+    Pandas labels an empty header cell "Unnamed: <i>" and makes a repeated label unique with a
+    ".1", ".2" suffix. The row is written out as one line of delimited text for Pandas to read, so
+    the labels match those of reading the file with `header=0`. A column the header row has no
+    cell over is labeled like an empty header cell.
 
-    - columns are the fields of the first record, counted with Pandas' quoting rules without
+    The line is the header record itself, so it is read even when it is blank: a header of one
+    cell of only spaces is written as a line of only spaces, which Pandas would otherwise skip.
+    """
+    line = io.StringIO()
+    csv.writer(line, delimiter=sep, lineterminator="\n").writerow(cells)
+    line.seek(0)
+    columns = pd.read_csv(
+        line,
+        sep=sep,
+        header=0,
+        nrows=0,
+        dtype=str,
+        keep_default_na=False,
+        skip_blank_lines=False,
+    )
+    return [str(label) for label in columns.columns]
+
+
+def check_cell_count(file: IO[bytes], delimiter: str | None, encoding: str | None) -> int:
+    """The number of columns of the table in `file`, which is the field count of its widest record.
+
+    Raises `UnprocessableEntityError` when `file` would span more than `CSV_MAX_CELLS` cells.
+
+    `read_delimited_text()` gives Pandas this width as the column names, so every record is padded
+    out to the widest one, and a record wider than the first is read whole rather than failing in
+    Pandas or having its first fields made the row index. A tiny file with one long run of
+    delimiters can therefore span millions of cells. The span is measured here before Pandas
+    allocates anything, reading `file` in fixed-size chunks from its current position, with each
+    line ending counted as one "\n", and the scan stops as soon as the limit is passed:
+
+    - columns are the fields of the widest record, each counted with Pandas' quoting rules without
       building the fields;
-    - rows are counted as line terminators after it. That is an upper bound, since blank lines and
-      newlines inside quoted fields count too, so the scan can over-count but never under-count.
+    - rows are the first record plus the line terminators after it. That is an upper bound, since
+      blank lines and newlines inside quoted fields count too, so the scan can over-count but
+      never under-count.
 
-    With `header`, the first record is the header, and Pandas makes the fields a data row has
-    beyond it an implicit index: its C engine takes their number from the first data row, and its
-    Python engine also from the second, which can make the first data row the index names. So the
-    columns are the widest of the header and the first two data records, each measured the same
-    way; any later, wider row is an error in Pandas.
+    The width is 0 when `file` has no non-blank record.
 
     This is a conservative estimate of the cells Pandas will build, not a bound on memory or bytes
     read: blank lines held while sniffing, or a stream spooled because it cannot seek, still take
@@ -347,22 +429,11 @@ def check_cell_count(
         chunks, delimiter, python_engine, max_cells, raise_limit_exceeded
     )
     if n_cols == 0:
-        return
+        return 0
     n_rows = 1
 
-    if header:
-        # -- the first two data records decide how many implicit-index columns Pandas adds --
-        for _ in range(2):
-            width, chunks = _first_record_width(
-                chunks, delimiter, python_engine, max_cells, raise_limit_exceeded
-            )
-            if width == 0:
-                return
-            n_rows, n_cols = n_rows + 1, max(n_cols, width)
-            if n_rows * n_cols > max_cells:
-                raise_limit_exceeded(n_rows, n_cols)
-
     # -- each later "\n" ends a row, and so does end-of-file when the last line is unterminated --
+    widths = _RecordWidths(delimiter)
     unterminated = False
     for chunk in chunks:
         if n_terminators := chunk.count("\n"):
@@ -370,8 +441,11 @@ def check_cell_count(
             unterminated = not chunk.endswith("\n")
         elif chunk:
             unterminated = True
+        n_cols = max(n_cols, widths.feed(chunk))
         if (n_rows + unterminated) * n_cols > max_cells:
             raise_limit_exceeded(n_rows + unterminated, n_cols)
+
+    return n_cols
 
 
 # -- the delimiter of a file with no usable one, which is then read as one column. It is the ASCII
@@ -761,6 +835,74 @@ def _read_whole_lines(file: IO[bytes], limit: int) -> list[bytes]:
             if total > limit:
                 return lines
             start = end + 1
+
+
+class _RecordWidths:
+    """The field count of the widest record in text fed to it chunk by chunk.
+
+    Starts at the beginning of a record and follows the quoting rules of `_first_record_width()`:
+    a `"` opens a quoted field only at the start of a field, `""` inside a quoted field is a
+    literal quote, and delimiters and newlines inside a quoted field are part of the field. Blank
+    lines need no rule of their own: a blank line is one field, which is never wider than the
+    first, non-blank, record.
+
+    Text outside quotes is measured a line at a time with `str.count()`, so the scan takes a step
+    for each line and each quote rather than for each field.
+    """
+
+    def __init__(self, delimiter: str):
+        self._delimiter = delimiter
+        self._widest = 0
+        self._n_delimiters = 0  # -- in the record being read --
+        self._at_field_start = True
+        self._in_quotes = False
+        self._quote_pending = False  # -- a `"` in a quoted field, which may begin a `""` --
+
+    def feed(self, chunk: str) -> int:
+        """Scan `chunk`; the widest record so far, the one not yet ended included."""
+        delimiter, widest, n_delimiters = self._delimiter, self._widest, self._n_delimiters
+        at_field_start, in_quotes = self._at_field_start, self._in_quotes
+        i, n = 0, len(chunk)
+        if self._quote_pending and n:
+            # -- the previous chunk ended with a quote inside a quoted field --
+            self._quote_pending = False
+            if chunk[0] == '"':  # -- `""` is a literal quote --
+                i = 1
+            else:  # -- the quote closed the quoted part; the field continues --
+                in_quotes = False
+
+        while i < n:
+            if in_quotes:
+                j = chunk.find('"', i)
+                if j < 0:
+                    break
+                if j + 1 == n:  # -- whether it begins a `""` is up to the next chunk --
+                    self._quote_pending = True
+                    break
+                if chunk[j + 1] == '"':  # -- `""` is a literal quote --
+                    i = j + 2
+                else:  # -- the quote closed the quoted part; the field continues --
+                    in_quotes, i = False, j + 1
+                continue
+
+            # -- unquoted text runs to the next quote; each "\n" in it ends a record --
+            quote = chunk.find('"', i)
+            end = n if quote < 0 else quote
+            while (newline := chunk.find("\n", i, end)) >= 0:
+                widest = max(widest, n_delimiters + chunk.count(delimiter, i, newline) + 1)
+                n_delimiters, at_field_start = 0, True
+                i = newline + 1
+            if i < end:
+                n_delimiters += chunk.count(delimiter, i, end)
+                at_field_start = chunk[end - 1] == delimiter
+                i = end
+            if quote >= 0:  # -- a quote anywhere but at the start of a field is literal text --
+                in_quotes, at_field_start = at_field_start, False
+                i = quote + 1
+
+        self._widest, self._n_delimiters = widest, n_delimiters
+        self._at_field_start, self._in_quotes = at_field_start, in_quotes
+        return max(widest, n_delimiters + 1)
 
 
 class _CsvPartitioningContext:
