@@ -47,7 +47,7 @@ jobs:
   setup:
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -111,7 +111,7 @@ jobs:
   test_unit:
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     runs-on: opensource-linux-8core
     steps:
     - uses: actions/checkout@v4
@@ -139,7 +139,7 @@ jobs:
   test_unit_no_extras:
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -161,7 +161,7 @@ jobs:
   test_unit_dependency_extras:
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
         extra: ["csv", "docx", "odt", "markdown", "pypandoc", "pdf-image", "pptx", "xlsx"]
         include:
           - extra: csv

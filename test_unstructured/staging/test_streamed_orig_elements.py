@@ -93,10 +93,14 @@ def test_compression_preserves_standard_encoder_circular_reference_error(
     element = NarrativeText("text", element_id="id", metadata=metadata)
 
     adjusted = base._fix_metadata_field_precision([element])
-    with pytest.raises(ValueError, match="^Circular reference detected$") as expected:
+    # -- compare str(exc), not `match=`: Python 3.14+ adds "when serializing ..." notes to the
+    # -- exception and `pytest.raises(match=...)` also matches against those notes --
+    with pytest.raises(ValueError) as expected:
         json.dumps(base.elements_to_dicts(adjusted), sort_keys=True)
-    with pytest.raises(type(expected.value), match="^Circular reference detected$"):
+    assert str(expected.value) == "Circular reference detected"
+    with pytest.raises(type(expected.value)) as actual:
         base.elements_to_base64_gzipped_json([element])
+    assert str(actual.value) == "Circular reference detected"
 
 
 @pytest.mark.parametrize("large_string", [False, True])
