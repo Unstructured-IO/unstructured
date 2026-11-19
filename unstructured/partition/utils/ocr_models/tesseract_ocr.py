@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegions
     from unstructured_inference.inference.layoutelement import LayoutElements
 
-_RE_X_CONF = re.compile(r"x_conf (\d+\.\d+)")
+_RE_X_CONF = re.compile(r"\bx_conf\s+(\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)(?=\s|;|$)")
 
 # -- force tesseract to be single threaded, otherwise we see major performance problems --
 if "OMP_THREAD_LIMIT" not in os.environ:
