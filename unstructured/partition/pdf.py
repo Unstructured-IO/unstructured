@@ -378,6 +378,10 @@ def partition_pdf_or_image(
                 )
         except Exception as e:
             logger.debug(e)
+            # -- fast reads only this text layer, so a failure must not look like an empty PDF.
+            # -- hi_res and auto still continue and can fall through to OCR. --
+            if strategy == PartitionStrategy.FAST:
+                raise
             logger.info("PDF text extraction failed, skip text extraction...")
 
     strategy = determine_pdf_or_image_strategy(
