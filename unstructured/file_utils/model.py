@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import enum
+import inspect
 from typing import TYPE_CHECKING, Callable, Iterable, Type, cast
 
 from typing_extensions import ParamSpec
@@ -578,7 +579,26 @@ def create_file_type(
     extensions: Iterable[str] | None = None,
     alias_mime_types: Iterable[str] | None = None,
 ) -> FileType:
-    """Register a new FileType member."""
+    """Register a new FileType member for detection, enumeration, and value lookup.
+
+    Register the type in each process before unpickling values of that type there.
+    Re-registering a custom name replaces that member. Names colliding with a built-in member,
+    another member's value, or an existing class attribute raise `ValueError`.
+
+    Registration is not synchronized. Configure custom types during process startup, before
+    starting workers, or coordinate updates with all registry users. Unpickling resolves to the
+    receiving process's current registration, including replacements made after serialization.
+    """
+    previous = FileType._member_map_.get(name)
+    if previous is not None and previous.value != name:
+        raise ValueError(f"Cannot replace built-in FileType member {name!r}")
+    missing = object()
+    if previous is None and (
+        inspect.getattr_static(FileType, name, missing) is not missing
+        or name in FileType._value2member_map_
+    ):
+        raise ValueError(f"FileType name {name!r} conflicts with an existing attribute or value")
+
     type_ = _create_file_type_enum(
         FileType,
         name,
@@ -591,7 +611,11 @@ def create_file_type(
         None,
     )
     type_._name_ = name
+    type.__setattr__(FileType, name, type_)
     FileType._member_map_[name] = type_
+    FileType._value2member_map_[name] = type_
+    if name not in FileType._member_names_:
+        FileType._member_names_.append(name)
     return type_
 
 
