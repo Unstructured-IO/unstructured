@@ -18,7 +18,7 @@ class HuggingFaceEmbeddingConfig(EmbeddingConfig):
     model_name: Optional[str] = Field(default="sentence-transformers/all-MiniLM-L6-v2")
     model_kwargs: Optional[dict] = Field(default_factory=lambda: {"device": "cpu"})
     encode_kwargs: Optional[dict] = Field(default_factory=lambda: {"normalize_embeddings": False})
-    cache_folder: Optional[dict] = Field(default=None)
+    cache_folder: Optional[str] = Field(default=None)
 
     @requires_dependencies(
         ["langchain_huggingface"],
