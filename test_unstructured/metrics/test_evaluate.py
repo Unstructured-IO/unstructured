@@ -419,6 +419,24 @@ def test_get_mean_grouping_df_input(grouping: str, count_row: int):
     assert grouped_df[grouping].dropna().nunique() == count_row
 
 
+@pytest.mark.parametrize(
+    ("eval_name", "data_input"),
+    [("text_extraction", DUMMY_DF_CCT), ("element_type", DUMMY_DF_ELEMENT_TYPE)],
+)
+def test_get_mean_grouping_uses_agg_name_in_export_filename(
+    eval_name: str, data_input: pd.DataFrame, tmp_path: Path
+):
+    get_mean_grouping(
+        group_by="doctype",
+        data_input=data_input,
+        export_dir=str(tmp_path),
+        eval_name=eval_name,
+        agg_name="custom",
+    )
+
+    assert os.listdir(tmp_path) == ["all-doctype-agg-custom.tsv"]
+
+
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
 def test_get_mean_grouping_tsv_input():
