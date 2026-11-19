@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any
 from unittest.mock import patch
 
@@ -418,3 +419,53 @@ def test_partition_md_tables_only_differs_from_default_for_code_fence():
     tables_only_els = partition_md(text=text, extensions=["tables"])
     assert default_el.category == ElementType.CODE_SNIPPET
     assert any(e.category == ElementType.TITLE for e in tables_only_els)
+
+
+def test_partition_md_recognizes_headings_indented_up_to_three_spaces():
+    text = "# Title\n\n ## Chapter 1\n\n   ### Section\n\n Body text here."
+
+    elements = partition_md(text=text)
+
+    assert [(e.text, e.metadata.category_depth) for e in elements[:3]] == [
+        ("Title", 0),
+        ("Chapter 1", 1),
+        ("Section", 2),
+    ]
+    assert elements[1].metadata.parent_id == elements[0].id
+    assert elements[2].metadata.parent_id == elements[1].id
+    assert elements[3].metadata.parent_id == elements[2].id
+
+
+def test_partition_md_keeps_four_space_indented_hash_line_as_code():
+    elements = partition_md(text="Intro paragraph.\n\n    # not a heading\n")
+
+    assert all(e.text != "not a heading" for e in elements)
+    assert not any(e.metadata.category_depth is not None for e in elements)
+
+
+def test_partition_md_does_not_pull_indented_hash_out_of_a_block():
+    list_els = partition_md(text="1. step\n   ## Notes\n2. next\n")
+    tag_els = partition_md(text="Tags for this post:\n  #python #ml\n")
+
+    assert [e.category for e in list_els] == ["ListItem", "ListItem"]
+    assert all(e.category != ElementType.TITLE for e in tag_els)
+    assert len(tag_els) == 1
+
+
+def test_partition_md_keeps_hashheader_processor_passed_through_extensions():
+    from markdown.blockprocessors import HashHeaderProcessor
+    from markdown.extensions import Extension
+
+    class StrictHashHeaderProcessor(HashHeaderProcessor):
+        RE = re.compile(r"(?:^|\n)(?P<level>#{1,6}) (?P<header>(?:\\.|[^\\])*?)#*(?:\n|$)")
+
+    class StrictExt(Extension):
+        def extendMarkdown(self, md):
+            md.parser.blockprocessors.register(
+                StrictHashHeaderProcessor(md.parser), "hashheader", 70
+            )
+
+    elements = partition_md(text="#nospace\n", extensions=["tables", StrictExt()])
+
+    assert [e.text for e in elements] == ["#nospace"]
+    assert elements[0].category != ElementType.TITLE
