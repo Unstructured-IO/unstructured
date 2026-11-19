@@ -949,10 +949,13 @@ def convert_to_coco(
         }
         for el in element_dicts
     ]
-    images = list({tuple(sorted(d.items())): d for d in images}.values())
-    for index, d in enumerate(images):
-        d["id"] = index + 1
-    coco_dataset["images"] = images
+    image_keys = [tuple(sorted(image.items())) for image in images]
+    images_by_key = dict(zip(image_keys, images))
+    image_ids = {}
+    for index, (key, image) in enumerate(images_by_key.items(), start=1):
+        image["id"] = index
+        image_ids[key] = index
+    coco_dataset["images"] = list(images_by_key.values())
     # Handle Categories
     categories = sorted(set(TYPE_TO_TEXT_ELEMENT_MAP.keys()))
     categories = [{"id": i + 1, "name": cat} for i, cat in enumerate(categories)]
@@ -961,6 +964,7 @@ def convert_to_coco(
     annotations = [
         {
             "id": el["element_id"],
+            "image_id": image_ids[image_key],
             "category_id": [x["id"] for x in categories if x["name"] == el["type"]][0],
             "bbox": (
                 [
@@ -1001,7 +1005,7 @@ def convert_to_coco(
                 else None
             ),
         }
-        for el in element_dicts
+        for el, image_key in zip(element_dicts, image_keys)
     ]
     coco_dataset["annotations"] = annotations
     return coco_dataset
