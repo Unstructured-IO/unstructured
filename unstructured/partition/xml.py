@@ -110,8 +110,10 @@ def get_leaf_elements(
             file=rewind_if_spooled(file), xml_path=xml_path, encoding=encoding
         )
     else:
+        # -- `text` is already decoded and is passed on as UTF-8 bytes, so any encoding its XML
+        # -- declaration names no longer applies to them --
         b = BytesIO(bytes(cast(str, text), encoding="utf-8"))
-        return _get_leaf_elements(b, xml_path=xml_path)
+        return _get_leaf_elements(b, xml_path=xml_path, encoding="utf-8")
 
 
 def _get_leaf_elements(
