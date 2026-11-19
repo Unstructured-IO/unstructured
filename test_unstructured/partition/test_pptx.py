@@ -437,6 +437,43 @@ def test_partition_pptx_maps_translated_group_child_coordinates_onto_the_slide(
     ]
 
 
+def test_partition_pptx_orders_group_children_by_their_position_on_the_slide(
+    tmp_path: pathlib.Path,
+):
+    """Reading order uses a grouped shape's slide position, not its child-coordinate position.
+
+    The grouped text box sits near the top of the group's child coordinate system, but the group
+    offset places it below the ungrouped text box, so it must come second.
+    """
+    filename = str(tmp_path / "test-group-translated-reading-order.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+
+    grouped_txBox = slide.shapes.add_textbox(Inches(0), Inches(0.25), Inches(2), Inches(0.5))
+    grouped_txBox.text_frame.text = "Lower on the slide, inside the group."
+    upper_txBox = slide.shapes.add_textbox(Inches(0.5), Inches(1), Inches(2), Inches(0.5))
+    upper_txBox.text_frame.text = "Higher on the slide, outside the group."
+
+    _add_group(
+        slide.shapes._spTree,
+        [grouped_txBox._element],
+        offset=(Inches(0.5), Inches(5)),
+        extent=(Inches(2), Inches(1)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(2), Inches(1)),
+        shape_id=100,
+    )
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == [
+        "Higher on the slide, outside the group.",
+        "Lower on the slide, inside the group.",
+    ]
+
+
 def test_partition_pptx_excludes_group_children_that_map_off_the_slide(
     tmp_path: pathlib.Path,
 ):
