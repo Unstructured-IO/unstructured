@@ -15,6 +15,7 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
+    CodeSnippet,
     CoordinatesMetadata,
     Element,
     ElementMetadata,
@@ -437,6 +438,12 @@ def element_to_md(
     match element:
         case Title(text=text):
             return f"# {text}"
+        case CodeSnippet(text=text):
+            # Keep code literal, including examples that contain Markdown fences.
+            longest_run = max((len(m.group()) for m in re.finditer(r"`+", text)), default=0)
+            fence = "`" * max(3, longest_run + 1)
+            ending = "\n" if text and not text.endswith("\n") else ""
+            return f"{fence}\n{text}{ending}{fence}"
         case Formula(text=text):
             return _emit_formula_markdown(
                 text,
