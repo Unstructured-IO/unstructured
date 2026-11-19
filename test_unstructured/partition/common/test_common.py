@@ -357,17 +357,19 @@ def test_normalize_layout_element_layout_element_maps_to_appropriate_text_elemen
 
 
 @pytest.mark.parametrize(
-    ("element_type", "expected_checked"),
+    ("element_type", "expected_checked", "control_type"),
     [
-        (ElementType.CHECK_BOX_UNCHECKED, False),
-        (ElementType.CHECK_BOX_CHECKED, True),
-        (ElementType.RADIO_BUTTON_UNCHECKED, False),
-        (ElementType.RADIO_BUTTON_CHECKED, True),
-        (ElementType.CHECKED, True),
-        (ElementType.UNCHECKED, False),
+        (ElementType.CHECK_BOX_UNCHECKED, False, "checkbox"),
+        (ElementType.CHECK_BOX_CHECKED, True, "checkbox"),
+        (ElementType.RADIO_BUTTON_UNCHECKED, False, "radio"),
+        (ElementType.RADIO_BUTTON_CHECKED, True, "radio"),
+        (ElementType.CHECKED, True, "checkbox"),
+        (ElementType.UNCHECKED, False, "checkbox"),
     ],
 )
-def test_normalize_layout_element_checkable(element_type: str, expected_checked: bool):
+def test_normalize_layout_element_checkable(
+    element_type: str, expected_checked: bool, control_type
+):
     layout_element = LayoutElement.from_coords(
         type=element_type,
         x1=1,
@@ -384,6 +386,7 @@ def test_normalize_layout_element_checkable(element_type: str, expected_checked:
     assert isinstance(element, CheckBox)
     assert element == CheckBox(
         checked=expected_checked,
+        control_type=control_type,
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
         coordinate_system=coordinate_system,
     )
