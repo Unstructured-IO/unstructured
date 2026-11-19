@@ -4,6 +4,7 @@ import hashlib
 import importlib
 import logging
 import os
+import re
 import shutil
 import sys
 import sysconfig
@@ -22,6 +23,11 @@ CACHE_MAX_SIZE: Final[int] = 128
 # -- Characters, not bytes: `Doc` size tracks token count, which tracks characters rather
 # -- than UTF-8 width. Element text is a paragraph or a table cell, so 8,192 covers it. --
 MAX_CACHEABLE_CHARS: Final[int] = 8192
+
+# NOTE(shlokbam): The English spaCy model does not reliably treat the danda (।) and double
+# danda (॥), the sentence terminators of Hindi, Bengali and other Indic scripts, as sentence
+# ends, so split on them after spaCy's own sentence segmentation.
+_DANDA_SPLIT_RE: Final[re.Pattern[str]] = re.compile(r"(?<=[।॥])\s+")
 
 _SPACY_MODEL_NAME: Final[str] = "en_core_web_sm"
 _SPACY_MODEL_VERSION: Final[str] = "3.8.0"
@@ -214,4 +220,6 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def _tokenize_for_cache(text: str) -> Tuple[str, ...]:
     """A wrapper around the spaCy sentence tokenizer with LRU caching enabled."""
-    return tuple(sent.text for sent in _process(text).sents)
+    return tuple(
+        part for sent in _process(text).sents for part in _DANDA_SPLIT_RE.split(sent.text) if part
+    )

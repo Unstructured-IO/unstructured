@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import os
 import re
-from typing import Final, List, Optional
+import unicodedata
+from typing import Final, Iterator, List, Optional
 
 from unstructured.cleaners.core import remove_punctuation
 from unstructured.logger import trace_logger
@@ -22,6 +23,36 @@ from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s\-,.!?_\/]+")
 NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
+
+
+# NOTE(shlokbam): Vowel signs, viramas and anusvaras in Indic scripts such as Devanagari and
+# Bengali are combining marks, not letters, so `"हिंदी".isalpha()` is False. Treat them as
+# part of the word they belong to. A mark counts only when it is attached to a letter, so the
+# variation selector (U+FE0F) and keycap (U+20E3) marks in emoji like "⭐️" and "1️⃣" do not.
+def _iter_letter_flags(text: str) -> Iterator[bool]:
+    """Yield, for each non-space character of `text`, whether it counts as a letter.
+
+    A letter counts. A combining mark (Unicode category M*) counts only when the previous
+    non-space character counted. Anything else does not count. Only that one flag is kept, so
+    memory use does not grow with the length of `text`.
+    """
+    category = unicodedata.category
+    counts = False
+    for char in text:
+        if char.isspace():
+            continue
+        if char.isalpha():
+            counts = True
+        elif category(char)[0] != "M":
+            counts = False
+        yield counts
+
+
+def _is_word(token: str) -> bool:
+    """True if `token` is letters and the combining marks attached to them, starting with a
+    letter."""
+    flags = _iter_letter_flags(token)
+    return next(flags, False) and all(flags)
 
 
 def is_possible_narrative_text(
@@ -256,11 +287,9 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
 
     alpha_count = 0
     total_count = 0
-    for char in text:
-        if not char.isspace():
-            total_count += 1
-            if char.isalpha():
-                alpha_count += 1
+    for counts in _iter_letter_flags(text):
+        total_count += 1
+        alpha_count += counts
 
     return ((alpha_count / total_count) < threshold) if total_count > 0 else False
 
@@ -291,7 +320,7 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     # ex. world_tokenize("ITEM 1. Financial Statements (Unaudited)")
     #     = ['ITEM', '1', '.', 'Financial', 'Statements', '(', 'Unaudited', ')'],
     # however, "ITEM 1. Financial Statements (Unaudited)" is Title, not NarrativeText
-    tokens = [tk for tk in word_tokenize(text) if tk.isalpha()]
+    tokens = [tk for tk in word_tokenize(text) if _is_word(tk)]
 
     # NOTE(jay-ylee) - If word_tokenize(text) is empty, return must be True to
     # avoid being misclassified as Narrative Text.
