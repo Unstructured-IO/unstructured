@@ -221,6 +221,14 @@ def _normalize_url(value: str) -> str:
     return re.sub(r"[\x00-\x20]+", "", value).lower()
 
 
+def is_data_url(value: str) -> bool:
+    """Recognize the data scheme using the shared output-sanitization normalization.
+
+    Inspect only the scheme to avoid copying a potentially large embedded payload.
+    """
+    return _normalize_url(value[: value.find(":") + 1]) == "data:"
+
+
 def _normalized_tag_and_attribute(
     tag_name: str | None = None,
     attribute_name: str | None = None,

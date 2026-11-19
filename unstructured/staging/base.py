@@ -523,6 +523,11 @@ def create_file_from_elements(
     Use this after partitioning a document, optionally modifying elements (e.g. replacing
     Image elements with NarrativeText using alt text), then writing back to a file.
 
+    HTML image URLs retain their literal references, subject to sanitization. Relative references
+    resolve against the output location, which can identify a different resource from the source
+    document. No source base is inferred from element URLs or local file paths. For resource
+    identity across output locations, supply absolute image URLs or allow embedded image data.
+
     Supported formats: "markdown", "html", "text".
 
     Args:
@@ -531,7 +536,8 @@ def create_file_from_elements(
         filename: Optional path to write the document to.
         encoding: File encoding when writing to file (all formats).
         exclude_binary_image_data: If True, omit base64 image data. Applies only to
-            **markdown** and **html**; ignored for text.
+            **markdown** and **html**; ignored for text. HTML also excludes ``data:`` image URL
+            fallbacks. Explicit ``text_as_html`` retains its existing precedence.
         no_group_by_page: If True (default), include all elements in output. If False,
             group **html** by page (elements without metadata.page_number are skipped).
             Applies only to **html**; ignored for markdown and text. Placed before
