@@ -314,15 +314,14 @@ class EmailPartitioningContext:
     @cached_property
     def _sent_date(self) -> str | None:
         """ISO-8601 str representation of message sent-date, if available."""
-        date_str = self.msg.get("Date")
-        if not date_str:
-            return None
         try:
+            date_str = self.msg.get("Date")
+            if not date_str:
+                return None
             sent_date = parser.parse(date_str)
-        except (parser.ParserError, TypeError, ValueError):
+            return sent_date.astimezone(dt.timezone.utc).isoformat(timespec="seconds")
+        except (parser.ParserError, TypeError, ValueError, OverflowError):
             return None
-
-        return sent_date.astimezone(dt.timezone.utc).isoformat(timespec="seconds")
 
     def _validate(self) -> EmailPartitioningContext:
         """Raise on first invalid option, return self otherwise."""
