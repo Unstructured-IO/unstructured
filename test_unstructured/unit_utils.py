@@ -18,6 +18,7 @@ from unittest.mock import (
     patch,
 )
 
+import requests
 from pytest import CaptureFixture, FixtureRequest, LogCaptureFixture, MonkeyPatch  # noqa: PT013
 
 from unstructured.documents.elements import Element
@@ -94,6 +95,21 @@ def example_doc_text(file_name: str) -> str:
     """Contents of example-doc `file_name` as text (decoded as utf-8)."""
     with open(example_doc_path(file_name)) as f:
         return f.read()
+
+
+def http_response(body: bytes, content_type: str) -> requests.Response:
+    """A 200 `requests.Response` of `body`, with `.encoding` set the way `requests` sets it.
+
+    `HTTPAdapter.build_response()` takes `.encoding` from the Content-Type header, which makes it
+    ISO-8859-1 for a `text/*` type without a charset. A bare `requests.Response()` has no encoding,
+    so its `.text` would guess one instead.
+    """
+    response = requests.Response()
+    response.status_code = 200
+    response.headers["Content-Type"] = content_type
+    response._content = body
+    response.encoding = requests.utils.get_encoding_from_headers(response.headers)
+    return response
 
 
 def parse_optional_datetime(datetime_str: Optional[str]) -> Optional[dt.datetime]:
