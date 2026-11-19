@@ -576,8 +576,11 @@ class TableBlock(Flow):
         caption_texts: list[str] = []
         row_texts: list[str] = []
 
-        def sanitized_text_and_html(node: etree._Element) -> tuple[str, str]:
-            """Text of a cell or caption, and the bare tag wrapping that escaped text."""
+        def sanitized_text_and_html(node: etree._Element, attrs: str = "") -> tuple[str, str]:
+            """Text of a cell or caption, and the bare tag wrapping that escaped text.
+
+            `attrs` is an already-validated attribute string, like ` colspan="2"`, for the tag.
+            """
             # -- a cell can contain other elements like spans etc. so we can't count on the
             # -- text being directly below the cell. `.itertext()` gets all of it recursively.
             # -- Filter out whitespace text nodes resulting from HTML formatting.
@@ -588,7 +591,25 @@ class TableBlock(Flow):
             # -- nested markup are intentionally excluded from this sanitized representation.
             escaped_text = html.escape(text)
             body = " ".join("<br/>".join(escaped_text.split("\n")).split())
-            return text, f"<{node.tag}>{body}</{node.tag}>" if body else f"<{node.tag}/>"
+            tag = f"{node.tag}{attrs}"
+            return text, f"<{tag}>{body}</{node.tag}>" if body else f"<{tag}/>"
+
+        def span_attrs(cell: etree._Element) -> str:
+            """`colspan`/`rowspan` attributes of `cell`, keeping only valid non-default values.
+
+            These are structural, not cosmetic: without them the cells of a merged-cell table no
+            longer line up with their columns in `text_as_html`. Values are clamped to the HTML
+            spec limits, the same way browsers read them.
+            """
+            attrs = ""
+            for name, minimum, maximum in (("colspan", 2, 1000), ("rowspan", 0, 65534)):
+                value = (cell.get(name) or "").strip()
+                if not value.isdigit():
+                    continue
+                span = min(int(value), maximum)
+                if span >= minimum and span != 1:
+                    attrs += f' {name}="{span}"'
+            return attrs
 
         def append_row(tr: etree._Element) -> None:
             """Append the text and sanitized HTML for one recognized table row."""
@@ -599,7 +620,7 @@ class TableBlock(Flow):
                 if cell.tag not in ("th", "td"):
                     continue
 
-                cell_text, cell_html = sanitized_text_and_html(cell)
+                cell_text, cell_html = sanitized_text_and_html(cell, span_attrs(cell))
                 cell_texts.append(cell_text)
                 cell_htmls.append(cell_html)
 
