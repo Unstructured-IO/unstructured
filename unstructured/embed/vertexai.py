@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 class VertexAIEmbeddingConfig(EmbeddingConfig):
     api_key: SecretStr
-    model_name: Optional[str] = Field(default="textembedding-gecko@001")
+    model_name: Optional[str] = Field(default="gemini-embedding-001")
 
     def register_application_credentials(self):
         application_credentials_path = os.path.join("/tmp", "google-vertex-app-credentials.json")
