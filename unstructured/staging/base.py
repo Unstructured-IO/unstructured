@@ -823,7 +823,7 @@ def get_default_pandas_dtypes() -> dict[str, Any]:
         "page_number": "Int64",  # Optional[int]
         "page_name": pd.StringDtype(),  # Optional[str]  # type: ignore
         "url": pd.StringDtype(),  # Optional[str]  # type: ignore
-        "link_urls": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "link_urls": object,  # Optional[list[str]]
         "link_texts": object,  # Optional[list[str]]
         "links": object,
         "sent_from": object,  # Optional[list[str]],
