@@ -60,7 +60,7 @@ def partition_html(
     text
         The string representation of the HTML document.
     url
-        The URL of a webpage to parse. Only for URLs that return an HTML document.
+        The URL of a webpage to parse. Accepts HTML and XHTML media types.
     headers
         The HTTP headers to be used in the HTTP request when `url` is specified.
     ssl_verify
@@ -167,8 +167,11 @@ class HtmlPartitionerOptions:
                     f"Error status code on GET of provided URL: {response.status_code}"
                 )
             content_type = response.headers.get("Content-Type", "")
-            if not content_type.startswith("text/html"):
-                raise ValueError(f"Expected content type text/html. Got {content_type}.")
+            media_type = content_type.partition(";")[0].strip().lower()
+            if media_type not in {"text/html", "application/xhtml+xml"}:
+                raise ValueError(
+                    f"Expected content type text/html or application/xhtml+xml. Got {content_type}."
+                )
 
             return response.text
 
