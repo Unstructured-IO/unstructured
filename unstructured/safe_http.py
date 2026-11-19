@@ -406,6 +406,9 @@ def safe_get(
                 return response  # malformed redirect — return as-is
 
             new_url = urljoin(response.url, location)
+            # The prepared response URL already includes the initial query parameters.
+            # Subsequent queries come from Location, as in requests redirect handling.
+            kwargs.pop("params", None)
             _validate_url(new_url, allow_private=allow_private)
             # Drop credential material on cross-origin hops (matches requests).
             if _is_cross_origin(url, new_url):
