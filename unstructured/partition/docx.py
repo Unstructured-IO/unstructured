@@ -904,15 +904,16 @@ class _DocxPartitioner:
                 yield from self._opts.increment_page_number()
 
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[dict[str, str]]:
-        """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
-        for run in paragraph.runs:
-            text = run.text.strip() if run.text else ""
-            if not text:
-                continue
-            if run.bold:
-                yield {"text": text, "tag": "b"}
-            if run.italic:
-                yield {"text": text, "tag": "i"}
+        """Generate e.g. {"text": "MUST", "tag": "b"} for emphasis, including hyperlink runs."""
+        for item in paragraph.iter_inner_content():
+            for run in item.runs if isinstance(item, Hyperlink) else (item,):
+                text = run.text.strip() if run.text else ""
+                if not text:
+                    continue
+                if run.bold:
+                    yield {"text": text, "tag": "b"}
+                if run.italic:
+                    yield {"text": text, "tag": "i"}
 
     def _iter_paragraph_images(self, paragraph: Paragraph) -> Iterator[Image]:
         """Generate `Image` element for each picture shape in `paragraph` when so configured."""
