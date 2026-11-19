@@ -285,6 +285,9 @@ class _Frame:
             if self.clear:
                 # -- the run holds the tail now; the node, still attached, need not --
                 self.tail_owner.tail = None
+                # -- clearing a node keeps a native XML-tree placeholder; detach it once its
+                # -- tail is consumed so a wide document does not retain every parsed sibling --
+                self.element.remove(self.tail_owner)
             self.tail_owner = None
 
 
