@@ -33,7 +33,7 @@ from pytest_mock import MockFixture
 from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-from unstructured_inference.inference.layoutelement import LayoutElement
+from unstructured_inference.inference.layoutelement import LayoutElement, LayoutElements
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
@@ -47,6 +47,7 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
+    PageBreak,
     Text,
     Title,
 )
@@ -1412,6 +1413,73 @@ def test_partition_pdf_with_ocr_only_strategy(
     # check detection origin
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         assert {element.metadata.detection_origin for element in elements} == {"ocr_tesseract"}
+
+
+@pytest.mark.parametrize(
+    ("text_is_sorted", "expected_texts"),
+    [
+        # Detection order is not reading order. XY-cut reads the left column, then the right.
+        (False, ["left-top", "left-bottom", "right-top"]),
+        # An agent that already sorted its text keeps that order. Tesseract does this.
+        (True, ["left-bottom", "right-top", "left-top"]),
+    ],
+)
+def test_ocr_only_from_image_returns_reading_order_and_requested_page_break(
+    monkeypatch,
+    text_is_sorted,
+    expected_texts,
+):
+    # Two columns. Listed bottom-left, right column, then top-left: the order an unsorted
+    # detector can emit. Paddle reports is_text_sorted() is False; Tesseract reports True.
+    layout = LayoutElements.from_list(
+        [
+            LayoutElement.from_coords(
+                10, 200, 90, 240, text="left-bottom", type=ElementType.UNCATEGORIZED_TEXT
+            ),
+            LayoutElement.from_coords(
+                200, 20, 280, 60, text="right-top", type=ElementType.UNCATEGORIZED_TEXT
+            ),
+            LayoutElement.from_coords(
+                10, 20, 90, 60, text="left-top", type=ElementType.UNCATEGORIZED_TEXT
+            ),
+        ]
+    )
+    captured: dict[str, list] = {}
+    original_ocr_data_to_elements = pdf.ocr_data_to_elements
+
+    def capture_page_elements(*args, **kwargs):
+        page_elements = original_ocr_data_to_elements(*args, **kwargs)
+        captured["page_elements"] = page_elements
+        return page_elements
+
+    class _StubOCRAgent:
+        def is_text_sorted(self) -> bool:
+            return text_is_sorted
+
+        def get_layout_elements_from_image(self, image):
+            return layout
+
+    monkeypatch.setattr(pdf, "ocr_data_to_elements", capture_page_elements)
+    monkeypatch.setattr(
+        "unstructured.partition.utils.ocr_models.ocr_interface.OCRAgent.get_agent",
+        lambda language: _StubOCRAgent(),
+    )
+
+    elements = pdf._partition_pdf_or_image_with_ocr_from_image(
+        image=Image.new("RGB", (400, 300)),
+        include_page_breaks=True,
+    )
+
+    observed = [(element.text, type(element).__name__) for element in elements]
+    assert observed == [(text, "Text") for text in expected_texts] + [("", "PageBreak")]
+    # A sorted agent leaves the OCR list in place, so the page break stays on that same list.
+    # An unsorted agent gets a new list from the sort, and the page break belongs on that list.
+    if text_is_sorted:
+        assert elements is captured["page_elements"]
+        assert isinstance(elements[-1], PageBreak)
+    else:
+        assert elements is not captured["page_elements"]
+        assert not any(isinstance(element, PageBreak) for element in captured["page_elements"])
 
 
 def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
