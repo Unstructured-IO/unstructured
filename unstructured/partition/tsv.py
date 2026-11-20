@@ -19,6 +19,7 @@ from unstructured.partition.common.metadata import apply_metadata, get_last_modi
 from unstructured.partition.csv import (
     check_cell_count,
     dataframe_to_html,
+    dataframe_to_text,
     read_delimited_text,
 )
 from unstructured.telemetry import partition_runtime_telemetry
@@ -80,16 +81,20 @@ def partition_tsv(
         # -- an empty file holds no table --
         return []
 
-    html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
+    if infer_table_structure:
+        html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
+        text, text_as_html = html_table.text, html_table.html
+    else:
+        text, text_as_html = dataframe_to_text(dataframe, header=include_header), None
 
     metadata = ElementMetadata(
         filename=filename,
         last_modified=get_last_modified_date(filename) if filename else None,
-        text_as_html=html_table.html if infer_table_structure else None,
+        text_as_html=text_as_html,
     )
     metadata.detection_origin = DETECTION_ORIGIN
 
-    return [Table(text=html_table.text, metadata=metadata)]
+    return [Table(text=text, metadata=metadata)]
 
 
 @contextlib.contextmanager
