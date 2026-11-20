@@ -23,6 +23,8 @@ from unstructured.documents.elements import (
     Table,
     TableChunk,
     Title,
+    _data_source_copy_scope,
+    _DataSourceCopyState,
 )
 from unstructured.errors import DecompressedSizeExceededError
 from unstructured.file_utils.ndjson import dumps as ndjson_dumps
@@ -265,7 +267,11 @@ def elements_to_base64_gzipped_json(elements: Iterable[Element]) -> str:
     can raise an I/O error if that storage is unavailable.
     """
     compressor = zlib.compressobj()
-    with tempfile.SpooledTemporaryFile(max_size=1024 * 1024) as compressed:
+    # Streaming must not retain all consumed source graphs in an enclosing bulk-copy memo.
+    with (
+        _data_source_copy_scope(None),
+        tempfile.SpooledTemporaryFile(max_size=1024 * 1024) as compressed,
+    ):
         compressed.write(compressor.compress(b"["))
         for index, element in enumerate(elements):
             if index:
@@ -418,8 +424,18 @@ def _json_parts(
 
 
 def elements_to_dicts(elements: Iterable[Element]) -> list[dict[str, Any]]:
-    """Convert document elements to element-dicts."""
-    return [e.to_dict() for e in elements]
+    """Convert elements, copying each shared data-source graph once for this result list.
+
+    Nested source values remain shared between siblings in this bulk export, but are detached
+    from the input and from other exports. Element, metadata, and data-source field dictionaries
+    remain independent. The memo is limited to element serialization, not input iteration.
+    """
+    state = _DataSourceCopyState()
+    result = []
+    for element in elements:
+        with _data_source_copy_scope(state):
+            result.append(element.to_dict())
+    return result
 
 
 # -- legacy aliases for elements_to_dicts() --

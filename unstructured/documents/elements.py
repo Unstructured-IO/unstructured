@@ -9,9 +9,11 @@ import hashlib
 import os
 import pathlib
 import uuid
+from contextlib import contextmanager
+from contextvars import ContextVar
 from functools import cached_property
 from types import MappingProxyType
-from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
+from typing import Any, Callable, FrozenSet, Iterator, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
@@ -39,8 +41,19 @@ class DataSourceMetadata:
     date_processed: Optional[str] = None
     permissions_data: Optional[list[dict[str, Any]]] = None
 
-    def to_dict(self):
-        return {key: value for key, value in self.__dict__.items() if value is not None}
+    def to_dict(self) -> dict[str, Any]:
+        """Detach populated fields, preserving aliases within one bulk export.
+
+        Standalone calls have independent copies. ``elements_to_dicts()`` shares the detached
+        graph across its results, retaining sibling aliasing without sharing with the source.
+        Each call still returns its own field dictionary.
+        """
+        state = _DATA_SOURCE_COPY_STATE.get() or _DataSourceCopyState()
+        return {
+            key: _copy_data_source_value(value, state)
+            for key, value in self.__dict__.items()
+            if value is not None
+        }
 
     @classmethod
     def from_dict(cls, input_dict: dict[str, Any]):
@@ -49,6 +62,81 @@ class DataSourceMetadata:
         args = {k: v for k, v in input_dict.items() if k in supported_fields}
 
         return cls(**args)
+
+
+@dc.dataclass
+class _DataSourceCopyState:
+    """Memo for one export, retaining originals so their ids cannot be reused."""
+
+    memo: dict[int, Any] = dc.field(default_factory=dict)
+    originals: list[Any] = dc.field(default_factory=list)
+
+
+_DATA_SOURCE_COPY_STATE: ContextVar[_DataSourceCopyState | None] = ContextVar(
+    "data_source_copy_state", default=None
+)
+
+
+@contextmanager
+def _data_source_copy_scope(state: _DataSourceCopyState | None) -> Iterator[None]:
+    """Set a private copy scope without changing element subclasses' ``to_dict()`` API."""
+    token = _DATA_SOURCE_COPY_STATE.set(state)
+    try:
+        yield
+    finally:
+        _DATA_SOURCE_COPY_STATE.reset(token)
+
+
+def _copy_data_source_value(value: Any, state: _DataSourceCopyState) -> Any:
+    """Copy ordinary JSON containers with an explicit stack and preserve shared references.
+
+    Tuples retain their type. Other objects and container subclasses keep ``deepcopy`` semantics;
+    this does not extend the supported nesting of custom objects. Mutable cycles are memoized as
+    before, leaving rejection of non-JSON circular graphs to the serializer.
+    """
+    result = [None]
+    # Tasks carry (finish_tuple, source, destination, key); dictionaries/lists are allocated
+    # before their children, while immutable tuples are assembled after their children.
+    tasks: list[tuple[bool, Any, Any, Any]] = [(False, value, result, 0)]
+    tuple_items: dict[int, list[Any]] = {}
+    while tasks:
+        finish_tuple, source, destination, key = tasks.pop()
+        source_id = id(source)
+        if finish_tuple:
+            items = tuple_items.pop(source_id)
+            if source_id not in state.memo:
+                state.memo[source_id] = (
+                    source if all(a is b for a, b in zip(source, items)) else tuple(items)
+                )
+            destination[key] = state.memo[source_id]
+        elif source_id in state.memo:
+            destination[key] = state.memo[source_id]
+        elif type(source) is dict:
+            copied: dict[Any, Any] = {}
+            state.memo[source_id] = destination[key] = copied
+            state.originals.append(source)
+            for item_key, item in reversed(tuple(source.items())):
+                tasks.append((False, item, copied, copy.deepcopy(item_key, state.memo)))
+        elif type(source) is list:
+            copied_items: list[Any] = [None] * len(source)
+            state.memo[source_id] = destination[key] = copied_items
+            state.originals.append(source)
+            tasks.extend(
+                (False, source[index], copied_items, index)
+                for index in range(len(source) - 1, -1, -1)
+            )
+        elif type(source) is tuple and source_id not in tuple_items:
+            tuple_items[source_id] = items = [None] * len(source)
+            state.originals.append(source)
+            tasks.append((True, source, destination, key))
+            tasks.extend(
+                (False, source[index], items, index) for index in range(len(source) - 1, -1, -1)
+            )
+        else:
+            # An active tuple can only be revisited through a mutable child already in the
+            # memo. deepcopy uses that child to close the cycle without walking it again.
+            destination[key] = copy.deepcopy(source, state.memo)
+    return result[0]
 
 
 @dc.dataclass
