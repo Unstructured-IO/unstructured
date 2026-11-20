@@ -248,6 +248,42 @@ class DescribeHtmlTable:
         )
         assert html_table.html == "<table><tr><td>abc def ghi</td></tr></table>"
 
+    @pytest.mark.parametrize(
+        ("cell_html", "expected_html", "expected_text"),
+        [
+            ("alpha <b>beta</b>", "alpha <b>beta</b>", "alpha beta"),
+            ("<b>alpha</b> <i>beta</i>", "<b>alpha</b> <i>beta</i>", "alpha beta"),
+            ("<b>alpha </b>beta", "<b>alpha </b>beta", "alpha beta"),
+            (
+                "<span>alpha</span>\n   <span>beta</span>",
+                "<span>alpha</span> <span>beta</span>",
+                "alpha beta",
+            ),
+            ("alpha<b>beta</b>", "alpha<b>beta</b>", "alphabeta"),
+            (
+                "<span>alpha</span><span>beta</span>",
+                "<span>alpha</span><span>beta</span>",
+                "alphabeta",
+            ),
+            ("alpha<b><i> beta</i></b>", "alpha<b><i> beta</i></b>", "alpha beta"),
+            ("<b>alpha</b> beta", "<b>alpha</b> beta", "alpha beta"),
+            ("alpha<br/>beta", "alpha<br/>beta", "alpha beta"),
+            ("<p>alpha</p><p>beta</p>", "<p>alpha</p><p>beta</p>", "alphabeta"),
+            ("\n <b> alpha </b> \n", "<b>alpha</b>", "alpha"),
+            ("\n <b> </b> \n", "<b></b>", ""),
+        ],
+    )
+    def it_preserves_inline_word_boundaries_while_compactifying(
+        self, cell_html: str, expected_html: str, expected_text: str
+    ):
+        html_table = HtmlTable.from_html_text(
+            f"\n<table>\n <tbody>\n  <tr>\n   <th>{cell_html}</th>\n  </tr>\n </tbody>\n</table>\n"
+        )
+
+        assert html_table.html == f"<table><tr><td>{expected_html}</td></tr></table>"
+        assert next(next(html_table.iter_rows()).iter_cells()).text == expected_text
+        assert next(html_table.iter_rows()).is_header
+
     def it_preserves_tail_text_in_mixed_content_cells(self):
         """Tail text (between inline children) carries real content and must not be dropped."""
         html_table = HtmlTable.from_html_text(
