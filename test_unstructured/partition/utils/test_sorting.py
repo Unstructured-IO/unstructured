@@ -95,6 +95,26 @@ def test_sort_basic_neg_coordinates():
     assert sorted_elem_text == "2 1 0"
 
 
+def test_sort_xycut_rtl_reverses_single_row_order():
+    # three elements on a single row, left-to-right on the page: '0', '1', '2'.
+    elements = []
+    for idx, left in enumerate([0, 20, 40]):
+        elem = Text(str(idx))
+        elem.metadata.coordinates = CoordinatesMetadata(
+            [(left, 0), (left, 10), (left + 10, 10), (left + 10, 0)],
+            PixelSpace,
+        )
+        elements.append(elem)
+
+    ltr = sort_page_elements(elements, sort_mode=SORT_MODE_XY_CUT, xy_cut_primary_direction="y")
+    assert [str(e.text) for e in ltr] == ["0", "1", "2"]
+
+    rtl = sort_page_elements(
+        elements, sort_mode=SORT_MODE_XY_CUT, xy_cut_primary_direction="y", rtl=True
+    )
+    assert [str(e.text) for e in rtl] == ["2", "1", "0"]
+
+
 def test_sort_basic_pos_coordinates():
     elements = []
     for idx in range(3):
