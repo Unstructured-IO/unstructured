@@ -51,7 +51,7 @@ def test_whitespace_content_does_not_abort_a_document_overlap_report(blank, reve
 
 
 @pytest.mark.parametrize(
-    "first,second,expected",
+    ("first", "second", "expected"),
     [
         ("Some lovely title", "Some lovely text", (50.0, {("Some", "lovely")}, "2")),
         ("apple", "orange", (0, set(), "1")),
