@@ -271,10 +271,13 @@ def calculate_largest_ngram_percentage(
         - A string representation of the size of the largest shared n-grams found.
     """
     shared_ngrams: set[tuple[str, ...]] = set()
-    if len(first_string.split()) < len(second_string.split()):
-        n = len(first_string.split()) - 1
+    first_length, second_length = len(first_string.split()), len(second_string.split())
+    if not first_length or not second_length:
+        return 0, shared_ngrams, "0"
+    if first_length < second_length:
+        n = first_length - 1
     else:
-        n = len(second_string.split()) - 1
+        n = second_length - 1
         first_string, second_string = second_string, first_string
     ngram_percentage = 0
     # Start from the biggest ngram possible (`n`) until the ngram_percentage is >0.0% or n == 0
