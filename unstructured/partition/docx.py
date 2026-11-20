@@ -7,6 +7,7 @@ import logging
 import os
 import re
 import zipfile
+from copy import deepcopy
 from functools import cached_property
 from io import BytesIO
 from typing import IO, Any, Iterator, Protocol, Type
@@ -15,6 +16,7 @@ import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.opc.part import Part
 from docx.oxml.ns import nsmap, qn
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
@@ -53,6 +55,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
@@ -415,6 +418,7 @@ class _DocxPartitioner:
         self._table_grid_cells_remaining = env_config.DOCX_TABLE_MAX_CELLS
         # -- paragraph-style name by style-id, see `._style_name()` --
         self._style_names: dict[str | None, str] = {}
+        self._alt_chunk_elements: dict[Part, tuple[Element, ...]] = {}
 
     @classmethod
     def iter_document_elements(cls, opts: DocxPartitionerOptions) -> Iterator[Element]:
@@ -497,6 +501,7 @@ class _DocxPartitioner:
                 yield child
 
     def _iter_alt_chunk_elements(self, anchor: etree._Element) -> Iterator[Element]:
+        """Emit independent copies of an imported part's elements at this anchor."""
         if not self._opts.include_alt_chunks:
             return
         relationship_id = anchor.get(qn("r:id"))
@@ -513,8 +518,18 @@ class _DocxPartitioner:
             )
             return
 
-        # Use the HTML element iterator so only the outer DOCX metadata pass assigns final IDs
-        # and hierarchy, including when the same import is inserted at more than one anchor.
+        if part not in self._alt_chunk_elements:
+            self._alt_chunk_elements[part] = self._parse_alt_chunk(part)
+        for element in deepcopy(self._alt_chunk_elements[part]):
+            element.metadata.filename = self._opts.metadata_file_path
+            element.metadata.last_modified = self._opts.last_modified
+            element.metadata.page_number = self._opts.metadata_page_number
+            if not self._opts.infer_table_structure:
+                element.metadata.text_as_html = None
+            yield element
+
+    def _parse_alt_chunk(self, part: Part) -> tuple[Element, ...]:
+        """Parse a part once, before the outer DOCX pass assigns final IDs and hierarchy."""
         from unstructured.partition.html.partition import HtmlPartitionerOptions, _HtmlPartitioner
 
         options = HtmlPartitionerOptions(
@@ -527,19 +542,13 @@ class _DocxPartitioner:
             ssl_verify=True,
             skip_headers_and_footers=False,
             detection_origin=DETECTION_ORIGIN,
+            prefer_main=False,
         )
         try:
-            elements = list(_HtmlPartitioner.iter_elements(options))
-        except (ValueError, UnicodeError, etree.ParserError) as error:
+            return tuple(_HtmlPartitioner.iter_elements(options))
+        except (ValueError, UnicodeError, etree.ParserError, UnprocessableEntityError) as error:
             logging.warning("Skipping unreadable DOCX HTML import: %s", error)
-            return
-        for element in elements:
-            element.metadata.filename = self._opts.metadata_file_path
-            element.metadata.last_modified = self._opts.last_modified
-            element.metadata.page_number = self._opts.metadata_page_number
-            if not self._opts.infer_table_structure:
-                element.metadata.text_as_html = None
-            yield element
+            return ()
 
     def _classify_paragraph_to_element(
         self, paragraph: Paragraph, label: str = ""

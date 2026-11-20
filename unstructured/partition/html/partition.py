@@ -128,6 +128,7 @@ class HtmlPartitionerOptions:
         image_alt_mode: Optional[Literal["to_text"]] = "to_text",
         extract_image_block_types: Optional[list[str]] = None,
         extract_image_block_to_payload: bool = False,
+        prefer_main: bool = True,
     ):
         self._file_path = file_path
         self._file = file
@@ -142,6 +143,7 @@ class HtmlPartitionerOptions:
         self._image_alt_mode = image_alt_mode
         self._extract_image_block_types = extract_image_block_types
         self._extract_image_block_to_payload = extract_image_block_to_payload
+        self._prefer_main = prefer_main
 
     @cached_property
     def detection_origin(self) -> str | None:
@@ -187,6 +189,11 @@ class HtmlPartitionerOptions:
     def skip_headers_and_footers(self) -> bool:
         """When True, elements located within a header or footer are pruned."""
         return self._skip_headers_and_footers
+
+    @cached_property
+    def prefer_main(self) -> bool:
+        """Select `<main>` for web pages; embedded document parts need their whole body."""
+        return self._prefer_main
 
     @cached_property
     def html_parser_version(self) -> Literal["v1", "v2"]:
@@ -275,7 +282,7 @@ class _HtmlPartitioner:
             etree.strip_elements(root, ["header", "footer"], with_tail=False)
 
         # -- jump to the core content if the document indicates where it is --
-        if (main := root.find(".//main")) is not None:
+        if self._opts.prefer_main and (main := root.find(".//main")) is not None:
             return cast(Flow, main)
         if (body := root.find(".//body")) is not None:
             return cast(Flow, body)

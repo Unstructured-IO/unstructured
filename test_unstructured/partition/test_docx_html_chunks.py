@@ -56,7 +56,7 @@ def document_with_chunk(
         chunk = wrapper
     document.element.body.insert(len(document.element.body) - 1, chunk)
     document.add_paragraph("After imported content")
-    if repeated:
+    for _ in range(repeated):
         repeated_chunk = OxmlElement("w:altChunk")
         repeated_chunk.set(qn("r:id"), relation_id)
         document.element.body.insert(len(document.element.body) - 1, repeated_chunk)
@@ -203,3 +203,90 @@ def test_imported_elements_use_the_page_number_at_their_anchor():
     assert len(imported) == 3
     assert all(element.metadata.page_number == 10 for element in imported)
     assert elements[0].metadata.page_number == 9
+
+
+def test_imports_keep_body_content_before_inside_and_after_main():
+    payload = document_with_chunk(
+        html=b"<body><p>Before main</p><main><p>Inside main</p></main><p>After main</p></body>"
+    )
+
+    elements = partition_docx(file=BytesIO(payload), languages=["eng"])
+
+    assert [element.text for element in elements] == [
+        "Before imported content",
+        "Before main",
+        "Inside main",
+        "After main",
+        "After imported content",
+    ]
+
+
+def test_imported_tables_keep_spans_and_rows_fully_covered_by_a_span():
+    payload = document_with_chunk(
+        html=(
+            b'<table><thead><tr><th colspan="2" onclick="alert(1)">Region</th></tr></thead>'
+            b'<tbody><tr><th rowspan="2">West</th><td>7</td></tr><tr><td>8</td></tr>'
+            b'<tr><td rowspan="2" colspan="2">Shared</td></tr><tr></tr></tbody></table>'
+        )
+    )
+
+    elements = partition_docx(file=BytesIO(payload), languages=["eng"])
+    table = next(element for element in elements if isinstance(element, Table))
+
+    assert table.metadata.text_as_html == (
+        '<table><thead><tr><th colspan="2">Region</th></tr></thead>'
+        '<tbody><tr><th rowspan="2">West</th><td>7</td></tr><tr><td>8</td></tr>'
+        '<tr><td rowspan="2" colspan="2">Shared</td></tr><tr></tr></tbody></table>'
+    )
+
+
+def test_invalid_import_encoding_keeps_surrounding_document_content(caplog):
+    payload = document_with_chunk(html=b"\xff\xfe\x00")
+
+    elements = partition_docx(file=BytesIO(payload), languages=["eng"])
+
+    assert [element.text for element in elements] == [
+        "Before imported content",
+        "After imported content",
+    ]
+    assert "Skipping unreadable DOCX HTML import" in caplog.text
+
+
+@pytest.mark.parametrize("html", [b"", b"<style>" + b"a{color:red}" * 10_000 + b"</style>"])
+def test_repeated_empty_imports_are_parsed_once_per_part(html, mocker):
+    from unstructured.partition.html.partition import _HtmlPartitioner
+
+    parse = mocker.spy(_HtmlPartitioner, "iter_elements")
+    payload = document_with_chunk(html=html, repeated=20)
+
+    elements = partition_docx(file=BytesIO(payload), languages=["eng"])
+
+    assert [element.text for element in elements] == [
+        "Before imported content",
+        "After imported content",
+    ]
+    assert parse.call_count == 1
+
+
+@pytest.mark.parametrize("unique_element_ids", [False, True])
+def test_repeated_imports_have_independent_elements_metadata_and_anchor_pages(unique_element_ids):
+    document = Document(BytesIO(document_with_chunk(repeated=True, page_break=True)))
+    document.paragraphs[-1].runs[0]._r.append(OxmlElement("w:lastRenderedPageBreak"))
+    output = BytesIO()
+    document.save(output)
+
+    elements = partition_docx(
+        file=BytesIO(output.getvalue()),
+        languages=["eng"],
+        starting_page_number=9,
+        unique_element_ids=unique_element_ids,
+    )
+    paragraphs = [element for element in elements if "café information" in element.text]
+    first, second = paragraphs
+
+    assert first is not second
+    assert first.metadata is not second.metadata
+    assert first.id != second.id
+    assert [element.metadata.page_number for element in paragraphs] == [10, 11]
+    first.metadata.link_urls.append("https://example.com/only-first")
+    assert second.metadata.link_urls == ["https://example.com/source"]
