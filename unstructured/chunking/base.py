@@ -1786,10 +1786,10 @@ class _HtmlTableSplitter:
                 # -- into whatever rows follow in the reassembled table --
                 bounded_row = group[0].row_clipped_to_rows(group_bounds[0])
                 for text, html in self._iter_row_splits(
-                    # -- this generator can yield multiple fragments; size each one to fit
-                    # -- every case: the first yield may carry the caption, the rest headers --
+                    # -- this generator can yield multiple fragments; size every fragment for
+                    # -- the continuation case because all but its first yield carry headers --
                     bounded_row,
-                    maxlen=self._fragment_maxlen(is_first_chunk),
+                    maxlen=self._maxlen(False),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -1801,10 +1801,10 @@ class _HtmlTableSplitter:
                 # -- like an ordinary oversized row, re-materializing any covered column a
                 # -- fragment boundary separates from the row whose rowspan declares it.
                 for text, html in self._iter_oversized_group_splits(
-                    # -- this generator can yield multiple fragments; size each one to fit
-                    # -- every case: the first yield may carry the caption, the rest headers --
+                    # -- this generator can yield multiple fragments; size every fragment for
+                    # -- the continuation case because all but its first yield carry headers --
                     group,
-                    maxlen=self._fragment_maxlen(is_first_chunk),
+                    maxlen=self._maxlen(False),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -2788,11 +2788,10 @@ class _HtmlTableSplitter:
     def _maxlen(self, is_first_chunk: bool) -> int:
         """Available size for non-header row content of the next chunk."""
         if is_first_chunk:
-            caption_text = self._table_element.caption_text
-            if not caption_text:
+            if not self._caption_text:
                 return self._opts.hard_max
             # -- the first chunk carries the table caption, plus one separator --
-            return max(1, self._opts.hard_max - self._opts.measure(caption_text) - 1)
+            return self._first_chunk_maxlen_with_caption
 
         if not self._should_repeat_headers:
             return self._opts.hard_max
@@ -2800,17 +2799,44 @@ class _HtmlTableSplitter:
         # -- reserve one separator between repeated header text and chunk body text --
         return max(1, self._opts.hard_max - self._header_text_len - 1)
 
-    def _fragment_maxlen(self, is_first_chunk: bool) -> int:
-        """Size for each fragment of an oversized row or row group.
+    @cached_property
+    def _first_chunk_maxlen_with_caption(self) -> int:
+        """Row budget of the first chunk once the caption and its separator are reserved."""
+        return self._opts.hard_max - self._opts.measure(self._table_element.caption_text) - 1
 
-        All but the first fragment carry repeated headers; the first carries the caption when it
-        starts the table.
+    @cached_property
+    def _caption_text(self) -> str:
+        """Caption text carried by the first chunk, or the empty string when not carried.
+
+        The caption is carried only when the first chunk can still hold the leading row group as
+        whole rows, plus every header row repeated on later chunks, within the hard limit. A
+        caption that leaves less room is not carried at all: carrying it would either exceed the
+        hard limit, starve an oversized first row into tiny fragments, or split the header block
+        that continuation chunks repeat (which reconstruction relies on).
         """
-        return min(self._maxlen(False), self._maxlen(is_first_chunk))
+        caption_text = self._table_element.caption_text
+        maxlen = self._first_chunk_maxlen_with_caption
+        if not caption_text or maxlen < 1:
+            return ""
+
+        accum = _RowAccumulator(maxlen=maxlen, measure=self._opts.measure)
+        row_count = 0
+        for group, group_bounds, group_is_clipped in self._iter_rowspan_bound_row_groups():
+            if not accum.will_fit(group) or (
+                accum.last_row_group_key is not None
+                and group[0].row_group_key is not accum.last_row_group_key
+                and accum.crosses_a_row_group_unsafely_if_extended
+            ):
+                return ""
+            accum.add_rows(group, group_bounds, is_clipped=group_is_clipped)
+            row_count += len(group)
+            if row_count >= self.carried_over_header_row_count:
+                break
+        return caption_text
 
     def _prepend_caption(self, text: str, html: str) -> TextAndHtml:
-        """Prepend the table caption, if any, to the first chunk."""
-        caption_text = self._table_element.caption_text
+        """Prepend the table caption, if carried, to the first chunk."""
+        caption_text = self._caption_text
         if not caption_text:
             return text, html
 

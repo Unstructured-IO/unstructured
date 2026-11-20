@@ -183,6 +183,12 @@ class DescribeHtmlTable:
                 "<caption>Lab Panel</caption>",
                 "Lab Panel",
             ),
+            (
+                "<table><caption>Revenue<br/>USD <b>millions</b></caption>"
+                "<tr><td>1</td></tr></table>",
+                "<caption>Revenue<br/>USD <b>millions</b></caption>",
+                "Revenue USD millions",
+            ),
             ("<table><tr><td>Na</td></tr></table>", "", ""),
         ],
     )

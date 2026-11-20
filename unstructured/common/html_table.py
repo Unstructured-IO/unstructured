@@ -269,7 +269,7 @@ class HtmlTable:
     def caption_text(self) -> str:
         """The normalized text of the table `<caption>`, the empty string when there is none."""
         captions = cast("list[HtmlElement]", self._table.xpath("./caption"))
-        return " ".join(captions[0].text_content().split()) if captions else ""
+        return normalize_html_cell_text(captions[0]) if captions else ""
 
     def iter_rows(self) -> Iterator[HtmlRow]:
         rows = cast("list[HtmlElement]", self._table.xpath("./tr"))
