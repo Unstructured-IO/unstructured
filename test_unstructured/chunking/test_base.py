@@ -3031,6 +3031,41 @@ class Describe_TableChunker:
         assert chunks[0].metadata.orig_elements == [table]
         assert "Omitting .metadata.orig_elements" not in caplog.text
 
+    @pytest.mark.parametrize("repeat_table_headers", [True, False])
+    def it_keeps_the_table_caption_in_the_first_chunk_when_it_splits_a_table(
+        self, repeat_table_headers: bool
+    ):
+        rows = "".join(f"<tr><td>Test{i}</td><td>{i * 10} mg/dL</td></tr>" for i in range(12))
+        html_table = (
+            "<table><caption>Chemistry Panel</caption>"
+            f"<thead><tr><th>Test</th><th>Value</th></tr></thead><tbody>{rows}</tbody></table>"
+        )
+        text_table = "Chemistry Panel Test Value " + " ".join(
+            f"Test{i} {i * 10} mg/dL" for i in range(12)
+        )
+        opts = ChunkingOptions(max_characters=120, repeat_table_headers=repeat_table_headers)
+
+        chunks = list(
+            _TableChunker.iter_chunks(
+                Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+                overlap_prefix="",
+                opts=opts,
+            )
+        )
+
+        assert len(chunks) > 1
+        assert chunks[0].text.startswith("Chemistry Panel Test Value Test0 ")
+        assert chunks[0].metadata.text_as_html.startswith(
+            "<table><caption>Chemistry Panel</caption><tr>"
+        )
+        assert all(len(c.text) <= 120 for c in chunks)
+        assert all("<caption>" not in c.metadata.text_as_html for c in chunks[1:])
+        reconstructed = reconstruct_table_from_chunks(chunks)[0]
+        assert reconstructed.text.split() == text_table.split()
+        assert reconstructed.metadata.text_as_html.startswith(
+            "<table><caption>Chemistry Panel</caption>"
+        )
+
     @pytest.mark.parametrize(
         ("text", "overlap_prefix", "expected_value"),
         [

@@ -259,6 +259,18 @@ class HtmlTable:
         """
         return etree.tostring(self._table, encoding=str)
 
+    @cached_property
+    def caption_html(self) -> str:
+        """Like "<caption>Lab Panel</caption>"; the empty string when the table has no caption."""
+        captions = cast("list[HtmlElement]", self._table.xpath("./caption"))
+        return etree.tostring(captions[0], encoding=str, with_tail=False) if captions else ""
+
+    @cached_property
+    def caption_text(self) -> str:
+        """The normalized text of the table `<caption>`, the empty string when there is none."""
+        captions = cast("list[HtmlElement]", self._table.xpath("./caption"))
+        return " ".join(captions[0].text_content().split()) if captions else ""
+
     def iter_rows(self) -> Iterator[HtmlRow]:
         rows = cast("list[HtmlElement]", self._table.xpath("./tr"))
         for idx, tr in enumerate(rows):

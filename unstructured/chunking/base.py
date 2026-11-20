@@ -1786,10 +1786,10 @@ class _HtmlTableSplitter:
                 # -- into whatever rows follow in the reassembled table --
                 bounded_row = group[0].row_clipped_to_rows(group_bounds[0])
                 for text, html in self._iter_row_splits(
-                    # -- this generator can yield multiple fragments; size every fragment for
-                    # -- the continuation case because all but its first yield carry headers --
+                    # -- this generator can yield multiple fragments; size each one to fit
+                    # -- every case: the first yield may carry the caption, the rest headers --
                     bounded_row,
-                    maxlen=self._maxlen(False),
+                    maxlen=self._fragment_maxlen(is_first_chunk),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -1801,10 +1801,10 @@ class _HtmlTableSplitter:
                 # -- like an ordinary oversized row, re-materializing any covered column a
                 # -- fragment boundary separates from the row whose rowspan declares it.
                 for text, html in self._iter_oversized_group_splits(
-                    # -- this generator can yield multiple fragments; size every fragment for
-                    # -- the continuation case because all but its first yield carry headers --
+                    # -- this generator can yield multiple fragments; size each one to fit
+                    # -- every case: the first yield may carry the caption, the rest headers --
                     group,
-                    maxlen=self._maxlen(False),
+                    maxlen=self._fragment_maxlen(is_first_chunk),
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -2787,15 +2787,42 @@ class _HtmlTableSplitter:
 
     def _maxlen(self, is_first_chunk: bool) -> int:
         """Available size for non-header row content of the next chunk."""
-        if is_first_chunk or not self._should_repeat_headers:
+        if is_first_chunk:
+            caption_text = self._table_element.caption_text
+            if not caption_text:
+                return self._opts.hard_max
+            # -- the first chunk carries the table caption, plus one separator --
+            return max(1, self._opts.hard_max - self._opts.measure(caption_text) - 1)
+
+        if not self._should_repeat_headers:
             return self._opts.hard_max
 
         # -- reserve one separator between repeated header text and chunk body text --
         return max(1, self._opts.hard_max - self._header_text_len - 1)
 
+    def _fragment_maxlen(self, is_first_chunk: bool) -> int:
+        """Size for each fragment of an oversized row or row group.
+
+        All but the first fragment carry repeated headers; the first carries the caption when it
+        starts the table.
+        """
+        return min(self._maxlen(False), self._maxlen(is_first_chunk))
+
+    def _prepend_caption(self, text: str, html: str) -> TextAndHtml:
+        """Prepend the table caption, if any, to the first chunk."""
+        caption_text = self._table_element.caption_text
+        if not caption_text:
+            return text, html
+
+        chunk_text = f"{caption_text} {text}" if text else caption_text
+        html_inner = html.removeprefix("<table>")
+        return chunk_text, f"<table>{self._table_element.caption_html}{html_inner}"
+
     def _prepend_repeated_headers(self, text: str, html: str, is_first_chunk: bool) -> TextAndHtml:
-        """Prepend repeated header rows to continuation chunk when enabled."""
-        if is_first_chunk or not self._should_repeat_headers:
+        """Prepend the caption to the first chunk and repeated header rows to the others."""
+        if is_first_chunk:
+            return self._prepend_caption(text, html)
+        if not self._should_repeat_headers:
             return text, html
 
         header_text = self._header_text
