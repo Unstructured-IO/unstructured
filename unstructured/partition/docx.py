@@ -7,12 +7,16 @@ import logging
 import os
 import re
 import zipfile
+from copy import deepcopy
 from functools import cached_property
+from io import BytesIO
 from typing import IO, Any, Iterator, Protocol, Type
 
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.opc.part import Part
 from docx.oxml.ns import nsmap, qn
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
@@ -51,6 +55,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
@@ -159,6 +164,7 @@ def partition_docx(
     *,
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
+    include_alt_chunks: bool = True,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
     strategy: str | None = None,
@@ -175,6 +181,9 @@ def partition_docx(
     include_page_breaks
         When True, add a `PageBreak` element to the element-stream when a page-break is detected in
         the document. Note that not all DOCX files include page-break information.
+    include_alt_chunks
+        If True, include internally embedded HTML/XHTML imports anchored in the document body.
+        External relationships and other import formats are skipped; no external content is fetched.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -194,6 +203,7 @@ def partition_docx(
         file=file,
         file_path=filename,
         include_page_breaks=include_page_breaks,
+        include_alt_chunks=include_alt_chunks,
         infer_table_structure=infer_table_structure,
         starting_page_number=starting_page_number,
         strategy=strategy,
@@ -223,6 +233,7 @@ class DocxPartitionerOptions:
         file: IO[bytes] | None,
         file_path: str | None,
         include_page_breaks: bool,
+        include_alt_chunks: bool = True,
         infer_table_structure: bool,
         starting_page_number: int = 1,
         strategy: str | None = None,
@@ -230,6 +241,7 @@ class DocxPartitionerOptions:
         self._file = file
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
+        self._include_alt_chunks = include_alt_chunks
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
         # -- options object maintains page-number state --
@@ -267,6 +279,11 @@ class DocxPartitionerOptions:
         contain no text) in the element stream is affected.
         """
         return self._include_page_breaks
+
+    @cached_property
+    def include_alt_chunks(self) -> bool:
+        """Whether internally embedded HTML imports are included at their body anchors."""
+        return self._include_alt_chunks
 
     def increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
@@ -401,6 +418,7 @@ class _DocxPartitioner:
         self._table_grid_cells_remaining = env_config.DOCX_TABLE_MAX_CELLS
         # -- paragraph-style name by style-id, see `._style_name()` --
         self._style_names: dict[str | None, str] = {}
+        self._alt_chunk_elements: dict[Part, tuple[Element, ...]] = {}
 
     @classmethod
     def iter_document_elements(cls, opts: DocxPartitionerOptions) -> Iterator[Element]:
@@ -427,7 +445,7 @@ class _DocxPartitioner:
         # -- Iterate document blocks only once. `Section.iter_inner_content()` scans from the start
         # -- of the document to find each section's boundaries, which becomes prohibitively
         # -- expensive for documents with many sections and paragraphs.
-        for block_item in self._document.iter_inner_content():
+        for block_item in self._iter_body_items():
             # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
             # -- Paragraph is more common so check that first.
             if isinstance(block_item, Paragraph):
@@ -436,6 +454,8 @@ class _DocxPartitioner:
                 block_item, DocxTable
             ):
                 yield from self._iter_table_element(block_item)
+            else:
+                yield from self._iter_alt_chunk_elements(block_item)
 
             # -- A paragraph-level sectPr marks the final paragraph governed by the current
             # -- section. The final section's sectPr lives directly under w:body, so it is handled
@@ -461,12 +481,74 @@ class _DocxPartitioner:
         A "section-less" DOCX must be iterated differently. Also it will have no headers or footers
         (because those live in a section).
         """
-        for block_item in self._document.iter_inner_content():
+        for block_item in self._iter_body_items():
             if isinstance(block_item, Paragraph):
                 yield from self._iter_paragraph_elements(block_item)
             # -- can only be a Paragraph or Table so far but more types may come later --
             elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
                 yield from self._iter_table_element(block_item)
+            else:
+                yield from self._iter_alt_chunk_elements(block_item)
+
+    def _iter_body_items(self) -> Iterator[Paragraph | DocxTable | etree._Element]:
+        """Include import anchors in the same order as ordinary paragraphs and tables."""
+        for child in self._document.element.body:
+            if isinstance(child, CT_P):
+                yield Paragraph(child, self._document)
+            elif isinstance(child, CT_Tbl):
+                yield DocxTable(child, self._document)
+            elif child.tag == qn("w:altChunk"):
+                yield child
+
+    def _iter_alt_chunk_elements(self, anchor: etree._Element) -> Iterator[Element]:
+        """Emit independent copies of an imported part's elements at this anchor."""
+        if not self._opts.include_alt_chunks:
+            return
+        relationship_id = anchor.get(qn("r:id"))
+        relationship = self._document.part.rels.get(relationship_id) if relationship_id else None
+        if relationship is None or relationship.is_external or relationship.reltype != RT.A_F_CHUNK:
+            logging.warning(
+                "Skipping DOCX altChunk with a missing or non-internal import relationship"
+            )
+            return
+        part = relationship.target_part
+        if part.content_type not in ("text/html", "application/xhtml+xml"):
+            logging.warning(
+                "Skipping unsupported DOCX altChunk content type: %s", part.content_type
+            )
+            return
+
+        if part not in self._alt_chunk_elements:
+            self._alt_chunk_elements[part] = self._parse_alt_chunk(part)
+        for element in deepcopy(self._alt_chunk_elements[part]):
+            element.metadata.filename = self._opts.metadata_file_path
+            element.metadata.last_modified = self._opts.last_modified
+            element.metadata.page_number = self._opts.metadata_page_number
+            if not self._opts.infer_table_structure:
+                element.metadata.text_as_html = None
+            yield element
+
+    def _parse_alt_chunk(self, part: Part) -> tuple[Element, ...]:
+        """Parse a part once, before the outer DOCX pass assigns final IDs and hierarchy."""
+        from unstructured.partition.html.partition import HtmlPartitionerOptions, _HtmlPartitioner
+
+        options = HtmlPartitionerOptions(
+            file_path=None,
+            file=BytesIO(part.blob),
+            text=None,
+            encoding=None,
+            url=None,
+            headers={},
+            ssl_verify=True,
+            skip_headers_and_footers=False,
+            detection_origin=DETECTION_ORIGIN,
+            prefer_main=False,
+        )
+        try:
+            return tuple(_HtmlPartitioner.iter_elements(options))
+        except (ValueError, UnicodeError, etree.ParserError, UnprocessableEntityError) as error:
+            logging.warning("Skipping unreadable DOCX HTML import: %s", error)
+            return ()
 
     def _classify_paragraph_to_element(
         self, paragraph: Paragraph, label: str = ""

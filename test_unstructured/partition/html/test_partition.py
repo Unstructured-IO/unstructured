@@ -554,7 +554,7 @@ def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_ht
     assert elements[0].metadata.text_as_html == expected_text_as_html
 
 
-def test_partition_html_preserves_table_structure_in_source_order_without_attributes():
+def test_partition_html_preserves_table_structure_with_only_validated_spans():
     html_text = (
         '<table class="source-table">'
         '<tfoot id="foot"><tr><th scope="row">F</th></tr></tfoot>'
@@ -572,8 +572,8 @@ def test_partition_html_preserves_table_structure_in_source_order_without_attrib
         "<table>"
         "<tfoot><tr><th>F</th></tr></tfoot>"
         "<tr><td>D &amp; &lt;x&gt;</td></tr>"
-        "<tbody><tr><td>B1</td></tr></tbody>"
-        "<tbody><tr><th>B2</th></tr></tbody>"
+        '<tbody><tr><td colspan="2">B1</td></tr></tbody>'
+        '<tbody><tr><th rowspan="2">B2</th></tr></tbody>'
         "<thead><tr><td>H</td></tr></thead>"
         "</table>"
     )
@@ -595,7 +595,37 @@ def test_partition_html_preserves_table_structure_in_source_order_without_attrib
         "tr",
         "td",
     ]
-    assert all(not node.attrib for node in reconstructed.iter())
+    assert all(set(node.attrib) <= {"rowspan", "colspan"} for node in reconstructed.iter())
+
+
+@pytest.mark.parametrize(
+    ("attribute", "value", "expected"),
+    [
+        ("rowspan", "0", "0"),
+        ("rowspan", "65534", "65534"),
+        ("rowspan", "65535", None),
+        ("rowspan", "-1", None),
+        ("colspan", "1", "1"),
+        ("colspan", "0002", "2"),
+        ("colspan", "1000", "1000"),
+        ("colspan", "1001", None),
+        ("colspan", "0", None),
+        ("colspan", "2.0", None),
+        ("colspan", "two", None),
+        ("colspan", "２", None),
+        ("colspan", "9" * 5000, None),
+    ],
+)
+def test_partition_html_validates_cell_spans_without_copying_other_attributes(
+    attribute, value, expected
+):
+    (table,) = partition_html(
+        text=f'<table><tr><td {attribute}="{value}" style="color:red">Cell</td></tr></table>'
+    )
+
+    cell = etree.fromstring(table.metadata.text_as_html).find("tr/td")
+
+    assert cell.attrib == ({} if expected is None else {attribute: expected})
 
 
 def test_partition_html_reduces_a_nested_table_to_its_text_placed_in_the_cell_that_contains_it():
