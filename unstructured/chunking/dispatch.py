@@ -198,6 +198,9 @@ def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
     # -- combine HTML if all chunks have it --
     if all(c.metadata.text_as_html for c in chunks):
         combined = fragment_fromstring("<table></table>")
+        # -- a split table's caption is carried by its first chunk only --
+        for caption in fragment_fromstring(chunks[0].metadata.text_as_html).xpath("./caption")[:1]:
+            combined.append(caption)
         canonical_header_row_count, canonical_header_rows = _first_carried_header_rows(chunks)
         if canonical_header_rows:
             thead = fragment_fromstring("<thead></thead>")
