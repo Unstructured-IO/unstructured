@@ -1534,14 +1534,14 @@ class DescribeMath:
     """
 
     @pytest.mark.parametrize("wrapper", ["{}", "<font size='2'>{}</font>", "<my-card>{}</my-card>"])
-    def it_skips_mathml_that_has_no_text_representation_but_not_its_tail(self, wrapper: str):
+    def it_preserves_presentation_mathml_and_its_tail(self, wrapper: str):
         html = "<div>Before {} after.</div>".format(
             wrapper.format("<math><mi>x</mi><mo>=</mo><mn>2</mn></math>")
         )
         div = etree.fromstring(html, html_parser).xpath(".//div")[0]
 
         assert isinstance(div.xpath(".//math")[0], Math)
-        assert [e.text for e in div.iter_elements()] == ["Before after."]
+        assert [e.text for e in div.iter_elements()] == ["Before x=2 after."]
 
 
 class DescribeRemovedPhrasing:
