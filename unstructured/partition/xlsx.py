@@ -101,51 +101,55 @@ def partition_xlsx(
     )
 
     elements: list[Element] = []
-    for page_number, (sheet_name, sheet) in enumerate(
-        opts.sheets.items(), start=starting_page_number
-    ):
-        if not opts.find_subtable:
-            text, html = _render_table(sheet, opts)
-
-            metadata = ElementMetadata(
-                text_as_html=html,
-                page_name=sheet_name,
-                page_number=page_number,
-                filename=opts.metadata_file_path,
-                last_modified=opts.last_modified,
+    with open_excel_workbook(opts._file_bytes, compact_empty_rows=opts.find_subtable) as reader:
+        for page_number, sheet_name in enumerate(reader.sheet_names, start=starting_page_number):
+            # The exhausted generator releases the frame and subtable views before the next
+            # parse. Keeping them in this loop would retain the previous sheet during that read.
+            elements.extend(
+                _partition_sheet(
+                    reader.parse(sheet_name, header=opts.header_row_idx),
+                    sheet_name,
+                    page_number,
+                    opts,
+                )
             )
-            metadata.detection_origin = DETECTION_ORIGIN
-
-            elements.append(Table(text=text, metadata=metadata))
-
-        else:
-            for component in _ConnectedComponents.from_worksheet_df(sheet):
-                subtable_parser = _SubtableParser(component.subtable)
-
-                # -- emit each leading single-cell row as its own `Text`-subtype element --
-                for content in subtable_parser.iter_leading_single_cell_rows_texts():
-                    element = _create_element(str(content))
-                    element.metadata = _get_metadata(sheet_name, page_number, opts)
-                    elements.append(element)
-
-                # -- emit core-table (if it exists) as a `Table` element --
-                core_table = subtable_parser.core_table
-                if core_table is not None:
-                    text, html = _render_table(core_table, opts)
-                    element = Table(text=text)
-                    element.metadata = _get_metadata(sheet_name, page_number, opts)
-                    element.metadata.text_as_html = html
-                    elements.append(element)
-
-                # -- no core-table is emitted if it's empty (all rows are single-cell rows) --
-
-                # -- emit each trailing single-cell row as its own `Text`-subtype element --
-                for content in subtable_parser.iter_trailing_single_cell_rows_texts():
-                    element = _create_element(str(content))
-                    element.metadata = _get_metadata(sheet_name, page_number, opts)
-                    elements.append(element)
 
     return elements
+
+
+def _partition_sheet(
+    sheet: pd.DataFrame, sheet_name: str, page_number: int, opts: _XlsxPartitionerOptions
+) -> Iterator[Element]:
+    """Partition one worksheet without retaining its frame while the next sheet is read."""
+    if not opts.find_subtable:
+        text, html = _render_table(sheet, opts)
+        metadata = _get_metadata(sheet_name, page_number, opts)
+        metadata.text_as_html = html
+        yield Table(text=text, metadata=metadata)
+        return
+
+    for component in _ConnectedComponents.from_worksheet_df(sheet):
+        subtable_parser = _SubtableParser(component.subtable)
+
+        # -- emit each leading single-cell row as its own `Text`-subtype element --
+        for content in subtable_parser.iter_leading_single_cell_rows_texts():
+            element = _create_element(str(content))
+            element.metadata = _get_metadata(sheet_name, page_number, opts)
+            yield element
+
+        core_table = subtable_parser.core_table
+        if core_table is not None:
+            text, html = _render_table(core_table, opts)
+            element = Table(text=text)
+            element.metadata = _get_metadata(sheet_name, page_number, opts)
+            element.metadata.text_as_html = html
+            yield element
+
+        # -- no core-table is emitted if it's empty (all rows are single-cell rows) --
+        for content in subtable_parser.iter_trailing_single_cell_rows_texts():
+            element = _create_element(str(content))
+            element.metadata = _get_metadata(sheet_name, page_number, opts)
+            yield element
 
 
 class _TableRowRenderer(HTMLFormatter):
