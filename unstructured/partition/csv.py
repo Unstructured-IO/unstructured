@@ -4,21 +4,23 @@ import codecs
 import collections
 import contextlib
 import csv
+import errno
 import io
 import itertools
+import os
 import re
 from functools import cached_property, partial
 from typing import IO, Any, Callable, Iterator, NoReturn, cast
-from urllib.parse import urlparse
 
 import pandas as pd
-from pandas.io.common import get_handle
+from pandas.io.common import get_handle, infer_compression
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.model import FileType
+from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.utils.config import env_config
 from unstructured.telemetry import partition_runtime_telemetry
@@ -45,9 +47,13 @@ def partition_csv(
     Parameters
     ----------
     filename
-        A string defining the target filename path.
+        The path of a local CSV file. It is always read from the local filesystem, never fetched:
+        a value such as "https://host/x.csv" is looked up as a file of that name. A file named
+        for its compression, e.g. "x.csv.gz", is read decompressed. To partition a remote
+        document, pass its address as `url` to `partition()`.
     file
-        A file-like object using "rb" mode --> open(filename, "rb").
+        A file-like object using "rb" mode --> open(filename, "rb"). Exactly one of `filename`
+        and `file` must be provided.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     include_header
@@ -59,6 +65,8 @@ def partition_csv(
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
     """
+    exactly_one(filename=filename, file=file)
+
     ctx = _CsvPartitioningContext.load(
         file_path=filename,
         file=file,
@@ -89,6 +97,39 @@ def partition_csv(
 
     # -- a CSV file becomes a single `Table` element --
     return [Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
+
+
+@contextlib.contextmanager
+def open_file_path(file_path: str) -> Iterator[IO[bytes]]:
+    """Open the local file at `file_path` for reading bytes, decompressed as its name implies.
+
+    `file_path` is always a path on the local filesystem. Pandas would fetch a string such as
+    "https://host/x.csv" or "s3://bucket/x.csv" itself, once for each read and without the checks
+    `partition(url=...)` applies to a fetch, so Pandas only gets the file this opens. A file that
+    does not exist raises `FileNotFoundError`, whatever its name looks like. Like
+    `pd.read_csv(filename)`, a leading "~" is expanded and a file named e.g. "x.csv.gz" is read
+    decompressed.
+    """
+    path = os.path.expanduser(os.fspath(file_path))
+    if _URL_PREFIX.match(path) and not os.path.exists(path):
+        raise FileNotFoundError(
+            errno.ENOENT,
+            "No such local file; `filename` is a local file path. To partition a remote"
+            " document, pass its HTTP(S) address as `url` to `partition()`, or download it first",
+            path,
+        )
+    with (
+        open(path, "rb") as file,
+        get_handle(
+            file, "rb", compression=infer_compression(path, "infer"), is_text=False
+        ) as handles,
+    ):
+        yield cast(IO[bytes], handles.handle)
+
+
+# -- a scheme followed by "://", as in "https://host/x.csv"; a Windows drive letter, as in
+# -- "C:\\dir\\x.csv", does not match --
+_URL_PREFIX = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*://")
 
 
 def dataframe_to_html(dataframe: pd.DataFrame, *, header: bool) -> str:
@@ -855,10 +896,9 @@ class _CsvPartitioningContext:
         File is guaranteed to be at read position 0 when called.
         """
         if self._file_path:
-            # -- like `pd.read_csv(filename)`, decompress a file named e.g. "x.csv.gz"; the
-            # -- sniff, the size check, and the read each get their own decompressing handle --
-            with get_handle(self._file_path, "rb", compression="infer", is_text=False) as handles:
-                yield cast(IO[bytes], handles.handle)
+            # -- the sniff, the size check, and the read each open the local file afresh --
+            with open_file_path(self._file_path) as file:
+                yield file
         else:
             file = self._file
             assert file is not None  # -- guaranteed by `._validate()` --
@@ -871,14 +911,4 @@ class _CsvPartitioningContext:
         """Raise on invalid argument values."""
         if self._file_path is None and self._file is None:
             raise ValueError("either file-path or file-like object must be provided")
-        if self._file_path and urlparse(self._file_path).scheme and "://" in self._file_path:
-            # -- a URL is not a filename: `get_handle()` would fetch it separately for the
-            # -- delimiter sniff, the cell-count check, and the read, with none of the scheme,
-            # -- redirect, and private-address checks applied to a `partition(url=...)` fetch;
-            # -- the `"://"` test keeps a Windows drive-letter path (e.g. "C:\\dir\\f.csv")
-            # -- out, since urlparse() reports a drive letter as its scheme --
-            raise ValueError(
-                f"filename must be a local file path, got URL {self._file_path!r};"
-                " use partition(url=...) to partition a remote document"
-            )
         return self

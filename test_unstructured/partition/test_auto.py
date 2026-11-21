@@ -1202,6 +1202,34 @@ def test_auto_partition_from_url_detects_file_type_when_served_as_octet_stream(
     assert all(e.metadata.filetype == "application/pdf" for e in elements)
 
 
+@pytest.mark.parametrize(
+    ("file_name", "content_type", "filetype"),
+    [("stanley-cups.csv", "text/csv", "text/csv"), ("stanley-cups.tsv", "text/tsv", "text/tsv")],
+)
+def test_auto_partition_fetches_a_CSV_or_TSV_document_from_url_with_one_safe_fetch(
+    request: FixtureRequest, file_name: str, content_type: str, filetype: str
+):
+    with open(example_doc_path(file_name), "rb") as f:
+        content = f.read()
+    safe_get_ = function_mock(
+        request,
+        "unstructured.partition.auto.safe_get",
+        return_value=SimpleNamespace(
+            status_code=200, ok=True, headers={}, content=content, encoding="utf-8"
+        ),
+    )
+    url = f"https://example.com/documents/{file_name}"
+
+    (table,) = partition(url=url, content_type=content_type)
+
+    safe_get_.assert_called_once_with(url, headers={}, verify=True, timeout=None)
+    assert isinstance(table, Table)
+    assert table.text.startswith("Stanley Cups Team Location Stanley Cups Blues STL 1")
+    assert table.metadata.url == url
+    assert table.metadata.filetype == filetype
+    assert table.metadata.filename is None
+
+
 def test_auto_partition_warns_if_header_set_and_not_url(caplog: LogCaptureFixture):
     partition(
         example_doc_path("eml/fake-email.eml"),

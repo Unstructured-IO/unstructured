@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import bz2
 import csv
 import gzip
 import io
+import lzma
+import socket
+import sys
+import tarfile
+import zipfile
 from pathlib import Path
-from typing import Any
+from typing import Any, NoReturn
 
 import pandas as pd
 import pytest
@@ -25,6 +31,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Table
 from unstructured.errors import UnprocessableEntityError
+from unstructured.partition import csv as csv_module
 from unstructured.partition.auto import partition
 from unstructured.partition.tsv import partition_tsv
 
@@ -249,6 +256,75 @@ def test_partition_tsv_decompresses_a_compressed_filename(
     monkeypatch.setenv("CSV_MAX_CELLS", "3")
     with pytest.raises(UnprocessableEntityError, match="CSV_MAX_CELLS"):
         partition_tsv(str(file_path))
+
+
+@pytest.mark.parametrize("suffix", [".bz2", ".xz", ".zip", ".tar", ".tar.gz"])
+def test_partition_tsv_reads_a_single_file_archive_or_compressed_file_by_its_name(
+    tmp_path: Path, suffix: str
+):
+    # -- the file is opened before Pandas sees it, so its name alone says how to decompress it --
+    data = b"a\tb\n1\t2\n"
+    file_path = tmp_path / f"table.tsv{suffix}"
+    if suffix == ".zip":
+        with zipfile.ZipFile(file_path, "w") as archive:
+            archive.writestr("table.tsv", data)
+    elif suffix.startswith(".tar"):
+        with tarfile.open(file_path, "w" + suffix[4:].replace(".", ":")) as archive:
+            member = tarfile.TarInfo("table.tsv")
+            member.size = len(data)
+            archive.addfile(member, io.BytesIO(data))
+    else:
+        file_path.write_bytes({".bz2": bz2.compress, ".xz": lzma.compress}[suffix](data))
+
+    (table,) = partition_tsv(str(file_path))
+
+    assert table.text == "a b 1 2"
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "http://127.0.0.1:1/documents/stanley-cups.tsv",
+        "https://example.com/documents/stanley-cups.tsv.gz",
+        "s3://unstructured-test/tsv/stanley-cups.tsv",
+        "file:///nonexistent/stanley-cups.tsv",
+    ],
+)
+def test_partition_tsv_looks_up_a_URL_filename_locally_and_never_fetches_it(
+    monkeypatch: pytest.MonkeyPatch, mocker: MockFixture, filename: str
+):
+    # -- Pandas fetches a URL it is given as a string; it is never given one --
+    get_handle_ = mocker.spy(csv_module, "get_handle")
+
+    # -- and an HTTP or S3 fetch would resolve its host first --
+    def no_network(*args: object, **kwargs: object) -> NoReturn:
+        raise AssertionError("partition_tsv() reached for the network")
+
+    monkeypatch.setattr(socket, "getaddrinfo", no_network)
+
+    with pytest.raises(FileNotFoundError, match=r"HTTP\(S\) address as `url` to `partition\(\)`"):
+        partition_tsv(filename)
+    get_handle_.assert_not_called()
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="':' is not allowed in a Windows file name")
+def test_partition_tsv_reads_a_local_file_whose_name_looks_like_a_URL(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mocker: MockFixture
+):
+    file_path = tmp_path / "https:" / "example.com" / "table.tsv.gz"
+    file_path.parent.mkdir(parents=True)
+    with gzip.open(file_path, "wb") as f:
+        f.write(b"a\tb\n1\t2\n")
+    monkeypatch.chdir(tmp_path)
+    get_handle_ = mocker.spy(csv_module, "get_handle")
+
+    (table,) = partition_tsv("https://example.com/table.tsv.gz")
+
+    assert table.text == "a b 1 2"
+    assert table.metadata.filename == "table.tsv.gz"
+    # -- Pandas gets the opened file, never the name --
+    assert get_handle_.call_count >= 2
+    assert all(isinstance(c.args[0], io.BufferedReader) for c in get_handle_.call_args_list)
 
 
 def test_partition_tsv_reads_a_stream_that_cannot_seek():
