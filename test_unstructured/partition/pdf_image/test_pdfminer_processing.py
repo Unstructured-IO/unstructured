@@ -20,12 +20,15 @@ from unstructured_inference.inference.layoutelement import LayoutElements
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.auto import partition
 from unstructured.partition.pdf_image.pdfminer_processing import (
+    _aggregated_iou,
     _deduplicate_ltchars,
     _rotate_bboxes,
     _validate_bbox,
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
     boxes_self_iou,
+    calculate_bbox_area,
+    calculate_intersection_area,
     clean_pdfminer_inner_elements,
     get_widget_text_from_annots,
     process_file_with_pdfminer,
@@ -236,6 +239,36 @@ def test_aggregate_not_filling_target():
     text, extracted = aggregate_embedded_text_by_block(target_region, embedded_regions)
     assert text == ""
     assert extracted.value == "false"
+
+
+def _scalar_aggregated_iou(box1s, box2):
+    """Reference: the per-box loop `_aggregated_iou` used before it was vectorized."""
+    intersection = 0.0
+    sum_areas = calculate_bbox_area(box2)
+    for i in range(box1s.shape[0]):
+        intersection += calculate_intersection_area(box1s[i, :], box2)
+        sum_areas += calculate_bbox_area(box1s[i, :])
+    union = sum_areas - intersection
+    return 1.0 if union == 0 else intersection / union
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_aggregated_iou_matches_scalar_loop_bit_for_bit(dtype):
+    # -- the result is compared against a coverage threshold, so a last-bit difference could
+    # -- flip `is_extracted` at the boundary; require exact equality and the same dtype --
+    rng = np.random.default_rng(0)
+    for _ in range(500):
+        n = int(rng.integers(1, 40))
+        xy = rng.uniform(0, 2000, (n, 2))
+        wh = rng.uniform(-5, 300, (n, 2))  # -- includes zero-size and inverted boxes --
+        box1s = np.hstack([xy, xy + wh]).astype(dtype)
+        box2 = np.array([100, 100, 900, 1500], dtype=dtype)
+
+        expected = _scalar_aggregated_iou(box1s, box2)
+        actual = _aggregated_iou(box1s, box2)
+
+        assert actual == expected
+        assert np.asarray(actual).dtype == np.asarray(expected).dtype
 
 
 @pytest.mark.parametrize(
