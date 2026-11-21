@@ -16,6 +16,17 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import LayoutElements
 
 
+def _as_png_bytes(image: PILImage.Image) -> bytes:
+    """Encode a page without mutating it, converting non-PNG color modes to RGB first."""
+    with BytesIO() as buffer:
+        if image.mode in {"CMYK", "RGBX", "YCbCr", "HSV"}:
+            with image.convert("RGB") as rgb_image:
+                rgb_image.save(buffer, format="PNG")
+        else:
+            image.save(buffer, format="PNG")
+        return buffer.getvalue()
+
+
 class OCRAgentGoogleVision(OCRAgent):
     """OCR service implementation for Google Vision API."""
 
@@ -35,11 +46,9 @@ class OCRAgentGoogleVision(OCRAgent):
 
     def get_text_from_image(self, image: PILImage.Image) -> str:
         image_context = ImageContext(language_hints=[self.language]) if self.language else None
-        with BytesIO() as buffer:
-            image.save(buffer, format="PNG")
-            response = self.client.document_text_detection(
-                image=Image(content=buffer.getvalue()), image_context=image_context
-            )
+        response = self.client.document_text_detection(
+            image=Image(content=_as_png_bytes(image)), image_context=image_context
+        )
         document = response.full_text_annotation
         assert isinstance(document, TextAnnotation)
         return document.text
@@ -47,11 +56,9 @@ class OCRAgentGoogleVision(OCRAgent):
     def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
         trace_logger.detail("Processing entire page OCR with Google Vision API...")
         image_context = ImageContext(language_hints=[self.language]) if self.language else None
-        with BytesIO() as buffer:
-            image.save(buffer, format="PNG")
-            response = self.client.document_text_detection(
-                image=Image(content=buffer.getvalue()), image_context=image_context
-            )
+        response = self.client.document_text_detection(
+            image=Image(content=_as_png_bytes(image)), image_context=image_context
+        )
         document = response.full_text_annotation
         assert isinstance(document, TextAnnotation)
         regions = self._parse_regions(document)
