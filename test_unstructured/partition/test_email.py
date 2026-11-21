@@ -132,7 +132,10 @@ def test_partition_email_partitions_an_html_part_with_quoted_printable_encoded_I
 
     assert len(elements) == 1
     assert isinstance(elements[0], Table)
-    assert elements[0].text.startswith("Slava Gxyzxyz Hi Slava, The password for your Google")
+    # "Google Accounts" is the alt text of the logo in the first table cell
+    assert elements[0].text.startswith(
+        "Google Accounts Slava Gxyzxyz Hi Slava, The password for your Google"
+    )
 
 
 # -- edge-cases ----------------------------------------------------------------------------------

@@ -576,12 +576,31 @@ class TableBlock(Flow):
         caption_texts: list[str] = []
         row_texts: list[str] = []
 
+        def text_nodes(node: etree._Element) -> Iterator[str]:
+            """Text of `node` in document order, like `.itertext()`, plus each image's `alt`.
+
+            An image in a cell, such as a check mark with `alt="Yes"`, is often all the cell
+            holds, so its alt text is the cell's text.
+            """
+            if node.text:
+                yield node.text
+            for child in node:
+                if child.tag == "img":
+                    if alt := child.get("alt"):
+                        yield alt
+                elif isinstance(child.tag, str):
+                    # -- comments and processing instructions contribute no text, as with
+                    # -- `.itertext()`, but their tail still does
+                    yield from text_nodes(child)
+                if child.tail:
+                    yield child.tail
+
         def sanitized_text_and_html(node: etree._Element) -> tuple[str, str]:
             """Text of a cell or caption, and the bare tag wrapping that escaped text."""
             # -- a cell can contain other elements like spans etc. so we can't count on the
-            # -- text being directly below the cell. `.itertext()` gets all of it recursively.
+            # -- text being directly below the cell. `text_nodes()` gets all of it recursively.
             # -- Filter out whitespace text nodes resulting from HTML formatting.
-            stripped_text_nodes = (t.strip() for t in node.itertext())
+            stripped_text_nodes = (t.strip() for t in text_nodes(node))
             text = " ".join(t for t in stripped_text_nodes if t)
 
             # -- Reconstruct only the recognized tag and escaped text. Source attributes and
