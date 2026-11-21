@@ -14,6 +14,7 @@ from unstructured.documents.elements import Element, ElementType
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
+from unstructured.partition.html.forms import materialize_form_values
 from unstructured.partition.html.parser import Flow, Math, html_parser
 from unstructured.partition.html.transformations import (
     ontology_to_unstructured_elements,
@@ -37,6 +38,7 @@ def partition_html(
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
     skip_headers_and_footers: bool = False,
+    include_form_values: bool = False,
     detection_origin: Optional[str] = None,
     html_parser_version: Literal["v1", "v2"] = "v1",
     image_alt_mode: Optional[Literal["to_text"]] = "to_text",
@@ -70,6 +72,9 @@ def partition_html(
         The encoding method used to decode the text input. If None, utf-8 will be used.
     skip_headers_and_footers
         If True, ignores any content that is within <header> or <footer> tags
+    include_form_values
+        If True, include authored textual input values, textarea text, selected option labels and
+        form labels. Passwords, hidden controls, placeholders and script-updated state are omitted.
 
     html_parser_version (Literal['v1', 'v2']):
         The version of the HTML parser to use. The default is 'v1'. For 'v2' the parser will
@@ -99,6 +104,7 @@ def partition_html(
         headers=headers,
         ssl_verify=ssl_verify,
         skip_headers_and_footers=skip_headers_and_footers,
+        include_form_values=include_form_values,
         detection_origin=detection_origin,
         html_parser_version=html_parser_version,
         image_alt_mode=image_alt_mode,
@@ -128,6 +134,7 @@ class HtmlPartitionerOptions:
         image_alt_mode: Optional[Literal["to_text"]] = "to_text",
         extract_image_block_types: Optional[list[str]] = None,
         extract_image_block_to_payload: bool = False,
+        include_form_values: bool = False,
     ):
         self._file_path = file_path
         self._file = file
@@ -137,6 +144,7 @@ class HtmlPartitionerOptions:
         self._headers = headers
         self._ssl_verify = ssl_verify
         self._skip_headers_and_footers = skip_headers_and_footers
+        self._include_form_values = include_form_values
         self._detection_origin = detection_origin
         self._html_parser_version = html_parser_version
         self._image_alt_mode = image_alt_mode
@@ -150,6 +158,12 @@ class HtmlPartitionerOptions:
 
     @cached_property
     def html_text(self) -> str:
+        """Source HTML, optionally with authored form values made visible to either parser."""
+        text = self._source_html_text
+        return materialize_form_values(text) if self._include_form_values else text
+
+    @cached_property
+    def _source_html_text(self) -> str:
         """The HTML document as a string, loaded from wherever the caller specified."""
         if self._file_path:
             return read_txt_file(filename=self._file_path, encoding=self._encoding)[1]
