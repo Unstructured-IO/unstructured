@@ -908,9 +908,10 @@ def _aggregated_iou(box1s, box2):
     areas = (x2 - x1) * (y2 - y1)
 
     # -- cumsum accumulates left to right like the scalar loop this replaced, so the float
-    # -- result is bit-identical (np.sum's pairwise summation would not be). --
-    intersection = np.cumsum(np.concatenate(([0.0], inter_areas)))[-1]
-    sum_areas = np.cumsum(np.concatenate(([calculate_bbox_area(box2)], areas)))[-1]
+    # -- result is bit-identical (np.sum's pairwise summation would not be). The seeds keep the
+    # -- coordinates' dtype so float32 input still accumulates in float32, as the loop did. --
+    intersection = np.cumsum(np.concatenate((np.zeros(1, inter_areas.dtype), inter_areas)))[-1]
+    sum_areas = np.cumsum(np.concatenate((np.atleast_1d(calculate_bbox_area(box2)), areas)))[-1]
 
     union = sum_areas - intersection
 
