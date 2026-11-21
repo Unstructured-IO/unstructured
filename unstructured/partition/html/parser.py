@@ -100,6 +100,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.common.metadata import category_depth_from_html_tag
+from unstructured.partition.html.mathml import presentation_to_latex
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -798,7 +799,7 @@ class Math(Flow, Phrasing):
         if alt_text is not None and alt_text.strip():
             return alt_text
 
-        return None
+        return presentation_to_latex(self)
 
     @cached_property
     def _page_number(self) -> int | None:

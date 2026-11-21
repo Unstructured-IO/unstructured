@@ -894,7 +894,7 @@ def test_partition_html_keeps_katex_html_of_unusable_mathml_inside_an_unrecogniz
         wrapper.format(
             "Before"
             ' <span class="katex">'
-            '<span class="katex-mathml"><math><semantics><mi>x</mi></semantics></math></span>'
+            '<span class="katex-mathml"><math><maction><mi>x</mi></maction></math></span>'
             '<span class="katex-html" aria-hidden="true">'
             '<span class="base"><span>x</span><span>2</span></span>'
             "</span></span>"
@@ -2223,7 +2223,7 @@ def test_partition_html_keeps_katex_html_when_mathml_is_unusable():
           <span class="katex">
             <span class="katex-mathml">
               <math>
-                <semantics><mi>x</mi></semantics>
+                <maction><mi>x</mi></maction>
               </math>
             </span>
             <span class="katex-html" aria-hidden="true">
