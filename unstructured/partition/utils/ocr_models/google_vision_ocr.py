@@ -84,8 +84,10 @@ class OCRAgentGoogleVision(OCRAgent):
             for block in page.blocks:
                 for paragraph in block.paragraphs:
                     vertices = paragraph.bounding_box.vertices
-                    x1, y1 = vertices[0].x, vertices[0].y
-                    x2, y2 = vertices[2].x, vertices[2].y
+                    # Vertex order follows the text's orientation, not the image axes. Taking
+                    # only opposite corners crops rotated text and reverses 180-degree boxes.
+                    x1, y1 = min(v.x for v in vertices), min(v.y for v in vertices)
+                    x2, y2 = max(v.x for v in vertices), max(v.y for v in vertices)
                     text_region = build_text_region_from_coords(
                         x1,
                         y1,
