@@ -55,6 +55,21 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
     assert is_possible_narrative is expected
 
 
+@pytest.mark.parametrize(
+    "text",
+    ["----------------------------------------", "$ 1,234.56 $ 7,890.12", "*** === +++ ###"],
+)
+def test_is_possible_narrative_text_rejects_low_alpha_text_without_nlp(text, monkeypatch):
+    def fail(*args, **kwargs):
+        raise AssertionError("low-alpha text should be rejected before the NLP pipeline runs")
+
+    monkeypatch.setattr(text_type, "word_tokenize", fail)
+    monkeypatch.setattr(text_type, "pos_tag", fail)
+    monkeypatch.setattr(text_type, "sent_tokenize", fail)
+
+    assert text_type.is_possible_narrative_text(text) is False
+
+
 def test_narrative_text_language_checks():
     # NOTE(robinson) - This is true because we don't check english vocab if language checks
     # are set to False
