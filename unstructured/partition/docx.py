@@ -159,6 +159,7 @@ def partition_docx(
     *,
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
+    include_image_alt_text: bool = False,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
     strategy: str | None = None,
@@ -175,6 +176,9 @@ def partition_docx(
     include_page_breaks
         When True, add a `PageBreak` element to the element-stream when a page-break is detected in
         the document. Note that not all DOCX files include page-break information.
+    include_image_alt_text
+        If True, the default picture partitioner emits authored image titles/descriptions as
+        Image elements without OCR. Registered picture partitioners keep control of their output.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -194,6 +198,7 @@ def partition_docx(
         file=file,
         file_path=filename,
         include_page_breaks=include_page_breaks,
+        include_image_alt_text=include_image_alt_text,
         infer_table_structure=infer_table_structure,
         starting_page_number=starting_page_number,
         strategy=strategy,
@@ -226,10 +231,12 @@ class DocxPartitionerOptions:
         infer_table_structure: bool,
         starting_page_number: int = 1,
         strategy: str | None = None,
+        include_image_alt_text: bool = False,
     ):
         self._file = file
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
+        self.include_image_alt_text = include_image_alt_text
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
         # -- options object maintains page-number state --
@@ -1640,10 +1647,25 @@ _ROMAN_NUMERALS = (
 
 
 class _NullPicturePartitioner:
-    """Does not parse the provided paragraph for pictures and generates zero `Image` elements."""
+    """Skip pictures by default, or emit their authored alt text when explicitly requested."""
 
     @classmethod
     def iter_elements(cls, paragraph: Paragraph, opts: DocxPartitionerOptions) -> Iterator[Image]:
-        """No-op picture partitioner."""
-        return
-        yield
+        """Generate alt-text Image elements without opening image data or performing OCR."""
+        if not opts.include_image_alt_text:
+            return
+        for properties in paragraph._p.xpath(
+            ".//w:drawing/*[self::wp:inline or self::wp:anchor][.//pic:pic]/wp:docPr"
+        ):
+            parts = [properties.get(attr, "").strip() for attr in ("title", "descr")]
+            text = "\n".join(dict.fromkeys(part for part in parts if part))
+            if text:
+                yield Image(
+                    text,
+                    detection_origin=DETECTION_ORIGIN,
+                    metadata=ElementMetadata(
+                        filename=opts.metadata_file_path,
+                        last_modified=opts.last_modified,
+                        page_number=opts.metadata_page_number,
+                    ),
+                )
