@@ -24,7 +24,9 @@ from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.common.html_table import HtmlTable, htmlify_matrix_of_cell_texts
+from unstructured.documents.coordinates import PointSpace
 from unstructured.documents.elements import (
+    CoordinatesMetadata,
     Element,
     ElementMetadata,
     EmailAddress,
@@ -135,6 +137,7 @@ def partition_pptx(
     include_page_breaks: bool = True,
     include_slide_notes: bool | None = None,
     include_off_slide_shapes: bool = False,
+    include_coordinates: bool = False,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
     strategy: str = PartitionStrategy.FAST,
@@ -154,6 +157,10 @@ def partition_pptx(
         If True, includes the slide notes as element
     include_off_slide_shapes
         If True, also include text from shapes that are mostly outside the slide.
+    include_coordinates
+        Include each shape's enclosing rectangle in points, with the slide's bottom-left as
+        origin. Paragraphs share their containing shape's bounds. Unsupported rotated/flipped
+        group transforms omit coordinates; slide notes and page breaks have no shape bounds.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -171,6 +178,7 @@ def partition_pptx(
         include_page_breaks=include_page_breaks,
         include_slide_notes=include_slide_notes,
         include_off_slide_shapes=include_off_slide_shapes,
+        include_coordinates=include_coordinates,
         infer_table_structure=infer_table_structure,
         strategy=strategy,
         starting_page_number=starting_page_number,
@@ -211,20 +219,69 @@ class _PptxPartitioner:
             title_shape, shapes = self._order_shapes(slide)
 
             for shape in shapes:
+                elements: Iterator[Element]
                 if shape.has_table:
                     assert isinstance(shape, GraphicFrame)
-                    yield from self._iter_table_element(shape)
+                    elements = self._iter_table_element(shape)
                 elif shape.has_text_frame:
                     assert isinstance(shape, Shape)
                     if shape == title_shape:
-                        yield from self._iter_title_shape_element(shape)
+                        elements = self._iter_title_shape_element(shape)
                     else:
-                        yield from self._iter_shape_elements(shape)
+                        elements = self._iter_shape_elements(shape)
                 elif isinstance(shape, Picture):
-                    yield from self._iter_picture_elements(shape)
+                    elements = self._iter_picture_elements(shape)
+                else:
+                    continue
+
+                for element in elements:
+                    if self._opts.include_coordinates and element.metadata.coordinates is None:
+                        element.metadata.coordinates = self._shape_coordinates(shape)
+                    yield element
 
                 # -- otherwise ditch it, this would include charts, connectors (lines),
                 # -- and free-form shapes (squiggly lines). Lines don't have text.
+
+    def _shape_coordinates(self, shape: BaseShape) -> CoordinatesMetadata | None:
+        """Map the shape's corners into slide points, including nested group scaling."""
+        left, top, width, height = shape.left, shape.top, shape.width, shape.height
+        slide_width, slide_height = self._presentation.slide_width, self._presentation.slide_height
+        if (
+            left is None
+            or top is None
+            or width is None
+            or height is None
+            or slide_width is None
+            or slide_height is None
+        ):
+            return None
+        angle = math.radians(shape.rotation)
+        cos, sin = math.cos(angle), math.sin(angle)
+        center_x, center_y = left + width / 2, top + height / 2
+        points = [
+            (center_x + x * cos - y * sin, center_y + x * sin + y * cos)
+            for x in (-width / 2, width / 2)
+            for y in (-height / 2, height / 2)
+        ]
+        node = shape._element
+        while (parent := node.getparent()) is not None and parent.tag == qn("p:grpSp"):
+            transform = _group_transform(parent)
+            if transform is None:
+                return None
+            off_x, off_y, ext_x, ext_y, child_x, child_y, child_w, child_h = transform
+            points = [
+                (off_x + (x - child_x) * ext_x / child_w, off_y + (y - child_y) * ext_y / child_h)
+                for x, y in points
+            ]
+            node = parent
+        # Office coordinates are EMUs, with 12,700 EMUs per typographic point.
+        x0, x1 = min(x for x, _ in points) / 12700, max(x for x, _ in points) / 12700
+        y0 = (slide_height - min(y for _, y in points)) / 12700
+        y1 = (slide_height - max(y for _, y in points)) / 12700
+        return CoordinatesMetadata(
+            points=((x0, y0), (x0, y1), (x1, y1), (x1, y0)),
+            system=PointSpace(width=slide_width / 12700, height=slide_height / 12700),
+        )
 
     def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
         """True when `paragraph` has a bullet-charcter prefix.
@@ -488,6 +545,7 @@ class PptxPartitionerOptions:
         include_page_breaks: bool,
         include_slide_notes: bool | None,
         include_off_slide_shapes: bool = False,
+        include_coordinates: bool = False,
         infer_table_structure: bool,
         strategy: str,
         starting_page_number: int = 1,
@@ -497,6 +555,7 @@ class PptxPartitionerOptions:
         self._include_page_breaks = include_page_breaks
         self._include_slide_notes = include_slide_notes
         self._include_off_slide_shapes = include_off_slide_shapes
+        self._include_coordinates = include_coordinates
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
         # -- options object maintains page-number state --
@@ -522,6 +581,11 @@ class PptxPartitionerOptions:
     def include_slide_notes(self) -> bool:
         """When True, also partition any text found in slide notes as part of each slide."""
         return False if self._include_slide_notes is None else self._include_slide_notes
+
+    @cached_property
+    def include_coordinates(self) -> bool:
+        """Whether to add point-space shape bounds to emitted elements."""
+        return self._include_coordinates
 
     @cached_property
     def include_off_slide_shapes(self) -> bool:
