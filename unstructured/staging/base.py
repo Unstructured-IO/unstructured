@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import codecs
 import csv
 import io
 import json
@@ -461,6 +462,21 @@ def element_to_md(
             return element.text
 
 
+def _write_text_file(filename: str, text: str, encoding: str) -> None:
+    """Check the entire encoding before opening (and truncating) a destination file.
+
+    Incremental preflight keeps extra encoded data bounded even for large exports. The final
+    text-mode write retains the existing newline and codec behavior. This protects against
+    encoding failures; operating-system write failures still propagate normally.
+    """
+    encoder = codecs.getincrementalencoder(encoding)(errors="strict")
+    for start in range(0, len(text), 65536):
+        encoder.encode(text[start : start + 65536], final=False)
+    encoder.encode("", final=True)
+    with open(filename, "w", encoding=encoding) as file:
+        file.write(text)
+
+
 def elements_to_md(
     elements: Iterable[Element],
     filename: Optional[str] = None,
@@ -501,8 +517,7 @@ def elements_to_md(
     )
 
     if filename is not None:
-        with open(filename, "w", encoding=encoding) as f:
-            f.write(markdown_content)
+        _write_text_file(filename, markdown_content, encoding)
 
     return markdown_content
 
@@ -577,8 +592,7 @@ def create_file_from_elements(
             no_group_by_page=no_group_by_page,
         )
         if filename is not None:
-            with open(filename, "w", encoding=encoding) as f:
-                f.write(content)
+            _write_text_file(filename, content, encoding)
         return content
     else:
         # text: delegate write to elements_to_text when filename is set
@@ -606,8 +620,7 @@ def elements_to_json(
     json_str = json.dumps(element_dicts, indent=indent, sort_keys=True)
 
     if filename is not None:
-        with open(filename, "w", encoding=encoding) as f:
-            f.write(json_str)
+        _write_text_file(filename, json_str, encoding)
 
     return json_str
 
@@ -629,8 +642,7 @@ def elements_to_ndjson(
     ndjson_str = ndjson_dumps(element_dicts, sort_keys=True)
 
     if filename is not None:
-        with open(filename, "w", encoding=encoding) as f:
-            f.write(ndjson_str)
+        _write_text_file(filename, ndjson_str, encoding)
 
     return ndjson_str
 
@@ -718,9 +730,8 @@ def elements_to_text(
     """
     element_cct = convert_to_text(elements)
     if filename is not None:
-        with open(filename, "w", encoding=encoding) as f:
-            f.write(element_cct)
-            return None
+        _write_text_file(filename, element_cct, encoding)
+        return None
     else:
         return element_cct
 
