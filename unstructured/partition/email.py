@@ -382,6 +382,20 @@ class _EmailPartitioner:
         if body_part is None:
             return
 
+        elements = list(self._iter_body_part_elements(body_part))
+        if elements:
+            yield from elements
+            return
+
+        # An empty preferred alternative must not hide a usable rendition of the message.
+        # get_body still excludes attachment parts when selecting the fallback.
+        other_type = "plain" if body_part.get_content_type() == "text/html" else "html"
+        alternative = self._ctx.msg.get_body(preferencelist=(other_type,))
+        if alternative is not None and alternative is not body_part:
+            yield from self._iter_body_part_elements(alternative)
+
+    def _iter_body_part_elements(self, body_part: MIMEPart) -> Iterator[Element]:
+        """Partition one selected text body without duplicating MIME alternatives."""
         content_type = body_part.get_content_type()
         content = body_part.get_content()
         assert isinstance(content, str)
