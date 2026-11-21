@@ -1218,6 +1218,8 @@ element_class_lookup.get_namespace(None).update(
         "noembed": RemovedPhrasing,  # -- obsolete; fallback content for `<embed>` --
         "noframes": RemovedPhrasing,  # -- obsolete; fallback content for frames --
         "object": RemovedPhrasing,  # -- content is fallback for when the object can't be shown --
+        "rp": RemovedPhrasing,  # -- parentheses shown around `<rt>` only without ruby support --
+        "rt": RemovedPhrasing,  # -- ruby text, a reading aid like furigana for the base text --
         "select": RemovedPhrasing,  # -- form control; its option list is not document text --
         "svg": RemovedPhrasing,  # -- graphics; `<title>` and `<desc>` inside it are metadata --
         "textarea": RemovedPhrasing,  # -- form control; its content is the editable value --
