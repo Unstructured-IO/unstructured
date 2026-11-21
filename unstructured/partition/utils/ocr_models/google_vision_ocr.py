@@ -98,19 +98,23 @@ class OCRAgentGoogleVision(OCRAgent):
         return TextRegions.from_list(text_regions)
 
     def _get_text_from_paragraph(self, paragraph: Paragraph) -> str:
+        """Retain every symbol, applying the response's leading or trailing break hints."""
         breaks = TextAnnotation.DetectedBreak.BreakType
-        para = ""
-        line = ""
+        separators = {
+            breaks.SPACE: " ",
+            breaks.SURE_SPACE: " ",
+            breaks.EOL_SURE_SPACE: " ",
+            breaks.HYPHEN: "-\n",
+            breaks.LINE_BREAK: "\n",
+        }
+        parts: list[str] = []
         for word in paragraph.words:
             for symbol in word.symbols:
-                line += symbol.text
-                if symbol.property.detected_break.type_ == breaks.SPACE:
-                    line += " "
-                if symbol.property.detected_break.type_ == breaks.EOL_SURE_SPACE:
-                    line += " "
-                    para += line
-                    line = ""
-                if symbol.property.detected_break.type_ == breaks.LINE_BREAK:
-                    para += line
-                    line = ""
-        return para
+                detected_break = symbol.property.detected_break
+                separator = separators.get(detected_break.type_, "")
+                if detected_break.is_prefix:
+                    parts.append(separator)
+                parts.append(symbol.text)
+                if not detected_break.is_prefix:
+                    parts.append(separator)
+        return "".join(parts).rstrip()
