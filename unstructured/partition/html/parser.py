@@ -86,6 +86,7 @@ from lxml import etree
 from typing_extensions import TypeAlias
 
 from unstructured.cleaners.core import clean_bullets
+from unstructured.common.html_table import iter_table_children_in_render_order
 from unstructured.documents.elements import (
     Address,
     CodeSnippet,
@@ -567,6 +568,9 @@ class TableBlock(Flow):
 
     def iter_elements(self) -> Iterator[Table]:
         """Generate paragraph string for each block item within."""
+
+        for table in self.iter("table"):
+            table[:] = list(iter_table_children_in_render_order(table))
 
         # -- NOTE this algorithm handles a nested-table by parsing all of its text into the text
         # -- for the _cell_ containing the table (and this is recursive, so a table nested within
