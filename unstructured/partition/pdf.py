@@ -673,9 +673,10 @@ def _pdfminer_page_elements(
                 page_number,
                 annotation_threshold,
             )
-            _, words = get_words_from_obj(obj, height)
-            for annot in annotations_within_element:
-                urls_metadata.append(map_bbox_and_index(words, annot))
+            if annotations_within_element:
+                _, words = get_words_from_obj(obj, height)
+                for annot in annotations_within_element:
+                    urls_metadata.append(map_bbox_and_index(words, annot))
 
         if hasattr(obj, "get_text"):
             # Use deduplication to handle fake bold text (characters rendered twice)
