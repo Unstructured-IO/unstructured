@@ -1595,6 +1595,15 @@ class DescribeRemovedPhrasing:
         assert isinstance(div[0], RemovedPhrasing)
         assert [e.text for e in div.iter_elements()] == ["Before after."]
 
+    def and_it_is_used_for_ruby_text_so_it_is_not_glued_to_the_base_text(self):
+        html = (
+            "<p>首都は<ruby>東京<rp>(</rp><rt>とうきょう</rt><rp>)</rp></ruby>です。"
+            "<ruby>漢<rt>かん</rt>字<rt>じ</rt></ruby></p>"
+        )
+        p = etree.fromstring(html, html_parser).xpath(".//p")[0]
+
+        assert [e.text for e in p.iter_elements()] == ["首都は東京です。漢字"]
+
     def and_it_is_used_for_head_which_is_only_reached_when_there_is_no_body(self):
         root = etree.fromstring("<html><head><foobar>Metadata</foobar></head></html>", html_parser)
 
