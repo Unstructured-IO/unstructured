@@ -266,6 +266,26 @@ class _PptxPartitioner:
         PicturePartitionerCls = self._opts.picture_partitioner
         yield from PicturePartitionerCls.iter_elements(picture, self._opts)
 
+    def _paragraph_metadata(self, paragraph: _Paragraph, category_depth: int) -> ElementMetadata:
+        """Preserve explicit run and paragraph-default bold/italic formatting."""
+        metadata = self._opts.text_metadata(category_depth=category_depth)
+        contents: list[str] = []
+        tags: list[str] = []
+        for run in paragraph.runs:
+            text = _break_lines(run.text).strip()
+            if not text:
+                continue
+            for attribute, tag in (("bold", "b"), ("italic", "i")):
+                emphasized = getattr(run.font, attribute)
+                if emphasized is None:
+                    emphasized = getattr(paragraph.font, attribute)
+                if emphasized:
+                    contents.append(text)
+                    tags.append(tag)
+        metadata.emphasized_text_contents = contents or None
+        metadata.emphasized_text_tags = tags or None
+        return metadata
+
     def _iter_shape_elements(self, shape: Shape) -> Iterator[Element]:
         """Generate Text or subtype element for each paragraph in `shape`."""
         if self._shape_is_off_slide(shape):
@@ -277,7 +297,7 @@ class _PptxPartitioner:
                 continue
 
             level = paragraph.level or 0
-            metadata = self._opts.text_metadata(category_depth=level)
+            metadata = self._paragraph_metadata(paragraph, category_depth=level)
 
             if self._is_bulleted_paragraph(paragraph):
                 yield ListItem(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
@@ -291,7 +311,7 @@ class _PptxPartitioner:
                 )
             elif is_possible_title(text):
                 # If text is a title but not the title shape increment the category depth)
-                metadata = self._opts.text_metadata(category_depth=level + 1)
+                metadata.category_depth = level + 1
                 yield Title(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             else:
                 yield Text(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
@@ -336,20 +356,20 @@ class _PptxPartitioner:
                 bullet_depth = paragraph.level or 0
                 yield ListItem(
                     text=text,
-                    metadata=self._opts.text_metadata(category_depth=bullet_depth),
+                    metadata=self._paragraph_metadata(paragraph, category_depth=bullet_depth),
                     detection_origin=DETECTION_ORIGIN,
                 )
             elif is_email_address(text):
                 yield EmailAddress(
                     text=text,
-                    metadata=self._opts.text_metadata(category_depth=depth),
+                    metadata=self._paragraph_metadata(paragraph, category_depth=depth),
                     detection_origin=DETECTION_ORIGIN,
                 )
             else:
                 # increment the category depth by the paragraph increment in the shape
                 yield Title(
                     text=text,
-                    metadata=self._opts.text_metadata(category_depth=depth),
+                    metadata=self._paragraph_metadata(paragraph, category_depth=depth),
                     detection_origin=DETECTION_ORIGIN,
                 )
                 depth += 1  # Cannot enumerate because we want to skip empty paragraphs
