@@ -278,16 +278,15 @@ class ObjectDetectionEvalProcessor:
         Returns:
             top_k_idx:     Indexes of the top k predictions. length <= (k * n_unique_class)
         """
+        sorting_idx = torch.argsort(preds_scores, descending=True, stable=True)
         n_unique_cls = torch.max(preds_cls)
-        mask = preds_cls.view(-1, 1) == torch.arange(
+        mask = preds_cls[sorting_idx].view(-1, 1) == torch.arange(
             n_unique_cls + 1, device=preds_scores.device
         ).view(1, -1)
-        preds_scores_per_cls = preds_scores.view(-1, 1) * mask
-
-        sorted_scores_per_cls, sorting_idx = preds_scores_per_cls.sort(0, descending=True)
-        idx_with_satisfying_scores = sorted_scores_per_cls[:top_k, :].nonzero(as_tuple=False)
-        top_k_idx = sorting_idx[idx_with_satisfying_scores.split(1, dim=1)]
-        return top_k_idx.view(-1)
+        # Rank actual detections within each class, including valid zero-confidence scores.
+        # Stable confidence order also determines which tied detections survive the limit.
+        top_k_mask = mask & (mask.cumsum(dim=0) <= top_k)
+        return sorting_idx[top_k_mask.any(dim=1)]
 
     @staticmethod
     def _change_bbox_bounds_for_image_size(
@@ -627,7 +626,7 @@ class ObjectDetectionEvalProcessor:
             if preds_scores.is_cuda and preds_scores.dtype is torch.bool
             else preds_scores.dtype
         )
-        sort_ind = torch.argsort(preds_scores.to(dtype), descending=True)
+        sort_ind = torch.argsort(preds_scores.to(dtype), descending=True, stable=True)
         tps = tps[sort_ind, :]
         fps = fps[sort_ind, :]
         preds_scores = preds_scores[sort_ind].contiguous()
