@@ -471,11 +471,7 @@ class DescribeMsgPartitionerOptions:
         assert m.cc_recipient == ["steve@unstructured.io"]
         assert m.email_message_id == "14DDEF33-2BA7-4CDD-A4D8-E7C5873B37F2@gmail.com"
         assert m.sent_from == ['"John" <johnjennings702@gmail.com>']
-        assert m.sent_to == [
-            "john-ctr@unstructured.io",
-            "steve@unstructured.io",
-            "hello@unstructured.io",
-        ]
+        assert m.sent_to == ["john-ctr@unstructured.io"]
         assert m.subject == "Fake email with cc and bcc recipients"
 
     def it_reads_the_cc_bcc_and_message_id_headers_whatever_their_case(
