@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pathlib
+import re
 from typing import Any
 from unittest.mock import patch
 
@@ -10,6 +12,7 @@ from pytest_mock import MockFixture
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ElementType, Title
+from unstructured.partition.auto import partition
 from unstructured.partition.md import partition_md
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
@@ -431,7 +434,10 @@ def test_partition_md_tables_only_differs_from_default_for_code_fence():
         "---\ntitle: Getting started\nsidebar_position: 2\ntags: [setup, install]\n---\n",
         "---\r\ntitle: Getting started\r\n---\r\n",
         "﻿---\ntitle: Getting started\n---\n",
-        "---\n# a YAML comment\nlayout: post\n...\n",
+        "---\nlayout: post\n...\n",
+        '---\ntitle: "Setup: part 1"\ndate: 2026-11-17T10:00:00Z\nurl: https://example.com/a\n---\n',
+        "---\ntags:\n  - setup\n  - install\nauthors:\n- name: Ada\n  url: https://example.com\n---\n",
+        "---\nseo:\n  title: Setup\ndescription: >-\n  How to: install\ndraft:\n---\n",
     ],
 )
 def test_partition_md_skips_yaml_front_matter(front_matter: str):
@@ -444,6 +450,58 @@ def test_partition_md_skips_yaml_front_matter(front_matter: str):
         (ElementType.NARRATIVE_TEXT, "Install the package and run the server."),
     ]
     assert elements[1].metadata.parent_id == elements[0].id
+
+
+@pytest.mark.parametrize(
+    "prefix",
+    [
+        # -- colon-bearing prose --
+        "Notice: This section describes an incident.\n",
+        "See also: the install guide.\n",
+        "note: the server restarts: save your work first.\n",
+        "summary: first line\nand the paragraph goes on.\n",
+        "warning: *do not* do this.\n\nlater: more prose.\n",
+        # -- headings, which look like YAML comments --
+        "# Incident report\n",
+        "# Incident report\nstatus: open\n",
+        "status: open\n## Impact\n",
+        # -- a heading and body text between two thematic breaks --
+        "Notice: An incident.\n\n## Impact\n\nThe service was down.\n\n",
+        "status: open\n\n## Impact\n\nThe service was down.\n\n",
+        # -- not a valid YAML mapping --
+        "title: one\ntitle: two\n",
+        "tags: [setup,\n",
+    ],
+)
+def test_partition_md_keeps_content_between_thematic_breaks(prefix: str):
+    text = f"---\n{prefix}---\n\nThe body of the document.\n"
+
+    elements = partition_md(text=text)
+
+    unchanged = partition_md(text=text, skip_front_matter=False)
+    assert [(e.category, e.text) for e in elements] == [(e.category, e.text) for e in unchanged]
+    joined = " ".join(e.text for e in elements)
+    for word in re.findall(r"\w+", prefix):
+        assert word in joined
+    assert elements[-1].text == "The body of the document."
+
+
+def test_partition_md_can_keep_front_matter():
+    text = "---\ntitle: Getting started\n---\n\nInstall the package.\n"
+
+    elements = partition_md(text=text, skip_front_matter=False)
+
+    assert [e.text for e in elements] == ["title: Getting started", "Install the package."]
+
+
+def test_auto_partition_md_forwards_skip_front_matter(tmp_path: pathlib.Path):
+    path = tmp_path / "doc.md"
+    path.write_text("---\ntitle: Getting started\n---\n\nInstall the package.\n")
+
+    assert [e.text for e in partition(str(path))] == ["Install the package."]
+    assert "title: Getting started" in [
+        e.text for e in partition(str(path), skip_front_matter=False)
+    ]
 
 
 def test_partition_md_keeps_a_leading_thematic_break_that_is_not_front_matter():
