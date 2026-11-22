@@ -96,47 +96,46 @@ def partition_via_api(
     # Note(austin) - the sdk takes the base url, but we have the full api_url
     # For consistency, just strip off the path when it's given
     base_url = api_url[:-19] if "/general/v0/general" in api_url else api_url
-    sdk = UnstructuredClient(api_key_auth=api_key, server_url=base_url)
+    with UnstructuredClient(api_key_auth=api_key, server_url=base_url) as sdk:
+        if filename is not None:
+            with open(filename, "rb") as f:
+                files = shared.Files(
+                    content=f.read(),
+                    file_name=filename,
+                )
 
-    if filename is not None:
-        with open(filename, "rb") as f:
-            files = shared.Files(
-                content=f.read(),
-                file_name=filename,
-            )
+        elif file is not None:
+            if metadata_filename is None:
+                raise ValueError(
+                    "If file is specified in partition_via_api, "
+                    "metadata_filename must be specified as well.",
+                )
+            files = shared.Files(content=file, file_name=metadata_filename)
 
-    elif file is not None:
-        if metadata_filename is None:
-            raise ValueError(
-                "If file is specified in partition_via_api, "
-                "metadata_filename must be specified as well.",
-            )
-        files = shared.Files(content=file, file_name=metadata_filename)
-
-    req = operations.PartitionRequest(
-        partition_parameters=shared.PartitionParameters(files=files, **request_kwargs)
-    )
-
-    retries_config = get_retries_config(
-        retries_connection_errors=retries_connection_errors,
-        retries_exponent=retries_exponent,
-        retries_initial_interval=retries_initial_interval,
-        retries_max_elapsed_time=retries_max_elapsed_time,
-        retries_max_interval=retries_max_interval,
-        sdk=sdk,
-    )
-
-    response = sdk.general.partition(
-        request=req,
-        retries=retries_config,
-    )
-
-    if response.status_code == 200:
-        return elements_from_json(text=response.raw_response.text)
-    else:
-        raise ValueError(
-            f"Receive unexpected status code {response.status_code} from the API.",
+        req = operations.PartitionRequest(
+            partition_parameters=shared.PartitionParameters(files=files, **request_kwargs)
         )
+
+        retries_config = get_retries_config(
+            retries_connection_errors=retries_connection_errors,
+            retries_exponent=retries_exponent,
+            retries_initial_interval=retries_initial_interval,
+            retries_max_elapsed_time=retries_max_elapsed_time,
+            retries_max_interval=retries_max_interval,
+            sdk=sdk,
+        )
+
+        response = sdk.general.partition(
+            request=req,
+            retries=retries_config,
+        )
+
+        if response.status_code == 200:
+            return elements_from_json(text=response.raw_response.text)
+        else:
+            raise ValueError(
+                f"Receive unexpected status code {response.status_code} from the API.",
+            )
 
 
 def get_retries_config(
