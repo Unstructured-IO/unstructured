@@ -21,6 +21,7 @@ def _get_indexed_match(text: str, pattern: str, index: int = 0) -> re.Match:
     for i, result in enumerate(re.finditer(pattern, text)):
         if i == index:
             regex_match = result
+            break
 
     if regex_match is None:
         raise ValueError(f"Result with index {index} was not found. The largest index was {i}.")

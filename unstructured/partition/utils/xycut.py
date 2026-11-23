@@ -32,11 +32,38 @@ def projection_by_bboxes(boxes: np.ndarray, axis: int) -> np.ndarray:
     assert axis in [0, 1]
     length = np.max(boxes[:, axis::2])
     res = np.zeros(length, dtype=np.int64)
+    if boxes.shape[0] == 1:
+        for j in range(boxes[0, axis], boxes[0, axis + 2]):
+            res[j] += 1
+        return res
+    covered_pixels = 0
+    has_negative = False
     for i in range(boxes.shape[0]):
         start = boxes[i, axis]
         end = boxes[i, axis + 2]
-        for j in range(start, end):
-            res[j] += 1
+        has_negative = has_negative or start < 0 or end < 0
+        covered_pixels += max(0, end - start)
+
+    # Sparse projections cost less to fill directly. Retain the original negative-index
+    # behavior for direct callers; page sorting supplies nonnegative coordinates.
+    if has_negative or covered_pixels <= length:
+        for i in range(boxes.shape[0]):
+            for j in range(boxes[i, axis], boxes[i, axis + 2]):
+                res[j] += 1
+        return res
+
+    # Mark interval boundaries, then accumulate once instead of visiting every pixel
+    # covered by every overlapping box. The final endpoint is outside the output.
+    for i in range(boxes.shape[0]):
+        start = boxes[i, axis]
+        end = boxes[i, axis + 2]
+        if start >= end:
+            continue
+        res[start] += 1
+        if end < length:
+            res[end] -= 1
+    for j in range(1, length):
+        res[j] += res[j - 1]
     return res
 
 
