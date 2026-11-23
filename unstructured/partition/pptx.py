@@ -49,6 +49,7 @@ from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 DETECTION_ORIGIN = "pptx"
+_MAX_CHART_CELLS = 100_000
 
 
 def _break_lines(text: str) -> str:
@@ -58,6 +59,92 @@ def _break_lines(text: str) -> str:
     element text.
     """
     return text.replace("\v", "\n")
+
+
+def _chart_cache(source: Any) -> Any:
+    """Return locally cached chart data without resolving a workbook reference."""
+    if source is None:
+        return None
+    caches = source.xpath(
+        "./c:strRef/c:strCache | ./c:numRef/c:numCache | "
+        "./c:multiLvlStrRef/c:multiLvlStrCache | ./c:strLit | ./c:numLit"
+    )
+    return caches[0] if caches else None
+
+
+def _chart_cache_extent(cache: Any, limit: int) -> int:
+    """Validate declared sizes and sparse indices before allocating chart rows."""
+    if cache is None:
+        return 0
+    extent = 0
+    for count in cache.iter(qn("c:ptCount")):
+        size = int(count.get("val"))
+        if size < 0 or size > limit:
+            raise ValueError("chart cache exceeds the output cell limit")
+        extent = max(extent, size)
+    for point in cache.iter(qn("c:pt")):
+        index = int(point.get("idx"))
+        if index < 0 or index >= limit:
+            raise ValueError("chart point index exceeds the output cell limit")
+        extent = max(extent, index + 1)
+    return extent
+
+
+def _chart_cache_points(cache: Any) -> dict[int, str]:
+    """Read explicit points by their original index, keeping empty values empty."""
+    if cache is None:
+        return {}
+    points: dict[int, str] = {}
+    for point in cache.findall(qn("c:pt")):
+        index = int(point.get("idx"))
+        if index in points:
+            raise ValueError("chart cache contains duplicate point indices")
+        value = point.find(qn("c:v"))
+        points[index] = _break_lines(value.text or "") if value is not None else ""
+    return points
+
+
+def _chart_cached_text(source: Any) -> str:
+    """Read a literal string or a locally cached single-cell chart reference."""
+    if source is None:
+        return ""
+    values = source.xpath("./c:v | ./c:strRef/c:strCache/c:pt[@idx='0']/c:v")
+    return _break_lines(values[0].text or "") if values else ""
+
+
+def _chart_plot_rows(plot: Any, cell_limit: int) -> list[list[str]]:
+    """Build a bounded category table with index-aligned cached series values."""
+    series = plot._element.findall(qn("c:ser"))
+    if not series:
+        return []
+    categories = _chart_cache(series[0].find(qn("c:cat")))
+    category_count = _chart_cache_extent(categories, cell_limit)
+    if not category_count:
+        return []
+    levels = categories.findall(qn("c:lvl")) or [categories]
+    value_caches = [_chart_cache(item.find(qn("c:val"))) for item in series]
+    row_count = max(
+        category_count, *(_chart_cache_extent(cache, cell_limit) for cache in value_caches)
+    )
+    depth = len(levels)
+    if (row_count + 1) * (depth + len(series)) > cell_limit:
+        raise ValueError("chart table exceeds the output cell limit")
+
+    labels = [_chart_cache_points(level) for level in reversed(levels)]
+    values = [_chart_cache_points(cache) for cache in value_caches]
+    headers = ["Category"] if depth == 1 else [f"Category {i + 1}" for i in range(depth)]
+    rows = [headers + [_chart_cached_text(item.find(qn("c:tx"))) for item in series]]
+    parents = [""] * (depth - 1)
+    for index in range(row_count):
+        for level, points in enumerate(labels[:-1]):
+            if index in points:
+                parents[level] = points[index]
+        row = [*parents, labels[-1].get(index, "")]
+        for points in values:
+            value = points.get(index, "")
+            row.append(str(float(value)) if value.strip() else "")
+        rows.append(row)
+    return rows
 
 
 def _group_transform(group: Any) -> tuple[int, int, int, int, int, int, int, int] | None:
@@ -155,7 +242,9 @@ def partition_pptx(
     include_slide_notes
         If True, includes the slide notes as element
     include_chart_data
-        If True, include chart titles and cached category-chart data as tables. Category labels,
+        If True, include chart titles and cached category-chart data as tables. Chart output is
+        limited to 100,000 table cells per chart; oversized or malformed plots are skipped with a
+        warning while titles and other slide content are retained. Category labels,
         series names and raw numeric values are read from the presentation; external workbooks
         are not opened. XY/scatter and bubble data are not interpreted as category tables.
     include_off_slide_shapes
@@ -241,35 +330,30 @@ class _PptxPartitioner:
         if not self._opts.include_chart_data or self._shape_is_off_slide(shape):
             return
         chart = shape.chart
-        if chart.has_title and chart.chart_title.has_text_frame:
-            title = _break_lines(chart.chart_title.text_frame.text).strip()
+        if chart.has_title:
+            chart_title = chart.chart_title
+            title = (
+                _break_lines(chart_title.text_frame.text)
+                if chart_title.has_text_frame
+                else _chart_cached_text(chart_title._element.find(qn("c:tx")))
+            ).strip()
             if title:
                 yield Title(
                     text=title,
-                    metadata=self._opts.text_metadata(),
+                    metadata=self._opts.text_metadata(category_depth=1),
                     detection_origin=DETECTION_ORIGIN,
                 )
+        remaining_cells = _MAX_CHART_CELLS
         for index in range(len(chart.plots)):
             try:
                 plot = chart.plots[index]
-                labels = plot.categories.flattened_labels
-                if not labels:
-                    continue
-                series = list(plot.series)
-                values = [item.values for item in series]
-            except (ValueError, NotImplementedError) as error:
+                rows = _chart_plot_rows(plot, remaining_cells)
+            except (TypeError, ValueError, NotImplementedError) as error:
                 logger.warning("Skipping unsupported PPTX chart plot: %s", error)
                 continue
-            depth = max(len(label) for label in labels)
-            headers = ["Category"] if depth == 1 else [f"Category {i + 1}" for i in range(depth)]
-            rows = [headers + [item.name for item in series]]
-            for index in range(max(len(labels), *(len(value) for value in values))):
-                label = list(labels[index]) if index < len(labels) else []
-                row = label + [""] * (depth - len(label))
-                for value in values:
-                    cell = value[index] if index < len(value) else None
-                    row.append("" if cell is None else str(cell))
-                rows.append(row)
+            if not rows:
+                continue
+            remaining_cells -= len(rows) * len(rows[0])
             html_table = HtmlTable.from_html_text(htmlify_matrix_of_cell_texts(rows))
             metadata = self._opts.table_metadata(
                 html_table.html if self._opts.infer_table_structure else None
