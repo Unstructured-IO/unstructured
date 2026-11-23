@@ -53,6 +53,7 @@ from unstructured.documents.elements import (
 from unstructured.partition.docx import (
     DocxPartitionerOptions,
     _DocxPartitioner,
+    _row_grid_width,
     partition_docx,
     register_picture_partitioner,
 )
@@ -3030,3 +3031,204 @@ def test_partition_docx_skips_malformed_row_cells():
     assert isinstance(elements, list)
     assert all(hasattr(el, "text") for el in elements)
     assert any(el.text.strip() for el in elements), "Expected some non-empty extracted text"
+
+
+def test_partition_docx_very_long_vertical_merge_keeps_every_row(tmp_path):
+    """A vertically merged cell spanning ~1500 rows must not lose the rows after ~1000.
+
+    python-docx resolves each `vMerge="continue"` cell by recursing to the cell above it, one
+    stack frame per merged row, so `row.cells` used to raise RecursionError inside
+    `_convert_table_to_html` on a long merge. The guard swallowed it and emitted empty cells,
+    silently dropping the remaining rows from `text_as_html` (the plain `Table.text` was never
+    affected). The grid walk now resolves the merge iteratively.
+    """
+    n_rows = 1500
+    document = docx.Document()
+    table = document.add_table(rows=n_rows, cols=2)
+    for i in range(n_rows):
+        table.cell(i, 1).text = f"side-{i}"
+    table.cell(0, 0).text = "MERGEDHEAD"
+
+    # -- merge column 0 across all rows via raw XML; python-docx's own merge helpers walk the
+    # -- span with the same recursion this regression is about --
+    for i, row in enumerate(table.rows):
+        tc = row._tr.tc_lst[0]
+        vmerge = parse_xml(
+            f'<w:vMerge {nsdecls("w")} w:val="restart"/>'
+            if i == 0
+            else f"<w:vMerge {nsdecls('w')}/>"
+        )
+        tc.get_or_add_tcPr().append(vmerge)
+
+    docx_path = tmp_path / "long-vmerge.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    table_element = next(e for e in elements if isinstance(e, Table))
+
+    html = table_element.metadata.text_as_html
+    assert html is not None
+    assert html.count('rowspan="1500"') == 1
+    assert html.count("MERGEDHEAD") == 1
+    # -- check exact ordered side-cell values, not substrings ("side-1" also matches side-10) --
+    side_cells = [
+        c.strip()
+        for c in re.findall(r"<td[^>]*>(.*?)</td>", html, re.DOTALL)
+        if c.strip().startswith("side-")
+    ]
+    assert side_cells == [f"side-{i}" for i in range(n_rows)]
+
+
+def test_partition_docx_vmerge_origin_not_reused_across_column_gap(tmp_path):
+    """A vMerge origin must not survive a row that omits its column (gridBefore/After).
+
+    A resume cell (vMerge="continue") with no origin in the immediately preceding row is
+    malformed; it must emit an empty position (like the plain-text walkers), never a stale
+    origin from rows above and never its own text.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    table.cell(0, 0).text = "OLD"
+    table.cell(0, 1).text = "A0"
+    table.cell(1, 1).text = "MID"
+    table.cell(2, 0).text = "CURRENT"
+    table.cell(2, 1).text = "A2"
+    # -- row 0 col 0 is the merge origin; row 2 col 0 is an orphan continuation --
+    table.rows[0]._tr.tc_lst[0].get_or_add_tcPr().append(
+        parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>')
+    )
+    table.rows[2]._tr.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+    # -- row 1 omits column 0 (leading gap) --
+    tr1 = table.rows[1]._tr
+    tr1.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    tr1.remove(tr1.tc_lst[0])
+    docx_path = tmp_path / "gap.docx"
+    document.save(str(docx_path))
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    html = next(e for e in elements if isinstance(e, Table)).metadata.text_as_html
+    # -- The orphan continuation must not reuse the stale "OLD" origin (the regression),
+    # -- and must not surface its own text either: the plain-text and emphasis walkers skip
+    # -- every vMerge="continue" tc, so HTML emits an empty position to stay consistent.
+    assert html.count("OLD") == 1
+    assert "CURRENT" not in html
+    # -- third row first cell is empty (self-closing <td/>); the row still has both positions --
+    assert re.search(r"<tr><td\s*/><td>A2</td></tr>", html)
+
+
+def test_partition_docx_unresolved_spanned_continuation_clears_stale_origins(tmp_path):
+    """An unresolved multi-column continuation must not leave a stale origin behind.
+
+    A `vMerge="continue"` cell spanning several grid columns whose starting column has
+    no origin is malformed: it emits blanks for every covered column. Those columns
+    must all have their tracked origins cleared, otherwise a later orphan continuation
+    in one of them resolves to text from several rows above. This is the multi-column
+    extension of the single-column gap case in
+    `test_partition_docx_vmerge_origin_not_reused_across_column_gap`.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    # -- set texts while cells are addressable via the grid API --
+    table.cell(0, 0).text = "OLD"
+    table.cell(0, 1).text = "A0"
+    table.cell(1, 0).text = "B0"
+    table.cell(1, 1).text = "B1"
+    table.cell(2, 0).text = "SHOULD_NOT_APPEAR"
+    table.cell(2, 1).text = "A2"
+
+    # -- row 0 omits col0 (gridBefore=1); its remaining tc holds OLD and starts a merge. --
+    r0 = table.rows[0]._tr
+    r0.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    r0.remove(r0.tc_lst[1])
+    r0.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>'))
+
+    # -- row 1 is a two-column continuation (gridSpan=2) starting at col0, which has no
+    # -- origin; col1 still holds the OLD origin. Both columns must be cleared. --
+    r1 = table.rows[1]._tr
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="2"/>'))
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+    r1.remove(r1.tc_lst[1])
+
+    # -- row 2 omits col0; its col1 continuation has no fresh origin and must not get OLD. --
+    r2 = table.rows[2]._tr
+    r2.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    r2.remove(r2.tc_lst[1])
+    r2.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+
+    docx_path = tmp_path / "spanned-orphan.docx"
+    document.save(str(docx_path))
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    html = next(e for e in elements if isinstance(e, Table)).metadata.text_as_html
+    # -- OLD appears only once, in its origin row; the later orphan continuation is blank. --
+    assert html.count("OLD") == 1
+    assert "SHOULD_NOT_APPEAR" not in html
+
+
+def test_partition_docx_resolved_spanned_continuation_clears_stale_origins(tmp_path):
+    """A resolved multi-column continuation must update every covered column's origin.
+
+    A `vMerge="continue"` cell spanning several grid columns whose starting column DOES
+    have an origin emits that origin across its whole span. Every covered column must be
+    tracked to that same origin: a non-starting column would otherwise keep an origin
+    from several rows above, and a later orphan continuation there re-emits stale text.
+    This is the resolved counterpart of
+    `test_partition_docx_unresolved_spanned_continuation_clears_stale_origins`.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    # -- set texts while cells are addressable via the grid API --
+    table.cell(0, 0).text = "LEFT"
+    table.cell(0, 1).text = "OLD"
+    table.cell(1, 0).text = "B0"
+    table.cell(1, 1).text = "B1"
+    table.cell(2, 0).text = "C0"
+    table.cell(2, 1).text = "C1"
+
+    # -- row 0: col0 and col1 each start their own vertical merge (LEFT and OLD). --
+    r0 = table.rows[0]._tr
+    r0.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>'))
+    r0.tc_lst[1].get_or_add_tcPr().append(parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>'))
+
+    # -- row 1: one tc spanning both columns (gridSpan=2), a continuation starting at
+    # -- col0. col0 has origin LEFT, so this is RESOLVED and emits LEFT in both positions;
+    # -- both columns must now track LEFT, not leave col1 pointing at the older OLD. --
+    r1 = table.rows[1]._tr
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="2"/>'))
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+    r1.remove(r1.tc_lst[1])
+
+    # -- row 2 omits col0; its col1 continuation must not pick up the stale OLD. --
+    r2 = table.rows[2]._tr
+    r2.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    r2.remove(r2.tc_lst[1])
+    r2.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+
+    docx_path = tmp_path / "resolved-spanned.docx"
+    document.save(str(docx_path))
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    html = next(e for e in elements if isinstance(e, Table)).metadata.text_as_html
+    # -- OLD appears only in its own origin row; the later continuation is blank. --
+    assert html.count("OLD") == 1
+    # -- row 1 emits LEFT across both spanned columns; row 2's col1 is an empty position. --
+    assert html.count("LEFT") == 2
+    assert re.search(r"<tr><td\s*/></tr>", html)
+
+
+def test_row_grid_width_normalizes_nonpositive_grid_span():
+    """_row_grid_width must charge the same positions the HTML iterator emits.
+
+    A gridSpan of 0 or less still expands to one position in iter_row_cells, so the
+    budget guard must count one position too; otherwise many such cells bypass
+    DOCX_TABLE_MAX_CELLS.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=1, cols=1)
+    tc = table.rows[0]._tr.tc_lst[0]
+    tc_pr = tc.get_or_add_tcPr()
+    tc_pr.append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="0"/>'))
+    assert _row_grid_width(table.rows[0]) == 1
+    # -- select the property by qualified name, not by child index, so the test
+    # -- cannot silently mutate a different tcPr child if the XML layout changes. --
+    (grid_span,) = tc_pr.findall(qn("w:gridSpan"))
+    grid_span.set(qn("w:val"), "-2")
+    assert grid_span.get(qn("w:val")) == "-2"
+    assert _row_grid_width(table.rows[0]) == 1

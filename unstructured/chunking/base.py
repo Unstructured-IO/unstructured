@@ -645,6 +645,7 @@ class PreChunkBuilder:
         self._opts = opts
         self._separator_len = len(opts.text_separator)
         self._elements: list[Element] = []
+        self._contains_table = False
 
         # -- overlap is only between pre-chunks so starts empty --
         self._overlap_prefix: str = ""
@@ -655,6 +656,7 @@ class PreChunkBuilder:
 
     def add_element(self, element: Element) -> None:
         """Add `element` to this section."""
+        self._contains_table = self._contains_table or _element_is_table_family(element)
         # -- do not prefix a table-only pre-chunk with narrative overlap from the prior chunk --
         if (
             self._opts.isolate_table
@@ -727,7 +729,7 @@ class PreChunkBuilder:
                 return len(self._elements) == 0
 
             # -- no non-table element may share a pre-chunk with a `Table` --
-            if _elements_contain_table_family(self._elements):
+            if self._contains_table:
                 return False
 
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
@@ -757,6 +759,7 @@ class PreChunkBuilder:
         """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
         self._overlap_prefix = overlap_prefix
         self._elements.clear()
+        self._contains_table = False
         self._text_segments = [overlap_prefix] if overlap_prefix else []
         self._text_len = len(overlap_prefix)
 
