@@ -78,13 +78,13 @@ from unstructured.partition.strategies import (
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
-    OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
     OCRMode,
     PartitionStrategy,
 )
+from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import patch_psparser
 from unstructured.telemetry import (
@@ -309,8 +309,8 @@ def partition_pdf_or_image(
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
     pdfminer_word_margin: Optional[float] = 0.185,
-    ocr_agent: str = OCR_AGENT_TESSERACT,
-    table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    ocr_agent: Optional[str] = None,
+    table_ocr_agent: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -351,7 +351,7 @@ def partition_pdf_or_image(
                     "Skipping PDFMiner text extraction."
                 )
 
-            elif pdf_strategy_can_resolve_to_fast(strategy):
+            elif pdf_strategy_can_resolve_to_fast(strategy, ocr_agent=ocr_agent):
                 extracted_elements = extractable_elements(
                     filename=filename,
                     file=rewind_if_spooled(file),
@@ -387,6 +387,7 @@ def partition_pdf_or_image(
         infer_table_structure=infer_table_structure,
         extract_images_in_pdf=extract_images_in_pdf,
         extract_image_block_types=extract_image_block_types,
+        ocr_agent=ocr_agent,
     )
     set_partition_strategy_used(strategy)
 
@@ -1250,8 +1251,8 @@ def _partition_pdf_or_image_local(
     pdf_hi_res_max_pages: Optional[int] = None,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
-    ocr_agent: str = OCR_AGENT_TESSERACT,
-    table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    ocr_agent: Optional[str] = None,
+    table_ocr_agent: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -1281,6 +1282,11 @@ def _partition_pdf_or_image_local(
         process_data_with_pdfminer,
         process_file_with_pdfminer,
     )
+
+    if ocr_agent is None:
+        ocr_agent = OCRAgent.get_configured_ocr_agent_module()
+    if table_ocr_agent is None and infer_table_structure:
+        table_ocr_agent = OCRAgent.get_configured_ocr_agent_module()
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:

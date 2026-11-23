@@ -70,6 +70,11 @@ class OCRAgent(ABC):
     def is_text_sorted(self) -> bool:
         pass
 
+    @classmethod
+    def get_configured_ocr_agent_module(cls) -> str:
+        """Get the fully-qualified class name of the configured OCR agent."""
+        return cls._get_ocr_agent_cls_qname()
+
     @staticmethod
     def _get_ocr_agent_cls_qname() -> str:
         """Get the fully-qualified class name of the configured OCR agent.

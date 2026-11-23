@@ -2778,3 +2778,64 @@ def test_partition_pdf_hi_res_matches_a_failed_full_pass_when_a_later_page_fails
         elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
 
     assert [e.to_dict() for e in elements] == [e.to_dict() for e in expected]
+
+
+def test_partition_pdf_hi_res_defaults_to_env_ocr_agent(
+    monkeypatch, mock_ocr_get_instance, mocker, tmp_path
+):
+    import numpy as np
+    from PIL import Image
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
+    from unstructured_inference.inference.layoutelement import LayoutElements
+    from unstructured_inference.models import tables
+
+    from unstructured.documents.elements import ElementType
+    from unstructured.partition.pdf_image import ocr as pdf_ocr
+
+    monkeypatch.setenv("OCR_AGENT", OCR_AGENT_PADDLE)
+    monkeypatch.setattr(
+        strategies,
+        "dependency_exists",
+        lambda dep: dep in {"unstructured_inference", "paddle", "unstructured_paddleocr"},
+    )
+
+    img_path = tmp_path / "page1.png"
+    Image.new("RGB", (100, 100)).save(img_path)
+
+    page = mock.MagicMock(spec=PageLayout)
+    page.elements_array = LayoutElements(
+        element_coords=np.array([[0.0, 0.0, 50.0, 50.0]]),
+        texts=np.array(["sample"]),
+        element_class_ids=np.array([0]),
+        element_class_id_map={0: ElementType.NARRATIVE_TEXT},
+    )
+    page.image_metadata = {"width": 100, "height": 100, "format": "PNG"}
+    doc_layout = mock.MagicMock(spec=DocumentLayout)
+    doc_layout.pages = [page]
+
+    mocker.patch(
+        "unstructured_inference.inference.layout.process_file_with_model",
+        return_value=doc_layout,
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.pdfminer_processing.process_file_with_pdfminer",
+        return_value=([], []),
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.pdfminer_processing.merge_inferred_with_extracted_layout",
+        return_value=doc_layout,
+    )
+    mocker.patch.object(pdf_ocr, "convert_pdf_to_image", return_value=[str(img_path)])
+    mocker.patch.object(tables, "load_agent")
+    mocker.patch.object(tables, "tables_agent", mock.MagicMock())
+
+    pdf.partition_pdf(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        strategy=PartitionStrategy.HI_RES,
+        infer_table_structure=True,
+    )
+
+    assert mock_ocr_get_instance.call_args_list == [
+        mocker.call(ocr_agent_module=OCR_AGENT_PADDLE, language="en"),
+        mocker.call(ocr_agent_module=OCR_AGENT_PADDLE, language="en"),
+    ]
