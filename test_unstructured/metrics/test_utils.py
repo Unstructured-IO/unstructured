@@ -50,6 +50,32 @@ def test_mean_ignores_unmeasured_scores():
     assert _mean([1.0, 2.0]) == 1.5
 
 
+@pytest.mark.parametrize(
+    ("stat", "scores", "expected"),
+    [
+        (_mean, [1.4, 1.6], 2),
+        (_stdev, [1, 2, 3], 1),
+        # stdev([1,2,3]) is already exactly 1.0, so use a raw stdev that differs
+        # from its integer rounding to prove rounding=0 is not ignored.
+        (_stdev, [1, 2, 4], 2),
+        (_pstdev, [1, 2, 3], 1),
+    ],
+)
+def test_rounding_zero_rounds_to_integer(stat, scores, expected):
+    """rounding=0 is a documented-valid value: round to integer, not 'no rounding'."""
+    assert stat(scores, rounding=0) == expected
+
+
+def test_rounding_default_and_none_preserve_unrounded_behavior():
+    """Controls: rounding=3 rounds to 3 dp; rounding=None returns the raw value."""
+    assert _mean([1.4, 1.6], rounding=3) == 1.5
+    assert _mean([1.4, 1.6], rounding=None) == 1.5
+    assert _stdev([1, 2, 3], rounding=3) == 1.0
+    assert _stdev([1, 2, 3], rounding=None) == 1.0
+    assert _pstdev([1, 2, 3], rounding=3) == 0.816
+    assert _pstdev([1, 2, 3], rounding=None) == 0.816496580927726
+
+
 def test_read_text_file_decodes_utf8_regardless_of_locale(tmp_path, monkeypatch):
     """Ground truths are decoded as UTF-8, like the JSON output they are scored against.
 
