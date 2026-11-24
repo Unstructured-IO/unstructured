@@ -199,7 +199,7 @@ required-environments = [
     "sys_platform == 'linux' and platform_machine == 'x86_64'",
     "sys_platform == 'linux' and platform_machine == 'aarch64'",
     "sys_platform == 'darwin' and platform_machine == 'arm64'",
-    "sys_platform == 'win32'",
+    "sys_platform == 'win32' and platform_machine == 'AMD64'",
 ]
 constraint-dependencies = [
     # Temporary pin for Azure public-container ingest regression in adlfs 2026.4.0 stack
