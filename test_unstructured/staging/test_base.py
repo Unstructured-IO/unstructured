@@ -287,6 +287,47 @@ def test_serialized_deserialize_elements_to_json(tmpdir: str):
     assert elements == new_elements_text
 
 
+def test_elements_from_dicts_keeps_element_embeddings():
+    elements = [
+        Title(text="Intro", element_id="1", embeddings=[0.1, 0.2, 0.3]),
+        NarrativeText(text="Hello there.", element_id="2", embeddings=[0.4, 0.5, 0.6]),
+        TableChunk(text="Region Total", element_id="3", embeddings=[0.7, 0.8, 0.9]),
+        CheckBox(checked=True, element_id="4"),
+    ]
+    element_dicts = base.elements_to_dicts(elements)
+
+    rehydrated = base.elements_from_dicts(element_dicts)
+
+    assert [getattr(e, "embeddings", None) for e in rehydrated] == [
+        [0.1, 0.2, 0.3],
+        [0.4, 0.5, 0.6],
+        [0.7, 0.8, 0.9],
+        None,
+    ]
+    assert base.elements_to_dicts(rehydrated) == element_dicts
+
+
+def test_elements_from_json_keeps_element_embeddings():
+    elements = [
+        Title(text="Intro", embeddings=[0.1, 0.2, 0.3]),
+        NarrativeText(text="Hello there.", embeddings=[0.4, 0.5, 0.6]),
+    ]
+
+    assert base.elements_from_json(text=base.elements_to_json(elements)) == elements
+
+
+def test_orig_elements_keep_their_embeddings_when_chunk_metadata_is_rehydrated():
+    orig_elements = [
+        Title(text="Intro", embeddings=[0.1, 0.2, 0.3]),
+        NarrativeText(text="Hello there.", embeddings=[0.4, 0.5, 0.6]),
+    ]
+    metadata = ElementMetadata(orig_elements=orig_elements)
+
+    rehydrated = ElementMetadata.from_dict(metadata.to_dict())
+
+    assert rehydrated.orig_elements == orig_elements
+
+
 def test_read_and_write_json_with_encoding():
     elements = partition_text("example-docs/fake-text-utf-16-be.txt")
 
