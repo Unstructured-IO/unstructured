@@ -474,6 +474,85 @@ def test_partition_pptx_orders_group_children_by_their_position_on_the_slide(
     ]
 
 
+def _add_rotated_and_unrotated_boxes(slide: Any) -> tuple[Any, Any]:
+    """An unrotated box at top 0.25in and a 180 degree rotated box at top 2in, in child units."""
+    unrotated = slide.shapes.add_textbox(Inches(0), Inches(0.25), Inches(1), Inches(0.5))
+    unrotated.text_frame.text = "Unrotated, higher on the slide."
+    rotated = slide.shapes.add_textbox(Inches(0), Inches(2), Inches(1), Inches(0.5))
+    rotated.text_frame.text = "Rotated, lower on the slide."
+    rotated.rotation = 180
+    return unrotated, rotated
+
+
+def test_partition_pptx_orders_a_rotated_child_under_nonuniform_scaling_by_slide_position(
+    tmp_path: pathlib.Path,
+):
+    """A group moved down 3in and scaled 2x across puts the boxes at 3.25in and 5in on the slide.
+
+    Sorted by child coordinates the rotated box (2in) would come before the unrotated one (3.25in
+    once mapped), although it sits lower.
+    """
+    filename = str(tmp_path / "test-group-nonuniform-rotated-reading-order.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+    unrotated, rotated = _add_rotated_and_unrotated_boxes(slide)
+
+    _add_group(
+        slide.shapes._spTree,
+        [rotated._element, unrotated._element],
+        offset=(Inches(0), Inches(3)),
+        extent=(Inches(8), Inches(4)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(4), Inches(4)),
+        shape_id=100,
+    )
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == [
+        "Unrotated, higher on the slide.",
+        "Rotated, lower on the slide.",
+    ]
+
+
+def test_partition_pptx_orders_a_rotated_child_under_nested_nonuniform_scaling_by_slide_position(
+    tmp_path: pathlib.Path,
+):
+    """The accumulated scale of nested groups is nonuniform although the inner group's is not."""
+    filename = str(tmp_path / "test-nested-group-nonuniform-rotated-reading-order.pptx")
+    presentation = pptx.Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+    unrotated, rotated = _add_rotated_and_unrotated_boxes(slide)
+
+    inner_group = _add_group(
+        slide.shapes._spTree,
+        [rotated._element, unrotated._element],
+        offset=(Inches(0), Inches(0)),
+        extent=(Inches(4), Inches(4)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(4), Inches(4)),
+        shape_id=101,
+    )
+    _add_group(
+        slide.shapes._spTree,
+        [inner_group],
+        offset=(Inches(0), Inches(3)),
+        extent=(Inches(8), Inches(4)),
+        child_offset=(Inches(0), Inches(0)),
+        child_extent=(Inches(4), Inches(4)),
+        shape_id=100,
+    )
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert [e.text for e in elements] == [
+        "Unrotated, higher on the slide.",
+        "Rotated, lower on the slide.",
+    ]
+
+
 def test_partition_pptx_excludes_group_children_that_map_off_the_slide(
     tmp_path: pathlib.Path,
 ):

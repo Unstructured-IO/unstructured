@@ -368,8 +368,9 @@ class _PptxPartitioner:
 
         def sort_key(shape: BaseShape) -> tuple[float, float]:
             # -- a grouped shape is positioned in its group's child coordinates, so order it by
-            # -- where the group transform puts it on the slide --
-            left, top, _, _ = self._shape_slide_box(cast(Shape, shape))
+            # -- where the group transform puts its unrotated origin on the slide, the same key an
+            # -- ungrouped shape gets --
+            left, top = self._shape_slide_origin(cast(Shape, shape))
             return top or 0, left or 0
 
         return slide.shapes.title, sorted(iter_shapes(slide.shapes), key=sort_key)
@@ -398,6 +399,47 @@ class _PptxPartitioner:
         visible_height = max(0, min(top + height, slide_height) - max(top, 0))
         return visible_width * visible_height < 0.5 * width * height
 
+    def _shape_slide_origin(self, shape: Shape) -> tuple[float | None, float | None]:
+        """The top-left of `shape`'s unrotated box in slide coordinates.
+
+        This is the position reading order is sorted by, so every shape, rotated or not, keeps one
+        coordinate system. A shape outside any group, or in a group without a usable transform,
+        keeps its own coordinates.
+        """
+        left = cast("int | None", shape.left)
+        top = cast("int | None", shape.top)
+        mapping = self._group_mapping(shape)
+        if left is None or top is None or mapping is None:
+            return left, top
+        scale_x, scale_y, offset_x, offset_y = mapping
+        return offset_x + left * scale_x, offset_y + top * scale_y
+
+    @staticmethod
+    def _group_mapping(shape: Shape) -> tuple[float, float, float, float] | None:
+        """`(scale_x, scale_y, offset_x, offset_y)` taking `shape`'s coordinates onto the slide.
+
+        Walks up the group hierarchy and composes each group's translation and scaling. Returns
+        `None` for a shape outside any group and when a group does not provide a usable transform.
+        """
+        scale_x, scale_y = 1.0, 1.0
+        offset_x, offset_y = 0.0, 0.0
+        element = shape._element
+        grouped = False
+        while (parent := element.getparent()) is not None and parent.tag == qn("p:grpSp"):
+            transform = _group_transform(parent)
+            if transform is None:
+                return None
+            off_x, off_y, ext_cx, ext_cy, ch_off_x, ch_off_y, ch_ext_cx, ch_ext_cy = transform
+            group_scale_x = ext_cx / ch_ext_cx
+            group_scale_y = ext_cy / ch_ext_cy
+            offset_x = off_x + (offset_x - ch_off_x) * group_scale_x
+            offset_y = off_y + (offset_y - ch_off_y) * group_scale_y
+            scale_x *= group_scale_x
+            scale_y *= group_scale_y
+            grouped = True
+            element = parent
+        return (scale_x, scale_y, offset_x, offset_y) if grouped else None
+
     def _shape_slide_box(
         self, shape: Shape
     ) -> tuple[float | None, float | None, float | None, float | None]:
@@ -418,26 +460,10 @@ class _PptxPartitioner:
         if shape_left is None or shape_top is None:
             return shape_left, shape_top, shape_width, shape_height
 
-        scale_x, scale_y = 1.0, 1.0
-        offset_x, offset_y = 0.0, 0.0
-        element = shape._element
-        grouped = False
-        while (parent := element.getparent()) is not None and parent.tag == qn("p:grpSp"):
-            transform = _group_transform(parent)
-            if transform is None:
-                return shape_left, shape_top, shape_width, shape_height
-            off_x, off_y, ext_cx, ext_cy, ch_off_x, ch_off_y, ch_ext_cx, ch_ext_cy = transform
-            group_scale_x = ext_cx / ch_ext_cx
-            group_scale_y = ext_cy / ch_ext_cy
-            offset_x = off_x + (offset_x - ch_off_x) * group_scale_x
-            offset_y = off_y + (offset_y - ch_off_y) * group_scale_y
-            scale_x *= group_scale_x
-            scale_y *= group_scale_y
-            grouped = True
-            element = parent
-
-        if not grouped:
+        mapping = self._group_mapping(shape)
+        if mapping is None:
             return shape_left, shape_top, shape_width, shape_height
+        scale_x, scale_y, offset_x, offset_y = mapping
         left = offset_x + shape_left * scale_x
         top = offset_y + shape_top * scale_y
         if shape_width is None or shape_height is None:
