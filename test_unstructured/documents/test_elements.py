@@ -27,6 +27,7 @@ from unstructured.documents.elements import (
     DataSourceMetadata,
     Element,
     ElementMetadata,
+    Image,
     Points,
     Text,
     Title,
@@ -58,6 +59,32 @@ def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic
 def test_Text_is_JSON_serializable():
     # -- This shold run without an error --
     json.dumps(Text(text="hello there!", element_id=None).to_dict())
+
+
+def test_Image_text_none_str_returns_empty_string():
+    # https://github.com/Unstructured-IO/unstructured/issues/4084
+    # -- `Image` elements whose `text` was normalized to `None` should still
+    # -- render as a string when `__str__` is called.
+    image = Image(text=None)
+    assert image.text == ""
+    assert str(image) == ""
+
+
+@pytest.mark.parametrize("element_cls", [Text, Image])
+@pytest.mark.parametrize("text", [None, "", "hello", " \u2603 ", "None"])
+def test_Text_normalizes_only_none(element_cls, text):
+    element = element_cls(text=text)
+    expected = "" if text is None else text
+    assert element.text == expected
+    assert str(element) == expected
+    assert element.to_dict()["text"] == expected
+
+
+def test_Image_str_handles_later_none_assignment_without_mutation():
+    image = Image(text="hello")
+    image.text = None
+    assert str(image) == ""
+    assert image.text is None
 
 
 @pytest.mark.parametrize(
@@ -771,6 +798,24 @@ class DescribeElementMetadata:
                 f"ElementMetadata field `.{field_name}` does not have a consolidation strategy."
                 f" Add one in `ConsolidationStrategy.field_consolidation_strategies()."
             )
+
+
+def test_hash_ids_are_unique_when_a_page_is_not_contiguous_in_the_element_list():
+    # GIVEN -- a list whose page numbers are not sorted, as happens when elements of two
+    # partitions of the same document are combined
+    elements: list[Element] = [
+        Text(text="Section", metadata=ElementMetadata(page_number=1)),
+        Text(text="Interlude", metadata=ElementMetadata(page_number=2)),
+        Text(text="Section", metadata=ElementMetadata(page_number=1)),
+    ]
+
+    # WHEN
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+
+    # THEN -- the third element is the second element of page 1 and must not collide with the
+    # first element of page 1, which also says "Section"
+    ids = [element.id for element in updated_elements]
+    assert len(ids) == len(set(ids)), "Recalculated IDs must be unique."
 
 
 def test_hash_ids_are_unique_for_duplicate_elements():

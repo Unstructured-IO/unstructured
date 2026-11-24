@@ -13,10 +13,27 @@ from langdetect import (  # pyright: ignore[reportMissingTypeStubs]
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     TESSERACT_LANGUAGES_AND_CODES,
     TESSERACT_LANGUAGES_SPLITTER,
 )
+
+if env_config.UNSTRUCTURED_USE_LANGDETECT_RS:
+    try:
+        from langdetect_rs import (  # pyright: ignore[reportMissingTypeStubs]
+            DetectorFactory,
+            detect_langs,  # pyright: ignore[reportUnknownVariableType]
+            lang_detect_exception,
+        )
+    except ModuleNotFoundError as e:
+        if e.name != "langdetect_rs":
+            raise
+        logger.warning(
+            "UNSTRUCTURED_USE_LANGDETECT_RS is set but langdetect-rs is not installed, "
+            "falling back to langdetect"
+        )
+logger.debug(f"language detection backend: {detect_langs.__module__}")
 
 _ASCII_RE = re.compile(r"^[\x00-\x7F]+$")
 
@@ -417,6 +434,7 @@ def detect_languages(
     """
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
+    An empty language list uses automatic detection, like the default None.
 
     For short ASCII text (fewer than 5 words), language detection is unreliable. By
     default such text is assigned English (["eng"]). Use ``language_fallback`` to
@@ -425,8 +443,12 @@ def detect_languages(
     responsible for returning valid ISO 639-3 codes (e.g. "eng", "fra"); invalid
     entries are filtered out and a warning is logged; if none remain, this function
     returns None.
+
+    The short-text rule applies only when ``languages`` contains "auto". When the
+    caller passes explicit languages, those are returned for short text too, and
+    ``language_fallback`` is not called.
     """
-    if languages is None:
+    if languages is None or languages == []:
         languages = ["auto"]
     if not isinstance(languages, list):
         raise TypeError(
@@ -443,7 +465,8 @@ def detect_languages(
 
     # If text contains special characters (like ñ, å, or Korean/Mandarin/etc.) it will NOT default
     # to English. It will default to English if text is only ascii characters and is short.
-    if _ASCII_RE.match(text) and len(text.split()) < 5:
+    # Only detection is unreliable on short text, so languages the user provided still apply.
+    if "auto" in languages and _ASCII_RE.match(text) and len(text.split()) < 5:
         if language_fallback is not None:
             return _validate_fallback_languages(language_fallback(text))
         logger.debug(f'short text: "{text}". Defaulting to English.')

@@ -230,7 +230,7 @@ class FileType(enum.Enum):
     def partitioner_shortname(self) -> str | None:
         """Familiar name of partitioner, like "image" for file-types that use `partition_image()`.
 
-        One use is to determine whether a file-type is one of the five image types, all of which
+        One use is to determine whether a file-type is one of the image types, all of which
         are processed by `partition_image()`.
 
         `None` for file-types that are not partitionable, although `.is_partitionable` is the
@@ -347,7 +347,15 @@ class FileType(enum.Enum):
         "audio/mp4",
         ["audio/x-m4a"],
     )
-    MD = ("md", "md", ["markdown"], "md", [".md"], "text/markdown", ["text/x-markdown"])
+    MD = (
+        "md",
+        "md",
+        ["markdown"],
+        "md",
+        [".md", ".markdown"],
+        "text/markdown",
+        ["text/x-markdown"],
+    )
     MP3 = (
         "mp3",
         "audio",
@@ -510,6 +518,15 @@ class FileType(enum.Enum):
         [".webm"],
         "audio/webm",
         [],  # Do not alias video/webm: WebM is a container; this type is for audio-only.
+    )
+    WEBP = (
+        "webp",
+        "image",
+        ["unstructured_inference"],
+        "image",
+        [".webp"],
+        "image/webp",
+        cast(list[str], []),
     )
     XLS = (
         "xls",

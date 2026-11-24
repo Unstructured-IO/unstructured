@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pytest
 from PIL import Image
@@ -5,7 +7,9 @@ from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.pdf_image.analysis.bbox_visualisation import (
+    AnalysisDrawer,
     TextAlignment,
     get_bbox_text_size,
     get_bbox_thickness,
@@ -13,7 +17,14 @@ from unstructured.partition.pdf_image.analysis.bbox_visualisation import (
     get_rgb_color,
     get_text_color,
 )
-from unstructured.partition.pdf_image.analysis.layout_dump import ObjectDetectionLayoutDumper
+from unstructured.partition.pdf_image.analysis.layout_dump import (
+    ObjectDetectionLayoutDumper,
+    OCRLayoutDumper,
+)
+from unstructured.partition.pdf_image.analysis.tools import (
+    render_bboxes_for_file,
+    save_analysis_artifiacts,
+)
 
 
 @pytest.mark.parametrize("color", ["red", "green", "blue", "yellow", "black", "white"])
@@ -152,3 +163,85 @@ def test_od_document_layout_dump():
     # check OD model classes are attached but do not depend on a specific model instance
     assert "object_detection_classes" in od_layout_dump
     assert len(od_layout_dump["object_detection_classes"]) > 0
+
+
+# the pages of layout-parser-paper-fast.pdf are US Letter (8.5 x 11 in), so 612 x 792 px at 72 dpi
+@pytest.mark.parametrize(
+    ("pdf_image_dpi", "expected_size"),
+    [(72, (612, 792)), (144, (1224, 1584))],
+)
+def test_analysis_drawer_renders_pdf_pages_at_pdf_image_dpi(
+    pdf_image_dpi: int, expected_size: tuple[int, int], tmp_path: Path
+):
+    drawer = AnalysisDrawer(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        is_image=False,
+        save_dir=tmp_path,
+        pdf_image_dpi=pdf_image_dpi,
+    )
+
+    page_sizes = [page_image.size for page_image in drawer.load_source_image()]
+
+    assert page_sizes == [expected_size, expected_size]
+
+
+def test_analysis_drawer_renders_pdf_pages_at_env_default_dpi_when_dpi_is_not_given(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+):
+    monkeypatch.setenv("PDF_RENDER_DPI", "100")
+    drawer = AnalysisDrawer(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        is_image=False,
+        save_dir=tmp_path,
+    )
+
+    page_sizes = [page_image.size for page_image in drawer.load_source_image()]
+
+    assert page_sizes == [(850, 1100), (850, 1100)]
+
+
+def test_analysis_drawer_renders_password_protected_pdf(tmp_path: Path):
+    drawer = AnalysisDrawer(
+        filename=example_doc_path("pdf/password.pdf"),
+        is_image=False,
+        save_dir=tmp_path,
+        pdf_image_dpi=72,
+        password="password",
+    )
+
+    assert len(list(drawer.load_source_image())) == 1
+
+
+def test_analysis_artifacts_are_rendered_at_pdf_image_dpi(tmp_path: Path):
+    """Both the partition-time and the deferred rendering respect `pdf_image_dpi`."""
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    ocr_layout_dumper = OCRLayoutDumper()
+    ocr_layout_dumper.add_ocred_page([])
+    ocr_layout_dumper.add_ocred_page([])
+
+    save_analysis_artifiacts(
+        ocr_layout_dumper,
+        filename=filename,
+        is_image=False,
+        analyzed_image_output_dir_path=str(tmp_path),
+        draw_caption=False,
+        pdf_image_dpi=72,
+    )
+    render_bboxes_for_file(
+        filename=filename,
+        analyzed_image_output_dir_path=str(tmp_path),
+        renders_output_dir_path=str(tmp_path / "renders"),
+        draw_caption=False,
+        pdf_image_dpi=72,
+    )
+
+    bboxes_dir = tmp_path / "analysis" / "layout-parser-paper-fast" / "bboxes"
+    deferred_bboxes_dir = tmp_path / "renders" / "analysis" / "layout-parser-paper-fast" / "bboxes"
+    for page_render in (
+        bboxes_dir / "page1_layout_ocr.png",
+        bboxes_dir / "page2_layout_ocr.png",
+        deferred_bboxes_dir / "page1_layout_ocr.png",
+        deferred_bboxes_dir / "page2_layout_ocr.png",
+    ):
+        with Image.open(page_render) as image:
+            assert image.size == (612, 792)

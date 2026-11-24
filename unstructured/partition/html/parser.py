@@ -107,6 +107,19 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 
+TEX_ENCODINGS = (
+    "application/x-tex",
+    "tex",
+    "latex",
+    "application/x-latex",
+)
+"""TeX/LaTeX annotation encodings recognized in MathML `<annotation>` elements.
+
+The order is significant. More specific MIME-style encodings are preferred over
+legacy shorthand values when multiple supported annotations are present.
+"""
+
+
 # ------------------------------------------------------------------------------------------------
 # DOMAIN MODEL
 # ------------------------------------------------------------------------------------------------
@@ -351,15 +364,17 @@ class Flow(etree.ElementBase):
     @cached_property
     def _page_number(self) -> int | None:
         """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute."""
-        page_attr = self.get("data-page-number")
-        if page_attr is not None:
-            try:
-                return int(page_attr)
-            except (ValueError, TypeError):
-                pass
-        parent = self.getparent()
-        if parent is not None and isinstance(parent, Flow):
-            return parent._page_number
+        # -- iterative, not recursive, because this can be called from deep inside nested
+        # -- unrecognized elements (which are Flow) where the call stack is already deep --
+        element: etree._Element | None = self
+        while isinstance(element, Flow):
+            page_attr = element.get("data-page-number")
+            if page_attr is not None:
+                try:
+                    return int(page_attr)
+                except (ValueError, TypeError):
+                    pass
+            element = element.getparent()
         return None
 
     def iter_elements(self) -> Iterator[Element]:
@@ -558,7 +573,22 @@ class TableBlock(Flow):
         # -- a cell within a table within a cell too.)
 
         html_parts = ["<table>"]
+        caption_texts: list[str] = []
         row_texts: list[str] = []
+
+        def sanitized_text_and_html(node: etree._Element) -> tuple[str, str]:
+            """Text of a cell or caption, and the bare tag wrapping that escaped text."""
+            # -- a cell can contain other elements like spans etc. so we can't count on the
+            # -- text being directly below the cell. `.itertext()` gets all of it recursively.
+            # -- Filter out whitespace text nodes resulting from HTML formatting.
+            stripped_text_nodes = (t.strip() for t in node.itertext())
+            text = " ".join(t for t in stripped_text_nodes if t)
+
+            # -- Reconstruct only the recognized tag and escaped text. Source attributes and
+            # -- nested markup are intentionally excluded from this sanitized representation.
+            escaped_text = html.escape(text)
+            body = " ".join("<br/>".join(escaped_text.split("\n")).split())
+            return text, f"<{node.tag}>{body}</{node.tag}>" if body else f"<{node.tag}/>"
 
         def append_row(tr: etree._Element) -> None:
             """Append the text and sanitized HTML for one recognized table row."""
@@ -569,21 +599,9 @@ class TableBlock(Flow):
                 if cell.tag not in ("th", "td"):
                     continue
 
-                # -- a cell can contain other elements like spans etc. so we can't count on the
-                # -- text being directly below the cell. `.itertext()` gets all of it recursively.
-                # -- Filter out whitespace text nodes resulting from HTML formatting.
-                stripped_text_nodes = (t.strip() for t in cell.itertext())
-                cell_text = " ".join(t for t in stripped_text_nodes if t)
+                cell_text, cell_html = sanitized_text_and_html(cell)
                 cell_texts.append(cell_text)
-
-                # -- Reconstruct only the recognized cell tag and escaped text. Source attributes
-                # -- and nested markup are intentionally excluded from this sanitized
-                # -- representation.
-                escaped_text = html.escape(cell_text)
-                cell_body = " ".join("<br/>".join(escaped_text.split("\n")).split())
-                cell_htmls.append(
-                    f"<{cell.tag}>{cell_body}</{cell.tag}>" if cell_body else f"<{cell.tag}/>"
-                )
+                cell_htmls.append(cell_html)
 
             # -- Retain an entry for empty rows to preserve the existing plain-text join behavior.
             row_texts.append(" ".join(t for t in cell_texts if t))
@@ -591,7 +609,12 @@ class TableBlock(Flow):
                 html_parts.extend(("<tr>", "".join(cell_htmls), "</tr>"))
 
         for child in self:
-            if child.tag == "tr":
+            if child.tag == "caption":
+                caption_text, caption_html = sanitized_text_and_html(child)
+                if caption_text:
+                    caption_texts.append(caption_text)
+                    html_parts.append(caption_html)
+            elif child.tag == "tr":
                 append_row(child)
             elif child.tag in ("thead", "tbody", "tfoot"):
                 html_parts.append(f"<{child.tag}>")
@@ -600,10 +623,11 @@ class TableBlock(Flow):
                         append_row(tr)
                 html_parts.append(f"</{child.tag}>")
 
-        table_text = " ".join(row_texts).strip()
-
-        if table_text == "":
+        # -- a caption alone does not make a table worth emitting --
+        if " ".join(row_texts).strip() == "":
             return
+
+        table_text = " ".join(caption_texts + row_texts).strip()
 
         html_parts.append("</table>")
         yield Table(
@@ -734,6 +758,124 @@ class Phrasing(etree.ElementBase):
         while q and q[0].is_phrasing:
             e = cast(Phrasing, q.popleft())
             yield from e.iter_text_segments(emphasis)
+
+
+class Math(Flow, Phrasing):
+    """Custom element-class for `<math>` element.
+
+    Provides basic math annotations.
+    """
+
+    @property
+    def is_phrasing(self) -> bool:
+        return (self.get("display") or "").strip().lower() != "block"
+
+    @property
+    def _latex(self) -> str | None:
+        """Parse basic MathML/Latex"""
+        if len(self) == 1 and not (self.text or "").strip() and not (self[0].tail or "").strip():
+            semantics = self.find("./semantics")
+            if semantics is not None:
+                for child in semantics:
+                    if child.tag != "annotation":
+                        continue
+
+                    encoding = child.get("encoding")
+
+                    if encoding is None:
+                        continue
+
+                    encoding = encoding.strip().lower()
+                    if encoding not in TEX_ENCODINGS:
+                        continue
+
+                    annotations_latex = child.text
+
+                    if annotations_latex is not None and annotations_latex.strip():
+                        return annotations_latex.strip()
+
+        alt_text = self.get("alttext")
+        if alt_text is not None and alt_text.strip():
+            return alt_text
+
+        return None
+
+    @cached_property
+    def _page_number(self) -> int | None:
+        """Page number from the nearest valid ancestor, including phrasing wrappers."""
+        element: etree._Element | None = self
+        while element is not None:
+            page_attr = element.get("data-page-number")
+            if page_attr is not None:
+                try:
+                    return int(page_attr)
+                except (ValueError, TypeError):
+                    pass
+            element = element.getparent()
+
+        return None
+
+    def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment | Element]:
+        """Emit inline math as phrasing content."""
+        if latex := self._latex:
+            yield TextSegment(
+                latex,
+                self._annotation(latex, enclosing_emphasis),
+            )
+
+        yield from self._iter_tail_segment(enclosing_emphasis)
+
+    def iter_elements(self) -> Iterator[Element]:
+        """Emit display math as its own document element."""
+        if latex := self._latex:
+            yield Text(
+                latex,
+                metadata=ElementMetadata(page_number=self._page_number),
+            )
+
+    @staticmethod
+    def _normalize_katex(root: etree._Element) -> None:
+        """Remove redundant KaTeX visual HTML when usable MathML is present."""
+
+        for katex in root.xpath(
+            ".//*[contains(concat(' ', normalize-space(@class), ' '), ' katex ')]"
+        ):
+            mathml = None
+            visual = None
+
+            for child in katex:
+                classes = child.get("class")
+                if classes is None:
+                    continue
+
+                classes = classes.split()
+
+                if "katex-mathml" in classes:
+                    mathml = child
+                elif "katex-html" in classes:
+                    visual = child
+
+            if mathml is None or visual is None:
+                continue
+
+            if katex.xpath("ancestor::table"):
+                continue
+
+            math = mathml.find(".//math")
+
+            if math is None or not math._latex:
+                continue
+
+            tail = visual.tail
+            previous = visual.getprevious()
+
+            katex.remove(visual)
+
+            if tail:
+                if previous is not None:
+                    previous.tail = (previous.tail or "") + tail
+                else:
+                    katex.text = (katex.text or "") + tail
 
 
 class Anchor(Phrasing):
@@ -922,12 +1064,18 @@ class RemovedPhrasing(Phrasing):
 class DefaultElement(Flow, Phrasing):
     """Custom element-class used for any element without an assigned custom element class.
 
-    An unrecognized element is given both Flow (block) and Phrasing (inline) behaviors. It behaves
-    like a Flow element When nested in a Flow element like a Phrasing element when nested in a
-    Phrasing element.
+    This includes custom elements like `<my-widget>`, obsolete elements like `<font>`, and elements
+    from other vocabularies embedded in the HTML, like Inline XBRL `<ix:nonFraction>`.
 
-    The contents of the element is skipped in either case, but its tail is not when it behaves as a
-    Phrasing element. The tail is processed by its parent when that is a Flow element.
+    An unrecognized element is _transparent_. Its text, children, and tail are processed as though
+    its tags were not there. It is given both Flow (block) and Phrasing (inline) behaviors. It
+    identifies as phrasing, so its text is part of the paragraph it appears in, while any block
+    items it contains, like `<p>` or `<table>`, each still produce their own document-elements,
+    just as they would inside a `<span>`. Its Flow `.iter_elements()` is only called when it is the
+    root of the parsed document, like an `<html>` element that has no `<body>`.
+
+    An element whose content should not appear in the document, like `<select>` or `<svg>`, must be
+    assigned a removed element-class like `RemovedPhrasing`.
     """
 
     @property
@@ -935,32 +1083,10 @@ class DefaultElement(Flow, Phrasing):
         """If asked (by a parent Flow element), identify as a phrasing element.
 
         It's not possible to determine the display intent (block|inline) of an unknown element
-        (like `<foobar>`) and phrasing is less disruptive, adding the tail of this element to any
+        (like `<foobar>`) and phrasing is less disruptive, adding the text of this element to any
         text or phrasing content before and after it without starting a new paragraph.
         """
         return True
-
-    def iter_elements(self) -> Iterator[Element]:
-        """Don't generate any document-elements when behaving like a Flow element.
-
-        Because the element identifies as phrasing and will always be enclosed by at least a
-        `<body>` element, this method should never be called. However, it's easier to prove it does
-        the appropriate thing if it is called than prove that it can never happen.
-        """
-        return
-        yield
-
-    def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment]:
-        """Generate text segment for tail of this element only.
-
-        This method is only called on Phrasing elements and their children. In that case, act like a
-        Phrasing element but don't generate a text segment for this element or any children. Do
-        however generate a tail text-segment.
-        """
-        # -- It is the phrasing element's job to emit its tail when it has one (there is no one
-        # -- else who can do it). Note that the tail gets the _enclosing-emphasis_, not the
-        # -- _inside-emphasis_ since the tail occurs after this phrasing element's closing tag.
-        yield from self._iter_tail_segment(enclosing_emphasis)
 
 
 # ------------------------------------------------------------------------------------------------
@@ -1041,6 +1167,8 @@ element_class_lookup.get_namespace(None).update(
         "img": ImageBlock,
         # -- table --
         "table": TableBlock,
+        # -- math --
+        "math": Math,
         # -- annotated phrasing --
         "a": Anchor,
         "b": Bold,
@@ -1076,6 +1204,26 @@ element_class_lookup.get_namespace(None).update(
         # -- removed phrasing --
         "button": RemovedPhrasing,
         "label": RemovedPhrasing,
+        # -- removed phrasing, content is not rendered as text --
+        "audio": RemovedPhrasing,  # -- content is fallback for browsers without audio support --
+        "canvas": RemovedPhrasing,  # -- content is fallback for browsers without canvas support --
+        "datalist": RemovedPhrasing,  # -- predefined options for an `<input>`; not displayed --
+        "dialog": RemovedPhrasing,  # -- popup UI; hidden until opened, likely boilerplate --
+        "head": RemovedPhrasing,  # -- document metadata; only reached when there's no `<body>` --
+        "iframe": RemovedPhrasing,  # -- displays another document; its own content is not shown --
+        # -- Inline XBRL hidden facts, contexts, and units. The HTML parser has no namespaces so
+        # -- this matches the conventional `ix` prefix only, not another prefix bound to the same
+        # -- Inline XBRL namespace.
+        "ix:header": RemovedPhrasing,
+        "noembed": RemovedPhrasing,  # -- obsolete; fallback content for `<embed>` --
+        "noframes": RemovedPhrasing,  # -- obsolete; fallback content for frames --
+        "object": RemovedPhrasing,  # -- content is fallback for when the object can't be shown --
+        "select": RemovedPhrasing,  # -- form control; its option list is not document text --
+        "svg": RemovedPhrasing,  # -- graphics; `<title>` and `<desc>` inside it are metadata --
+        "textarea": RemovedPhrasing,  # -- form control; its content is the editable value --
+        "title": RemovedPhrasing,  # -- document metadata; lands in `<body>` in malformed HTML --
+        "video": RemovedPhrasing,  # -- content is fallback for browsers without video support --
+        "xml": RemovedPhrasing,  # -- legacy "data island", like Office document-properties --
         # -- removed block --
         "details": RemovedBlock,  # -- likely boilerplate --
         "figure": RemovedBlock,

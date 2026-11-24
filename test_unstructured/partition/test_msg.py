@@ -25,7 +25,7 @@ from unstructured.documents.elements import (
     Text,
 )
 from unstructured.partition.common import UnsupportedFileFormatError
-from unstructured.partition.msg import MsgPartitionerOptions, partition_msg
+from unstructured.partition.msg import MsgPartitionerOptions, _split_addresses, partition_msg
 
 EXPECTED_MSG_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
@@ -52,6 +52,7 @@ def test_partition_msg_from_filename():
             sent_from=['"Matthew Robinson" <mrobinson@unstructured.io>'],
             sent_to=["mrobinson@unstructured.io"],
             subject="Test Email",
+            email_message_id="CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com",
             filetype="application/vnd.ms-outlook",
             parent_id=parent_id,
             languages=["eng"],
@@ -477,6 +478,55 @@ class DescribeMsgPartitionerOptions:
         ]
         assert m.subject == "Fake email with cc and bcc recipients"
 
+    def it_reads_the_cc_bcc_and_message_id_headers_whatever_their_case(
+        self, opts_args: dict[str, Any], Message_message_headers_: Mock
+    ):
+        # -- Outlook writes these headers as `CC:`, `BCC:` and `Message-ID:` --
+        Message_message_headers_.return_value = {
+            "To": "john-ctr@unstructured.io",
+            "CC": "steve@unstructured.io",
+            "BCC": "hello@unstructured.io",
+            "Message-ID": "<14DDEF33-2BA7-4CDD-A4D8-E7C5873B37F2@gmail.com>",
+        }
+        opts_args["file_path"] = example_doc_path("fake-email-with-cc-and-bcc.msg")
+        opts = MsgPartitionerOptions(**opts_args)
+
+        m = opts.extra_msg_metadata
+        assert m.cc_recipient == ["steve@unstructured.io"]
+        assert m.bcc_recipient == ["hello@unstructured.io"]
+        assert m.email_message_id == "14DDEF33-2BA7-4CDD-A4D8-E7C5873B37F2@gmail.com"
+
+    def it_keeps_a_comma_in_a_quoted_display_name_inside_its_address(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = example_doc_path("fake-email-with-quoted-comma-names.msg")
+        opts = MsgPartitionerOptions(**opts_args)
+
+        m = opts.extra_msg_metadata
+        assert m.sent_from == ['"Doe, John" <john@example.com>']
+        assert m.cc_recipient == [
+            '"Roe, Jane" <jane@example.com>',
+            '"12\\" Display Team" <displays@example.com>',
+            "steve@example.com",
+        ]
+        assert m.bcc_recipient == ["hello@example.com", '"Poe, Ed" <ed@example.com>']
+
+    def it_keeps_a_quote_inside_an_address_comment_from_merging_recipients(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = example_doc_path("fake-email-with-quote-in-comment.msg")
+        opts = MsgPartitionerOptions(**opts_args)
+
+        m = opts.extra_msg_metadata
+        assert m.cc_recipient == [
+            'steve@example.com (12" display team)',
+            '"Roe, Jane" <jane@example.com>',
+        ]
+        assert m.bcc_recipient == [
+            'hello@example.com (12" display team)',
+            "bob@example.com (nested (a, b), c)",
+        ]
+
     # -- .is_encrypted ---------------------------
 
     @pytest.mark.parametrize(
@@ -594,6 +644,10 @@ class DescribeMsgPartitionerOptions:
         return property_mock(request, MsgPartitionerOptions, "_last_modified")
 
     @pytest.fixture
+    def Message_message_headers_(self, request: FixtureRequest):
+        return property_mock(request, Message, "message_headers")
+
+    @pytest.fixture
     def Message_sent_date_(self, request: FixtureRequest):
         return property_mock(request, Message, "sent_date")
 
@@ -612,3 +666,56 @@ class DescribeMsgPartitionerOptions:
             "partition_attachments": False,
             "kwargs": {},
         }
+
+
+@pytest.mark.parametrize(
+    ("addresses", "expected_value"),
+    [
+        ("a@example.com", ["a@example.com"]),
+        ("a@example.com, b@example.com", ["a@example.com", "b@example.com"]),
+        ('"Doe, John" <john@example.com>', ['"Doe, John" <john@example.com>']),
+        (
+            'a@example.com, "12\\" Display Team" <displays@example.com>, b@example.com',
+            ["a@example.com", '"12\\" Display Team" <displays@example.com>', "b@example.com"],
+        ),
+        (
+            '"Doe, John\\\\" <john@example.com>, b@example.com',
+            ['"Doe, John\\\\" <john@example.com>', "b@example.com"],
+        ),
+        (
+            'a@example.com, b@example.com, "Doe, John <john@example.com>, c@example.com',
+            ["a@example.com", "b@example.com", '"Doe, John <john@example.com>, c@example.com'],
+        ),
+        (
+            'a@example.com (12" display team), b@example.com',
+            ['a@example.com (12" display team)', "b@example.com"],
+        ),
+        (
+            "a@example.com (Doe, John), b@example.com",
+            ["a@example.com (Doe, John)", "b@example.com"],
+        ),
+        (
+            "a@example.com (outer (inner, one) still, comment), b@example.com",
+            ["a@example.com (outer (inner, one) still, comment)", "b@example.com"],
+        ),
+        (
+            "a@example.com (closes \\) here, still comment), b@example.com",
+            ["a@example.com (closes \\) here, still comment)", "b@example.com"],
+        ),
+        (
+            '"Doe (, John" <john@example.com>, b@example.com',
+            ['"Doe (, John" <john@example.com>', "b@example.com"],
+        ),
+        (
+            "a@example.com, b@example.com (unterminated, c@example.com",
+            ["a@example.com", "b@example.com (unterminated, c@example.com"],
+        ),
+    ],
+)
+def test_split_addresses(addresses: str, expected_value: list[str]):
+    assert _split_addresses(addresses) == expected_value
+
+
+@pytest.mark.parametrize("address", ['"Doe, John" <john@example.com>', "john@example.com"])
+def test_split_addresses_splits_a_long_list_in_one_pass(address: str):
+    assert _split_addresses(", ".join([address] * 20_000)) == [address] * 20_000

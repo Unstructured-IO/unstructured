@@ -61,6 +61,44 @@ def partition_msg(
     return list(_MsgPartitioner.iter_message_elements(opts))
 
 
+def _split_addresses(addresses: str) -> list[str]:
+    """Split a comma-separated address-list header value into its addresses.
+
+    A comma inside a quoted display name, like the one in `"Doe, John" <john@example.com>`, or
+    inside a parenthesized comment, like the one in `john@example.com (Doe, John)`, is part of that
+    address and does not separate two addresses. A backslash escapes the next character inside a
+    quoted name or a comment, so `\\"` does not end the name and `\\)` does not end the comment.
+    A quote inside a comment is plain text and a parenthesis inside a quoted name is plain text.
+    Comments can nest. An unterminated quote or comment runs to the end of the value and leaves
+    the addresses before it unchanged. This is one forward pass over the value.
+    """
+    parts: list[str] = []
+    start = 0
+    in_quotes = False
+    comment_depth = 0
+    escaped = False
+    for i, ch in enumerate(addresses):
+        if escaped:
+            escaped = False
+        elif ch == "\\" and (in_quotes or comment_depth):
+            escaped = True
+        elif in_quotes:
+            in_quotes = ch != '"'
+        elif ch == "(":
+            comment_depth += 1
+        elif ch == ")" and comment_depth:
+            comment_depth -= 1
+        elif comment_depth:
+            continue
+        elif ch == '"':
+            in_quotes = True
+        elif ch == ",":
+            parts.append(addresses[start:i].strip())
+            start = i + 1
+    parts.append(addresses[start:].strip())
+    return parts
+
+
 class MsgPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
@@ -91,16 +129,14 @@ class MsgPartitionerOptions:
         None of these metadata fields change based on the element, so we just compute it once.
         """
         msg = self.msg
+        # -- header names are case-insensitive; Outlook writes `CC:`, `BCC:` and `Message-ID:` --
+        headers = {name.lower(): value for name, value in msg.message_headers.items()}
 
-        sent_from = [s.strip() for s in sender.split(",")] if (sender := msg.sender) else None
+        sent_from = _split_addresses(sender) if (sender := msg.sender) else None
         sent_to = [r.email_address for r in msg.recipients] or None
-        bcc_recipient = (
-            [c.strip() for c in bcc.split(",")] if (bcc := msg.message_headers.get("Bcc")) else None
-        )
-        cc_recipient = (
-            [c.strip() for c in cc.split(",")] if (cc := msg.message_headers.get("Cc")) else None
-        )
-        if email_message_id := msg.message_headers.get("Message-Id"):
+        bcc_recipient = _split_addresses(bcc) if (bcc := headers.get("bcc")) else None
+        cc_recipient = _split_addresses(cc) if (cc := headers.get("cc")) else None
+        if email_message_id := headers.get("message-id"):
             email_message_id = re.sub(r"^<|>$", "", email_message_id)  # Strip angle brackets
 
         element_metadata = ElementMetadata(

@@ -1,13 +1,27 @@
 # pyright: reportPrivateUsage=false, reportUnknownMemberType=false, reportOptionalMemberAccess=false
 # pyright: reportAttributeAccessIssue=false, reportUnknownLambdaType=false
+import io
 from collections import defaultdict
+from copy import deepcopy
 from typing import Any, Optional
 
 import pytest
 from bs4 import BeautifulSoup, Tag
 from pytest_mock import MockerFixture
 
-from unstructured.documents.elements import Element, ElementMetadata, ElementType
+from unstructured.documents.elements import (
+    CodeSnippet,
+    Element,
+    ElementMetadata,
+    ElementType,
+    Footer,
+    Header,
+    Image,
+    NarrativeText,
+    PageNumber,
+    Title,
+)
+from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.partition.html.convert import (
     HTML_PARSER,
     ElementHtml,
@@ -25,6 +39,7 @@ from unstructured.partition.html.convert import (
     elements_to_html,
     group_elements_by_page,
 )
+from unstructured.partition.html.partition import partition_html
 
 
 class MockElement(Element):
@@ -265,6 +280,94 @@ def test_title_element_html_tag(title_element_html: TitleElementHtml) -> None:
     assert title_element_html.html_tag == "h1"
 
 
+@pytest.mark.parametrize(
+    ("category_depth", "expected_tag"),
+    [
+        (None, "h1"),
+        (-1, "h1"),
+        (0, "h1"),
+        (1, "h2"),
+        (2, "h3"),
+        (5, "h6"),
+        (6, "h6"),
+        (8, "h6"),
+        (99, "h6"),
+    ],
+)
+def test_title_element_html_tag_follows_zero_based_category_depth(
+    mock_element: MockElement, category_depth: Optional[int], expected_tag: str
+) -> None:
+    mock_element.metadata.category_depth = category_depth
+    assert TitleElementHtml(mock_element).html_tag == expected_tag
+
+
+def test_elements_to_html_keeps_the_heading_levels_of_partitioned_html() -> None:
+    elements = partition_html(
+        text=(
+            "<h1>Chapter</h1><p>The chapter starts with this paragraph of text.</p>"
+            "<h2>Section</h2><p>The section has a paragraph of its own here.</p>"
+            "<h3>Subsection</h3><p>And the subsection has one more paragraph.</p>"
+        )
+    )
+
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    headings = BeautifulSoup(html, HTML_PARSER).find_all(["h1", "h2", "h3", "h4", "h5", "h6"])
+    assert [(h.name, h.get_text(strip=True)) for h in headings] == [
+        ("h1", "Chapter"),
+        ("h2", "Section"),
+        ("h3", "Subsection"),
+    ]
+
+
+def test_elements_to_html_renders_headings_deeper_than_h6_as_h6() -> None:
+    # -- e.g. DOCX "Heading 8" and "Heading 9"; an `<h7>` or `<h8>` tag would be dropped by the
+    # -- sanitization pass, leaving the text without heading markup --
+    elements: list[Element] = [
+        Title("Level 7", metadata=ElementMetadata(category_depth=6)),
+        Title("Level 8", metadata=ElementMetadata(category_depth=7)),
+        Title("Level 9", metadata=ElementMetadata(category_depth=8)),
+    ]
+
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    headings = BeautifulSoup(html, HTML_PARSER).find_all(["h1", "h2", "h3", "h4", "h5", "h6"])
+    assert [(h.name, h.get_text(strip=True)) for h in headings] == [
+        ("h6", "Level 7"),
+        ("h6", "Level 8"),
+        ("h6", "Level 9"),
+    ]
+
+
+def test_elements_to_html_keeps_docx_heading_levels_through_a_json_round_trip() -> None:
+    # -- titles reloaded from stored JSON render from their stored `category_depth` --
+    docx = pytest.importorskip("docx")
+    from unstructured.partition.docx import partition_docx
+    from unstructured.staging.base import elements_from_json, elements_to_json
+
+    document = docx.Document()
+    document.add_heading("Report", level=0)
+    document.add_paragraph("A short subtitle", style="Subtitle")
+    document.add_heading("Background", level=1)
+    document.add_paragraph("The background section has a paragraph of body text.")
+    document.add_heading("Details", level=2)
+    document.add_paragraph("The details section has a paragraph of body text too.")
+    file = io.BytesIO()
+    document.save(file)
+    file.seek(0)
+
+    elements = elements_from_json(text=elements_to_json(partition_docx(file=file)))
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    headings = BeautifulSoup(html, HTML_PARSER).find_all(["h1", "h2", "h3", "h4", "h5", "h6"])
+    assert [(h.name, h.get_text(strip=True)) for h in headings] == [
+        ("h1", "Report"),
+        ("h2", "A short subtitle"),
+        ("h1", "Background"),
+        ("h2", "Details"),
+    ]
+
+
 def test_image_element_html_content(image_element_html: ImageElementHtml) -> None:
     soup = BeautifulSoup("", HTML_PARSER)
     tag = soup.new_tag("img")
@@ -309,6 +412,32 @@ def test_table_element_html_leaves_empty_table_without_a_cell(
     table_element_html.element.text = ""
     tag = table_element_html.get_html_element()
     assert tag.find("td") is None
+
+
+def test_elements_to_html_keeps_a_partitioned_table_caption_inside_the_table() -> None:
+    elements = partition_html(
+        text=(
+            "<table>"
+            '<caption class="t" onclick="alert(1)">'
+            "Quarterly <b>revenue</b><img src=x onerror=alert(2)>"
+            "</caption>"
+            "<tr><td>EMEA</td></tr>"
+            "</table>"
+        )
+    )
+
+    html = elements_to_html(elements, no_group_by_page=True)
+
+    table = BeautifulSoup(html, HTML_PARSER).find("table")
+    assert isinstance(table, Tag)
+    caption = table.find("caption", recursive=False)
+    assert isinstance(caption, Tag)
+    assert caption.get_text(strip=True) == "Quarterly revenue"
+    assert caption.attrs == {}
+    assert caption.find(True) is None
+    assert html.count("Quarterly revenue") == 1
+    assert "onerror" not in html
+    assert "onclick" not in html
 
 
 def test_link_element_html_attrs(link_element_html: LinkElementHtml) -> None:
@@ -509,3 +638,87 @@ def test_elements_to_html_invalid_html_template(
 
     with pytest.raises(ValueError, match="Body tag not found in the HTML template"):
         elements_to_html(elements)
+
+
+@pytest.mark.parametrize("content_type", ["code", "image"])
+def test_elements_to_html_keeps_partitioned_children_of_a_heading_on_another_page(
+    content_type: str,
+) -> None:
+    image_base64 = (
+        "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
+        "w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+    )
+    content = (
+        "<pre>x = 1</pre>"
+        if content_type == "code"
+        else f'<img src="data:image/png;base64,{image_base64}" alt="Pipeline diagram">'
+    )
+    elements = partition_html(
+        text=(
+            '<div data-page-number="1"><h1>Section</h1></div>'
+            f'<div data-page-number="2">{content}'
+            "<p>The pipeline has three stages.</p>"
+            "<h2>Subsection</h2><p>Each stage is described below.</p></div>"
+        ),
+        extract_image_block_to_payload=True,
+        extract_image_block_types=["Image"],
+    )
+    heading, *page_two = elements
+    subsection, subsection_text = page_two[-2:]
+    assert [element.category for element in elements] == [
+        "Title",
+        "CodeSnippet" if content_type == "code" else "Image",
+        "NarrativeText",
+        "Title",
+        "NarrativeText",
+    ]
+    assert heading.metadata.page_number == 1
+    assert all(element.metadata.page_number == 2 for element in page_two)
+    assert all(element.metadata.parent_id == heading.id for element in page_two[:-1])
+    assert subsection_text.metadata.parent_id == subsection.id
+    if content_type == "image":
+        assert page_two[0].metadata.image_base64 == image_base64
+    before_export = deepcopy([element.to_dict() for element in elements])
+
+    soup = BeautifulSoup(elements_to_html(elements), HTML_PARSER)
+
+    for page_number, page_elements in ((1, [heading]), (2, page_two)):
+        page = soup.find("div", {"data-page_number": str(page_number)})
+        assert page is not None
+        for element in page_elements:
+            (tag,) = soup.find_all(id=element.id)
+            assert tag.find_parent("div", {"data-page_number": str(page_number)}) is page
+            if element.category == "Image":
+                assert tag["src"] == f"data:image/png;base64,{image_base64}"
+            else:
+                assert tag.get_text(strip=True) == element.text
+    assert soup.find(id=subsection_text.id).parent is soup.find(id=subsection.id).parent
+    assert [element.to_dict() for element in elements] == before_export
+
+
+@pytest.mark.parametrize("content_class", [CodeSnippet, Image, PageNumber, Footer])
+def test_elements_to_html_keeps_children_of_a_header_on_another_page(content_class) -> None:
+    header = Header("Section", metadata=ElementMetadata(page_number=1))
+    content = content_class("Pipeline", metadata=ElementMetadata(page_number=2))
+    following = NarrativeText(
+        "The pipeline has three stages.", metadata=ElementMetadata(page_number=2)
+    )
+    subsection = Title("Subsection", metadata=ElementMetadata(page_number=2))
+    subsection_text = NarrativeText(
+        "Each stage is described below.", metadata=ElementMetadata(page_number=2)
+    )
+    elements = set_element_hierarchy([header, content, following, subsection, subsection_text])
+    assert content.metadata.parent_id == header.id
+    assert following.metadata.parent_id == header.id
+    assert subsection.metadata.parent_id == header.id
+    assert subsection_text.metadata.parent_id == subsection.id
+    before_export = deepcopy([element.to_dict() for element in elements])
+
+    soup = BeautifulSoup(elements_to_html(elements), HTML_PARSER)
+
+    page_two = soup.find("div", {"data-page_number": "2"})
+    for element in (content, following, subsection, subsection_text):
+        (tag,) = soup.find_all(id=element.id)
+        assert tag.find_parent("div", {"data-page_number": "2"}) is page_two
+    assert soup.find(id=subsection_text.id).parent is soup.find(id=subsection.id).parent
+    assert [element.to_dict() for element in elements] == before_export

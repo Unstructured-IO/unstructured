@@ -348,5 +348,14 @@ class ENVConfig:
         """Maximum pixels, summed across all frames, an image file may decode to"""
         return self._get_int("IMAGE_MAX_TOTAL_PIXELS", 500_000_000)
 
+    @property
+    def UNSTRUCTURED_USE_LANGDETECT_RS(self) -> bool:
+        """Use langdetect-rs instead of langdetect for partition language detection
+
+        Read once, when `unstructured.partition.common.lang` is first imported. Falls back to
+        langdetect with a warning if langdetect-rs is not installed.
+        """
+        return self._get_bool("UNSTRUCTURED_USE_LANGDETECT_RS", False)
+
 
 env_config = ENVConfig()

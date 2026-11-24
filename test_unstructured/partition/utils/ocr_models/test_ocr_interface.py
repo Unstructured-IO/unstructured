@@ -53,14 +53,20 @@ class DescribeOCRAgent:
         self, _get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception], _clear_cache
     ):
         _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
+        original_exc = exception_cls("underlying import failure details")
         with (
             patch(
                 "unstructured.partition.utils.ocr_models.ocr_interface.importlib.import_module",
-                side_effect=exception_cls,
+                side_effect=original_exc,
             ),
-            pytest.raises(RuntimeError, match="Could not get the OCRAgent instance"),
+            pytest.raises(
+                RuntimeError,
+                match="Could not get the OCRAgent instance.*underlying import failure details",
+            ) as exc_info,
         ):
             OCRAgent.get_agent(language="eng")
+
+        assert exc_info.value.__cause__ is original_exc
 
     @pytest.mark.parametrize(
         ("OCR_AGENT", "expected_value"),

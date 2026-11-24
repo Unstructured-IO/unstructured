@@ -1,16 +1,21 @@
+# pyright: reportPrivateUsage=false
+
 """Test suite for `unstructured.partition.email` module."""
 
 from __future__ import annotations
 
+import base64
+import email.policy
 import io
 import tempfile
 from email.message import EmailMessage
-from typing import Any
+from typing import IO, Any
 
 import pytest
 
 from test_unstructured.unit_utils import (
     FixtureRequest,
+    LogCaptureFixture,
     Mock,
     assert_round_trips_through_JSON,
     example_doc_path,
@@ -19,6 +24,7 @@ from test_unstructured.unit_utils import (
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     CompositeElement,
+    Element,
     ListItem,
     NarrativeText,
     Table,
@@ -26,6 +32,8 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.file_utils.model import FileType
+from unstructured.partition.auto import _PartitionerLoader, partition
 from unstructured.partition.email import EmailPartitioningContext, partition_email
 
 EXPECTED_OUTPUT = [
@@ -214,6 +222,57 @@ def test_partition_email_augments_message_body_elements_with_email_metadata():
         e.metadata.sent_to == ["Bob <bob@example.com>", "Sue <sue@example.com>"] for e in elements
     )
     assert all(e.metadata.subject == "Example Plain-Text MIME Message" for e in elements)
+
+
+def test_partition_email_keeps_non_ascii_display_names_readable():
+    # -- mail clients write a non-ASCII display name as an RFC 2047 encoded-word, which
+    # -- `email.utils.formataddr()` would produce again, e.g. "=?utf-8?b?5byg5Lyf?=" for "张伟" --
+    msg = EmailMessage(policy=email.policy.SMTP)
+    msg["From"] = "José García <jose@ejemplo.es>"
+    msg["To"] = "张伟 <zhang@example.cn>, Jürgen Müller <juergen@beispiel.de>"
+    msg["Cc"] = '"Müller, Jürgen" <j.mueller@beispiel.de>'
+    msg["Bcc"] = "Zoë <zoe@example.com>"
+    msg.set_content("Hello")
+
+    element = partition_email(file=io.BytesIO(msg.as_bytes()))[0]
+
+    assert element.metadata.sent_from == ["José García <jose@ejemplo.es>"]
+    assert element.metadata.sent_to == [
+        "张伟 <zhang@example.cn>",
+        "Jürgen Müller <juergen@beispiel.de>",
+    ]
+    assert element.metadata.cc_recipient == ['"Müller, Jürgen" <j.mueller@beispiel.de>']
+    assert element.metadata.bcc_recipient == ["Zoë <zoe@example.com>"]
+
+
+def test_partition_email_accepts_non_ascii_addresses():
+    # -- RFC 6532 allows UTF-8 in addresses; `email.utils.formataddr()` raises on them --
+    msg = EmailMessage(policy=email.policy.SMTPUTF8)
+    msg["From"] = "José <josé@ejemplo.es>"
+    msg["To"] = "Jürgen <jürgen@beispiel.de>, alice@example.com"
+    msg.set_content("Hello")
+
+    element = partition_email(file=io.BytesIO(msg.as_bytes()))[0]
+
+    assert element.metadata.sent_from == ["José <josé@ejemplo.es>"]
+    assert element.metadata.sent_to == ["Jürgen <jürgen@beispiel.de>", "alice@example.com"]
+
+
+def test_partition_email_drops_the_empty_entry_of_an_address_group():
+    # -- RFC 5322 group syntax: "undisclosed-recipients:;" names a group with no members --
+    msg = EmailMessage()
+    msg["From"] = "alice@example.com"
+    msg["To"] = "undisclosed-recipients:;"
+    msg["Cc"] = "Team: bob@example.com, carol@example.com;"
+    msg["Bcc"] = "undisclosed-recipients:;"
+    msg.set_content("Hello")
+
+    element = partition_email(file=io.BytesIO(msg.as_bytes()))[0]
+
+    assert element.metadata.sent_from == ["alice@example.com"]
+    assert element.metadata.sent_to is None
+    assert element.metadata.cc_recipient == ["bob@example.com", "carol@example.com"]
+    assert element.metadata.bcc_recipient is None
 
 
 # -- .metadata.filename --------------------------------------------------------------------------
@@ -405,6 +464,162 @@ def test_partition_email_silently_skips_attachments_it_cannot_partition():
         NarrativeText("This is an email with an MP3 attachment."),
         # -- no elements appear for the attachment --
     ]
+
+
+def test_partition_email_does_not_raise_on_multipart_attachment():
+    """A multipart/* "attachment" (e.g. a PGP/MIME-signed forwarded message) must not crash.
+
+    `email.contentmanager` has no `get_content()` handler for any `multipart/*` content-type, so
+    without special-casing this in `_AttachmentPartitioner._file_bytes`, resolving such an
+    attachment's bytes raises `KeyError` -- crashing the whole `partition_email()` call instead
+    of gracefully processing or skipping just that one attachment. Regression test for #3922.
+
+    The fixture's attachment is itself a genuine boundary-bearing `multipart/signed` MIME part
+    (a PGP-signed forwarded message), so this also guards a second, subtler bug: serializing
+    that part verbatim (with its own `Content-Disposition: attachment` header intact) and
+    re-parsing it as a new root message made `EmailMessage.get_body()` skip it entirely, i.e.
+    the attachment partitioned to zero elements instead of surfacing its signed body text.
+    """
+    elements = partition_email(
+        example_doc_path("eml/mime-attach-multipart-signed.eml"), process_attachments=True
+    )
+
+    # -- No exception; the outer email body is partitioned ... --
+    assert elements[0] == NarrativeText("This is the main email body.")
+    # -- ... and the signed attachment's own body is also partitioned, not silently dropped. --
+    assert elements[1] == NarrativeText("This is the signed forwarded message body.")
+    assert elements[1].metadata.filename == "signed-message.eml"
+    assert elements[1].metadata.attached_to_filename == "mime-attach-multipart-signed.eml"
+
+
+def test_partition_email_partitions_the_messages_of_a_multipart_digest():
+    """Each part of a `multipart/digest` is a `message/rfc822` part, i.e. an email in its own right.
+
+    `get_content()` returns an `EmailMessage` for such a part, not `str` or `bytes`.
+    """
+    elements = partition_email(
+        example_doc_path("eml/mime-multipart-digest.eml"), process_attachments=True
+    )
+
+    assert elements == [
+        NarrativeText("This is the first message in the digest."),
+        NarrativeText("This is the second message in the digest."),
+        NarrativeText("This is the third message in the digest."),
+    ]
+    assert [e.metadata.subject for e in elements] == [
+        "First Message",
+        "Second Message",
+        "Third Message",
+    ]
+    assert all(e.metadata.attached_to_filename == "mime-multipart-digest.eml" for e in elements)
+
+
+def test_partition_email_partitions_a_message_forwarded_as_an_attachment():
+    forwarded = EmailMessage()
+    forwarded.set_content("Are we still on for lunch tomorrow at noon?")
+    # -- these headers follow "Content-Type:", so libmagic alone would take this for plain text --
+    forwarded["From"] = "alice@example.com"
+    forwarded["To"] = "bob@example.com"
+    forwarded["Subject"] = "Lunch"
+    msg = EmailMessage()
+    msg.set_content("See the message below.")
+    msg.add_attachment(forwarded)
+
+    elements = partition_email(file=io.BytesIO(msg.as_bytes()), process_attachments=True)
+
+    assert elements == [
+        NarrativeText("See the message below."),
+        NarrativeText("Are we still on for lunch tomorrow at noon?"),
+    ]
+    assert elements[1].metadata.subject == "Lunch"
+    assert elements[1].metadata.sent_from == ["alice@example.com"]
+
+
+# -- a PNG signature, then a bare CR, a bare LF, a CRLF and non-ASCII bytes --
+ATTACHMENT_BYTES = b"\x89PNG\r\n\x1a\n" + b"a\rb\nc\r\nd" + "é".encode()
+
+
+@pytest.mark.parametrize(
+    "file_name",
+    [
+        # -- email > level-1.eml > attachment --
+        "binary-1.png",
+        "7bit-1.png",
+        "base64-1.png",
+        # -- email > level-1.eml > level-2.eml > attachment --
+        "binary-2.png",
+        "7bit-2.png",
+        "base64-2.png",
+    ],
+)
+def test_partition_email_passes_on_the_exact_bytes_of_an_attachment_of_an_attached_email(
+    request: FixtureRequest, nested_attached_emails: io.BytesIO, file_name: str
+):
+    """A non-Base64 attachment keeps its CR and LF bytes, whatever its Content-Transfer-Encoding.
+
+    They are data in such a part, not line breaks, as when its email is partitioned on its own.
+    The Base64-encoded attachments are the control.
+    """
+    received: dict[str | None, bytes] = {}
+
+    def partition_(file: IO[bytes], **kwargs: Any) -> list[Element]:
+        received[kwargs["metadata_filename"]] = file.read()
+        file.seek(0)
+        # -- partition an attached email for real, so its own attachments get here too --
+        if kwargs.get("content_type") == "message/rfc822":
+            return partition(file=file, **kwargs)
+        return []
+
+    function_mock(request, "unstructured.partition.auto.partition", side_effect=partition_)
+
+    partition_email(file=nested_attached_emails, process_attachments=True)
+
+    assert received[file_name] == ATTACHMENT_BYTES
+
+
+def test_partition_email_skips_a_WEBP_attachment_when_image_dependencies_are_not_installed(
+    request: FixtureRequest, caplog: LogCaptureFixture, webp_attachment_email: io.BytesIO
+):
+    # -- a WEBP partitioner cached by an earlier test would bypass the dependency check --
+    _PartitionerLoader._partitioners.pop(FileType.WEBP, None)
+    function_mock(
+        request,
+        "unstructured.partition.auto.dependency_exists",
+        side_effect=lambda pkg_name: pkg_name != "unstructured_inference",
+    )
+
+    elements = partition_email(file=webp_attachment_email, process_attachments=True)
+
+    assert elements == [NarrativeText("This is an email with a WEBP attachment.")]
+    # -- the image partitioner's dependency check skipped it, so it was detected as an image --
+    assert "Skipping attachment DA-1p.webp: ImportError: partition_image()" in caplog.text
+
+
+def test_partition_email_partitions_a_WEBP_attachment_with_partition_image(
+    request: FixtureRequest, webp_attachment_email: io.BytesIO
+):
+    pytest.importorskip("unstructured_inference")
+    # -- stub out layout inference and OCR; this test covers routing and metadata --
+    function_mock(
+        request,
+        "unstructured.partition.image.partition_pdf_or_image",
+        return_value=[Title("Scanned page")],
+    )
+
+    elements = partition_email(
+        file=webp_attachment_email,
+        metadata_filename="webp-attachment.eml",
+        process_attachments=True,
+    )
+
+    assert elements == [
+        NarrativeText("This is an email with a WEBP attachment."),
+        Title("Scanned page"),
+    ]
+    attachment_element = elements[-1]
+    assert attachment_element.metadata.filetype == "image/webp"
+    assert attachment_element.metadata.filename == "DA-1p.webp"
+    assert attachment_element.metadata.attached_to_filename == "webp-attachment.eml"
 
 
 # ================================================================================================
@@ -652,3 +867,102 @@ class DescribeEmailPartitionerOptions:
     @pytest.fixture()
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
         return function_mock(request, "unstructured.partition.email.get_last_modified_date")
+
+
+# ================================================================================================
+# MODULE-LEVEL FIXTURES
+# ================================================================================================
+
+
+@pytest.fixture()
+def nested_attached_emails() -> io.BytesIO:
+    """An email with an email attached, which in turn has an email attached.
+
+    Each attached email has `ATTACHMENT_BYTES` attached three times: sent with
+    Content-Transfer-Encoding "binary", with no Content-Transfer-Encoding header (which means
+    "7bit"; these bytes are not, but such parts are found in real mail) and in Base64. Built from
+    bytes, since `EmailMessage` would choose its own transfer-encoding.
+    """
+    attachment_base64 = base64.b64encode(ATTACHMENT_BYTES)
+    level_2 = (
+        b"From: carol@example.com\r\n"
+        b"Subject: Level 2\r\n"
+        b"MIME-Version: 1.0\r\n"
+        b'Content-Type: multipart/mixed; boundary="level-2"\r\n'
+        b"\r\n"
+        b"--level-2\r\n"
+        b"Content-Type: text/plain\r\n"
+        b"\r\n"
+        b"This is the level 2 email.\r\n"
+        b"--level-2\r\n"
+        b"Content-Type: image/png\r\n"
+        b'Content-Disposition: attachment; filename="binary-2.png"\r\n'
+        b"Content-Transfer-Encoding: binary\r\n"
+        b"\r\n" + ATTACHMENT_BYTES + b"\r\n"
+        b"--level-2\r\n"
+        b"Content-Type: image/png\r\n"
+        b'Content-Disposition: attachment; filename="7bit-2.png"\r\n'
+        b"\r\n" + ATTACHMENT_BYTES + b"\r\n"
+        b"--level-2\r\n"
+        b"Content-Type: image/png\r\n"
+        b'Content-Disposition: attachment; filename="base64-2.png"\r\n'
+        b"Content-Transfer-Encoding: base64\r\n"
+        b"\r\n" + attachment_base64 + b"\r\n"
+        b"--level-2--\r\n"
+    )
+    level_1 = (
+        b"From: bob@example.com\r\n"
+        b"Subject: Level 1\r\n"
+        b"MIME-Version: 1.0\r\n"
+        b'Content-Type: multipart/mixed; boundary="level-1"\r\n'
+        b"\r\n"
+        b"--level-1\r\n"
+        b"Content-Type: text/plain\r\n"
+        b"\r\n"
+        b"This is the level 1 email.\r\n"
+        b"--level-1\r\n"
+        b"Content-Type: image/png\r\n"
+        b'Content-Disposition: attachment; filename="binary-1.png"\r\n'
+        b"Content-Transfer-Encoding: binary\r\n"
+        b"\r\n" + ATTACHMENT_BYTES + b"\r\n"
+        b"--level-1\r\n"
+        b"Content-Type: image/png\r\n"
+        b'Content-Disposition: attachment; filename="7bit-1.png"\r\n'
+        b"\r\n" + ATTACHMENT_BYTES + b"\r\n"
+        b"--level-1\r\n"
+        b"Content-Type: image/png\r\n"
+        b'Content-Disposition: attachment; filename="base64-1.png"\r\n'
+        b"Content-Transfer-Encoding: base64\r\n"
+        b"\r\n" + attachment_base64 + b"\r\n"
+        b"--level-1\r\n"
+        b"Content-Type: message/rfc822\r\n"
+        b'Content-Disposition: attachment; filename="level-2.eml"\r\n'
+        b"\r\n" + level_2 + b"\r\n"
+        b"--level-1--\r\n"
+    )
+    return io.BytesIO(
+        b"From: alice@example.com\r\n"
+        b"Subject: Level 0\r\n"
+        b"MIME-Version: 1.0\r\n"
+        b'Content-Type: multipart/mixed; boundary="level-0"\r\n'
+        b"\r\n"
+        b"--level-0\r\n"
+        b"Content-Type: text/plain\r\n"
+        b"\r\n"
+        b"This is the email.\r\n"
+        b"--level-0\r\n"
+        b"Content-Type: message/rfc822\r\n"
+        b'Content-Disposition: attachment; filename="level-1.eml"\r\n'
+        b"\r\n" + level_1 + b"\r\n"
+        b"--level-0--\r\n"
+    )
+
+
+@pytest.fixture()
+def webp_attachment_email() -> io.BytesIO:
+    """An email with a plain-text body and the example WEBP image attached."""
+    msg = EmailMessage()
+    msg.set_content("This is an email with a WEBP attachment.")
+    with open(example_doc_path("img/DA-1p.webp"), "rb") as f:
+        msg.add_attachment(f.read(), maintype="image", subtype="webp", filename="DA-1p.webp")
+    return io.BytesIO(msg.as_bytes())

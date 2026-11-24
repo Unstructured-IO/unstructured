@@ -80,6 +80,7 @@ ALLOWED_TAGS: frozenset[str] = frozenset(
         "dl",
         # tables
         "table",
+        "caption",
         "thead",
         "tbody",
         "tfoot",
