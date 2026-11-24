@@ -168,6 +168,10 @@ def partition(
                 "The headers kwarg is set but the url kwarg is not. "
                 "The headers kwarg will be ignored.",
             )
+        # -- a pipe or socket can't be rewound between file-type detection and partitioning, so
+        # -- read it once, as is done for a URL above
+        if file is not None and hasattr(file, "seekable") and not file.seekable():
+            file = io.BytesIO(file.read())
         file_type = detect_filetype(
             file_path=filename,
             file=file,
