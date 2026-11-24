@@ -11,7 +11,7 @@ from lxml import etree
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, ElementType
-from unstructured.file_utils.encoding import read_txt_file
+from unstructured.file_utils.encoding import read_response_text, read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.html.parser import Flow, Math, html_parser
@@ -67,7 +67,11 @@ def partition_html(
         If the URL parameter is set, determines whether or not SSL verification is performed
         on the HTTP request.
     encoding
-        The encoding method used to decode the text input. If None, utf-8 will be used.
+        The source encoding for filename, file, or URL bytes. When None, local files use
+        best-effort detection, and URLs use the charset in the response's Content-Type header.
+        A response that declares no charset is read as UTF-8 when it is valid UTF-8, and as
+        ISO-8859-1 otherwise. An explicit encoding is decoded strictly and is never replaced by
+        an automatic guess.
     skip_headers_and_footers
         If True, ignores any content that is within <header> or <footer> tags
 
@@ -170,7 +174,7 @@ class HtmlPartitionerOptions:
             if not content_type.startswith("text/html"):
                 raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
-            return response.text
+            return read_response_text(response, encoding=self._encoding)
 
         raise ValueError("Exactly one of filename, file, text, or url must be specified.")
 
