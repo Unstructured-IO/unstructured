@@ -499,7 +499,7 @@ class _AttachmentPartitioner:
 
     @staticmethod
     def _serialize_message(message: Message) -> bytes:
-        """Serialized bytes of `message`, the email enclosed in a `message/rfc822` attachment.
+        """Serialized bytes of `message`, an email or a `multipart/*` part found as an attachment.
 
         `as_bytes()` writes the body of each part as is, except that it rewrites each CR in it,
         alone or in a CRLF, as LF. Unless the part is in Base64, which ignores line breaks, that
@@ -535,7 +535,10 @@ class _AttachmentPartitioner:
         message would make `partition_email()` find no body at all. Strip that header on a
         *copy* before serializing -- `self._attachment` itself is left untouched since
         `_attachment_file_name` still needs its original `Content-Disposition` filename param.
+
+        The copy is serialized by `_serialize_message()`, so that a binary file inside keeps its
+        CR bytes.
         """
         part = copy.deepcopy(self._attachment)
         del part["Content-Disposition"]
-        return part.as_bytes()
+        return self._serialize_message(part)
