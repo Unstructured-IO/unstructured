@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import importlib
 import io
 import json
 import logging
@@ -185,7 +186,7 @@ class MockSinglePageDocumentLayout(layout.DocumentLayout):
     ],
 )
 def test_partition_pdf_local(monkeypatch, filename, file):
-    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", lambda *a, **k: [])
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: False)
     monkeypatch.setattr(
         layout,
         "process_data_with_model",
@@ -261,7 +262,7 @@ def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
     rotated_layout = _layout_with_rotation_corrections(
         [{"pdf_rotation_correction": 90}, {"pdf_rotation_correction": 0}]
     )
-    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", lambda *a, **k: [])
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: False)
     monkeypatch.setattr(layout, model_target, lambda *a, **k: rotated_layout)
 
     captured = {}
@@ -284,6 +285,16 @@ def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
     )
 
     assert captured["rotation_corrections"] == [90, 0]
+
+
+def _stub_page_render(monkeypatch, render):
+    """Replace the page render `hi_res` looks up on `pdf_image_utils`.
+
+    The analysis module binds the renderer by name when it is first imported, so it is imported
+    before the stub goes in and keeps the real one.
+    """
+    importlib.import_module("unstructured.partition.pdf_image.analysis.bbox_visualisation")
+    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", render)
 
 
 @pytest.mark.parametrize(
@@ -320,7 +331,7 @@ def test_partition_pdf_local_renders_pages_once_and_shares_them(
 
         return _inner
 
-    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", _render)
+    _stub_page_render(monkeypatch, _render)
     monkeypatch.setattr(layout, model_target, _capture("model"))
     monkeypatch.setattr(pdfminer_processing, pdfminer_target, lambda *a, **k: ([], []))
     monkeypatch.setattr(
@@ -370,7 +381,7 @@ def test_partition_pdf_local_renders_streams_without_readinto(monkeypatch):
         rendered_inputs.append((Path(filename).read_bytes(), file))
         return []
 
-    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", _render)
+    _stub_page_render(monkeypatch, _render)
     monkeypatch.setattr(layout, "process_data_with_model", lambda *a, **k: MockDocumentLayout())
     monkeypatch.setattr(pdfminer_processing, "process_data_with_pdfminer", lambda *a, **k: ([], []))
     monkeypatch.setattr(
@@ -392,11 +403,7 @@ def test_partition_pdf_local_does_not_prerender_when_inference_cannot_reuse_page
     """Without inference support the pages would be rendered twice, so the pipeline keeps
     rendering per stage."""
     monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: False)
-    monkeypatch.setattr(
-        pdf_image_utils,
-        "convert_pdf_to_image",
-        lambda *a, **k: pytest.fail("pdf must not be pre-rendered"),
-    )
+    _stub_page_render(monkeypatch, lambda *a, **k: pytest.fail("pdf must not be pre-rendered"))
     received = {}
 
     def _capture(name):
