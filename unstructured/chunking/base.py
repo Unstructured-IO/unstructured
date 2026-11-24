@@ -2787,15 +2787,68 @@ class _HtmlTableSplitter:
 
     def _maxlen(self, is_first_chunk: bool) -> int:
         """Available size for non-header row content of the next chunk."""
-        if is_first_chunk or not self._should_repeat_headers:
+        if is_first_chunk:
+            if not self._caption_text:
+                return self._opts.hard_max
+            # -- the first chunk carries the table caption, plus one separator --
+            return self._first_chunk_maxlen_with_caption
+
+        if not self._should_repeat_headers:
             return self._opts.hard_max
 
         # -- reserve one separator between repeated header text and chunk body text --
         return max(1, self._opts.hard_max - self._header_text_len - 1)
 
+    @cached_property
+    def _first_chunk_maxlen_with_caption(self) -> int:
+        """Row budget of the first chunk once the caption and its separator are reserved."""
+        return self._opts.hard_max - self._opts.measure(self._table_element.caption_text) - 1
+
+    @cached_property
+    def _caption_text(self) -> str:
+        """Caption text carried by the first chunk, or the empty string when not carried.
+
+        The caption is carried only when the first chunk can still hold the leading row group as
+        whole rows, plus every header row repeated on later chunks, within the hard limit. A
+        caption that leaves less room is not carried at all: carrying it would either exceed the
+        hard limit, starve an oversized first row into tiny fragments, or split the header block
+        that continuation chunks repeat (which reconstruction relies on).
+        """
+        caption_text = self._table_element.caption_text
+        maxlen = self._first_chunk_maxlen_with_caption
+        if not caption_text or maxlen < 1:
+            return ""
+
+        accum = _RowAccumulator(maxlen=maxlen, measure=self._opts.measure)
+        row_count = 0
+        for group, group_bounds, group_is_clipped in self._iter_rowspan_bound_row_groups():
+            if not accum.will_fit(group) or (
+                accum.last_row_group_key is not None
+                and group[0].row_group_key is not accum.last_row_group_key
+                and accum.crosses_a_row_group_unsafely_if_extended
+            ):
+                return ""
+            accum.add_rows(group, group_bounds, is_clipped=group_is_clipped)
+            row_count += len(group)
+            if row_count >= self.carried_over_header_row_count:
+                break
+        return caption_text
+
+    def _prepend_caption(self, text: str, html: str) -> TextAndHtml:
+        """Prepend the table caption, if carried, to the first chunk."""
+        caption_text = self._caption_text
+        if not caption_text:
+            return text, html
+
+        chunk_text = f"{caption_text} {text}" if text else caption_text
+        html_inner = html.removeprefix("<table>")
+        return chunk_text, f"<table>{self._table_element.caption_html}{html_inner}"
+
     def _prepend_repeated_headers(self, text: str, html: str, is_first_chunk: bool) -> TextAndHtml:
-        """Prepend repeated header rows to continuation chunk when enabled."""
-        if is_first_chunk or not self._should_repeat_headers:
+        """Prepend the caption to the first chunk and repeated header rows to the others."""
+        if is_first_chunk:
+            return self._prepend_caption(text, html)
+        if not self._should_repeat_headers:
             return text, html
 
         header_text = self._header_text

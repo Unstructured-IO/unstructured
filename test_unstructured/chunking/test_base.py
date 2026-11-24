@@ -3031,6 +3031,128 @@ class Describe_TableChunker:
         assert chunks[0].metadata.orig_elements == [table]
         assert "Omitting .metadata.orig_elements" not in caplog.text
 
+    @pytest.mark.parametrize("repeat_table_headers", [True, False])
+    def it_keeps_the_table_caption_in_the_first_chunk_when_it_splits_a_table(
+        self, repeat_table_headers: bool
+    ):
+        rows = "".join(f"<tr><td>Test{i}</td><td>{i * 10} mg/dL</td></tr>" for i in range(12))
+        html_table = (
+            "<table><caption>Chemistry Panel</caption>"
+            f"<thead><tr><th>Test</th><th>Value</th></tr></thead><tbody>{rows}</tbody></table>"
+        )
+        text_table = "Chemistry Panel Test Value " + " ".join(
+            f"Test{i} {i * 10} mg/dL" for i in range(12)
+        )
+        opts = ChunkingOptions(max_characters=120, repeat_table_headers=repeat_table_headers)
+
+        chunks = list(
+            _TableChunker.iter_chunks(
+                Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+                overlap_prefix="",
+                opts=opts,
+            )
+        )
+
+        assert len(chunks) > 1
+        assert chunks[0].text.startswith("Chemistry Panel Test Value Test0 ")
+        assert chunks[0].metadata.text_as_html.startswith(
+            "<table><caption>Chemistry Panel</caption><tr>"
+        )
+        assert all(len(c.text) <= 120 for c in chunks)
+        assert all("<caption>" not in c.metadata.text_as_html for c in chunks[1:])
+        reconstructed = reconstruct_table_from_chunks(chunks)[0]
+        assert reconstructed.text.split() == text_table.split()
+        assert reconstructed.metadata.text_as_html.startswith(
+            "<table><caption>Chemistry Panel</caption>"
+        )
+
+    @staticmethod
+    def _chunk_captioned_table(
+        caption: str, body_html: str, max_characters: int, repeat_table_headers: bool = False
+    ) -> list[TableChunk]:
+        html_table = f"<table><caption>{caption}</caption>{body_html}</table>"
+        table = HtmlTable.from_html_text(html_table)
+        text = f"{table.caption_text} {table.text}"
+        opts = ChunkingOptions(
+            max_characters=max_characters, repeat_table_headers=repeat_table_headers
+        )
+        return list(
+            _TableChunker.iter_chunks(
+                Table(text, metadata=ElementMetadata(text_as_html=html_table)),
+                overlap_prefix="",
+                opts=opts,
+            )
+        )
+
+    @pytest.mark.parametrize("caption_len", [90, 98, 99, 100, 150])
+    def it_keeps_captioned_chunks_within_the_hard_limit_for_near_limit_and_oversized_captions(
+        self, caption_len: int
+    ):
+        rows = "".join(f"<tr><td>{c}</td></tr>" for c in "abcdefghijklmnopqrstuvwxyz" * 3)
+
+        chunks = self._chunk_captioned_table("C" * caption_len, rows, max_characters=100)
+
+        assert all(len(c.text) <= 100 for c in chunks)
+        # -- a caption that leaves room for the first row is carried, any larger one is not --
+        caption_is_carried = caption_len + len(" a") <= 100
+        assert chunks[0].text.startswith("C" * caption_len) is caption_is_carried
+        assert ("<caption>" in chunks[0].metadata.text_as_html) is caption_is_carried
+        assert reconstruct_table_from_chunks(chunks)[0].text.split()[-1] == "z"
+
+    @pytest.mark.parametrize(
+        "body_html",
+        [
+            # -- a single first cell far larger than the window --
+            f"<tr><td>{'word ' * 200}</td></tr><tr><td>next</td></tr>",
+            # -- an oversized rowspan-bound group at the start of the table --
+            '<tr><td rowspan="3">' + "word " * 100 + "</td><td>a</td></tr>"
+            "<tr><td>" + "b " * 60 + "</td></tr><tr><td>c</td></tr><tr><td>next</td></tr>",
+        ],
+    )
+    def it_does_not_shrink_oversized_first_row_fragments_for_a_large_caption(self, body_html: str):
+        chunks = self._chunk_captioned_table("C" * 480, body_html, max_characters=500)
+
+        assert all(len(c.text) <= 500 for c in chunks)
+        # -- the caption cannot share a chunk with any whole first row, so it is not carried and
+        # -- every fragment of the oversized first row gets the full window rather than one char --
+        assert all("C" * 480 not in c.text for c in chunks)
+        assert len(chunks) < 10
+
+    def it_does_not_let_a_caption_split_a_repeated_multirow_header_block(self):
+        header = (
+            "<thead><tr><th>Group Alpha Beta Gamma</th><th>Group Delta Epsilon</th></tr>"
+            "<tr><th>Unit Name</th><th>Unit Value</th></tr></thead>"
+        )
+        rows = "".join(f"<tr><td>row{i}</td><td>{i}</td></tr>" for i in range(20))
+        body_html = f"{header}<tbody>{rows}</tbody>"
+
+        # -- the caption leaves room for the first header row but not the second --
+        chunks = self._chunk_captioned_table(
+            "X" * 50, body_html, max_characters=100, repeat_table_headers=True
+        )
+
+        assert all(len(c.text) <= 100 for c in chunks)
+        assert len(chunks) > 1
+        [table] = reconstruct_table_from_chunks(chunks)
+        html = fragment_fromstring(table.metadata.text_as_html)
+        assert [tr.xpath("string()") for tr in html.xpath("./thead/tr")] == [
+            "Group Alpha Beta GammaGroup Delta Epsilon",
+            "Unit NameUnit Value",
+        ]
+        assert table.text.startswith("Group Alpha Beta Gamma Group Delta Epsilon Unit Name ")
+
+        # -- a caption that leaves room for the whole header block is carried --
+        chunks = self._chunk_captioned_table(
+            "X" * 20, body_html, max_characters=100, repeat_table_headers=True
+        )
+
+        assert all(len(c.text) <= 100 for c in chunks)
+        assert chunks[0].text.startswith("X" * 20 + " Group Alpha")
+        [table] = reconstruct_table_from_chunks(chunks)
+        html = fragment_fromstring(table.metadata.text_as_html)
+        assert html.xpath("./caption/text()") == ["X" * 20]
+        assert len(html.xpath("./thead/tr")) == 2
+
     @pytest.mark.parametrize(
         ("text", "overlap_prefix", "expected_value"),
         [

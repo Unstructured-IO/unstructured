@@ -176,6 +176,31 @@ class DescribeHtmlTable:
         assert html_table._table.tag == "table"
 
     @pytest.mark.parametrize(
+        ("html_text", "expected_html", "expected_text"),
+        [
+            (
+                '<table><caption class="c">\n  Lab   Panel </caption><tr><td>Na</td></tr></table>',
+                "<caption>Lab Panel</caption>",
+                "Lab Panel",
+            ),
+            (
+                "<table><caption>Revenue<br/>USD <b>millions</b></caption>"
+                "<tr><td>1</td></tr></table>",
+                "<caption>Revenue<br/>USD <b>millions</b></caption>",
+                "Revenue USD millions",
+            ),
+            ("<table><tr><td>Na</td></tr></table>", "", ""),
+        ],
+    )
+    def it_provides_access_to_the_table_caption(
+        self, html_text: str, expected_html: str, expected_text: str
+    ):
+        html_table = HtmlTable.from_html_text(html_text)
+
+        assert html_table.caption_html == expected_html
+        assert html_table.caption_text == expected_text
+
+    @pytest.mark.parametrize(
         "html_text",
         [
             "<table><tr><td>foobar</td></tr></table>",
