@@ -76,6 +76,10 @@ def partition_tsv(
             f.seek(start)
             dataframe = read_delimited_text(f, sep="\t", header=header, encoding=None)
 
+    if not len(dataframe.columns):
+        # -- an empty file holds no table --
+        return []
+
     html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
 
     metadata = ElementMetadata(

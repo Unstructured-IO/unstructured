@@ -87,6 +87,10 @@ def partition_md(
     ``["tables", "fenced_code"]``. Pass e.g. ``extensions=["tables"]`` if you need the legacy
     behavior where ``#`` inside unfenced content is parsed as a heading (see #4006).
     """
+    # -- an empty document yields no elements, like the other text-based partitioners --
+    if text == "" and file is None and filename is None and url is None:
+        return []
+
     if text is None:
         text = ""
 

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import logging
 import pathlib
 import re
 import tempfile
@@ -52,6 +53,7 @@ from unstructured.documents.elements import (
 from unstructured.partition.docx import (
     DocxPartitionerOptions,
     _DocxPartitioner,
+    _row_grid_width,
     partition_docx,
     register_picture_partitioner,
 )
@@ -349,6 +351,233 @@ def test_partition_docx_detects_lists():
 # -- auto-numbered list labels -------------------------------------------------------------------
 
 _W_NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
+
+
+_SEQ_COMPLEX = (
+    '<w:r><w:fldChar w:fldCharType="begin"/></w:r>'
+    '<w:r><w:instrText xml:space="preserve"> SEQ Table \\* ARABIC </w:instrText></w:r>'
+    '<w:r><w:fldChar w:fldCharType="separate"/></w:r>'
+    "<w:r><w:t>2</w:t></w:r>"
+    '<w:r><w:fldChar w:fldCharType="end"/></w:r>'
+)
+_SEQ_SIMPLE = '<w:fldSimple w:instr=" SEQ Table \\* ARABIC "><w:r><w:t>2</w:t></w:r></w:fldSimple>'
+
+
+@pytest.mark.parametrize(
+    "wrapped",
+    [
+        _SEQ_SIMPLE,
+        _SEQ_COMPLEX,
+        f'<w:ins w:id="1" w:author="a">{_SEQ_SIMPLE}</w:ins>',
+        f'<w:ins w:id="1" w:author="a">{_SEQ_COMPLEX}</w:ins>',
+        f'<w:smartTag w:uri="u" w:element="e">{_SEQ_COMPLEX}</w:smartTag>',
+        f"<w:sdt><w:sdtContent>{_SEQ_COMPLEX}</w:sdtContent></w:sdt>",
+        f'<w:hyperlink w:anchor="t2">{_SEQ_SIMPLE}</w:hyperlink>',
+    ],
+)
+def test_partition_docx_keeps_the_number_of_a_caption_field_however_it_is_wrapped(
+    tmp_path, wrapped: str
+):
+    path = str(tmp_path / "caption.docx")
+    document = docx.Document()
+    paragraph = document.add_paragraph()
+    for child in parse_xml(
+        f'<w:p {_W_NS}><w:r><w:t xml:space="preserve">Table </w:t></w:r>{wrapped}'
+        "<w:r><w:t>: Puppy Naps</w:t></w:r></w:p>"
+    ):
+        paragraph._p.append(child)
+    document.save(path)
+
+    (element,) = partition_docx(path)
+
+    assert element.text == "Table 2: Puppy Naps"
+
+
+def test_partition_docx_does_not_include_text_from_a_text_box_in_the_paragraph_text(tmp_path):
+    path = str(tmp_path / "text_box.docx")
+    document = docx.Document()
+    paragraph = document.add_paragraph("Fetch ")
+    paragraph._p.append(
+        parse_xml(
+            f"<w:r {_W_NS}><w:pict><w:txbxContent><w:p><w:r><w:t>squirrel</w:t></w:r></w:p>"
+            "</w:txbxContent></w:pict></w:r>"
+        )
+    )
+    paragraph.add_run("stick")
+    document.save(path)
+
+    (element,) = partition_docx(path)
+
+    assert element.text == "Fetch stick"
+
+
+def _docx_with_body_xml(tmp_path, *body_xml: str) -> str:
+    path = str(tmp_path / "nested.docx")
+    document = docx.Document()
+    for xml in body_xml:
+        document.element.body.insert(len(document.element.body) - 1, parse_xml(xml))
+    document.save(path)
+    return path
+
+
+def _p(inner: str) -> str:
+    return f"<w:p {_W_NS}>{inner}</w:p>"
+
+
+def _r(text: str) -> str:
+    return f"<w:r><w:t>{text}</w:t></w:r>"
+
+
+@pytest.mark.parametrize(
+    ("body_xml", "expected"),
+    [
+        (
+            f"<w:sdt {_W_NS}><w:sdtContent>{_p(_r('puppy in a box'))}</w:sdtContent></w:sdt>",
+            "puppy in a box",
+        ),
+        (
+            f'<w:customXml {_W_NS} w:element="e">{_p(_r("puppy in custom xml"))}</w:customXml>',
+            "puppy in custom xml",
+        ),
+        (
+            _p(f'{_r("wag")}<w:ins w:id="1" w:author="x">{_r("wiggle")}</w:ins>{_r("woof")}'),
+            "wagwigglewoof",
+        ),
+        (
+            _p(
+                f'{_r("wag")}<w:moveTo w:id="1" w:author="x">{_r("wiggle")}</w:moveTo>'
+                f'<w:moveFrom w:id="2" w:author="x"><w:r><w:delText>wiggle</w:delText></w:r>'
+                f"</w:moveFrom>{_r('woof')}"
+            ),
+            "wagwigglewoof",
+        ),
+        (
+            _p(f'{_r("wag")}<w:smartTag w:uri="u" w:element="e">{_r("wiggle")}</w:smartTag>'),
+            "wagwiggle",
+        ),
+        (
+            _p(
+                f'{_r("wag")}<w:customXml w:element="e"><w:customXmlPr/>'
+                f"{_r('wiggle')}</w:customXml>"
+            ),
+            "wagwiggle",
+        ),
+        (_p(f'{_r("wag")}<w:bdo w:val="ltr">{_r("wiggle")}</w:bdo>{_r("woof")}'), "wagwigglewoof"),
+    ],
+)
+def test_partition_docx_reads_content_wrapped_in_elements_python_docx_skips(
+    tmp_path, body_xml: str, expected: str
+):
+    (element,) = partition_docx(_docx_with_body_xml(tmp_path, body_xml))
+
+    assert element.text == expected
+
+
+def test_partition_docx_leaves_out_deleted_text_including_a_deleted_tab_or_line_break(tmp_path):
+    path = _docx_with_body_xml(
+        tmp_path,
+        _p(
+            f'{_r("wag")}<w:del w:id="1" w:author="x"><w:r><w:tab/><w:br/>'
+            f"<w:delText>chewed slipper</w:delText></w:r></w:del>{_r('wiggle')}"
+        ),
+    )
+
+    (element,) = partition_docx(path)
+
+    assert element.text == "wagwiggle"
+
+
+def test_partition_docx_leaves_out_a_content_control_that_only_shows_its_placeholder(tmp_path):
+    path = _docx_with_body_xml(
+        tmp_path,
+        _p(
+            f"{_r('Puppy name: ')}<w:sdt><w:sdtPr><w:showingPlcHdr/></w:sdtPr><w:sdtContent>"
+            f"{_r('Type a puppy name here')}</w:sdtContent></w:sdt>"
+        ),
+    )
+
+    (element,) = partition_docx(path)
+
+    assert element.text == "Puppy name: "
+
+
+@pytest.mark.parametrize(
+    ("flag", "expected"),
+    [
+        ("<w:showingPlcHdr/>", "Puppy name: "),
+        ('<w:showingPlcHdr w:val="1"/>', "Puppy name: "),
+        ('<w:showingPlcHdr w:val="true"/>', "Puppy name: "),
+        ('<w:showingPlcHdr w:val="on"/>', "Puppy name: "),
+        ('<w:showingPlcHdr w:val="0"/>', "Puppy name: Rex"),
+        ('<w:showingPlcHdr w:val="false"/>', "Puppy name: Rex"),
+        ('<w:showingPlcHdr w:val="off"/>', "Puppy name: Rex"),
+    ],
+)
+def test_partition_docx_drops_a_content_control_only_when_its_placeholder_flag_is_on(
+    tmp_path, flag: str, expected: str
+):
+    path = _docx_with_body_xml(
+        tmp_path,
+        _p(
+            f"{_r('Puppy name: ')}<w:sdt><w:sdtPr>{flag}</w:sdtPr><w:sdtContent>{_r('Rex')}"
+            "</w:sdtContent></w:sdt>"
+        ),
+    )
+
+    (element,) = partition_docx(path)
+
+    assert element.text == expected
+
+
+def test_partition_docx_leaves_the_automatic_table_of_contents_unread(tmp_path):
+    toc = (
+        f'<w:sdt {_W_NS}><w:sdtPr><w:docPartObj><w:docPartGallery w:val="Table of Contents"/>'
+        f"</w:docPartObj></w:sdtPr><w:sdtContent>{_p(_r('1. Treats ..... 3'))}</w:sdtContent>"
+        "</w:sdt>"
+    )
+    path = _docx_with_body_xml(tmp_path, toc, _p(_r("Good dog")))
+
+    elements = partition_docx(path)
+
+    assert [e.text for e in elements] == ["Good dog"]
+
+
+def test_partition_docx_reads_a_table_whose_row_and_cell_are_wrapped_in_content_controls(
+    tmp_path,
+):
+    cell = f"<w:sdt><w:sdtContent><w:tc>{_p(_r('Fido'))}</w:tc></w:sdtContent></w:sdt>"
+    row = f"<w:tr><w:tc>{_p(_r('Rex'))}</w:tc>{cell}</w:tr>"
+    path = _docx_with_body_xml(
+        tmp_path,
+        f"<w:tbl {_W_NS}><w:tblPr/><w:tblGrid><w:gridCol/><w:gridCol/></w:tblGrid>"
+        f"<w:sdt><w:sdtContent>{row}</w:sdtContent></w:sdt></w:tbl>",
+    )
+
+    (table,) = partition_docx(path)
+
+    assert isinstance(table, Table)
+    assert table.text == "Rex Fido"
+    assert "<td>Fido</td>" in (table.metadata.text_as_html or "")
+
+
+def test_partition_docx_reads_a_content_control_in_a_header_and_a_footer(tmp_path):
+    path = str(tmp_path / "hf.docx")
+    document = docx.Document()
+    document.add_paragraph("Good dog")
+    section = document.sections[0]
+    for part, text in ((section.header, "zoomies"), (section.footer, "treats")):
+        paragraph = part.paragraphs[0]
+        paragraph._p.append(
+            parse_xml(
+                f"<w:sdt {_W_NS}><w:sdtContent><w:r><w:t>{text}</w:t></w:r></w:sdtContent></w:sdt>"
+            )
+        )
+    document.save(path)
+
+    texts = [e.text for e in partition_docx(path)]
+
+    assert "zoomies" in texts
+    assert "treats" in texts
 
 
 def _lvl_xml(ilvl: int, fmt: str, text: str, start: int = 1) -> str:
@@ -1242,7 +1471,7 @@ def test_partition_docx_counts_a_section_break_paragraph_whose_text_is_in_a_cont
 
     elements = partition_docx(path)
 
-    assert [e.text for e in elements] == ["1. a", "3. c", "a) c1"]
+    assert [e.text for e in elements] == ["1. a", "2. b", "3. c", "a) c1"]
 
 
 def test_partition_docx_counts_a_section_break_paragraph_that_holds_only_an_equation(tmp_path):
@@ -2769,6 +2998,32 @@ class Describe_DocxPartitioner:
         assert [element.text for element in elements] == ["Header", "Body", "Footer"]
 
 
+def test_partition_docx_skips_a_header_whose_relationship_is_missing(
+    caplog: pytest.LogCaptureFixture,
+):
+    """A dangling header `r:id` must not abort partitioning with a raw `KeyError`.
+
+    The body content is still returned and a warning records the dropped header.
+    """
+    document = docx.Document()
+    document.add_paragraph("Body")
+    sectPr = document.sections[0]._sectPr
+    headerReference = sectPr.makeelement(qn("w:headerReference"), {})
+    headerReference.set(qn("r:id"), "rIdDoesNotExist")
+    headerReference.set(qn("w:type"), "default")
+    sectPr.insert(0, headerReference)
+
+    file = io.BytesIO()
+    document.save(file)
+    file.seek(0)
+
+    with caplog.at_level(logging.WARNING):
+        elements = partition_docx(file=file)
+
+    assert [element.text for element in elements] == ["Body"]
+    assert "unresolved relationship id" in caplog.text
+
+
 def test_partition_docx_skips_malformed_row_cells():
     """Test that partition_docx does not crash on a DOCX with malformed/merged table rows."""
     elements = partition_docx(example_doc_path("grid_offset_error.docx"))
@@ -2776,3 +3031,204 @@ def test_partition_docx_skips_malformed_row_cells():
     assert isinstance(elements, list)
     assert all(hasattr(el, "text") for el in elements)
     assert any(el.text.strip() for el in elements), "Expected some non-empty extracted text"
+
+
+def test_partition_docx_very_long_vertical_merge_keeps_every_row(tmp_path):
+    """A vertically merged cell spanning ~1500 rows must not lose the rows after ~1000.
+
+    python-docx resolves each `vMerge="continue"` cell by recursing to the cell above it, one
+    stack frame per merged row, so `row.cells` used to raise RecursionError inside
+    `_convert_table_to_html` on a long merge. The guard swallowed it and emitted empty cells,
+    silently dropping the remaining rows from `text_as_html` (the plain `Table.text` was never
+    affected). The grid walk now resolves the merge iteratively.
+    """
+    n_rows = 1500
+    document = docx.Document()
+    table = document.add_table(rows=n_rows, cols=2)
+    for i in range(n_rows):
+        table.cell(i, 1).text = f"side-{i}"
+    table.cell(0, 0).text = "MERGEDHEAD"
+
+    # -- merge column 0 across all rows via raw XML; python-docx's own merge helpers walk the
+    # -- span with the same recursion this regression is about --
+    for i, row in enumerate(table.rows):
+        tc = row._tr.tc_lst[0]
+        vmerge = parse_xml(
+            f'<w:vMerge {nsdecls("w")} w:val="restart"/>'
+            if i == 0
+            else f"<w:vMerge {nsdecls('w')}/>"
+        )
+        tc.get_or_add_tcPr().append(vmerge)
+
+    docx_path = tmp_path / "long-vmerge.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    table_element = next(e for e in elements if isinstance(e, Table))
+
+    html = table_element.metadata.text_as_html
+    assert html is not None
+    assert html.count('rowspan="1500"') == 1
+    assert html.count("MERGEDHEAD") == 1
+    # -- check exact ordered side-cell values, not substrings ("side-1" also matches side-10) --
+    side_cells = [
+        c.strip()
+        for c in re.findall(r"<td[^>]*>(.*?)</td>", html, re.DOTALL)
+        if c.strip().startswith("side-")
+    ]
+    assert side_cells == [f"side-{i}" for i in range(n_rows)]
+
+
+def test_partition_docx_vmerge_origin_not_reused_across_column_gap(tmp_path):
+    """A vMerge origin must not survive a row that omits its column (gridBefore/After).
+
+    A resume cell (vMerge="continue") with no origin in the immediately preceding row is
+    malformed; it must emit an empty position (like the plain-text walkers), never a stale
+    origin from rows above and never its own text.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    table.cell(0, 0).text = "OLD"
+    table.cell(0, 1).text = "A0"
+    table.cell(1, 1).text = "MID"
+    table.cell(2, 0).text = "CURRENT"
+    table.cell(2, 1).text = "A2"
+    # -- row 0 col 0 is the merge origin; row 2 col 0 is an orphan continuation --
+    table.rows[0]._tr.tc_lst[0].get_or_add_tcPr().append(
+        parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>')
+    )
+    table.rows[2]._tr.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+    # -- row 1 omits column 0 (leading gap) --
+    tr1 = table.rows[1]._tr
+    tr1.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    tr1.remove(tr1.tc_lst[0])
+    docx_path = tmp_path / "gap.docx"
+    document.save(str(docx_path))
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    html = next(e for e in elements if isinstance(e, Table)).metadata.text_as_html
+    # -- The orphan continuation must not reuse the stale "OLD" origin (the regression),
+    # -- and must not surface its own text either: the plain-text and emphasis walkers skip
+    # -- every vMerge="continue" tc, so HTML emits an empty position to stay consistent.
+    assert html.count("OLD") == 1
+    assert "CURRENT" not in html
+    # -- third row first cell is empty (self-closing <td/>); the row still has both positions --
+    assert re.search(r"<tr><td\s*/><td>A2</td></tr>", html)
+
+
+def test_partition_docx_unresolved_spanned_continuation_clears_stale_origins(tmp_path):
+    """An unresolved multi-column continuation must not leave a stale origin behind.
+
+    A `vMerge="continue"` cell spanning several grid columns whose starting column has
+    no origin is malformed: it emits blanks for every covered column. Those columns
+    must all have their tracked origins cleared, otherwise a later orphan continuation
+    in one of them resolves to text from several rows above. This is the multi-column
+    extension of the single-column gap case in
+    `test_partition_docx_vmerge_origin_not_reused_across_column_gap`.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    # -- set texts while cells are addressable via the grid API --
+    table.cell(0, 0).text = "OLD"
+    table.cell(0, 1).text = "A0"
+    table.cell(1, 0).text = "B0"
+    table.cell(1, 1).text = "B1"
+    table.cell(2, 0).text = "SHOULD_NOT_APPEAR"
+    table.cell(2, 1).text = "A2"
+
+    # -- row 0 omits col0 (gridBefore=1); its remaining tc holds OLD and starts a merge. --
+    r0 = table.rows[0]._tr
+    r0.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    r0.remove(r0.tc_lst[1])
+    r0.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>'))
+
+    # -- row 1 is a two-column continuation (gridSpan=2) starting at col0, which has no
+    # -- origin; col1 still holds the OLD origin. Both columns must be cleared. --
+    r1 = table.rows[1]._tr
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="2"/>'))
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+    r1.remove(r1.tc_lst[1])
+
+    # -- row 2 omits col0; its col1 continuation has no fresh origin and must not get OLD. --
+    r2 = table.rows[2]._tr
+    r2.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    r2.remove(r2.tc_lst[1])
+    r2.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+
+    docx_path = tmp_path / "spanned-orphan.docx"
+    document.save(str(docx_path))
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    html = next(e for e in elements if isinstance(e, Table)).metadata.text_as_html
+    # -- OLD appears only once, in its origin row; the later orphan continuation is blank. --
+    assert html.count("OLD") == 1
+    assert "SHOULD_NOT_APPEAR" not in html
+
+
+def test_partition_docx_resolved_spanned_continuation_clears_stale_origins(tmp_path):
+    """A resolved multi-column continuation must update every covered column's origin.
+
+    A `vMerge="continue"` cell spanning several grid columns whose starting column DOES
+    have an origin emits that origin across its whole span. Every covered column must be
+    tracked to that same origin: a non-starting column would otherwise keep an origin
+    from several rows above, and a later orphan continuation there re-emits stale text.
+    This is the resolved counterpart of
+    `test_partition_docx_unresolved_spanned_continuation_clears_stale_origins`.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=2)
+    # -- set texts while cells are addressable via the grid API --
+    table.cell(0, 0).text = "LEFT"
+    table.cell(0, 1).text = "OLD"
+    table.cell(1, 0).text = "B0"
+    table.cell(1, 1).text = "B1"
+    table.cell(2, 0).text = "C0"
+    table.cell(2, 1).text = "C1"
+
+    # -- row 0: col0 and col1 each start their own vertical merge (LEFT and OLD). --
+    r0 = table.rows[0]._tr
+    r0.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>'))
+    r0.tc_lst[1].get_or_add_tcPr().append(parse_xml(f'<w:vMerge {nsdecls("w")} w:val="restart"/>'))
+
+    # -- row 1: one tc spanning both columns (gridSpan=2), a continuation starting at
+    # -- col0. col0 has origin LEFT, so this is RESOLVED and emits LEFT in both positions;
+    # -- both columns must now track LEFT, not leave col1 pointing at the older OLD. --
+    r1 = table.rows[1]._tr
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="2"/>'))
+    r1.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+    r1.remove(r1.tc_lst[1])
+
+    # -- row 2 omits col0; its col1 continuation must not pick up the stale OLD. --
+    r2 = table.rows[2]._tr
+    r2.get_or_add_trPr().append(parse_xml(f'<w:gridBefore {nsdecls("w")} w:val="1"/>'))
+    r2.remove(r2.tc_lst[1])
+    r2.tc_lst[0].get_or_add_tcPr().append(parse_xml(f"<w:vMerge {nsdecls('w')}/>"))
+
+    docx_path = tmp_path / "resolved-spanned.docx"
+    document.save(str(docx_path))
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    html = next(e for e in elements if isinstance(e, Table)).metadata.text_as_html
+    # -- OLD appears only in its own origin row; the later continuation is blank. --
+    assert html.count("OLD") == 1
+    # -- row 1 emits LEFT across both spanned columns; row 2's col1 is an empty position. --
+    assert html.count("LEFT") == 2
+    assert re.search(r"<tr><td\s*/></tr>", html)
+
+
+def test_row_grid_width_normalizes_nonpositive_grid_span():
+    """_row_grid_width must charge the same positions the HTML iterator emits.
+
+    A gridSpan of 0 or less still expands to one position in iter_row_cells, so the
+    budget guard must count one position too; otherwise many such cells bypass
+    DOCX_TABLE_MAX_CELLS.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=1, cols=1)
+    tc = table.rows[0]._tr.tc_lst[0]
+    tc_pr = tc.get_or_add_tcPr()
+    tc_pr.append(parse_xml(f'<w:gridSpan {nsdecls("w")} w:val="0"/>'))
+    assert _row_grid_width(table.rows[0]) == 1
+    # -- select the property by qualified name, not by child index, so the test
+    # -- cannot silently mutate a different tcPr child if the XML layout changes. --
+    (grid_span,) = tc_pr.findall(qn("w:gridSpan"))
+    grid_span.set(qn("w:val"), "-2")
+    assert grid_span.get(qn("w:val")) == "-2"
+    assert _row_grid_width(table.rows[0]) == 1

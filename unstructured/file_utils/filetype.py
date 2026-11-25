@@ -276,7 +276,11 @@ class _FileTypeDetector:
             return None
 
         # -- otherwise we trust the passed `content_type` as long as `FileType` recognizes it --
-        return FileType.from_mime_type(self._ctx.content_type)
+        file_type = FileType.from_mime_type(self._ctx.content_type)
+
+        # -- except "application/octet-stream", which maps to `FileType.UNK`. Servers commonly send
+        # -- it for any binary download, so it says nothing about the file-type --
+        return None if file_type is FileType.UNK else file_type
 
     @property
     def _disambiguate_json_file_type(self) -> FileType:
@@ -685,7 +689,15 @@ class _FileTypeDetectionContext:
             UnprocessableEntityError when the file cannot be decoded with the declared
             encoding or any of the common fallback encodings.
         """
+        # -- a leading UTF-8 BOM survives a plain "utf-8" decode as a literal U+FEFF character,
+        # -- which defeats content-shape checks (e.g. JSON's leading "[" or "{" test) that assume
+        # -- the text starts with actual content. Only one BOM can ever be produced by decoding,
+        # -- so remove at most one; `.lstrip()` would also strip a legitimate U+FEFF appearing in
+        # -- the actual content immediately after it. --
+        return self._read_text_head().removeprefix("\ufeff")
 
+    def _read_text_head(self) -> str:
+        """Decoded initial characters of the file, as read; see `.text_head`."""
         if file := self._file_arg:
             file.seek(0)
             content = file.read(4096)

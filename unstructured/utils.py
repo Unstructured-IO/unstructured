@@ -12,6 +12,7 @@ import tempfile
 import threading
 from functools import lru_cache, wraps
 from itertools import combinations
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -64,7 +65,10 @@ def is_temp_file_path(file_path: str) -> bool:
     The Python-defined temp directory is platform dependent (macOS != Linux != Windows)
     and can also be determined by an environment variable (TMPDIR, TEMP, or TMP).
     """
-    return file_path.startswith(tempfile.gettempdir())
+    # -- Compare path components, not a raw string prefix: `startswith()` also matches a
+    # -- path that merely begins with the temp-dir name, e.g. "/tmpdata/report.csv" when
+    # -- the temp dir is "/tmp", which would drop `filename`/`last_modified` metadata.
+    return Path(file_path).is_relative_to(tempfile.gettempdir())
 
 
 def save_as_jsonl(data: list[dict[str, Any]], filename: str) -> None:

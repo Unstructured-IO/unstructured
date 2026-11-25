@@ -86,7 +86,9 @@ class TitleElementHtml(ElementHtml):
 
     @property
     def html_tag(self) -> str:
-        return self._html_tag % (self.element.metadata.category_depth or 1)
+        # -- `category_depth` is zero-based (h1 -> 0, h2 -> 1, ...) and HTML stops at h6 --
+        depth = self.element.metadata.category_depth or 0
+        return self._html_tag % (min(max(depth, 0), 5) + 1)
 
 
 class ImageElementHtml(ElementHtml):
@@ -271,10 +273,12 @@ def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[Elemen
         grouped_children = _group_element_children(children)
         parent = elements_by_id.get(parent_id)
         if parent is None:
-            logger.warning(f"Parent element with id {parent_id} not found. Skipping.")
+            logger.warning(
+                f"Parent element with id {parent_id} not found. Rendering children as roots."
+            )
             continue
         parent.set_children(grouped_children)
-    return [el for el in elements if el.element.metadata.parent_id is None]
+    return [el for el in elements if el.element.metadata.parent_id not in elements_by_id]
 
 
 def _elements_to_html_tags(

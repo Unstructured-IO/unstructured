@@ -98,9 +98,9 @@ class ObjectDetectionEvalProcessor:
         """
         # TODO: Test after https://unstructured-ai.atlassian.net/browse/ML-92
         # is done.
-        with open(prediction_file_path) as f:
+        with open(prediction_file_path, encoding="utf-8") as f:
             predictions_data = json.load(f)
-        with open(ground_truth_file_path) as f:
+        with open(ground_truth_file_path, encoding="utf-8") as f:
             ground_truth_data = json.load(f)
 
         assert sorted(predictions_data["object_detection_classes"]) == sorted(
@@ -484,7 +484,7 @@ class ObjectDetectionEvalProcessor:
         preds_to_ignore[preds_idx_to_use] = False
 
         if len(targets) > 0:  # or len(crowd_targets) > 0:
-            self._change_bbox_bounds_for_image_size(preds, (height, width))
+            preds_box = self._change_bbox_bounds_for_image_size(preds_box.clone(), (height, width))
 
             preds_matched = self._compute_targets(
                 preds_box,
@@ -641,9 +641,6 @@ class ObjectDetectionEvalProcessor:
             rolling_tps + rolling_fps + torch.finfo(torch.float64).eps
         )
 
-        # Reversed cummax to only have decreasing values
-        rolling_precisions = rolling_precisions.flip(0).cummax(0).values.flip(0)
-
         # ==================
         # RECALL & PRECISION
 
@@ -669,6 +666,9 @@ class ObjectDetectionEvalProcessor:
 
         # ==================
         # AVERAGE PRECISION
+
+        # Reversed cummax is the interpolated precision envelope for AP only.
+        rolling_precisions = rolling_precisions.flip(0).cummax(0).values.flip(0)
 
         # shape = (nb_iou_thrs, n_recall_thresholds)
         recall_thresholds = recall_thresholds.view(1, -1).repeat(nb_iou_thrs, 1)

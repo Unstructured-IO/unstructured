@@ -168,6 +168,36 @@ def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_ty
     assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
 
 
+@pytest.mark.parametrize(
+    ("expected_value", "file_name", "mime_type", "metadata_file_path"),
+    [
+        # -- detected by MIME-type guessing --
+        (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf", None),
+        (FileType.HTML, "example-10k-1p.html", "text/html", None),
+        # -- detected by filename extension --
+        (FileType.MD, "README.md", None, "README.md"),
+    ],
+)
+def test_it_ignores_asserted_octet_stream_content_type(
+    file_name: str,
+    mime_type: str | None,
+    metadata_file_path: str | None,
+    expected_value: FileType,
+    ctx_mime_type_: Mock,
+):
+    # -- the generic "application/octet-stream" maps to `FileType.UNK` and must not end detection
+    # -- before MIME-type guessing and the filename extension get a chance --
+    ctx_mime_type_.return_value = mime_type
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    file_type = detect_filetype(
+        file=file, content_type="application/octet-stream", metadata_file_path=metadata_file_path
+    )
+
+    assert file_type is expected_value
+
+
 # ================================================================================================
 # STRATEGY #3 - GUESS MIME-TYPE WITH LIBMAGIC/FILETYPE LIBRARY
 # ================================================================================================
@@ -556,6 +586,18 @@ def test_it_preserves_a_path_like_stream_name_extension():
     file.name = Path("notes.md")
 
     assert detect_filetype(file=file) == FileType.MD
+
+
+@pytest.mark.parametrize("mime_type", ["text/plain", None])
+def test_it_detects_MD_from_a_dot_markdown_extension(
+    mime_type: str | None, tmp_path: Path, ctx_mime_type_: Mock
+):
+    # -- libmagic usually guesses "text/plain" for Markdown, `None` is the no-libmagic case --
+    ctx_mime_type_.return_value = mime_type
+    file_path = tmp_path / "notes.markdown"
+    file_path.write_text("# Release notes\n\nThis release fixes several bugs.\n")
+
+    assert detect_filetype(file_path=str(file_path)) is FileType.MD
 
 
 def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
@@ -1288,6 +1330,15 @@ class Describe_FileTypeDetectionContext:
         assert len(text_head) == 188
         assert text_head.startswith("This is a test document to use for unit tests.\n\n    Doyle")
 
+    def it_strips_only_the_leading_utf8_bom_and_not_a_later_literal_ufeff_char(self):
+        """Only one BOM can ever be produced by decoding; a 2nd U+FEFF is real content."""
+        file = io.BytesIO(b"\xef\xbb\xbf\xef\xbb\xbf{}")
+        ctx = _FileTypeDetectionContext(file=file)
+
+        text_head = ctx.text_head
+
+        assert text_head == "﻿{}"
+
     def and_it_accommodates_a_utf_32_encoded_file_like_object(self):
         with open(example_doc_path("fake-text-utf-32.txt"), "rb") as f:
             file = io.BytesIO(f.read())
@@ -1478,6 +1529,18 @@ def test_json_content_type_is_disambiguated_for_ndjson():
     file_buffer.name = "filename.pdf"
     predicted_type = detect_filetype(file=file_buffer, content_type="application/json")
     assert predicted_type == FileType.NDJSON
+
+
+def test_it_identifies_json_with_a_leading_utf8_bom_and_no_extension():
+    json_bytes = b"\xef\xbb\xbf" + json.dumps([{"example": "data"}]).encode("utf-8")
+
+    file_buffer = io.BytesIO(json_bytes)
+    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    assert predicted_type == FileType.JSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer)
+    assert predicted_type == FileType.JSON
 
 
 def test_office_files_when_document_archive_has_non_standard_prefix():

@@ -347,7 +347,15 @@ class FileType(enum.Enum):
         "audio/mp4",
         ["audio/x-m4a"],
     )
-    MD = ("md", "md", ["markdown"], "md", [".md"], "text/markdown", ["text/x-markdown"])
+    MD = (
+        "md",
+        "md",
+        ["markdown"],
+        "md",
+        [".md", ".markdown"],
+        "text/markdown",
+        ["text/x-markdown"],
+    )
     MP3 = (
         "mp3",
         "audio",
