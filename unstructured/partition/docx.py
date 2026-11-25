@@ -256,6 +256,7 @@ class DocxPartitionerOptions:
         for part in document.part.package.iter_parts():
             if isinstance(part, (DocumentPart, HeaderPart, FooterPart)):
                 _unwrap_nested_content(part.element)
+                _unwrap_ruby_base(part.element)
         return document
 
     @cached_property
@@ -1335,6 +1336,26 @@ def _unwrap_nested_content(root: BaseOxmlElement) -> None:
         if children is None:
             continue
         index = parent.index(wrapper)
+        parent[index : index + 1] = children
+
+
+def _unwrap_ruby_base(root: BaseOxmlElement) -> None:
+    """Keep the visible base of East Asian ruby text where python-docx can read it.
+
+    A run's ``w:ruby`` contains pronunciation in ``w:rt`` and the corresponding document
+    text in ``w:rubyBase``. python-docx ignores both. Lift the base runs' content into the
+    enclosing run, retaining inline text, tabs and breaks without duplicating pronunciation.
+    The enclosing run's formatting applies; separate base-run formatting is not resolved.
+    """
+    for ruby in reversed(list(root.iter(_W + "ruby"))):
+        parent = ruby.getparent()
+        base = ruby.find(_W + "rubyBase")
+        if parent is None or base is None:
+            continue
+        children = [
+            child for run in base.findall(_W + "r") for child in run if child.tag != _W + "rPr"
+        ]
+        index = parent.index(ruby)
         parent[index : index + 1] = children
 
 
