@@ -28,6 +28,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     EmailAddress,
+    Image,
     ListItem,
     NarrativeText,
     PageBreak,
@@ -133,6 +134,7 @@ def partition_pptx(
     *,
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
+    include_image_alt_text: bool = False,
     include_slide_notes: bool | None = None,
     include_off_slide_shapes: bool = False,
     infer_table_structure: bool = True,
@@ -150,6 +152,9 @@ def partition_pptx(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, includes a PageBreak element between slides
+    include_image_alt_text
+        If True, the default picture partitioner emits authored image titles/descriptions as
+        Image elements without OCR. Registered picture partitioners keep control of their output.
     include_slide_notes
         If True, includes the slide notes as element
     include_off_slide_shapes
@@ -169,6 +174,7 @@ def partition_pptx(
         file=file,
         file_path=filename,
         include_page_breaks=include_page_breaks,
+        include_image_alt_text=include_image_alt_text,
         include_slide_notes=include_slide_notes,
         include_off_slide_shapes=include_off_slide_shapes,
         infer_table_structure=infer_table_structure,
@@ -491,10 +497,12 @@ class PptxPartitionerOptions:
         infer_table_structure: bool,
         strategy: str,
         starting_page_number: int = 1,
+        include_image_alt_text: bool = False,
     ):
         self._file = file
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
+        self.include_image_alt_text = include_image_alt_text
         self._include_slide_notes = include_slide_notes
         self._include_off_slide_shapes = include_off_slide_shapes
         self._infer_table_structure = infer_table_structure
@@ -645,10 +653,15 @@ class PptxPartitionerOptions:
 
 
 class _NullPicturePartitioner:
-    """Does not parse the provided Picture element and generates zero elements."""
+    """Skip pictures by default, or emit their authored alt text when explicitly requested."""
 
     @classmethod
     def iter_elements(cls, picture: Picture, opts: PptxPartitionerOptions) -> Iterator[Element]:
-        """No-op picture partitioner."""
-        return
-        yield
+        """Generate an alt-text Image element without opening image data or performing OCR."""
+        if not opts.include_image_alt_text:
+            return
+        for properties in picture._element.xpath("./p:nvPicPr/p:cNvPr"):
+            parts = [properties.get(attr, "").strip() for attr in ("title", "descr")]
+            text = "\n".join(dict.fromkeys(part for part in parts if part))
+            if text:
+                yield Image(text, metadata=opts.text_metadata(), detection_origin=DETECTION_ORIGIN)
