@@ -1269,7 +1269,7 @@ def get_words_from_obj(
         start_index = 0
         last_char: LTChar | None = None  # Track last character for deduplication
 
-        for index, character in enumerate(text_line):
+        for character in text_line:
             if isinstance(character, LTChar):
                 # Skip duplicate characters (fake bold fix)
                 if (
@@ -1282,6 +1282,10 @@ def get_words_from_obj(
                 last_char = character
                 characters.append(character)
                 char = character.get_text()
+                # Link offsets address emitted Unicode text: duplicate glyphs add
+                # nothing, while one retained glyph can expand to several characters.
+                char_start = text_len
+                text_len += len(char)
 
                 if word and not char.strip():
                     words.append(
@@ -1302,7 +1306,7 @@ def get_words_from_obj(
                     word = ""
 
                 if len(word) == 0:
-                    start_index = text_len + index
+                    start_index = char_start
                     x1 = character.x0
                     y2 = height - character.y0
                     x2 = character.x1
@@ -1314,11 +1318,12 @@ def get_words_from_obj(
                 word += char
             else:
                 # Non-LTChar items (e.g., LTAnno) act as word boundaries
+                if hasattr(character, "get_text"):
+                    text_len += len(character.get_text())
                 words.append(
                     {"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index},
                 )
                 word = ""
-        text_len += len(text_line)
     return characters, words
 
 
