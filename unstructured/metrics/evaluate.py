@@ -8,6 +8,7 @@ import logging
 import os
 import sys
 from abc import ABC, abstractmethod
+from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Union
@@ -145,9 +146,9 @@ class BaseMetricsCalculator(ABC):
         Returns:
             Metrics for each document as a pandas DataFrame
         """
-        if executor is None:
-            executor = self._default_executor()
-        rows = self._process_all_documents(executor, visualize_progress)
+        executor_context = self._default_executor() if executor is None else nullcontext(executor)
+        with executor_context as active_executor:
+            rows = self._process_all_documents(active_executor, visualize_progress)
         df, agg_df = self._generate_dataframes(rows)
 
         if export_dir is not None:
@@ -177,17 +178,16 @@ class BaseMetricsCalculator(ABC):
 
         Failures are omitted from the returned result.
         """
-        with executor:
-            return [
-                row
-                for row in tqdm(
-                    executor.map(self._try_process_document, self._document_paths),
-                    total=len(self._document_paths),
-                    leave=False,
-                    disable=not visualize_progress,
-                )
-                if row is not None
-            ]
+        return [
+            row
+            for row in tqdm(
+                executor.map(self._try_process_document, self._document_paths),
+                total=len(self._document_paths),
+                leave=False,
+                disable=not visualize_progress,
+            )
+            if row is not None
+        ]
 
     def _try_process_document(self, doc: Path) -> Optional[list]:
         """Safe wrapper around the document processing method."""
