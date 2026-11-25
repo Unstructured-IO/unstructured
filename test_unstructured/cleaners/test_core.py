@@ -148,6 +148,19 @@ def test_remove_punctuation(text, expected):
 
 
 @pytest.mark.parametrize(
+    ("exclude_punctuation", "expected"),
+    [
+        (["!"], "Hello world! 3 + 4 ~ 7"),
+        (["~", "+"], "Hello world 3 + 4 ~ 7"),
+        (["!", "!"], "Hello world! 3 + 4 ~ 7"),
+    ],
+)
+def test_remove_sentence_punctuation_excludes(exclude_punctuation, expected):
+    text = "Hello, world! 3 + 4 ~ 7."
+    assert core.remove_sentence_punctuation(text, exclude_punctuation) == expected
+
+
+@pytest.mark.parametrize(
     ("text", "expected"),
     [
         ("RISK\n\nFACTORS", "RISK FACTORS"),
