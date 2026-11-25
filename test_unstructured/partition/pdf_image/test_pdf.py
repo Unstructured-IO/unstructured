@@ -2649,6 +2649,14 @@ def test_partition_pdf_with_password(file_mode, strategy):
                 _test(result)
 
 
+def test_partition_pdf_fast_reraises_text_layer_failure_for_encrypted_pdf():
+    """Fast has no OCR fallback, so an unreadable text layer must not look like an empty PDF."""
+    filename = example_doc_path("pdf/password.pdf")
+
+    with pytest.raises(PDFPasswordIncorrect):
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
+
+
 def test_partition_pdf_with_specified_ocr_agents(mock_ocr_get_instance, mocker):
     pdf.partition_pdf(
         filename=example_doc_path("pdf/layout-parser-paper-with-table.pdf"),
