@@ -79,16 +79,20 @@ def partition_csv(
         # -- an empty file holds no table --
         return []
 
-    html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
+    if infer_table_structure:
+        html_table = HtmlTable.from_html_text(dataframe_to_html(dataframe, header=include_header))
+        text, text_as_html = html_table.text, html_table.html
+    else:
+        text, text_as_html = dataframe_to_text(dataframe, header=include_header), None
 
     metadata = ElementMetadata(
         filename=filename,
         last_modified=ctx.last_modified,
-        text_as_html=html_table.html if infer_table_structure else None,
+        text_as_html=text_as_html,
     )
 
     # -- a CSV file becomes a single `Table` element --
-    return [Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
+    return [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
 
 
 def dataframe_to_html(dataframe: pd.DataFrame, *, header: bool) -> str:
@@ -102,6 +106,32 @@ def dataframe_to_html(dataframe: pd.DataFrame, *, header: bool) -> str:
         col: (lambda value: "" if pd.isna(value) else str(value)) for col in dataframe.columns
     }
     return dataframe.to_html(index=False, header=header, na_rep="", formatters=formatters)  # pyright: ignore
+
+
+def dataframe_to_text(dataframe: pd.DataFrame, *, header: bool) -> str:
+    """Normalized table text without rendering and reparsing the body as HTML.
+
+    Render just the header when requested to retain Pandas' header-label formatting. Frames with
+    missing values retain the existing renderer's formatting. Otherwise body whitespace is
+    collapsed, and NUL follows the HTML parser's replacement behavior.
+    """
+    if dataframe.isna().any(axis=None):
+        return HtmlTable.from_html_text(dataframe_to_html(dataframe, header=header)).text
+
+    def iter_text() -> Iterator[str]:
+        """Yield nonempty header and cell text in reading order."""
+        if header:
+            yield HtmlTable.from_html_text(dataframe_to_html(dataframe.iloc[:0], header=True)).text
+        for row in dataframe.itertuples(index=False, name=None):
+            for value in row:
+                if text := " ".join(str(value).replace("\x00", "\ufffd").split()):
+                    yield text
+
+    text = " ".join(text for text in iter_text() if text)
+    if re.search(r"[\x01-\x1f\ud800-\udfff\ufffe\uffff]", text):
+        # Retain the existing parser's handling of characters it cannot serialize as XML.
+        return HtmlTable.from_html_text(dataframe_to_html(dataframe, header=header)).text
+    return text
 
 
 def read_delimited_text(
