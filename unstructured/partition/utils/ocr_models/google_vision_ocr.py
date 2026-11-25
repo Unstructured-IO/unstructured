@@ -34,26 +34,27 @@ class OCRAgentGoogleVision(OCRAgent):
         return True
 
     def get_text_from_image(self, image: PILImage.Image) -> str:
+        return self._detect_document(image).text
+
+    def _detect_document(self, image: PILImage.Image) -> TextAnnotation:
+        """Request OCR once and reject service errors before interpreting the annotation."""
         image_context = ImageContext(language_hints=[self.language]) if self.language else None
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
             response = self.client.document_text_detection(
                 image=Image(content=buffer.getvalue()), image_context=image_context
             )
+        if response.error.code:
+            raise RuntimeError(
+                f"Google Vision OCR failed ({response.error.code}): {response.error.message}"
+            )
         document = response.full_text_annotation
         assert isinstance(document, TextAnnotation)
-        return document.text
+        return document
 
     def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
         trace_logger.detail("Processing entire page OCR with Google Vision API...")
-        image_context = ImageContext(language_hints=[self.language]) if self.language else None
-        with BytesIO() as buffer:
-            image.save(buffer, format="PNG")
-            response = self.client.document_text_detection(
-                image=Image(content=buffer.getvalue()), image_context=image_context
-            )
-        document = response.full_text_annotation
-        assert isinstance(document, TextAnnotation)
+        document = self._detect_document(image)
         regions = self._parse_regions(document)
         return regions
 
@@ -62,15 +63,11 @@ class OCRAgentGoogleVision(OCRAgent):
             build_layout_elements_from_ocr_regions,
         )
 
-        ocr_regions = self.get_layout_from_image(
-            image,
-        )
-        ocr_text = self.get_text_from_image(
-            image,
-        )
+        document = self._detect_document(image)
+        ocr_regions = self._parse_regions(document)
         return build_layout_elements_from_ocr_regions(
             ocr_regions=ocr_regions,
-            ocr_text=ocr_text,
+            ocr_text=document.text,
             group_by_ocr_text=False,
         )
 
