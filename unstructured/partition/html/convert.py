@@ -3,7 +3,8 @@ from abc import ABC
 from collections import defaultdict
 from typing import Any, Optional, Union
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4.element import PageElement
 
 from unstructured.documents.elements import Element, ElementType
 from unstructured.documents.html_sanitization import sanitize_html_fragment
@@ -53,6 +54,28 @@ class ElementHtml(ABC):
             return None
         return element_html
 
+    def _wrap_html_fragment(
+        self, soup: BeautifulSoup, element_html: Tag, rendered_html: Tag, nodes: list[PageElement]
+    ) -> Tag:
+        """Keep all fragment nodes around the rendered root without losing its children."""
+        if not nodes:
+            return rendered_html
+        has_root_text = any(type(node) is NavigableString and node.strip() for node in nodes)
+        if sum(isinstance(node, Tag) for node in nodes) == 1 and not has_root_text:
+            return rendered_html
+        # Wrap the original tag in its rendered position, preserving type attributes and children.
+        wrapper = soup.new_tag("div")
+        element_html.wrap(wrapper)
+        before_element = True
+        for node in nodes:
+            if node is element_html:
+                before_element = False
+            elif before_element:
+                element_html.insert_before(node)
+            else:
+                wrapper.append(node)
+        return wrapper if rendered_html is element_html else rendered_html
+
     def _get_children_html(self, soup: BeautifulSoup, element_html: Tag, **kwargs: Any) -> Tag:
         wrapper = soup.new_tag(name="div")
         wrapper.append(element_html)
@@ -70,12 +93,15 @@ class ElementHtml(ABC):
         if element_html is None:
             element_html = soup.new_tag(name=self.html_tag)
             self._inject_html_element_content(element_html, **kwargs)
+        fragment = element_html.parent
+        fragment_nodes = list(fragment.contents) if isinstance(fragment, BeautifulSoup) else []
         element_html["class"] = self.element.category
         element_html["id"] = self.element.id
         self._inject_html_element_attrs(element_html)
+        rendered_html = element_html
         if self.children:  # if element has children wrap it with a 'div' tag
-            return self._get_children_html(soup, element_html, **kwargs)
-        return element_html
+            rendered_html = self._get_children_html(soup, element_html, **kwargs)
+        return self._wrap_html_fragment(soup, element_html, rendered_html, fragment_nodes)
 
     def set_children(self, children: list["ElementHtml"]) -> None:
         self.children = children
