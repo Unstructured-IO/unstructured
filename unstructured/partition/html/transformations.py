@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Sequence, Type
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup, NavigableString, Tag
 
 from unstructured.documents import elements, ontology
 from unstructured.documents.html_sanitization import sanitize_attributes
@@ -495,26 +495,37 @@ def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> ontol
             additional_attributes=escaped_attrs,
         )
 
+    has_tag_children = any(isinstance(content, Tag) for content in soup.contents)
     has_children = (
         (ontology_class != ontology.UncategorizedText)
-        and any(isinstance(content, Tag) for content in soup.contents)
+        and has_tag_children
         or ontology_class().elementType == ontology.ElementTypeEnum.layout
     )
     should_unwrap_html = has_children and recursion_depth <= RECURSION_LIMIT
 
     if should_unwrap_html:
         text = ""
-        children = [
-            (
-                parse_html_to_ontology_element(child, recursion_depth=recursion_depth + 1)
-                if isinstance(child, Tag)
-                else ontology.Paragraph(text=str(child).strip())
-            )
-            for child in soup.children
-            if str(child).strip()
-        ]
+        children = []
+        for child in soup.children:
+            if not str(child).strip():
+                continue
+            if isinstance(child, Tag):
+                child_element = parse_html_to_ontology_element(
+                    child, recursion_depth=recursion_depth + 1
+                )
+            else:
+                child_element = ontology.Paragraph(text=str(child).strip())
+                child_element._text_is_html = False
+            children.append(child_element)
     else:
-        text = "\n".join([str(content).strip() for content in soup.contents]).strip()
+        # When retaining a collapsed HTML fragment, escape its decoded text nodes
+        # so a later parse cannot turn literal '<tag>' text into real markup.
+        text = "\n".join(
+            content.output_ready().strip()
+            if has_tag_children and isinstance(content, NavigableString)
+            else str(content).strip()
+            for content in soup.contents
+        ).strip()
         children = []
 
     output_element = ontology_class(
@@ -523,6 +534,7 @@ def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> ontol
         html_tag_name=ontology_html_tag,
         additional_attributes=escaped_attrs,
     )
+    output_element._text_is_html = has_tag_children
     # TODO (Pluto): <input class="FormFieldValue"/> requires being wrapped in <label> tags
     return output_element
 
