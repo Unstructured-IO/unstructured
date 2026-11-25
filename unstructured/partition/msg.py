@@ -8,6 +8,7 @@ from typing import IO, Any, Iterator, Optional
 
 from oxmsg import Message
 from oxmsg.attachment import Attachment
+from oxmsg.domain.constants import PID_RECIPIENT_TYPE
 
 from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
@@ -132,10 +133,24 @@ class MsgPartitionerOptions:
         # -- header names are case-insensitive; Outlook writes `CC:`, `BCC:` and `Message-ID:` --
         headers = {name.lower(): value for name, value in msg.message_headers.items()}
 
+        # -- MSG recipient tables contain all three roles, not just To recipients. The low
+        # -- two bits hold the role, independently of flags such as MAPI_SUBMITTED. Preserve
+        # -- the previous To fallback for incomplete records missing the role property. --
+        recipient_addresses: dict[int, list[str]] = {1: [], 2: [], 3: []}
+        for recipient in msg.recipients:
+            recipient_type = recipient.properties.int_prop_value(PID_RECIPIENT_TYPE)
+            role = recipient_type & 3 if recipient_type is not None else 1
+            if role in recipient_addresses and (address := recipient.email_address):
+                recipient_addresses[role].append(address)
+
         sent_from = _split_addresses(sender) if (sender := msg.sender) else None
-        sent_to = [r.email_address for r in msg.recipients] or None
-        bcc_recipient = _split_addresses(bcc) if (bcc := headers.get("bcc")) else None
-        cc_recipient = _split_addresses(cc) if (cc := headers.get("cc")) else None
+        sent_to = recipient_addresses[1] or None
+        bcc_recipient = (
+            _split_addresses(bcc) if (bcc := headers.get("bcc")) else recipient_addresses[3] or None
+        )
+        cc_recipient = (
+            _split_addresses(cc) if (cc := headers.get("cc")) else recipient_addresses[2] or None
+        )
         if email_message_id := headers.get("message-id"):
             email_message_id = re.sub(r"^<|>$", "", email_message_id)  # Strip angle brackets
 
