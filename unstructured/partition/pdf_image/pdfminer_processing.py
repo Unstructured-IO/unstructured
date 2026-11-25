@@ -672,18 +672,6 @@ def process_data_with_pdfminer(
     return layouts, layouts_links
 
 
-def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
-    """Creates a text region of the specified class with scaled coordinates."""
-    return region_class.from_coords(
-        x1 * coef,
-        y1 * coef,
-        x2 * coef,
-        y2 * coef,
-        text=text,
-        source=source,
-    )
-
-
 def get_coords_from_bboxes(bboxes, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """convert a list of boxes's coords into np array"""
     if isinstance(bboxes, np.ndarray):
@@ -753,29 +741,6 @@ def boxes_iou(
     denom = np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)
     # Instead of (x/y) > t, use x > t*y for memory & speed with same result
     return inter_area > (threshold * denom)
-
-
-@requires_dependencies("unstructured_inference")
-def pdfminer_elements_to_text_regions(layout_elements: LayoutElements) -> list[TextRegions]:
-    """a temporary solution to convert layout elements to a list of either EmbeddedTextRegion or
-    ImageTextRegion; this should be made obsolete after we refactor the merging logic in inference
-    library"""
-    from unstructured_inference.inference.elements import (
-        EmbeddedTextRegion,
-        ImageTextRegion,
-    )
-
-    regions = []
-    for i, element_class in enumerate(layout_elements.element_class_ids):
-        region_class = EmbeddedTextRegion if element_class == 0 else ImageTextRegion
-        regions.append(
-            region_class.from_coords(
-                *layout_elements.element_coords[i],
-                text=layout_elements.texts[i],
-                source=Source.PDFMINER,
-            )
-        )
-    return regions
 
 
 @requires_dependencies("unstructured_inference")
