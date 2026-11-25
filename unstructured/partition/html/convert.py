@@ -140,6 +140,18 @@ class TextElementHtml(ElementHtml):
     _html_tag = "p"
 
 
+class CodeSnippetElementHtml(ElementHtml):
+    """Render code as literal, preformatted content."""
+
+    _html_tag = "pre"
+
+    def _inject_html_element_content(self, element_html: Tag, **kwargs: Any) -> None:
+        """Keep indentation and leading newlines inside a code child."""
+        code_html = Tag(name="code")
+        code_html.string = self.element.text
+        element_html.append(code_html)
+
+
 class UnorderedListElementHtml(ElementHtml):
     _html_tag = "ul"
 
@@ -236,7 +248,7 @@ TYPE_TO_HTML_MAP = {
     ElementType.FOOTNOTE: ElementHtml,
     ElementType.PAGE_FOOTER: ElementHtml,
     ElementType.PAGE_NUMBER: ElementHtml,
-    ElementType.CODE_SNIPPET: ElementHtml,
+    ElementType.CODE_SNIPPET: CodeSnippetElementHtml,
     ElementType.FORM_KEYS_VALUES: ElementHtml,
     ElementType.DOCUMENT_DATA: ElementHtml,
 }
