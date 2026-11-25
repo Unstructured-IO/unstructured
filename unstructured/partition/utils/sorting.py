@@ -14,30 +14,32 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegions
 
 
-def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> tuple[int, int, int, int]:
+def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> tuple[float, float, float, float]:
     """
-    Convert coordinates to a bounding box representation.
+    Convert coordinates to a bounding box without rounding fractional extents.
 
     Parameters:
         coordinates (CoordinatesMetadata): Metadata containing points to represent the bounding box.
 
     Returns:
-        tuple[int, int, int, int]: A tuple representing the bounding box in the format
+        tuple[float, float, float, float]: A tuple representing the bounding box in the format
         (left, top, right, bottom).
     """
 
     points = coordinates.points
     left, top = points[0]
     right, bottom = points[2]
-    return int(left), int(top), int(right), int(bottom)
+    return left, top, right, bottom
 
 
-def shrink_bbox(bbox: tuple[int, int, int, int], shrink_factor) -> tuple[int, int, int, int]:
+def shrink_bbox(
+    bbox: tuple[float, float, float, float], shrink_factor
+) -> tuple[int, int, int, int]:
     """
     Shrink a bounding box by a given shrink factor while maintaining its top and left.
 
     Parameters:
-        bbox (tuple[int, int, int, int]): The original bounding box represented by
+        bbox (tuple[float, float, float, float]): The original bounding box represented by
         (left, top, right, bottom).
         shrink_factor (float): The factor by which to shrink the bounding box (0.0 to 1.0).
 
@@ -56,6 +58,11 @@ def shrink_bbox(bbox: tuple[int, int, int, int], shrink_factor) -> tuple[int, in
 
     new_right = right - dw
     new_bottom = bottom - dh
+    # A positive scaled extent must occupy at least one pixel in the projection grid.
+    if new_width > 0:
+        new_right = max(int(left) + 1, new_right)
+    if new_height > 0:
+        new_bottom = max(int(top) + 1, new_bottom)
     return int(left), int(top), int(new_right), int(new_bottom)
 
 
