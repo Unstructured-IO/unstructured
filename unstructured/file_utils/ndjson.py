@@ -9,7 +9,9 @@ from typing import IO, Any
 
 def dumps(obj: list[dict[str, Any]], **kwargs) -> str:
     """
-    Converts the list of dictionaries into string representation
+    Converts the list of dictionaries into newline-delimited JSON.
+
+    Indentation is disabled to keep each record on one line.
 
     Args:
         obj (list[dict[str, Any]]): List of dictionaries to convert
@@ -18,6 +20,8 @@ def dumps(obj: list[dict[str, Any]], **kwargs) -> str:
     Returns:
         str: string representation of the list of dictionaries
     """
+    # Indent breaks ndjson formatting.
+    kwargs["indent"] = None
     return "\n".join(json.dumps(each, **kwargs) for each in obj)
 
 
@@ -33,8 +37,6 @@ def dump(obj: list[dict[str, Any]], fp: IO, **kwargs) -> None:
     Returns:
         None
     """
-    # Indent breaks ndjson formatting
-    kwargs["indent"] = None
     text = dumps(obj, **kwargs)
     fp.write(text)
 
