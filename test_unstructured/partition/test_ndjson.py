@@ -6,6 +6,7 @@ import io
 import json
 import os
 import pathlib
+import sys
 import tempfile
 
 import pytest
@@ -436,6 +437,10 @@ def it_rejects_non_standard_json_constants_on_a_line(payload: str):
         partition_ndjson(text=payload + "\n")
 
 
+@pytest.mark.skipif(
+    sys.version_info >= (3, 14),
+    reason="Python 3.14+ json encoder no longer hits a RecursionError at this depth",
+)
 def and_it_raises_ValueError_when_a_valid_line_is_too_deep_to_pretty_print():
     # -- json.loads() (C scanner) parses deeper than json.dumps() (pure Python) can serialize,
     # -- so a valid line can still fail pretty-printing; that surfaces as ValueError too --

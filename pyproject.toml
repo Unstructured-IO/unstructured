@@ -1,7 +1,7 @@
 [project]
 name = "unstructured"
 description = "A library that prepares raw documents for downstream ML tasks."
-requires-python = ">=3.11, <3.14"
+requires-python = ">=3.11, <3.15"
 authors = [{name = "Unstructured Technologies", email = "devops@unstructuredai.io"}]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -14,6 +14,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 readme = "README.md"
@@ -134,9 +135,9 @@ local-inference = [
     "unstructured[all-docs]",
 ]
 paddleocr = [
-    "paddlepaddle>=3.3.0, <4.0.0; platform_machine != 'aarch64' and platform_system != 'Windows'",
+    "paddlepaddle>=3.3.0, <4.0.0; platform_machine != 'aarch64' and platform_system != 'Windows' and python_version < '3.14'",
     "paddlepaddle>=3.3.0, <4.0.0; platform_system == 'Windows' and python_version < '3.13'",
-    "unstructured-paddleocr==2.10.0",
+    "unstructured-paddleocr==2.10.0; python_version < '3.14'",
 ]
 ingest = [
     "unstructured-ingest[airtable,astradb,azure,azure-ai-search,bedrock,biomed,box,chroma,confluence,couchbase,databricks-volumes,delta-table,discord,dropbox,elasticsearch,gcs,github,gitlab,google-drive,hubspot,huggingface,jira,kafka,kdbai,milvus,mongodb,notion,octoai,onedrive,openai,opensearch,outlook,pinecone,postgres,qdrant,reddit,remote,s3,salesforce,sftp,sharepoint,singlestore,slack,vectara,vertexai,voyageai,weaviate,wikipedia]>=1.4.0, <2.0.0; platform_system != 'Windows'",
