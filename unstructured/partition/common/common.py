@@ -117,6 +117,12 @@ def normalize_layout_element(
         ]
         return CheckBox(
             checked=checked,
+            control_type=(
+                "radio"
+                if element_type
+                in (ElementType.RADIO_BUTTON_CHECKED, ElementType.RADIO_BUTTON_UNCHECKED)
+                else "checkbox"
+            ),
             **common_kwargs,
         )
     else:

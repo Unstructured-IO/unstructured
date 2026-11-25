@@ -11,7 +11,7 @@ import pathlib
 import uuid
 from functools import cached_property
 from types import MappingProxyType
-from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
+from typing import Any, Callable, FrozenSet, Literal, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
@@ -844,9 +844,12 @@ class Element(abc.ABC):
 
 
 class CheckBox(Element):
-    """A checkbox with an attribute indicating whether its checked or not.
+    """A checkbox or radio button with an attribute indicating whether it is checked.
 
-    Primarily used in documents that are forms.
+    Primarily used in documents that are forms. ``control_type`` defaults to ``"checkbox"``;
+    ``"radio"`` preserves the kind of a detected radio button. Only radio buttons add the
+    optional ``control_type`` field to serialized elements, leaving legacy checkbox dictionaries
+    unchanged. Other control types are not supported.
     """
 
     def __init__(
@@ -857,7 +860,11 @@ class CheckBox(Element):
         checked: bool = False,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
+        *,
+        control_type: Literal["checkbox", "radio"] = "checkbox",
     ):
+        if control_type not in ("checkbox", "radio"):
+            raise ValueError("control_type must be 'checkbox' or 'radio'")
         metadata = metadata if metadata else ElementMetadata()
         super().__init__(
             element_id=element_id,
@@ -867,6 +874,7 @@ class CheckBox(Element):
             detection_origin=detection_origin,
         )
         self.checked: bool = checked
+        self.control_type = control_type
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, CheckBox):
@@ -874,6 +882,7 @@ class CheckBox(Element):
         return all(
             (
                 self.checked == other.checked,
+                self.control_type == other.control_type,
                 self.metadata.coordinates == other.metadata.coordinates,
             )
         )
@@ -883,6 +892,8 @@ class CheckBox(Element):
         out = super().to_dict()
         out["type"] = "CheckBox"
         out["checked"] = self.checked
+        if self.control_type == "radio":
+            out["control_type"] = self.control_type
         out["element_id"] = self.id
         return out
 
