@@ -1,6 +1,8 @@
 import pytest
+from tokenizers import Tokenizer, models, pre_tokenizers
+from transformers import PreTrainedTokenizerFast
 
-from unstructured.documents.elements import Text, Title
+from unstructured.documents.elements import ElementMetadata, Text, Title
 from unstructured.staging import huggingface
 
 
@@ -9,6 +11,58 @@ class MockTokenizer:
 
     def tokenize(self, text):
         return text.split(" ")
+
+
+@pytest.fixture
+def character_tokenizer():
+    backend = Tokenizer(
+        models.BPE(
+            vocab={"[UNK]": 0, "a": 1, "b": 2, "c": 3, "Ġ": 4, "|": 5},
+            merges=[],
+            unk_token="[UNK]",
+        )
+    )
+    backend.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)
+    return PreTrainedTokenizerFast(tokenizer_object=backend, unk_token="[UNK]")
+
+
+@pytest.mark.parametrize(
+    ("separator", "max_input_size", "buffer", "expected"),
+    [
+        (" ", 3, 0, ["a b", "c"]),
+        (" ", 4, 1, ["a b", "c"]),
+        (" | ", 5, 0, ["a | b", "c"]),
+        ("", 2, 0, ["ab", "c"]),
+    ],
+)
+def test_chunk_by_attention_window_counts_joined_text(
+    character_tokenizer, separator, max_input_size, buffer, expected
+):
+    chunks = huggingface.chunk_by_attention_window(
+        "a b c",
+        character_tokenizer,
+        max_input_size=max_input_size,
+        buffer=buffer,
+        chunk_separator=separator,
+    )
+
+    assert chunks == expected
+    assert all(
+        len(character_tokenizer.tokenize(chunk)) <= max_input_size - buffer for chunk in chunks
+    )
+
+
+def test_stage_for_transformers_respects_joined_token_budget(character_tokenizer):
+    source = Text("a b c", metadata=ElementMetadata(filename="source.txt"))
+
+    chunks = huggingface.stage_for_transformers(
+        [source], character_tokenizer, max_input_size=3, buffer=0
+    )
+
+    assert [chunk.text for chunk in chunks] == ["a b", "c"]
+    assert all(len(character_tokenizer.tokenize(chunk.text)) <= 3 for chunk in chunks)
+    assert all(chunk.metadata.filename == "source.txt" for chunk in chunks)
+    assert source.text == "a b c"
 
 
 def test_stage_for_transformers():
