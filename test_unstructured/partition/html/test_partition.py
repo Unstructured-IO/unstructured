@@ -11,6 +11,7 @@ import tempfile
 from typing import Any, Optional
 
 import pytest
+from bs4 import BeautifulSoup
 from lxml import etree
 
 from test_unstructured.unit_utils import (
@@ -2490,7 +2491,14 @@ def test_partition_html_extracts_nested_details_blocks():
     ]
 
 
-def test_partition_html_keeps_a_summary_a_title_after_a_leading_image():
+@pytest.mark.parametrize(
+    "label",
+    [
+        '<img src="/chevron.svg" alt="">Second question?',
+        '<h3><img src="/chevron.svg" alt="">Second question?</h3>',
+    ],
+)
+def test_partition_html_keeps_a_summary_a_title_after_a_leading_image(label: str):
     """An expand/collapse icon before the label must not demote the label to `Text`.
 
     Otherwise `chunk_by_title()` sees no boundary and merges the second entry into the first.
@@ -2498,7 +2506,7 @@ def test_partition_html_keeps_a_summary_a_title_after_a_leading_image():
     html_text = (
         "<html><body>"
         "<details><summary>First question?</summary><p>First answer.</p></details>"
-        '<details><summary><img src="/chevron.svg" alt="">Second question?</summary>'
+        f"<details><summary>{label}</summary>"
         "<p>Second answer.</p></details>"
         "</body></html>"
     )
@@ -2557,10 +2565,17 @@ def test_partition_html_keeps_text_after_a_summary_out_of_its_title():
     ]
 
 
-def test_partition_html_keeps_annotations_and_page_number_on_a_summary_title():
+@pytest.mark.parametrize(
+    "label",
+    [
+        '<img src="/i.svg" alt=""><div>{}</div>',
+        '<h3><img src="/i.svg" alt="">{}</h3>',
+    ],
+)
+def test_partition_html_keeps_annotations_and_page_number_on_a_summary_title(label: str):
+    question = 'How do I <b>reset</b> my <a href="/reset">password</a>?'
     html_text = (
-        '<html><body><details data-page-number="3"><summary><img src="/i.svg" alt="">'
-        '<div>How do I <b>reset</b> my <a href="/reset">password</a>?</div></summary>'
+        f'<html><body><details data-page-number="3"><summary>{label.format(question)}</summary>'
         "<p>Use the link.</p></details></body></html>"
     )
 
@@ -2609,6 +2624,68 @@ def test_partition_html_nests_a_nested_details_summary_under_its_parent_summary(
     assert inner.metadata.parent_id == outer.id
     assert inner_answer.metadata.parent_id == inner.id
     assert [outer.metadata.category_depth, inner.metadata.category_depth] == [6, 7]
+
+
+@pytest.mark.parametrize("unique_element_ids", [False, True])
+def test_partition_html_keeps_the_heading_chain_across_a_summary_icon(unique_element_ids: bool):
+    """The icon before a label is a child of the heading, so the heading stays the parent."""
+    html_text = (
+        "<html><body><h1>FAQ</h1>"
+        '<details><summary><img src="/chevron.svg" alt="Expand">Question?</summary>'
+        "<p>Answer.</p>"
+        '<details><summary><img src="/chevron.svg" alt="Expand inner">Inner question?</summary>'
+        "<p>Inner answer.</p></details></details>"
+        "<h2>Shipping</h2><p>Orders ship within two business days.</p></body></html>"
+    )
+
+    elements = partition_html(text=html_text, unique_element_ids=unique_element_ids)
+
+    by_id = {e.id: e for e in elements}
+    parents = {
+        e.text: by_id[e.metadata.parent_id].text if e.metadata.parent_id else None for e in elements
+    }
+    assert parents == {
+        "FAQ": None,
+        "Expand": "FAQ",
+        "Question?": "FAQ",
+        "Answer.": "Question?",
+        "Expand inner": "Question?",
+        "Inner question?": "Question?",
+        "Inner answer.": "Inner question?",
+        "Shipping": "FAQ",
+        "Orders ship within two business days.": "Shipping",
+    }
+
+
+@pytest.mark.parametrize("unique_element_ids", [False, True])
+def test_partition_html_exports_disclosure_content_and_later_pages_once(
+    unique_element_ids: bool,
+):
+    """Text on a later page can have a summary on an earlier page as its parent."""
+    html_text = (
+        '<html><body><details data-page-number="1"><summary>Question?</summary>'
+        "<p>Answer on page one.</p>"
+        '<p data-page-number="2">Answer continued on page two.</p></details>'
+        '<p data-page-number="2">Paragraph after the disclosure.</p></body></html>'
+    )
+    elements = partition_html(text=html_text, unique_element_ids=unique_element_ids)
+    question = elements[0]
+    assert [(e.text, e.metadata.page_number) for e in elements] == [
+        ("Question?", 1),
+        ("Answer on page one.", 1),
+        ("Answer continued on page two.", 2),
+        ("Paragraph after the disclosure.", 2),
+    ]
+    assert all(e.metadata.parent_id == question.id for e in elements[1:])
+    before_export = [e.to_dict() for e in elements]
+
+    for no_group_by_page in (False, True):
+        soup = BeautifulSoup(
+            elements_to_html(elements, no_group_by_page=no_group_by_page), "html.parser"
+        )
+        assert all(len(soup.find_all(id=e.id)) == 1 for e in elements)
+        assert soup.find(id=elements[1].id).parent is soup.find(id=question.id).parent
+    assert [e.to_dict() for e in elements] == before_export
 
 
 def test_partition_html_places_a_wrapped_summary_label_like_a_plain_one():

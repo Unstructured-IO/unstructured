@@ -493,8 +493,8 @@ class Summary(Heading):
     """A `<summary>` element, the visible label of a `<details>` disclosure widget.
 
     The label is a `Title` even when it follows an image (such as an expand/collapse icon) or is
-    wrapped in an ordinary block like `<p>` or `<div>`, so each widget still starts a new section
-    when chunking by title.
+    wrapped in an ordinary block like `<p>`, `<div>` or `<h3>`, so each widget still starts a new
+    section when chunking by title.
     """
 
     def iter_elements(self) -> Iterator[Element]:
@@ -506,8 +506,9 @@ class Summary(Heading):
         yield from block._element_from_text_or_tail(block.text or "", q, Title)
         while q:
             child = cast(Flow, q.popleft())
-            # -- descend into a plain wrapper; an image, heading, table, etc. keeps its own type --
-            if type(child) in (Flow, BlockItem):
+            # -- descend into a plain or heading wrapper, so label text after an icon inside it is
+            # -- still a `Title`; an image, table, list, etc. keeps its own type --
+            if type(child) in (Flow, BlockItem, Heading):
                 yield from self._iter_label_elements(child)
             else:
                 yield from child.iter_elements()
