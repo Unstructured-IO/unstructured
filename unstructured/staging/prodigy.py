@@ -63,6 +63,7 @@ def stage_csv_for_prodigy(
 ) -> str:
     """
     Converts the document to the CSV format required for use with Prodigy.
+    Raises ValueError if lowercasing metadata keys would overwrite a CSV field.
     ref: https://prodi.gy/docs/api-loaders#input
     """
     validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(elements, metadata)
@@ -75,9 +76,20 @@ def stage_csv_for_prodigy(
     )
 
     def _get_rows() -> Generator[Dict[str, str], None, None]:
-        for element, metadatum in zip(elements, validated_metadata):
-            metadatum = {key.lower(): value for key, value in metadatum.items()}
-            row_data = dict(text=element.text, **metadatum)
+        for index, (element, metadatum) in enumerate(zip(elements, validated_metadata)):
+            normalized_metadata: Dict[str, str] = {}
+            for key, value in metadatum.items():
+                column = key.lower()
+                if column in ("text", "id"):
+                    raise ValueError(
+                        f'The key "{key}" conflicts with CSV column "{column}" at index: {index}'
+                    )
+                if column in normalized_metadata:
+                    raise ValueError(
+                        f'Multiple metadata keys normalize to "{column}" at index: {index}'
+                    )
+                normalized_metadata[column] = value
+            row_data = dict(text=element.text, **normalized_metadata)
             if isinstance(element.id, str):
                 row_data["id"] = element.id
             yield row_data
