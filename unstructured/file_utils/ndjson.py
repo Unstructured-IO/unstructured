@@ -4,15 +4,15 @@ streaming json content that would otherwise not be possible using raw JSON files
 """
 
 import json
-from typing import IO, Any
+from typing import IO, Any, Iterable
 
 
-def dumps(obj: list[dict[str, Any]], **kwargs) -> str:
+def dumps(obj: Iterable[dict[str, Any]], **kwargs) -> str:
     """
-    Converts the list of dictionaries into string representation
+    Converts an iterable of dictionaries into newline-delimited JSON
 
     Args:
-        obj (list[dict[str, Any]]): List of dictionaries to convert
+        obj (Iterable[dict[str, Any]]): Dictionaries to convert
         **kwargs: Additional keyword arguments to pass to json.dumps
 
     Returns:
