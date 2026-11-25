@@ -89,7 +89,6 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
-from unstructured.patches.pdfminer import patch_psparser
 from unstructured.telemetry import (
     mark_partition_ocr_used,
     partition_runtime_telemetry,
@@ -101,12 +100,6 @@ from unstructured.utils import first, requires_dependencies
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
     from unstructured_inference.inference.layoutelement import LayoutElement
-
-
-# Correct a bug that was introduced by a previous patch to
-# pdfminer.six, causing needless and unsuccessful repairing of PDFs
-# which were not actually broken.
-patch_psparser()
 
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
