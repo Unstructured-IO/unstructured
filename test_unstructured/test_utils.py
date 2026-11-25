@@ -432,6 +432,39 @@ def test_calculate_shared_ngram_percentage_returns_null_vals_for_empty_str():
     assert not bool(common_ngrams)
 
 
+@pytest.mark.parametrize(
+    ("first_string", "second_string", "expected"),
+    [
+        ("red green blue", "red green blue", (100.0, {("red", "green"), ("green", "blue")}, "2")),
+        ("red red red", "red red red", (50.0, {("red", "red")}, "2")),
+        ("a b c d e", "x b c d z", (33.33, {("b", "c", "d")}, "3")),
+        ("a b c X d e f", "a b c Y d e f", (40.0, {("a", "b", "c"), ("d", "e", "f")}, "3")),
+        ("a b c d e", "b c d", (100.0, {("b", "c"), ("c", "d")}, "2")),
+        ("b d", "a b c d e", (100.0, {("b",), ("d",)}, "1")),
+        ("alpha", "alpha", (0, set(), "1")),
+        ("one two", "三 四", (0, set(), "1")),
+        ("α\tβ γ δ", "x β γ y", (33.33, {("β", "γ")}, "2")),
+    ],
+)
+def test_calculate_largest_ngram_percentage_preserves_shared_grams_and_reference_length(
+    first_string, second_string, expected
+):
+    assert utils.calculate_largest_ngram_percentage(first_string, second_string) == expected
+
+
+@pytest.mark.parametrize("common_length", [1, 2, 3, 7, 8, 9, 15, 16, 30, 31])
+def test_calculate_largest_ngram_percentage_finds_the_longest_shared_run(common_length):
+    common = [f"shared{i}" for i in range(common_length)]
+    first = common + [f"left{i}" for i in range(32 - common_length)]
+    second = [f"right{i}" for i in range(32 - common_length)] + common
+
+    assert utils.calculate_largest_ngram_percentage(" ".join(first), " ".join(second)) == (
+        round(100 / (32 - common_length + 1), 2),
+        {tuple(common)},
+        str(common_length),
+    )
+
+
 class DescribeGroupElementsByParentId:
     """Unit tests for group_elements_by_parent_id function."""
 
