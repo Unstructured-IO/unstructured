@@ -368,20 +368,17 @@ class ObjectDetectionEvalProcessor:
         # shape = (n_preds x n_targets)
         iou = self._box_iou(preds_box_xyxy[preds_idx_to_use], targets_box_xyxy)
 
-        # Fill IoU values at index (i, j) with 0 when the prediction (i) and target(j)
-        # are of different class
-        # Filling with 0 is equivalent to ignore these values
-        # since with want IoU > iou_threshold > 0
+        # Exclude pairs of different classes at every valid IoU threshold, including zero.
         cls_mismatch = preds_cls[preds_idx_to_use].view(-1, 1) != targets_cls.view(1, -1)
-        iou[cls_mismatch] = 0
+        iou[cls_mismatch] = -1
 
         # The matching priority is first detection confidence and then IoU value.
         # The detection is already sorted by confidence in NMS,
         # so here for each prediction we order the targets by iou.
         sorted_iou, target_sorted = iou.sort(descending=True, stable=True)
 
-        # Only iterate over IoU values higher than min threshold to speed up the process
-        for pred_selected_i, target_sorted_i in (sorted_iou > iou_thresholds[0]).nonzero(
+        # Only iterate over IoU values meeting the minimum threshold to speed up the process.
+        for pred_selected_i, target_sorted_i in (sorted_iou >= iou_thresholds[0]).nonzero(
             as_tuple=False
         ):
             # pred_selected_i and target_sorted_i are relative to filters/sorting,
@@ -389,8 +386,8 @@ class ObjectDetectionEvalProcessor:
             pred_i = preds_idx_to_use[pred_selected_i]
             target_i = target_sorted[pred_selected_i, target_sorted_i]
 
-            # Vector[j], True when IoU(pred_i, target_i) is above the (j)th threshold
-            is_iou_above_threshold = sorted_iou[pred_selected_i, target_sorted_i] > iou_thresholds
+            # Vector[j], True when IoU(pred_i, target_i) meets the (j)th threshold.
+            is_iou_above_threshold = sorted_iou[pred_selected_i, target_sorted_i] >= iou_thresholds
 
             # Vector[j], True when both pred_i and target_i are not matched yet
             # for the (j)th threshold
