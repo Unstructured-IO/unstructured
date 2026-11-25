@@ -66,6 +66,14 @@ def is_possible_narrative_text(
     if "eng" in languages and language_checks and not contains_english_word(text):
         return False
 
+    # -- Cheap character scan first: `exceeds_cap_ratio` runs the spaCy pipeline, and both checks
+    # -- only ever return False, so their order doesn't change the result. --
+    non_alpha_threshold = float(
+        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold),
+    )
+    if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
+        return False
+
     # NOTE(robinson): it gets read in from the environment as a string so we need to
     # cast it to a float
     cap_threshold = float(
@@ -73,12 +81,6 @@ def is_possible_narrative_text(
     )
     if exceeds_cap_ratio(text, threshold=cap_threshold):
         trace_logger.detail(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")  # type: ignore # noqa: E501
-        return False
-
-    non_alpha_threshold = float(
-        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold),
-    )
-    if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
 
     if "eng" in languages and (sentence_count(text, 3) < 2) and (not contains_verb(text)):
