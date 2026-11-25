@@ -14,7 +14,6 @@ from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import PixelSpace, PointSpace
 from unstructured.documents.elements import CoordinatesMetadata, ElementType
-from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
     _is_duplicate_char,
@@ -38,6 +37,17 @@ if TYPE_CHECKING:
 EPSILON_AREA = 0.01
 # rounding floating point to nearest machine precision
 DEFAULT_ROUND = 15
+
+
+def remove_control_characters(text: str) -> str:
+    """Remove control characters from text; delegates to `pdf_image_utils`.
+
+    Kept as this module's historical attribute. `pdf_image_utils` loads the inference model
+    stack, so it is imported on call instead of before a partitioning strategy is selected.
+    """
+    from unstructured.partition.pdf_image import pdf_image_utils
+
+    return pdf_image_utils.remove_control_characters(text)
 
 
 def process_file_with_pdfminer(

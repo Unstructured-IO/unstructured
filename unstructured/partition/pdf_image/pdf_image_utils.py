@@ -127,6 +127,7 @@ def save_elements(
     extract_image_block_to_payload: bool = False,
     output_dir_path: str | None = None,
     password: Optional[str] = None,
+    image_paths: Optional[List[str]] = None,
 ):
     """
     Saves specific elements from a PDF as images either to a directory or embeds them in the
@@ -135,6 +136,9 @@ def save_elements(
     This function processes a list of elements partitioned from a PDF file. For each element of
     a specified category, it extracts and saves the image. The images can either be saved to
     a specified directory or embedded into the element's payload as a base64-encoded string.
+
+    `image_paths` are page images already rendered from the PDF at `pdf_image_dpi`. When given,
+    the PDF is not rendered again.
     """
 
     # Determine the output directory path
@@ -148,28 +152,29 @@ def save_elements(
         os.makedirs(output_dir_path, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        if is_image:
-            if file is None:
-                image_paths = [filename]
+        if image_paths is None:
+            if is_image:
+                if file is None:
+                    image_paths = [filename]
+                else:
+                    tmp_file_path = os.path.join(temp_dir, "tmp_file")
+                    with open(tmp_file_path, "wb") as tmp_file:
+                        if isinstance(file, bytes):
+                            tmp_file.write(file)
+                        else:
+                            file.seek(0)
+                            shutil.copyfileobj(file, tmp_file, length=1024 * 1024)
+                    image_paths = [tmp_file_path]
             else:
-                tmp_file_path = os.path.join(temp_dir, "tmp_file")
-                with open(tmp_file_path, "wb") as tmp_file:
-                    if isinstance(file, bytes):
-                        tmp_file.write(file)
-                    else:
-                        file.seek(0)
-                        shutil.copyfileobj(file, tmp_file, length=1024 * 1024)
-                image_paths = [tmp_file_path]
-        else:
-            _image_paths = convert_pdf_to_image(
-                filename,
-                file,
-                pdf_image_dpi,
-                output_folder=temp_dir,
-                path_only=True,
-                password=password,
-            )
-            image_paths = cast(List[str], _image_paths)
+                _image_paths = convert_pdf_to_image(
+                    filename,
+                    file,
+                    pdf_image_dpi,
+                    output_folder=temp_dir,
+                    path_only=True,
+                    password=password,
+                )
+                image_paths = cast(List[str], _image_paths)
 
         figure_number = 0
         for el in elements:

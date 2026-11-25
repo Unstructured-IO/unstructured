@@ -928,3 +928,42 @@ class DescribeTokenBasedChunking:
             "Alpha\n\none two three four five",
             "Bravo\n\nsix seven eight nine ten",
         ]
+
+
+# ================================================================================================
+# `combine_text_under_n_chars` IS CAPPED AT `new_after_n_chars`
+# ================================================================================================
+
+
+def test_chunk_by_title_caps_combine_text_under_n_chars_at_new_after_n_chars():
+    """`combine_text_under_n_chars` is reduced to `new_after_n_chars` when it exceeds it.
+
+    The soft-max is the ceiling on how much text a caller wants combined, so asking to combine
+    up to a larger value than `new_after_n_chars` must not combine more, and the default (which
+    is `max_characters`) must behave like `combine_text_under_n_chars == new_after_n_chars`.
+
+    Before the cap was applied, `combine_text_under_n_chars` was used exactly as specified, so
+    these four undersized sections were merged into a single 354-character chunk -- more than
+    three times the 100-character soft-max the caller asked for.
+    """
+
+    def elements() -> list[Element]:
+        # -- four sections, each well under `new_after_n_chars=100` --
+        return [
+            element
+            for idx in range(1, 5)
+            for element in (
+                Title(f"Section {idx} heading"),
+                Text("Body text of section " + "word " * 10),
+            )
+        ]
+
+    capped_chunks = chunk_by_title(
+        elements(), max_characters=500, new_after_n_chars=100, combine_text_under_n_chars=400
+    )
+    soft_max_chunks = chunk_by_title(
+        elements(), max_characters=500, new_after_n_chars=100, combine_text_under_n_chars=100
+    )
+
+    assert len(soft_max_chunks) == 2
+    assert [chunk.text for chunk in capped_chunks] == [chunk.text for chunk in soft_max_chunks]

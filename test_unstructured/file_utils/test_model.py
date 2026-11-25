@@ -26,6 +26,8 @@ class DescribeFileType:
             (".eml", FileType.EML),
             (".p7s", FileType.EML),
             (".java", FileType.TXT),
+            (".md", FileType.MD),
+            (".markdown", FileType.MD),
         ],
     )
     def it_can_recognize_a_file_type_from_an_extension(self, ext: str, file_type: FileType | None):

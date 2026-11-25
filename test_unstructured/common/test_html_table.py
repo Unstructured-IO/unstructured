@@ -426,6 +426,14 @@ class DescribeHtmlCell:
         cell = HtmlCell(fragment_fromstring('<td colspan="2" rowspan="3"></td>'))
         assert cell.html == '<td colspan="2" rowspan="3"/>'
 
+    def and_it_preserves_a_rowspan_of_zero_on_an_empty_cell(self):
+        # -- `rowspan="0"` means "span every remaining row in the row group" and
+        # -- `HtmlCell.rowspan` reports it as `None`; serializing it as a plain `<td/>` silently
+        # -- reports a one-row cell instead, so the declared geometry is lost whenever the cell
+        # -- happens to have no text.
+        cell = HtmlCell(fragment_fromstring('<td rowspan="0"></td>'))
+        assert cell.html == '<td rowspan="0"/>'
+
     @pytest.mark.parametrize(
         ("cell_html", "expected_value"),
         [

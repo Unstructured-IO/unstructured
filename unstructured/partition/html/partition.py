@@ -84,6 +84,7 @@ def partition_html(
         Detect language per element instead of at the document level.
     language_fallback
         Optional callable for short text; called with the text, return ISO 639-3 codes or None.
+        Called only when ``languages`` contains "auto"; explicit languages are kept for short text.
     """
     # -- parser rejects an empty str, nip that edge-case in the bud here --
     if text is not None and text.strip() == "" and not file and not filename and not url:

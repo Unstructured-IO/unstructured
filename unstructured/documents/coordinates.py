@@ -20,7 +20,10 @@ def convert_coordinate(old_t, old_t_max, new_t_max, t_orientation):
 class CoordinateSystem:
     """A finite coordinate plane with given width and height."""
 
-    orientation: Orientation
+    # -- `orientation` is part of the class contract: `__eq__` and both `convert_*_relative()`
+    # -- methods read it, and `TYPE_TO_COORDINATE_SYSTEM_MAP` rebuilds the bare
+    # -- "CoordinateSystem" name from serialized metadata, where no caller can set it afterwards.
+    orientation: Orientation = Orientation.CARTESIAN
 
     def __init__(self, width: Union[int, float], height: Union[int, float]):
         self.width = width

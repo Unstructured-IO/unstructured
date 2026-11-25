@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import base64
+import importlib
 import io
+import json
 import logging
 import math
 import os
@@ -21,7 +23,13 @@ from pdfminer.pdfdocument import PDFPasswordIncorrect
 from PIL import Image
 from pypdf import PdfWriter
 from pypdf.errors import LimitReachedError
-from pypdf.generic import ArrayObject, DecodedStreamObject, NameObject, NullObject
+from pypdf.generic import (
+    ArrayObject,
+    DecodedStreamObject,
+    DictionaryObject,
+    NameObject,
+    NullObject,
+)
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
@@ -45,7 +53,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.partition import pdf, strategies
-from unstructured.partition.pdf_image import ocr, pdfminer_processing
+from unstructured.partition.pdf_image import ocr, pdf_image_utils, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
 from unstructured.partition.utils import config as partition_config
 from unstructured.partition.utils.constants import (
@@ -178,6 +186,7 @@ class MockSinglePageDocumentLayout(layout.DocumentLayout):
     ],
 )
 def test_partition_pdf_local(monkeypatch, filename, file):
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: False)
     monkeypatch.setattr(
         layout,
         "process_data_with_model",
@@ -214,7 +223,7 @@ def test_partition_pdf_local(monkeypatch, filename, file):
 
 
 def test_partition_pdf_local_raises_with_no_filename():
-    with pytest.raises((FileNotFoundError, PDFPageCountError, TypeError)):
+    with pytest.raises((FileNotFoundError, PDFPageCountError, TypeError, ValueError)):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 
 
@@ -253,6 +262,7 @@ def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
     rotated_layout = _layout_with_rotation_corrections(
         [{"pdf_rotation_correction": 90}, {"pdf_rotation_correction": 0}]
     )
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: False)
     monkeypatch.setattr(layout, model_target, lambda *a, **k: rotated_layout)
 
     captured = {}
@@ -275,6 +285,149 @@ def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
     )
 
     assert captured["rotation_corrections"] == [90, 0]
+
+
+def _stub_page_render(monkeypatch, render):
+    """Replace the page render `hi_res` looks up on `pdf_image_utils`.
+
+    The analysis module binds the renderer by name when it is first imported, so it is imported
+    before the stub goes in and keeps the real one.
+    """
+    importlib.import_module("unstructured.partition.pdf_image.analysis.bbox_visualisation")
+    monkeypatch.setattr(pdf_image_utils, "convert_pdf_to_image", render)
+
+
+@pytest.mark.parametrize(
+    ("file_arg", "model_target", "pdfminer_target", "ocr_target"),
+    [
+        (None, "process_file_with_model", "process_file_with_pdfminer", "process_file_with_ocr"),
+        (
+            b"0000",
+            "process_data_with_model",
+            "process_data_with_pdfminer",
+            "process_data_with_ocr",
+        ),
+    ],
+)
+def test_partition_pdf_local_renders_pages_once_and_shares_them(
+    monkeypatch, file_arg, model_target, pdfminer_target, ocr_target
+):
+    """The PDF is rendered a single time and the page images reach layout inference, OCR
+    and image extraction instead of each of them rendering the PDF again."""
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: True)
+    rendered = ["page-1.png", "page-2.png"]
+    render_calls = []
+    received = {}
+    saved_with = []
+
+    def _render(*args, **kwargs):
+        render_calls.append(kwargs)
+        return rendered
+
+    def _capture(name):
+        def _inner(*args, **kwargs):
+            received[name] = kwargs.get("image_paths")
+            return MockDocumentLayout()
+
+        return _inner
+
+    _stub_page_render(monkeypatch, _render)
+    monkeypatch.setattr(layout, model_target, _capture("model"))
+    monkeypatch.setattr(pdfminer_processing, pdfminer_target, lambda *a, **k: ([], []))
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "merge_inferred_with_extracted_layout",
+        lambda **k: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(ocr, ocr_target, _capture("ocr"))
+    monkeypatch.setattr(
+        pdf_image_utils,
+        "save_elements",
+        lambda **kwargs: saved_with.append(kwargs["image_paths"]),
+    )
+
+    pdf._partition_pdf_or_image_local(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf") if file_arg is None else "",
+        file=file_arg,
+        extract_image_block_types=["Image", "Table"],
+    )
+
+    assert len(render_calls) == 1
+    assert received == {"model": rendered, "ocr": rendered}
+    assert saved_with == [rendered, rendered]
+
+
+def test_partition_pdf_local_renders_streams_without_readinto(monkeypatch):
+    """pdfium can only open streams that implement `readinto`, so a file-like is rendered from
+    an on-disk copy and left rewound for the stages that read it next."""
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: True)
+
+    class ReadSeekOnly:
+        def __init__(self, data):
+            self._buffer = io.BytesIO(data)
+
+        def read(self, *args):
+            return self._buffer.read(*args)
+
+        def seek(self, *args):
+            return self._buffer.seek(*args)
+
+        def tell(self):
+            return self._buffer.tell()
+
+    rendered_inputs = []
+
+    def _render(filename, file=None, *args, **kwargs):
+        rendered_inputs.append((Path(filename).read_bytes(), file))
+        return []
+
+    _stub_page_render(monkeypatch, _render)
+    monkeypatch.setattr(layout, "process_data_with_model", lambda *a, **k: MockDocumentLayout())
+    monkeypatch.setattr(pdfminer_processing, "process_data_with_pdfminer", lambda *a, **k: ([], []))
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "merge_inferred_with_extracted_layout",
+        lambda **k: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(ocr, "process_data_with_ocr", lambda *a, **k: MockDocumentLayout())
+    pdf_bytes = Path(example_doc_path("pdf/layout-parser-paper-fast.pdf")).read_bytes()
+    stream = ReadSeekOnly(pdf_bytes)
+
+    pdf._partition_pdf_or_image_local(filename="", file=stream)
+
+    assert rendered_inputs == [(pdf_bytes, None)]
+    assert stream.tell() == 0
+
+
+def test_partition_pdf_local_does_not_prerender_when_inference_cannot_reuse_pages(monkeypatch):
+    """Without inference support the pages would be rendered twice, so the pipeline keeps
+    rendering per stage."""
+    monkeypatch.setattr(pdf, "_inference_reuses_page_images", lambda: False)
+    _stub_page_render(monkeypatch, lambda *a, **k: pytest.fail("pdf must not be pre-rendered"))
+    received = {}
+
+    def _capture(name):
+        def _inner(*args, **kwargs):
+            received[name] = kwargs
+            return MockDocumentLayout()
+
+        return _inner
+
+    monkeypatch.setattr(layout, "process_file_with_model", _capture("model"))
+    monkeypatch.setattr(pdfminer_processing, "process_file_with_pdfminer", lambda *a, **k: ([], []))
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "merge_inferred_with_extracted_layout",
+        lambda **k: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(ocr, "process_file_with_ocr", _capture("ocr"))
+
+    pdf._partition_pdf_or_image_local(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+    )
+
+    assert received["model"].get("image_paths") is None
+    assert received["ocr"].get("image_paths") is None
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
@@ -1669,6 +1822,31 @@ def test_analysis_artifacts_saved(is_path: bool, example_doc: str, doc_pages: in
             file.close()
 
 
+def test_analysis_bboxes_are_drawn_on_pages_rendered_at_pdf_image_dpi(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+):
+    # the caption is a strip added above the page, which would change the image height
+    monkeypatch.setenv("ANALYSIS_BBOX_DRAW_CAPTION", "false")
+
+    pdf.partition_pdf(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        strategy=PartitionStrategy.HI_RES,
+        analysis=True,
+        analyzed_image_output_dir_path=str(tmp_path),
+        pdf_image_dpi=100,
+    )
+
+    file_analysis_root = tmp_path / "analysis" / "layout-parser-paper-fast"
+    od_layout_dump = json.loads(
+        (file_analysis_root / "layout_dump" / "object_detection.json").read_text()
+    )
+    for page in od_layout_dump["pages"]:
+        layout_page_size = (page["size"]["width"], page["size"]["height"])
+        page_render = file_analysis_root / "bboxes" / f"page{page['number']}_layout_od_model.png"
+        with Image.open(page_render) as image:
+            assert image.size == layout_page_size == (850, 1100)
+
+
 @pytest.mark.parametrize(
     ("filename", "pdf_hi_res_max_pages", "expected_error"),
     [
@@ -2073,6 +2251,271 @@ def test_is_pdf_too_complex_charges_non_stream_entries_to_budget():
 
     # Fails closed on page 1; the pre-fix code charged only streams and returned False.
     assert result is True
+
+
+def _vector_heavy_pdf_with_text(text: str) -> bytes:
+    """One-page PDF with a line of real text over 4,000 line strokes: ~140 KB of decoded
+    content and 12,000 graphics operators, vector-heavy under the default thresholds."""
+    writer = PdfWriter()
+    page = writer.add_blank_page(width=612, height=792)
+    font = DictionaryObject(
+        {
+            NameObject("/Type"): NameObject("/Font"),
+            NameObject("/Subtype"): NameObject("/Type1"),
+            NameObject("/BaseFont"): NameObject("/Helvetica"),
+        }
+    )
+    page[NameObject("/Resources")] = DictionaryObject(
+        {NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})}
+    )
+    strokes = b"".join(
+        b"%.2f 100.00 m %.2f 700.00 l S\n" % (x, x) for x in (72 + (i % 468) for i in range(4_000))
+    )
+    stream = DecodedStreamObject()
+    stream.set_data(b"BT /F1 24 Tf 72 740 Td (" + text.encode() + b") Tj ET\n" + strokes)
+    page[NameObject("/Contents")] = writer._add_object(stream)
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+def test_pdf_complexity_reports_vector_heavy_page():
+    data = _vector_heavy_pdf_with_text("Site plan")
+
+    assert pdf.pdf_complexity(file=data) is pdf.PdfComplexity.VECTOR_HEAVY
+
+
+def test_pdf_complexity_reports_exceeded_limits():
+    data = _vector_heavy_pdf_with_text("Site plan")
+
+    assert pdf.pdf_complexity(file=data, max_raw_stream_bytes=1_000) is (
+        pdf.PdfComplexity.EXCEEDS_LIMITS
+    )
+
+
+class _StubStream:
+    def __init__(self, data: bytes):
+        self.data = data
+
+    def get_data(self):
+        return self.data
+
+
+class _DecodeLimitStream:
+    def get_data(self):
+        raise LimitReachedError("Limit reached while decompressing.")
+
+
+_VECTOR_HEAVY_OPS = b"0 0 m 1 1 l S\n" * 4_000  # 12,000 graphics ops, no text ops, ~56 KB
+
+_LIMIT_KWARGS = {
+    "min_file_size_bytes": 1,
+    "min_raw_stream_bytes": 1,
+    "max_raw_stream_bytes": 100_000,
+    "max_content_stream_array_entries": 10,
+    "max_total_stream_bytes": 100_000,
+    "max_total_array_entries": 5,
+}
+
+
+@pytest.mark.parametrize(
+    "over_limit_contents",
+    [
+        pytest.param(lambda: _StubStream(b"\x00" * 200_000), id="page-bytes"),
+        pytest.param(lambda: ArrayObject([_StubStream(b"")] * 11), id="page-entries"),
+        pytest.param(lambda: _StubStream(b"\x00" * 60_000), id="total-bytes"),
+        pytest.param(lambda: ArrayObject([_StubStream(b"")] * 8), id="total-entries"),
+        pytest.param(_DecodeLimitStream, id="decode-limit-stream"),
+        pytest.param(lambda: ArrayObject([_DecodeLimitStream()]), id="decode-limit-array"),
+    ],
+)
+@pytest.mark.parametrize("vector_heavy_first", [True, False])
+def test_pdf_complexity_limits_take_precedence_over_vector_heavy_page(
+    over_limit_contents, vector_heavy_first
+):
+    pages = [{"/Contents": _StubStream(_VECTOR_HEAVY_OPS)}, {"/Contents": over_limit_contents()}]
+    reader = mock.Mock()
+    reader.pages = pages if vector_heavy_first else pages[::-1]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.pdf_complexity(file=b"x" * 20, **_LIMIT_KWARGS) is (
+            pdf.PdfComplexity.EXCEEDS_LIMITS
+        )
+
+
+def test_pdf_complexity_reports_vector_heavy_after_scanning_every_page():
+    get_data_calls = 0
+
+    class CountingStream(_StubStream):
+        def get_data(self):
+            nonlocal get_data_calls
+            get_data_calls += 1
+            return super().get_data()
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": CountingStream(_VECTOR_HEAVY_OPS)}] + [
+        {"/Contents": CountingStream(b"\x00" * 100)} for _ in range(3)
+    ]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.pdf_complexity(file=b"x" * 20, **_LIMIT_KWARGS) is (
+            pdf.PdfComplexity.VECTOR_HEAVY
+        )
+    assert get_data_calls == 4
+
+
+def test_pdf_complexity_keeps_vector_heavy_verdict_when_a_later_page_fails_to_load():
+    class FailingPages:
+        def __bool__(self):
+            return True
+
+        def __iter__(self):
+            yield {"/Contents": _StubStream(_VECTOR_HEAVY_OPS)}
+            raise IndexError("page tree is shorter than /Count")
+
+    reader = mock.Mock()
+    reader.pages = FailingPages()
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.pdf_complexity(file=b"x" * 20, **_LIMIT_KWARGS) is (
+            pdf.PdfComplexity.VECTOR_HEAVY
+        )
+
+
+def _flate_stream(payload: bytes, filter_name: str = "/FlateDecode") -> DecodedStreamObject:
+    stream = DecodedStreamObject()
+    stream[NameObject("/Filter")] = NameObject(filter_name)
+    stream._data = zlib.compress(payload)
+    return stream
+
+
+def _pdf_with_vector_heavy_page_and_shared_contents(
+    shared_items: list[DecodedStreamObject], n_shared_pages: int, vector_heavy_first: bool
+) -> bytes:
+    """A vector-heavy page plus `n_shared_pages` pages that all reference one `/Contents` array."""
+    writer = PdfWriter()
+    vector_heavy_ref = writer._add_object(_flate_stream(_VECTOR_HEAVY_OPS))
+    shared_ref = writer._add_object(ArrayObject([writer._add_object(i) for i in shared_items]))
+    contents = [shared_ref] * n_shared_pages
+    contents.insert(0 if vector_heavy_first else len(contents), vector_heavy_ref)
+    for page_contents in contents:
+        writer.add_blank_page(width=200, height=200)
+        writer.pages[-1][NameObject("/Contents")] = page_contents
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+@pytest.mark.parametrize("vector_heavy_first", [True, False])
+def test_pdf_complexity_charges_shared_contents_after_vector_heavy_page(vector_heavy_first):
+    # -- 56 KB vector-heavy page plus ten pages sharing one 40 KB stream: 456 KB decoded --
+    data = _pdf_with_vector_heavy_page_and_shared_contents(
+        [_flate_stream(b"\x00" * 40_000)], n_shared_pages=10, vector_heavy_first=vector_heavy_first
+    )
+
+    assert (
+        pdf.pdf_complexity(
+            file=data,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_total_stream_bytes=250_000,
+        )
+        is pdf.PdfComplexity.EXCEEDS_LIMITS
+    )
+
+
+@pytest.mark.parametrize("vector_heavy_first", [True, False])
+def test_pdf_complexity_charges_streams_beside_decode_errors_after_vector_heavy_page(
+    vector_heavy_first,
+):
+    # -- each shared array holds a valid 90 KB stream and one whose filter fails to decode --
+    data = _pdf_with_vector_heavy_page_and_shared_contents(
+        [_flate_stream(b"\x00" * 90_000), _flate_stream(b"garbage", "/UnknownBogusFilter")],
+        n_shared_pages=2,
+        vector_heavy_first=vector_heavy_first,
+    )
+
+    assert (
+        pdf.pdf_complexity(
+            file=data,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_total_stream_bytes=200_000,
+        )
+        is pdf.PdfComplexity.EXCEEDS_LIMITS
+    )
+
+
+def _two_page_pdf(first: bytes, second: bytes) -> bytes:
+    writer = PdfWriter()
+    for payload in (first, second):
+        stream = DecodedStreamObject()
+        stream[NameObject("/Filter")] = NameObject("/FlateDecode")
+        stream._data = zlib.compress(payload)
+        writer.add_blank_page(width=612, height=792)
+        writer.pages[-1][NameObject("/Contents")] = writer._add_object(stream)
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+@pytest.mark.parametrize("vector_heavy_first", [True, False])
+def test_partition_pdf_fast_rejects_over_limit_page_after_vector_heavy_page(
+    monkeypatch, vector_heavy_first
+):
+    vector_heavy = _VECTOR_HEAVY_OPS * 2  # over the default 100 KB scan threshold
+    over_limit = b"\x00" * (pdf.DEFAULT_MAX_RAW_STREAM_BYTES + 1)
+    pages = (vector_heavy, over_limit) if vector_heavy_first else (over_limit, vector_heavy)
+    data = _two_page_pdf(*pages)
+    extractable_elements = mock.Mock(return_value=[])
+    monkeypatch.setattr(pdf, "extractable_elements", extractable_elements)
+
+    with pytest.raises(UnprocessableEntityError, match="decoding limits"):
+        pdf.partition_pdf(file=io.BytesIO(data), strategy=PartitionStrategy.FAST)
+
+    extractable_elements.assert_not_called()
+
+
+def test_partition_pdf_fast_extracts_text_from_vector_heavy_pdf():
+    data = _vector_heavy_pdf_with_text("Site plan")
+
+    elements = pdf.partition_pdf(file=io.BytesIO(data), strategy=PartitionStrategy.FAST)
+
+    assert "Site plan" in [element.text for element in elements]
+
+
+def test_partition_pdf_fast_rejects_pdf_over_decoding_limits(monkeypatch):
+    monkeypatch.setattr(pdf, "pdf_complexity", lambda **kwargs: pdf.PdfComplexity.EXCEEDS_LIMITS)
+
+    with pytest.raises(UnprocessableEntityError, match="decoding limits"):
+        pdf.partition_pdf(
+            filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+            strategy=PartitionStrategy.FAST,
+        )
+
+
+@pytest.mark.parametrize("complexity", list(pdf.PdfComplexity))
+@pytest.mark.parametrize(
+    ("strategy", "partitioner"),
+    [
+        (PartitionStrategy.AUTO, "_partition_pdf_or_image_with_ocr"),
+        (PartitionStrategy.HI_RES, "_partition_pdf_or_image_local"),
+    ],
+)
+def test_partition_pdf_skips_text_extraction_for_complex_pdf(
+    monkeypatch, complexity, strategy, partitioner
+):
+    monkeypatch.setattr(pdf, "pdf_complexity", lambda **kwargs: complexity)
+    extractable_elements = mock.Mock(return_value=[])
+    monkeypatch.setattr(pdf, "extractable_elements", extractable_elements)
+
+    with mock.patch.object(pdf, partitioner, return_value=[Text("Hello there!")]) as mock_partition:
+        pdf.partition_pdf(
+            filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"), strategy=strategy
+        )
+
+    extractable_elements.assert_not_called()
+    mock_partition.assert_called_once()
 
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():

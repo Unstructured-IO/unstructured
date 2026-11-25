@@ -16,6 +16,9 @@ from docx.enum.section import WD_SECTION_START
 from docx.oxml.ns import nsmap, qn
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
+from docx.oxml.xmlchemy import BaseOxmlElement
+from docx.parts.document import DocumentPart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.table import _Cell, _Row
@@ -244,8 +247,16 @@ class DocxPartitionerOptions:
 
     @cached_property
     def document(self) -> Document:
-        """The python-docx `Document` object loaded from file or filename."""
-        return docx.Document(self._docx_file)
+        """The python-docx `Document` object loaded from file or filename.
+
+        Content python-docx would skip because a wrapper element encloses it is lifted into place
+        first; see `_unwrap_nested_content()`.
+        """
+        document = docx.Document(self._docx_file)
+        for part in document.part.package.iter_parts():
+            if isinstance(part, (DocumentPart, HeaderPart, FooterPart)):
+                _unwrap_nested_content(part.element)
+        return document
 
     @cached_property
     def include_page_breaks(self) -> bool:
@@ -570,6 +581,12 @@ class _DocxPartitioner:
         # -- text once --
         cell_texts: dict[Any, str] = {}
 
+        # -- The origin `tc` of the vertical span covering each grid column, tracked while rows
+        # -- are visited top-down. This resolves `vMerge="continue"` without `row.cells`, which
+        # -- recurses to the cell above once per merged row and raises RecursionError on a long
+        # -- merge (the recursion is inside python-docx, so it can't be raised on its behalf). --
+        vmerge_origins: dict[int, Any] = {}
+
         def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
             """Generate the text of each paragraph or table in `cell` as a separate string.
 
@@ -608,13 +625,61 @@ class _DocxPartitioner:
                 yield "", None
 
             try:
-                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
-                # -- table has merged or malformed cells. always wrap in try/except.
-                for cell in row.cells:
-                    yield cell_text(cell), cell
+                # -- Walk the row's own `tc` elements and expand their grid spans by hand rather
+                # -- than via `row.cells`: a `vMerge="continue"` tc is resolved to the origin
+                # -- tracked for its grid column (the same underlying `tc` python-docx would
+                # -- find by recursing upward), so no recursion runs however long the merge is.
+                # -- A malformed row can still raise (e.g. `ValueError` from a tc wider than the
+                # -- grid accounts for); that still skips the rest of the row, as before.
+                offset = row.grid_cols_before
+                covered_cols: set[int] = set()
+                for tc in row._tr.tc_lst:
+                    span = max(tc.grid_span, 1)
+                    covered_cols.update(range(offset, offset + span))
+                    if tc.vMerge == "continue":
+                        # -- resolve to the tracked origin, as python-docx would by recursing
+                        # -- upward. A "continue" with no origin in the row above is malformed;
+                        # -- emit an empty position rather than its own text, matching the
+                        # -- plain-text and emphasis walkers, which skip every continue tc.
+                        origin = vmerge_origins.get(offset)
+                        if origin is None:
+                            # -- This continuation is unresolved: its starting column has no
+                            # -- origin in the row above. It emits blanks for every column it
+                            # -- covers, so none of those columns may retain an origin from
+                            # -- older rows -- otherwise a later orphan "continue" in one of
+                            # -- them resolves to stale text several rows up. Drop them here
+                            # -- (the end-of-row pruning only removes columns this row did
+                            # -- NOT cover, which is the opposite set for a spanned cell). --
+                            for col in range(offset, offset + span):
+                                vmerge_origins.pop(col, None)
+                            for _ in range(span):
+                                yield "", None
+                            offset += span
+                            continue
+                        # -- A resolved continuation emits `origin` across its whole span,
+                        # -- so every column it covers now displays that origin. Track it
+                        # -- for all of them, not just the starting column: a non-starting
+                        # -- column would otherwise keep an origin from an older row and a
+                        # -- later orphan continuation there would re-emit stale text. --
+                    else:
+                        origin = tc
+                    for col in range(offset, offset + span):
+                        vmerge_origins[col] = origin
+                    origin_cell = _Cell(origin, table)
+                    for _ in range(span):
+                        yield cell_text(origin_cell), origin_cell
+                    offset += span
             except Exception as e:
                 logging.warning(f"Skipping cell in _convert_table_to_html due to: {e}")
                 yield "", None
+            # -- An origin is only valid for the row immediately below it: a merged cell
+            # -- continues from the cell above in the same column. When a row omits a
+            # -- leading/trailing column (gridBefore/gridAfter) or is malformed, that
+            # -- column has no cell in this row, so a later orphan "continue" must not
+            # -- resolve back to a stale origin several rows up. Drop origins for every
+            # -- column this row did not cover. --
+            for col in set(vmerge_origins) - covered_cols:
+                del vmerge_origins[col]
 
             # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
             for _ in range(row.grid_cols_after):
@@ -669,7 +734,18 @@ class _DocxPartitioner:
 
             This includes paragraphs as well as table cell contents.
             """
-            for block_item in hdrftr.iter_inner_content():
+            # -- A corrupt DOCX can reference a header/footer part by a relationship-id that does
+            # -- not resolve to a part. python-docx raises `KeyError` resolving that missing part;
+            # -- treat it like an absent header/footer and contribute no text, but warn so the
+            # -- dropped header/footer is observable rather than silently lost. --
+            try:
+                block_items = list(hdrftr.iter_inner_content())
+            except KeyError as err:
+                logging.warning(
+                    "Skipping a header/footer with an unresolved relationship id %s", err
+                )
+                return
+            for block_item in block_items:
                 if isinstance(block_item, Paragraph):
                     yield block_item.text.strip()
                 # -- can only be a Paragraph or Table so far but more types may come later --
@@ -1213,8 +1289,71 @@ def _row_grid_width(row: _Row) -> int:
     the positive counts it would otherwise cancel.
     """
     tr = row._tr
-    counts = [tr.grid_before, *(tc.grid_span for tc in tr.tc_lst), tr.grid_after]
-    return sum(max(count, 0) for count in counts)
+    # -- cell spans are normalized to >=1 to match iter_row_cells (gridSpan<=0 still
+    # -- expands to one position); leading/trailing omissions charge max(count, 0). --
+    cell_positions = sum(max(tc.grid_span, 1) for tc in tr.tc_lst)
+    return max(tr.grid_before, 0) + cell_positions + max(tr.grid_after, 0)
+
+
+_W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+_OFF_VALUES = frozenset(("0", "false", "off"))
+
+_UNWRAPPED_TAGS = frozenset(
+    _W + tag for tag in ("ins", "moveTo", "customXml", "smartTag", "fldSimple", "dir", "bdo")
+)
+
+
+def _unwrap_nested_content(root: BaseOxmlElement) -> None:
+    """Replace each wrapper element under `root` with its content, in place.
+
+    python-docx reads only the `w:p` and `w:tbl` children of the body, a cell, a header or a
+    footer, and only the runs and hyperlinks directly inside a paragraph. Content one level deeper
+    is skipped. That covers:
+
+    - content controls (`w:sdt`), which hold paragraphs, tables, rows, cells or runs in
+      `w:sdtContent`;
+    - insertions and moves made with track changes on (`w:ins`, `w:moveTo`);
+    - custom XML, smart tags, simple fields (`w:fldSimple`, which holds a caption's `SEQ`
+      number) and bidirectional spans (`w:dir`, `w:bdo`).
+
+    Deleted and moved-away content (`w:del`, `w:moveFrom`) is left where it is, where python-docx
+    skips it, so the text read is what Word shows once all revisions are accepted.
+
+    Two content controls keep their old treatment: the automatic table of contents stays unread,
+    and a control still showing its placeholder text is dropped, since that text only tells the
+    reader what to enter.
+    """
+    for wrapper in list(root.iter(_W + "sdt", *_UNWRAPPED_TAGS)):
+        parent = wrapper.getparent()
+        if parent is None:
+            continue
+        if wrapper.tag == _W + "sdt":
+            children = _content_control_children(wrapper)
+        else:
+            children = list(wrapper)
+        if children is None:
+            continue
+        index = parent.index(wrapper)
+        parent[index : index + 1] = children
+
+
+def _content_control_children(sdt: BaseOxmlElement) -> list[BaseOxmlElement] | None:
+    """The elements to put in place of content control `sdt`, or None to leave it as it is.
+
+    `w:showingPlcHdr` is an on/off flag: present without a value, or with any value but "0",
+    "false" or "off", it is on.
+    """
+    properties = sdt.find(_W + "sdtPr")
+    if properties is not None:
+        placeholder_flag = properties.find(_W + "showingPlcHdr")
+        if placeholder_flag is not None and placeholder_flag.get(_W + "val") not in _OFF_VALUES:
+            return []
+        gallery = properties.find(f"{_W}docPartObj/{_W}docPartGallery")
+        if gallery is not None and gallery.get(_W + "val") == "Table of Contents":
+            return None
+    content = sdt.find(_W + "sdtContent")
+    return [] if content is None else list(content)
 
 
 # ================================================================================================
