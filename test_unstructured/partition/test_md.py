@@ -26,6 +26,21 @@ def test_partition_md_recognizes_loose_and_tight_lists(marker: str, separator: s
     assert [e.metadata.category_depth for e in elements] == [1, 1, 1]
 
 
+def test_partition_md_links_continuation_paragraphs_of_a_loose_list_to_their_list_item():
+    text = "- First item.\n\n    Continuation.\n\n- Second item.\n\nText after the list.\n"
+
+    first, continuation, second, after_list = partition_md(text=text, languages=[""])
+
+    assert (first.category, first.text) == ("ListItem", "First item.")
+    assert continuation.text == "Continuation."
+    assert continuation.category != "ListItem"
+    assert continuation.metadata.parent_id == first.id
+    assert (second.category, second.text) == ("ListItem", "Second item.")
+    assert second.metadata.parent_id is None
+    assert after_list.text == "Text after the list."
+    assert after_list.metadata.parent_id is None
+
+
 def test_partition_md_from_filename():
     filename = example_doc_path("README.md")
     elements = partition_md(filename=filename)
