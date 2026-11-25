@@ -260,8 +260,10 @@ def test_partition_html_on_ideas_page():
 
     assert len(elements) == 1
     e = elements[0]
+    # -- the essay title is an image, `<img alt="How to Get New Ideas">`, so it is text too --
     assert e == Table(
-        "January 2023 ( Someone fed my essays into GPT to make something that could answer"
+        "How to Get New Ideas January 2023 ( Someone fed my essays into GPT to make something"
+        " that could answer"
         "\nquestions based on them, then asked it where good ideas come from.  The"
         "\nanswer was ok, but not what I would have said. This is what I would have said.)"
         " The way to get new ideas is to notice anomalies: what seems strange,"
@@ -473,6 +475,40 @@ def test_it_keeps_the_table_caption_in_the_text_and_html():
         "<tr><td>EMEA</td><td>4.2</td></tr>"
         "</table>"
     )
+
+
+def test_it_keeps_the_alt_text_of_an_image_in_a_table_cell():
+    # -- a feature table often marks a cell with an image only, such as a check mark --
+    html_text = (
+        "<table>\n"
+        "  <tr><th>Feature</th><th>Supported</th></tr>\n"
+        '  <tr><td>Search</td><td><img src="check.png" alt="Yes"></td></tr>\n'
+        '  <tr><td>Export</td><td>Partly <img src="half.png" alt="(beta)"> now</td></tr>\n'
+        '  <tr><td>Sync</td><td><img src="spacer.gif"></td></tr>\n'
+        "</table>"
+    )
+
+    (element,) = partition_html(text=html_text)
+
+    assert isinstance(element, Table)
+    assert element.text == "Feature Supported Search Yes Export Partly (beta) now Sync"
+    assert element.metadata.text_as_html == (
+        "<table>"
+        "<tr><th>Feature</th><th>Supported</th></tr>"
+        "<tr><td>Search</td><td>Yes</td></tr>"
+        "<tr><td>Export</td><td>Partly (beta) now</td></tr>"
+        "<tr><td>Sync</td><td/></tr>"
+        "</table>"
+    )
+
+
+def test_it_emits_a_Table_element_for_a_table_whose_cells_are_only_images():
+    html_text = '<table><tr><td><img src="a.png" alt="Accepted"></td></tr></table>'
+
+    (element,) = partition_html(text=html_text)
+
+    assert isinstance(element, Table)
+    assert element.text == "Accepted"
 
 
 def test_it_does_not_emit_a_Table_element_for_a_table_with_only_a_caption():
