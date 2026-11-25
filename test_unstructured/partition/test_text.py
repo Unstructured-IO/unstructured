@@ -647,9 +647,9 @@ def test_partition_text_from_text_prefers_metadata_last_modified():
 def test_Text_element_assigns_id_hashes_that_are_unique_and_deterministic():
     ids = [element.id for element in partition_text(text="hello\nhello\nhello")]
     assert ids == [
-        "8657c0ec31a4cfc822f6cd4a5684cafd",
-        "72aefb4a12be063ad160931fdb380163",
-        "ba8c1a216ca585aecdd365a72e6124f1",
+        "b9e98f0dfd75f6b84f519ed0ca83dafd",
+        "ea34bddd31b7d1a5f2ed3192e05f2f93",
+        "a0e23438e99a3618c59248facda678dd",
     ]
 
 

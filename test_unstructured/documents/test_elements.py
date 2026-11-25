@@ -46,7 +46,7 @@ def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic
     assert len(element.id) == 36
     assert element.id.count("-") == 4
 
-    expected_hash = "5336294a19f32ff03ef80066fbc3e0f7"
+    expected_hash = "43a3b656531edb2c10d84c7c3c8598b8"
     # -- calling `.id_to_hash()` changes the element's id-type to hash --
     assert element.id_to_hash(0) == expected_hash
     assert element.id == expected_hash
@@ -818,6 +818,50 @@ def test_hash_ids_are_unique_when_a_page_is_not_contiguous_in_the_element_list()
     assert len(ids) == len(set(ids)), "Recalculated IDs must be unique."
 
 
+def test_hash_ids_are_unique_when_page_and_sequence_digits_concatenate_the_same():
+    # -- GIVEN -- element 12 of page 1 and element 2 of page 11 feed the same hash input:
+    # -- "doc.pdf" + text + "1" + "12" and "doc.pdf" + text + "11" + "2" are both
+    # -- "doc.pdfRepeated112", so both elements used to hash to the same id (see #4675) --
+    elements: list[Element] = [
+        Text(text=f"page one line {idx}", metadata=ElementMetadata(page_number=1))
+        for idx in range(12)
+    ]
+    elements.append(Text(text="Repeated", metadata=ElementMetadata(page_number=1)))
+    elements.extend(
+        Text(text=f"page eleven line {idx}", metadata=ElementMetadata(page_number=11))
+        for idx in range(2)
+    )
+    elements.append(Text(text="Repeated", metadata=ElementMetadata(page_number=11)))
+
+    # -- WHEN --
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+
+    # -- THEN -- every element of the document gets its own id --
+    ids = [element.id for element in updated_elements]
+    assert len(ids) == 16, "Expected one id per element"
+    assert len(ids) == len(set(ids)), "Colliding hash inputs must produce unique ids."
+
+
+def test_hash_ids_are_the_hash_of_the_element_fields():
+    # -- GIVEN -- a document whose elements do not share a hash input --
+    elements: list[Element] = [
+        Text(text="Section", metadata=ElementMetadata(filename="doc.pdf", page_number=1)),
+        Text(text="Body", metadata=ElementMetadata(filename="doc.pdf", page_number=1)),
+    ]
+
+    # -- WHEN --
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+
+    # -- THEN -- the ids stay the hash of filename, text, page number and sequence number --
+    expected = [
+        Text(text="Section", metadata=ElementMetadata(filename="doc.pdf", page_number=1)),
+        Text(text="Body", metadata=ElementMetadata(filename="doc.pdf", page_number=1)),
+    ]
+    assert [element.id for element in updated_elements] == [
+        element.id_to_hash(idx) for idx, element in enumerate(expected)
+    ]
+
+
 def test_hash_ids_are_unique_for_duplicate_elements():
     # GIVEN
     parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
@@ -872,14 +916,14 @@ def test_hash_ids_are_deterministic():
     parent_ids = [element.metadata.parent_id for element in updated_elements]
 
     assert ids == [
-        "ea9eb7e80383c190f8cafce1ad666624",
-        "4112a8d24886276e18e759d06956021b",
-        "eba84bbe7f03e8b91a1527323040ee3d",
+        "496f16dd637cc5f8abf9961575288fae",
+        "349a3d2b45ba201e6d4f1a5d214a8b87",
+        "59f6afb544a44b83c64def30cdfb25cc",
     ]
     assert parent_ids == [
         None,
-        "ea9eb7e80383c190f8cafce1ad666624",
-        "ea9eb7e80383c190f8cafce1ad666624",
+        "496f16dd637cc5f8abf9961575288fae",
+        "496f16dd637cc5f8abf9961575288fae",
     ]
 
 
@@ -887,11 +931,11 @@ def test_hash_ids_are_deterministic():
     ("text", "sequence_number", "filename", "page_number", "expected_hash"),
     [
         # -- pdf files support page numbers --
-        ("foo", 1, "foo.pdf", 1, "4bb264eb23ceb44cd8fcc5af44f8dc71"),
-        ("foo", 2, "foo.pdf", 1, "75fc1de48cf724ec00aa8d1c5a0d3758"),
+        ("foo", 1, "foo.pdf", 1, "355ae94b3acf8816f45f966c4f26c53a"),
+        ("foo", 2, "foo.pdf", 1, "1e3245f19f882b4ac41981a98c8e7732"),
         # -- txt files don't have a page number --
-        ("some text", 0, "some.txt", None, "1a2627b5760c06b1440102f11a1edb0f"),
-        ("some text", 1, "some.txt", None, "e3fd10d867c4a1c0264dde40e3d7e45a"),
+        ("some text", 0, "some.txt", None, "b496e70179a8f974b7bc9808e370c9ed"),
+        ("some text", 1, "some.txt", None, "0073f7cbb4db93844fb5983df23124e8"),
     ],
 )
 def test_id_to_hash_calculates(

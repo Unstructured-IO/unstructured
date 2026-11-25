@@ -566,3 +566,23 @@ def test_partition_html_parent_child_relationships_preserved_with_hash_ids():
     assert child is not None, "Expected at least one element with a parent_id"
     # -- parent_id must point to the hashed title id, not an old UUID --
     assert child.metadata.parent_id == title.id
+
+
+def test_assign_hash_ids_gives_colliding_elements_distinct_ids():
+    """Element 12 of page 1 and element 2 of page 11 used to share one hash (see #4675)."""
+    page_1 = ElementMetadata(filename="foo.bar", page_number=1)
+    page_11 = ElementMetadata(filename="foo.bar", page_number=11)
+    elements: list[Element] = [Text(text=f"line {idx}", metadata=page_1) for idx in range(12)]
+    # -- "foo.bar" + "Repeated" + "1" + "12" and "foo.bar" + "Repeated" + "11" + "2" are both
+    # -- "foo.barRepeated112", so these two elements collide
+    elements.append(Text(text="Repeated", metadata=page_1))
+    elements.extend(Text(text=f"line {idx}", metadata=page_11) for idx in range(2))
+    elements.append(Text(text="Repeated", metadata=page_11))
+
+    # -- WHEN --
+    elements = _assign_hash_ids(elements)
+    ids = [e.id for e in elements]
+
+    # -- THEN -- every element of the document gets its own id, and the ids stay deterministic --
+    assert len(ids) == len(set(ids)), "Elements with colliding hash inputs must get unique ids"
+    assert ids == [e.id for e in _assign_hash_ids(copy.deepcopy(elements))]
