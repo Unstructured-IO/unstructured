@@ -808,10 +808,10 @@ def test_elements_from_json_to_md_with_formula_fixture():
 def test_elements_to_md_five_positional_args_order():
     """Lock (elements, filename, exclude_binary_image_data, encoding, normalize_formula)."""
     m = mock_open()
-    elements = [Formula("x ∈ A")]
+    elements = [Formula("x × A")]
     with patch("builtins.open", m):
         out = base.elements_to_md(elements, "out.md", False, "latin-1", False)
-    assert out == "$$\nx ∈ A\n$$"
+    assert out == "$$\nx × A\n$$"
     assert m.call_args.kwargs.get("encoding") == "latin-1"
 
 
