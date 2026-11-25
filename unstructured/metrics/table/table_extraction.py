@@ -245,7 +245,7 @@ def extract_cells_from_text_as_html(element: Dict[str, Any]) -> List[Dict[str, A
         ]
     """
     val = element["metadata"].get("text_as_html")
-    if not val or "<table>" not in val:
+    if not val:
         return None
 
     predicted_cells = None
