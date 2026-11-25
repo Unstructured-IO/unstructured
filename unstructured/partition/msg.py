@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import os
 import re
 import tempfile
@@ -273,7 +274,7 @@ class _MsgPartitioner:
         # -- augment the element metadata with email-specific values --
         email_specific_metadata = self._opts.extra_msg_metadata
         for e in elements:
-            e.metadata.update(email_specific_metadata)
+            e.metadata.update(copy.deepcopy(email_specific_metadata))
             yield e
 
 

@@ -365,7 +365,7 @@ class _EmailPartitioner:
         in the message as well.
         """
         for e in self._iter_email_body_elements():
-            e.metadata.update(self._ctx.email_metadata)
+            e.metadata.update(copy.deepcopy(self._ctx.email_metadata))
             yield e
 
         if not self._ctx.process_attachments:
