@@ -640,9 +640,10 @@ def test_elements_to_html_invalid_html_template(
         elements_to_html(elements)
 
 
+@pytest.mark.parametrize("figure", [False, True])
 @pytest.mark.parametrize("content_type", ["code", "image"])
 def test_elements_to_html_keeps_partitioned_children_of_a_heading_on_another_page(
-    content_type: str,
+    figure: bool, content_type: str
 ) -> None:
     image_base64 = (
         "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
@@ -653,6 +654,8 @@ def test_elements_to_html_keeps_partitioned_children_of_a_heading_on_another_pag
         if content_type == "code"
         else f'<img src="data:image/png;base64,{image_base64}" alt="Pipeline diagram">'
     )
+    if figure:
+        content = f"<figure>{content}<figcaption>Figure 1. The pipeline.</figcaption></figure>"
     elements = partition_html(
         text=(
             '<div data-page-number="1"><h1>Section</h1></div>'
@@ -665,13 +668,11 @@ def test_elements_to_html_keeps_partitioned_children_of_a_heading_on_another_pag
     )
     heading, *page_two = elements
     subsection, subsection_text = page_two[-2:]
-    assert [element.category for element in elements] == [
-        "Title",
-        "CodeSnippet" if content_type == "code" else "Image",
-        "NarrativeText",
-        "Title",
-        "NarrativeText",
-    ]
+    assert [element.category for element in elements] == (
+        ["Title", "CodeSnippet" if content_type == "code" else "Image"]
+        + (["FigureCaption"] if figure else [])
+        + ["NarrativeText", "Title", "NarrativeText"]
+    )
     assert heading.metadata.page_number == 1
     assert all(element.metadata.page_number == 2 for element in page_two)
     assert all(element.metadata.parent_id == heading.id for element in page_two[:-1])
