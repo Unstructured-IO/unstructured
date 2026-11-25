@@ -227,12 +227,13 @@ class _PptxPartitioner:
                 # -- and free-form shapes (squiggly lines). Lines don't have text.
 
     def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
-        """True when `paragraph` has a bullet-charcter prefix.
+        """True when `paragraph` explicitly specifies a character, numbered or picture bullet.
 
-        Bullet characters in the openxml schema are represented by buChar.
+        Bullet appearance settings alone do not make a paragraph a list item. This checks the
+        paragraph's own marker, as before; it does not resolve inherited slide/layout styles.
         """
         # -- True when XPath returns a non-empty list (nodeset) --
-        return bool(paragraph._p.xpath("./a:pPr/a:buChar"))
+        return bool(paragraph._p.xpath("./a:pPr/a:buChar | ./a:pPr/a:buAutoNum | ./a:pPr/a:buBlip"))
 
     def _iter_maybe_slide_notes(self, slide: Slide) -> Iterator[NarrativeText]:
         """Generate zero-or-one NarrativeText element for the slide-notes."""
