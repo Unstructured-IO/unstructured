@@ -656,7 +656,7 @@ def _fix_metadata_field_precision(elements: Iterable[Element]) -> list[Element]:
         _ = element.id
         el = copy(element)
         el.metadata = copy(element.metadata)
-        if el.metadata.coordinates:
+        if el.metadata.coordinates and el.metadata.coordinates.points is not None:
             coordinates = el.metadata.coordinates
             precision = 1 if isinstance(coordinates.system, PixelSpace) else 2
             points = coordinates.points
