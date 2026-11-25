@@ -21,6 +21,26 @@ if TYPE_CHECKING:
 SpannedCell: TypeAlias = "tuple[str, int, int]"
 
 
+def iter_table_children_in_render_order(table: etree._Element) -> Iterator[etree._Element]:
+    """Yield direct children with the first header first and first footer last among rows.
+
+    Under the default HTML table display rules, the first ``thead``/``tfoot`` is laid out
+    before/after other row groups regardless of source order. Additional headers/footers
+    behave as ordinary row groups. Non-row children retain their positions.
+    """
+    row_tags = {"thead", "tbody", "tfoot", "tr"}
+    rows = [child for child in table if child.tag in row_tags]
+    header = next((child for child in rows if child.tag == "thead"), None)
+    footer = next((child for child in rows if child.tag == "tfoot"), None)
+    ordered = iter(
+        ([header] if header is not None else [])
+        + [child for child in rows if child is not header and child is not footer]
+        + ([footer] if footer is not None else [])
+    )
+    for child in table:
+        yield next(ordered) if child.tag in row_tags else child
+
+
 def normalize_html_cell_text(cell: HtmlElement) -> str:
     """Return normalized cell text, treating a ``<br>`` as a word boundary.
 
@@ -178,6 +198,8 @@ class HtmlTable:
         if not tables:
             raise ValueError("`html_text` contains no `<table>` element")
         table = tables[0]
+        for nested_table in table.iter("table"):
+            nested_table[:] = list(iter_table_children_in_render_order(nested_table))
 
         # -- capture header semantics, source row HTML, and row-group identity before
         # -- compactification strips those details --
