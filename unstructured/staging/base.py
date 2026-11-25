@@ -864,12 +864,31 @@ def convert_to_dataframe(
         text: the element text
         type: the text type (NarrativeText, Title, etc)
 
+    Metadata columns that collide with element fields receive a `metadata_` prefix,
+    repeated as needed to preserve existing metadata column names.
+
     Output is pd.DataFrame
     """
     element_dicts = elements_to_dicts(elements)
-    for d in element_dicts:
-        if metadata := d.pop("metadata", None):
-            d.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
+    flattened_metadata = [
+        flatten_dict(d.pop("metadata", {}), keys_to_omit=["data_source_record_locator"])
+        for d in element_dicts
+    ]
+    element_columns = {key for d in element_dicts for key in d}
+    metadata_columns = {key for metadata in flattened_metadata for key in metadata}
+    occupied_columns = element_columns | metadata_columns
+    column_names: dict[str, str] = {}
+    for key in sorted(metadata_columns):
+        column = key
+        if column in element_columns:
+            column = f"metadata_{column}"
+            while column in occupied_columns:
+                column = f"metadata_{column}"
+            occupied_columns.add(column)
+        column_names[key] = column
+
+    for d, metadata in zip(element_dicts, flattened_metadata):
+        d.update((column_names[key], value) for key, value in metadata.items())
     df = pd.DataFrame.from_dict(element_dicts)  # type: ignore
     if set_dtypes:
         dt = {k: v for k, v in get_default_pandas_dtypes().items() if k in df.columns}
