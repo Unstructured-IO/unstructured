@@ -114,10 +114,10 @@ class BaseMetricsCalculator(ABC):
         ground_truth_paths: Optional[list[str | Path]] = None,
     ) -> BaseMetricsCalculator:
         """Overrides the default list of files to process."""
-        if document_paths:
+        if document_paths is not None:
             self._document_paths = [Path(p) for p in document_paths]
 
-        if ground_truth_paths:
+        if ground_truth_paths is not None:
             self._ground_truth_paths = [Path(p) for p in ground_truth_paths]
 
         return self
