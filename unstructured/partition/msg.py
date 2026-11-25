@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import io
 import os
 import re
-import tempfile
 from functools import cached_property
 from typing import IO, Any, Iterator, Optional
 
@@ -295,16 +295,11 @@ class _AttachmentPartitioner:
         """Partition the file in an `oxmsg.attachment.Attachment` into elements."""
         from unstructured.partition.auto import partition
 
-        with tempfile.TemporaryDirectory() as tmp_dir_path:
-            # -- save attachment as file in this temporary directory --
-            detached_file_path = os.path.join(tmp_dir_path, self._attachment_file_name)
-            with open(detached_file_path, "wb") as f:
-                f.write(self._file_bytes)
-
+        with io.BytesIO(self._file_bytes) as file:
             # -- partition the attachment --
             try:
                 elements = partition(
-                    detached_file_path,
+                    file=file,
                     metadata_filename=self._attachment_file_name,
                     metadata_last_modified=self._attachment_last_modified,
                     **self._opts.partitioning_kwargs,
