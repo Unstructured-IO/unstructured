@@ -31,8 +31,8 @@ def test_eval_table_transformer_for_file():
         example_doc_path("img/table-multi-row-column-cells.png"),
         example_doc_path("table-multi-row-column-cells-actual.csv"),
     )
-    # avoid severe degradation of performance
-    assert 0.8 < score < 1
+    # Guard against degradation while accepting a perfect reference match.
+    assert 0.8 < score <= 1
 
 
 def test_table_eval_processor_simple():
