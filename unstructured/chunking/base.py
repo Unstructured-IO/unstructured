@@ -644,6 +644,9 @@ class PreChunkBuilder:
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
         self._separator_len = len(opts.text_separator)
+        # The last trial prefix becomes the current prefix after admission. Reuse its exact
+        # count without assuming token counts are additive; retain only one entry per builder.
+        self._measure_token_text = lru_cache(maxsize=1)(opts.measure)
         self._elements: list[Element] = []
         self._contains_table = False
 
@@ -744,7 +747,7 @@ class PreChunkBuilder:
             new_text = self._opts.text_separator.join(
                 self._text_segments + ([element.text] if element.text else [])
             )
-            return self._opts.measure(new_text) <= self._opts.hard_max
+            return self._measure_token_text(new_text) <= self._opts.hard_max
         # -- for character counting, use the efficient incremental approach --
         return not self._remaining_space < len(element.text or "")
 
@@ -757,6 +760,7 @@ class PreChunkBuilder:
 
     def _reset_state(self, overlap_prefix: str) -> None:
         """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
+        self._measure_token_text.cache_clear()
         self._overlap_prefix = overlap_prefix
         self._elements.clear()
         self._contains_table = False
@@ -778,7 +782,7 @@ class PreChunkBuilder:
             if not self._text_segments:
                 return 0
             text = self._opts.text_separator.join(self._text_segments)
-            return self._opts.measure(text)
+            return self._measure_token_text(text)
 
         # -- for character counting, use the efficient incremental approach --
         # -- number of text separators present in joined text of elements. This includes only
