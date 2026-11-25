@@ -824,7 +824,15 @@ class Element(abc.ABC):
 
         Returns: new ID value
         """
-        data = f"{self.metadata.filename}{self.text}{self.metadata.page_number}{sequence_number}"
+        # -- concatenating the fields without a separator makes element 12 of page 1 and
+        # -- element 2 of page 11 hash the same input, so both get the same id (#4675). A
+        # -- separator alone still collides when a field holds it; repr() of the tuple is
+        # -- unambiguous for every field value and depends on this element only.
+        # -- str()/int() keep the hash input plain: OCR hands us numpy scalars, whose repr
+        # -- ("np.str_('...')") changes with the NumPy major version.
+        page = self.metadata.page_number
+        text, page = str(self.text), None if page is None else int(page)
+        data = repr((self.metadata.filename, text, page, sequence_number))
         self._element_id = hashlib.sha256(data.encode()).hexdigest()[:32]
         return self.id
 
