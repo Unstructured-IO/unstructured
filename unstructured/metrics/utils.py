@@ -188,7 +188,7 @@ def _mean(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union[f
     if len(scores) == 0:
         return None
     mean = statistics.mean(scores)
-    if not rounding:
+    if rounding is None:
         return mean
     return round(mean, rounding)
 
@@ -206,7 +206,7 @@ def _stdev(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union[
     # Proceed only if there are more than one value
     if len(scores) <= 1:
         return None
-    if not rounding:
+    if rounding is None:
         return statistics.stdev(scores)
     return round(statistics.stdev(scores), rounding)
 
@@ -222,7 +222,7 @@ def _pstdev(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union
     scores = [score for score in scores if score is not None]
     if len(scores) <= 1:
         return None
-    if not rounding:
+    if rounding is None:
         return statistics.pstdev(scores)
     return round(statistics.pstdev(scores), rounding)
 
