@@ -949,7 +949,7 @@ class Text(Element):
         out["type"] = self.category
         out["text"] = self.text
         if self.embeddings:
-            out["embeddings"] = self.embeddings
+            out["embeddings"] = copy.copy(self.embeddings)
         return out
 
 
