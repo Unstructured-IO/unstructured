@@ -570,7 +570,8 @@ def apply_lang_metadata(
     ):
         # -- apply detected language to each element's metadata --
         for e in elements:
-            e.metadata.languages = detected_languages
+            # A later correction to one element must not change its neighbors.
+            e.metadata.languages = detected_languages.copy()
             yield e
     else:
         for e in elements:
