@@ -469,27 +469,23 @@ class _ConnectedComponents:
         # -- order connected-components by their top row --
         sorted_components = sorted(connected_components, key=lambda x: x.min_x)
 
-        current_component = None
+        current_cells: set[_CellCoordinate] = set()
+        current_max_x: int | None = None
 
         for component in sorted_components:
-            # -- prime the pump --
-            if current_component is None:
-                current_component = component
-                continue
-
-            # -- merge this next component with prior if it overlaps row-wise. Note the merged
-            # -- component becomes the new current-component.
-            if component.min_x <= current_component.max_x:
-                current_component = current_component.merge(component)
-
-            # -- otherwise flush and move on --
+            if current_max_x is None or component.min_x > current_max_x:
+                if current_max_x is not None:
+                    yield _ConnectedComponent(self._worksheet_df, current_cells)
+                current_cells = set(component._cell_coordinate_set)
+                current_max_x = component.max_x
             else:
-                yield current_component
-                current_component = component
+                # -- accumulate once, without copying and rescanning the growing union --
+                current_cells.update(component._cell_coordinate_set)
+                current_max_x = max(current_max_x, component.max_x)
 
         # -- flush last component --
-        if current_component is not None:
-            yield current_component
+        if current_max_x is not None:
+            yield _ConnectedComponent(self._worksheet_df, current_cells)
 
 
 class _SubtableParser:
