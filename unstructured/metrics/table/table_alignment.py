@@ -41,11 +41,24 @@ class TableAlignment:
 
         """
         ground_truth_texts = TableAlignment.get_content_in_tables(ground_truth_table_data)
+        indices_by_text: Dict[str, List[int]] = {}
+        for index, text in enumerate(ground_truth_texts):
+            indices_by_text.setdefault(text, []).append(index)
+        matched_counts: Dict[str, int] = {}
         matched_indices = []
         for td in predicted_table_data:
             reference = TableAlignment.get_content_in_tables([td])[0]
             matches = difflib.get_close_matches(reference, ground_truth_texts, cutoff=0.1, n=1)
-            matched_indices.append(ground_truth_texts.index(matches[0]) if matches else -1)
+            if not matches:
+                matched_indices.append(-1)
+                continue
+            matched_text = matches[0]
+            indices = indices_by_text[matched_text]
+            occurrence = matched_counts.get(matched_text, 0)
+            # Consume distinct occurrences before reusing a ground-truth table. Excess
+            # predictions still reuse an index and count as detection false positives.
+            matched_indices.append(indices[occurrence] if occurrence < len(indices) else indices[0])
+            matched_counts[matched_text] = occurrence + 1
         return matched_indices
 
     @staticmethod
