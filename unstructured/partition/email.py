@@ -26,6 +26,7 @@ from unstructured.logger import logger
 from unstructured.partition.common import EXPECTED_ATTACHMENT_ERRORS
 from unstructured.partition.common.metadata import (
     get_last_modified_date,
+    is_attachment_element,
     mark_as_attachment_element,
 )
 from unstructured.partition.html import partition_html
@@ -454,8 +455,10 @@ class _AttachmentPartitioner:
             return
 
         for e in elements:
-            e.metadata.attached_to_filename = self._attached_to_filename
-            mark_as_attachment_element(e)
+            # Preserve nested attachments' immediate parent, including an unknown name.
+            if not is_attachment_element(e):
+                e.metadata.attached_to_filename = self._attached_to_filename
+                mark_as_attachment_element(e)
             yield e
 
     @cached_property
