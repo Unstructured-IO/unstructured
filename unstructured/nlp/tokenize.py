@@ -198,17 +198,36 @@ def sent_tokenize(text: str) -> List[str]:
     return list(_tokenize_for_cache(text))
 
 
-@lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
-    """A wrapper around the spaCy word tokenizer with LRU caching enabled."""
-    return [token.text for token in _process(text)]
+    """Return caller-owned tokens, reusing an immutable cached tokenization."""
+    return list(_word_tokenize_for_cache(text))
+
+
+def pos_tag(text: str) -> List[Tuple[str, str]]:
+    """Return caller-owned tags, reusing an immutable cached POS analysis."""
+    return list(_pos_tag_for_cache(text))
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
-def pos_tag(text: str) -> List[Tuple[str, str]]:
-    """A wrapper around the spaCy POS tagger with LRU caching enabled."""
+def _word_tokenize_for_cache(text: str) -> Tuple[str, ...]:
+    """Cache tokens without exposing mutable shared state to callers."""
+    return tuple(token.text for token in _process(text))
+
+
+@lru_cache(maxsize=CACHE_MAX_SIZE)
+def _pos_tag_for_cache(text: str) -> Tuple[Tuple[str, str], ...]:
+    """Cache POS tags without exposing mutable shared state to callers."""
     doc = _process(text)
-    return [(token.text, token.tag_) for token in doc]
+    return tuple((token.text, token.tag_) for token in doc)
+
+
+# Preserve the cache-management interface exposed by the previous lru_cache wrappers.
+word_tokenize.cache_clear = _word_tokenize_for_cache.cache_clear
+word_tokenize.cache_info = _word_tokenize_for_cache.cache_info
+word_tokenize.cache_parameters = _word_tokenize_for_cache.cache_parameters
+pos_tag.cache_clear = _pos_tag_for_cache.cache_clear
+pos_tag.cache_info = _pos_tag_for_cache.cache_info
+pos_tag.cache_parameters = _pos_tag_for_cache.cache_parameters
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
