@@ -1,5 +1,6 @@
 import os
 from typing import Any, Dict, List, Optional, Sequence
+from urllib.parse import quote
 
 from unstructured.documents.elements import Text
 
@@ -80,7 +81,7 @@ def stage_for_label_box(
     config_data: List[Dict[str, str]] = []
     for element, element_id, attachment_list in zip(elements, ids, attachments):
         output_filename = f"{element_id}.txt"
-        data_url = "/".join([url_prefix.rstrip("/"), output_filename])
+        data_url = "/".join([url_prefix.rstrip("/"), quote(output_filename, safe="")])
         output_filepath = os.path.join(output_directory, output_filename)
         with open(output_filepath, "w+") as output_text_file:
             output_text_file.write(element.text)
