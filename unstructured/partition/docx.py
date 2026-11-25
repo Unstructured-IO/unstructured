@@ -162,6 +162,7 @@ def partition_docx(
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
     strategy: str | None = None,
+    skip_strikethrough: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -189,10 +190,14 @@ def partition_docx(
     starting_page_number
         Assign this number to the first page of this document and increment the page number from
         there.
+    skip_strikethrough
+        Omit text with explicit single/double strikethrough run formatting. Defaults to False.
+        Style-inherited strikethrough is not resolved. Drawings and page breaks are preserved.
     """
     opts = DocxPartitionerOptions.load(
         file=file,
         file_path=filename,
+        skip_strikethrough=skip_strikethrough,
         include_page_breaks=include_page_breaks,
         infer_table_structure=infer_table_structure,
         starting_page_number=starting_page_number,
@@ -226,9 +231,11 @@ class DocxPartitionerOptions:
         infer_table_structure: bool,
         starting_page_number: int = 1,
         strategy: str | None = None,
+        skip_strikethrough: bool = False,
     ):
         self._file = file
         self._file_path = file_path
+        self._skip_strikethrough = skip_strikethrough
         self._include_page_breaks = include_page_breaks
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
@@ -256,6 +263,8 @@ class DocxPartitionerOptions:
         for part in document.part.package.iter_parts():
             if isinstance(part, (DocumentPart, HeaderPart, FooterPart)):
                 _unwrap_nested_content(part.element)
+                if self._skip_strikethrough:
+                    _remove_struck_text(part.element)
         return document
 
     @cached_property
@@ -1359,6 +1368,21 @@ def _content_control_children(sdt: BaseOxmlElement) -> list[BaseOxmlElement] | N
 # ================================================================================================
 # SUB-PARTITIONERS
 # ================================================================================================
+
+
+def _remove_struck_text(root: Any) -> None:
+    """Remove explicitly struck run text while retaining structural and drawing content."""
+    text_tags = {qn(tag) for tag in ("w:t", "w:tab", "w:cr", "w:noBreakHyphen", "w:softHyphen")}
+    for run in root.xpath(".//w:r[w:rPr/w:strike or w:rPr/w:dstrike]"):
+        marks = run.xpath("./w:rPr/w:strike | ./w:rPr/w:dstrike")
+        if not any(mark.get(qn("w:val"), "true") in ("true", "1", "on") for mark in marks):
+            continue
+        for child in list(run):
+            line_break = child.tag == qn("w:br") and child.get(qn("w:type"), "textWrapping") == (
+                "textWrapping"
+            )
+            if child.tag in text_tags or line_break:
+                run.remove(child)
 
 
 def _paragraph_text(paragraph: Paragraph) -> str:
