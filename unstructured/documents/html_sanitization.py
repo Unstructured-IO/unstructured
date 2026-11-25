@@ -207,7 +207,10 @@ _REQUIRED_BLANK_TARGET_REL_VALUES: frozenset[str] = frozenset({"noopener", "nore
 # -- inside one), which makes matching whole start tags with a regex safe. --
 _ANCHOR_START_TAG_RE = re.compile(r"<a\b[^>]*>", flags=re.IGNORECASE)
 _BLANK_TARGET_RE = re.compile(r"""\btarget\s*=\s*["']?_blank\b""", flags=re.IGNORECASE)
-_REL_ATTRIBUTE_RE = re.compile(r"""\brel\s*=""", flags=re.IGNORECASE)
+_REL_ATTRIBUTE_RE = re.compile(
+    r"""\brel\s*=\s*(?P<quote>["'])(?P<value>.*?)(?P=quote)""",
+    flags=re.IGNORECASE,
+)
 
 _CSS_COMMENT_RE = re.compile(r"/\*.*?\*/", flags=re.DOTALL)
 _CSS_UNSAFE_VALUE_RE = re.compile(
@@ -393,8 +396,13 @@ def _add_rel_to_blank_target_links(html_fragment: str) -> str:
 
     def add_rel(match: re.Match[str]) -> str:
         tag = match.group(0)
-        if not _BLANK_TARGET_RE.search(tag) or _REL_ATTRIBUTE_RE.search(tag):
+        if not _BLANK_TARGET_RE.search(tag):
             return tag
+
+        if rel_match := _REL_ATTRIBUTE_RE.search(tag):
+            rel = _link_rel_with_required_values(rel_match.group("value"))
+            return f"{tag[: rel_match.start('value')]}{rel}{tag[rel_match.end('value') :]}"
+
         rel = " ".join(sorted(_REQUIRED_BLANK_TARGET_REL_VALUES))
         return f'{tag[:-1].rstrip()} rel="{rel}">'
 

@@ -269,6 +269,14 @@ class DescribeSanitizeHtmlFragment:
         )
         assert cleaned.count("rel=") == 1
 
+    def it_adds_missing_values_to_existing_rel_on_blank_target_links(self):
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank" rel="nofollow">x</a>'
+        )
+        assert cleaned == (
+            '<a href="https://example.com" target="_blank" rel="nofollow noopener noreferrer">x</a>'
+        )
+
     def it_filters_inline_styles(self):
         cleaned = sanitize_html_fragment(
             '<p style="position:fixed;inset:0;z-index:9999;color:red">x</p>'
