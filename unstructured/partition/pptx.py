@@ -36,6 +36,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
+from unstructured.logger import logger
 from unstructured.partition.common.common import rewind_if_spooled
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
@@ -48,6 +49,7 @@ from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 DETECTION_ORIGIN = "pptx"
+_MAX_CHART_CELLS = 100_000
 
 
 def _break_lines(text: str) -> str:
@@ -57,6 +59,92 @@ def _break_lines(text: str) -> str:
     element text.
     """
     return text.replace("\v", "\n")
+
+
+def _chart_cache(source: Any) -> Any:
+    """Return locally cached chart data without resolving a workbook reference."""
+    if source is None:
+        return None
+    caches = source.xpath(
+        "./c:strRef/c:strCache | ./c:numRef/c:numCache | "
+        "./c:multiLvlStrRef/c:multiLvlStrCache | ./c:strLit | ./c:numLit"
+    )
+    return caches[0] if caches else None
+
+
+def _chart_cache_extent(cache: Any, limit: int) -> int:
+    """Validate declared sizes and sparse indices before allocating chart rows."""
+    if cache is None:
+        return 0
+    extent = 0
+    for count in cache.iter(qn("c:ptCount")):
+        size = int(count.get("val"))
+        if size < 0 or size > limit:
+            raise ValueError("chart cache exceeds the output cell limit")
+        extent = max(extent, size)
+    for point in cache.iter(qn("c:pt")):
+        index = int(point.get("idx"))
+        if index < 0 or index >= limit:
+            raise ValueError("chart point index exceeds the output cell limit")
+        extent = max(extent, index + 1)
+    return extent
+
+
+def _chart_cache_points(cache: Any) -> dict[int, str]:
+    """Read explicit points by their original index, keeping empty values empty."""
+    if cache is None:
+        return {}
+    points: dict[int, str] = {}
+    for point in cache.findall(qn("c:pt")):
+        index = int(point.get("idx"))
+        if index in points:
+            raise ValueError("chart cache contains duplicate point indices")
+        value = point.find(qn("c:v"))
+        points[index] = _break_lines(value.text or "") if value is not None else ""
+    return points
+
+
+def _chart_cached_text(source: Any) -> str:
+    """Read a literal string or a locally cached single-cell chart reference."""
+    if source is None:
+        return ""
+    values = source.xpath("./c:v | ./c:strRef/c:strCache/c:pt[@idx='0']/c:v")
+    return _break_lines(values[0].text or "") if values else ""
+
+
+def _chart_plot_rows(plot: Any, cell_limit: int) -> list[list[str]]:
+    """Build a bounded category table with index-aligned cached series values."""
+    series = plot._element.findall(qn("c:ser"))
+    if not series:
+        return []
+    categories = _chart_cache(series[0].find(qn("c:cat")))
+    category_count = _chart_cache_extent(categories, cell_limit)
+    if not category_count:
+        return []
+    levels = categories.findall(qn("c:lvl")) or [categories]
+    value_caches = [_chart_cache(item.find(qn("c:val"))) for item in series]
+    row_count = max(
+        category_count, *(_chart_cache_extent(cache, cell_limit) for cache in value_caches)
+    )
+    depth = len(levels)
+    if (row_count + 1) * (depth + len(series)) > cell_limit:
+        raise ValueError("chart table exceeds the output cell limit")
+
+    labels = [_chart_cache_points(level) for level in reversed(levels)]
+    values = [_chart_cache_points(cache) for cache in value_caches]
+    headers = ["Category"] if depth == 1 else [f"Category {i + 1}" for i in range(depth)]
+    rows = [headers + [_chart_cached_text(item.find(qn("c:tx"))) for item in series]]
+    parents = [""] * (depth - 1)
+    for index in range(row_count):
+        for level, points in enumerate(labels[:-1]):
+            if index in points:
+                parents[level] = points[index]
+        row = [*parents, labels[-1].get(index, "")]
+        for points in values:
+            value = points.get(index, "")
+            row.append(str(float(value)) if value.strip() else "")
+        rows.append(row)
+    return rows
 
 
 def _group_transform(group: Any) -> tuple[int, int, int, int, int, int, int, int] | None:
@@ -134,6 +222,7 @@ def partition_pptx(
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
     include_slide_notes: bool | None = None,
+    include_chart_data: bool = True,
     include_off_slide_shapes: bool = False,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
@@ -152,6 +241,12 @@ def partition_pptx(
         If True, includes a PageBreak element between slides
     include_slide_notes
         If True, includes the slide notes as element
+    include_chart_data
+        If True, include chart titles and cached category-chart data as tables. Chart output is
+        limited to 100,000 table cells per chart; oversized or malformed plots are skipped with a
+        warning while titles and other slide content are retained. Category labels,
+        series names and raw numeric values are read from the presentation; external workbooks
+        are not opened. XY/scatter and bubble data are not interpreted as category tables.
     include_off_slide_shapes
         If True, also include text from shapes that are mostly outside the slide.
     infer_table_structure
@@ -170,6 +265,7 @@ def partition_pptx(
         file_path=filename,
         include_page_breaks=include_page_breaks,
         include_slide_notes=include_slide_notes,
+        include_chart_data=include_chart_data,
         include_off_slide_shapes=include_off_slide_shapes,
         infer_table_structure=infer_table_structure,
         strategy=strategy,
@@ -214,6 +310,9 @@ class _PptxPartitioner:
                 if shape.has_table:
                     assert isinstance(shape, GraphicFrame)
                     yield from self._iter_table_element(shape)
+                elif shape.has_chart:
+                    assert isinstance(shape, GraphicFrame)
+                    yield from self._iter_chart_elements(shape)
                 elif shape.has_text_frame:
                     assert isinstance(shape, Shape)
                     if shape == title_shape:
@@ -223,8 +322,43 @@ class _PptxPartitioner:
                 elif isinstance(shape, Picture):
                     yield from self._iter_picture_elements(shape)
 
-                # -- otherwise ditch it, this would include charts, connectors (lines),
+                # -- otherwise ditch it, this would include connectors (lines),
                 # -- and free-form shapes (squiggly lines). Lines don't have text.
+
+    def _iter_chart_elements(self, shape: GraphicFrame) -> Iterator[Element]:
+        """Read chart titles and category data from the chart's local cache."""
+        if not self._opts.include_chart_data or self._shape_is_off_slide(shape):
+            return
+        chart = shape.chart
+        if chart.has_title:
+            chart_title = chart.chart_title
+            title = (
+                _break_lines(chart_title.text_frame.text)
+                if chart_title.has_text_frame
+                else _chart_cached_text(chart_title._element.find(qn("c:tx")))
+            ).strip()
+            if title:
+                yield Title(
+                    text=title,
+                    metadata=self._opts.text_metadata(category_depth=1),
+                    detection_origin=DETECTION_ORIGIN,
+                )
+        remaining_cells = _MAX_CHART_CELLS
+        for index in range(len(chart.plots)):
+            try:
+                plot = chart.plots[index]
+                rows = _chart_plot_rows(plot, remaining_cells)
+            except (TypeError, ValueError, NotImplementedError) as error:
+                logger.warning("Skipping unsupported PPTX chart plot: %s", error)
+                continue
+            if not rows:
+                continue
+            remaining_cells -= len(rows) * len(rows[0])
+            html_table = HtmlTable.from_html_text(htmlify_matrix_of_cell_texts(rows))
+            metadata = self._opts.table_metadata(
+                html_table.html if self._opts.infer_table_structure else None
+            )
+            yield Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
     def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
         """True when `paragraph` has a bullet-charcter prefix.
@@ -376,7 +510,7 @@ class _PptxPartitioner:
         """The python-pptx `Presentation` object loaded from the provided source file."""
         return pptx.Presentation(self._opts.pptx_file)
 
-    def _shape_is_off_slide(self, shape: Shape) -> bool:
+    def _shape_is_off_slide(self, shape: BaseShape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
         if self._opts.include_off_slide_shapes:
             return False
@@ -396,7 +530,7 @@ class _PptxPartitioner:
         return visible_width * visible_height < 0.5 * width * height
 
     def _shape_slide_box(
-        self, shape: Shape
+        self, shape: BaseShape
     ) -> tuple[float | None, float | None, float | None, float | None]:
         """The bounding box of `shape` in slide coordinates.
 
@@ -487,6 +621,7 @@ class PptxPartitionerOptions:
         file_path: str | None,
         include_page_breaks: bool,
         include_slide_notes: bool | None,
+        include_chart_data: bool = True,
         include_off_slide_shapes: bool = False,
         infer_table_structure: bool,
         strategy: str,
@@ -496,6 +631,7 @@ class PptxPartitionerOptions:
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._include_slide_notes = include_slide_notes
+        self._include_chart_data = include_chart_data
         self._include_off_slide_shapes = include_off_slide_shapes
         self._infer_table_structure = infer_table_structure
         self._strategy = strategy
@@ -522,6 +658,11 @@ class PptxPartitionerOptions:
     def include_slide_notes(self) -> bool:
         """When True, also partition any text found in slide notes as part of each slide."""
         return False if self._include_slide_notes is None else self._include_slide_notes
+
+    @cached_property
+    def include_chart_data(self) -> bool:
+        """When True, include chart titles and locally cached category data."""
+        return self._include_chart_data
 
     @cached_property
     def include_off_slide_shapes(self) -> bool:
