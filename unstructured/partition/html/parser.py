@@ -576,19 +576,37 @@ class TableBlock(Flow):
         caption_texts: list[str] = []
         row_texts: list[str] = []
 
+        def cell_span_attributes(node: etree._Element) -> str:
+            """Retain only valid, bounded HTML cell spans, normalized to decimal integers."""
+            if node.tag not in ("td", "th"):
+                return ""
+            attributes: list[str] = []
+            for name, maximum in (("rowspan", 65534), ("colspan", 1000)):
+                raw = node.get(name, "")
+                if not raw.isascii() or not raw.isdecimal():
+                    continue
+                digits = raw.lstrip("0") or "0"
+                if len(digits) > len(str(maximum)):
+                    continue
+                value = int(digits)
+                if value <= maximum and (name == "rowspan" or value > 0):
+                    attributes.append(f' {name}="{value}"')
+            return "".join(attributes)
+
         def sanitized_text_and_html(node: etree._Element) -> tuple[str, str]:
-            """Text of a cell or caption, and the bare tag wrapping that escaped text."""
+            """Text of a cell or caption, and a sanitized tag wrapping that escaped text."""
             # -- a cell can contain other elements like spans etc. so we can't count on the
             # -- text being directly below the cell. `.itertext()` gets all of it recursively.
             # -- Filter out whitespace text nodes resulting from HTML formatting.
             stripped_text_nodes = (t.strip() for t in node.itertext())
             text = " ".join(t for t in stripped_text_nodes if t)
 
-            # -- Reconstruct only the recognized tag and escaped text. Source attributes and
-            # -- nested markup are intentionally excluded from this sanitized representation.
+            # -- Reconstruct the recognized tag, validated cell spans and escaped text.
+            # -- Other source attributes and nested markup remain excluded.
             escaped_text = html.escape(text)
             body = " ".join("<br/>".join(escaped_text.split("\n")).split())
-            return text, f"<{node.tag}>{body}</{node.tag}>" if body else f"<{node.tag}/>"
+            tag = f"{node.tag}{cell_span_attributes(node)}"
+            return text, f"<{tag}>{body}</{node.tag}>" if body else f"<{tag}/>"
 
         def append_row(tr: etree._Element) -> None:
             """Append the text and sanitized HTML for one recognized table row."""
@@ -605,8 +623,8 @@ class TableBlock(Flow):
 
             # -- Retain an entry for empty rows to preserve the existing plain-text join behavior.
             row_texts.append(" ".join(t for t in cell_texts if t))
-            if cell_htmls:
-                html_parts.extend(("<tr>", "".join(cell_htmls), "</tr>"))
+            # -- Even a row without its own cells can be covered by an earlier rowspan.
+            html_parts.extend(("<tr>", "".join(cell_htmls), "</tr>"))
 
         for child in self:
             if child.tag == "caption":
