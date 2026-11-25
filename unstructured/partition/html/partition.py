@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from functools import cached_property
 from typing import IO, Any, Callable, Iterator, List, Literal, Optional, cast
+from urllib.parse import urljoin, urlsplit
 
 from lxml import etree
 
@@ -45,6 +46,7 @@ def partition_html(
     languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
     language_fallback: Optional[Callable[[str], Optional[list[str]]]] = None,
+    resolve_relative_urls: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -85,6 +87,9 @@ def partition_html(
     language_fallback
         Optional callable for short text; called with the text, return ISO 639-3 codes or None.
         Called only when ``languages`` contains "auto"; explicit languages are kept for short text.
+    resolve_relative_urls
+        Resolve link and image URLs against the first HTML base URL or the final response URL.
+        Defaults to False, preserving relative values. Resolution does not fetch linked resources.
     """
     # -- parser rejects an empty str, nip that edge-case in the bud here --
     if text is not None and text.strip() == "" and not file and not filename and not url:
@@ -104,6 +109,7 @@ def partition_html(
         image_alt_mode=image_alt_mode,
         extract_image_block_types=extract_image_block_types,
         extract_image_block_to_payload=extract_image_block_to_payload,
+        resolve_relative_urls=resolve_relative_urls,
     )
 
     return list(_HtmlPartitioner.iter_elements(opts))
@@ -128,6 +134,7 @@ class HtmlPartitionerOptions:
         image_alt_mode: Optional[Literal["to_text"]] = "to_text",
         extract_image_block_types: Optional[list[str]] = None,
         extract_image_block_to_payload: bool = False,
+        resolve_relative_urls: bool = False,
     ):
         self._file_path = file_path
         self._file = file
@@ -142,6 +149,8 @@ class HtmlPartitionerOptions:
         self._image_alt_mode = image_alt_mode
         self._extract_image_block_types = extract_image_block_types
         self._extract_image_block_to_payload = extract_image_block_to_payload
+        self._resolve_relative_urls = resolve_relative_urls
+        self._document_url = url
 
     @cached_property
     def detection_origin(self) -> str | None:
@@ -150,6 +159,30 @@ class HtmlPartitionerOptions:
 
     @cached_property
     def html_text(self) -> str:
+        """Loaded HTML, optionally with link and image references made absolute."""
+        text = self._raw_html_text
+        if not self._resolve_relative_urls or not text.strip():
+            return text
+        root = etree.HTML(text)
+        if root is None:
+            return text
+        bases = root.xpath("//base[@href]")
+        base_url = self._document_url or ""
+        if bases:
+            base_url = urljoin(base_url, bases[0].get("href", ""))
+        if urlsplit(base_url).scheme.lower() not in ("http", "https"):
+            return text
+        for element in root.iter():
+            if element.tag == "base":
+                continue
+            for attribute in ("href", "src", "data-src"):
+                value = element.get(attribute)
+                if value:
+                    element.set(attribute, urljoin(base_url, value))
+        return etree.tostring(root, encoding="unicode", method="html")
+
+    @cached_property
+    def _raw_html_text(self) -> str:
         """The HTML document as a string, loaded from wherever the caller specified."""
         if self._file_path:
             return read_txt_file(filename=self._file_path, encoding=self._encoding)[1]
@@ -170,6 +203,7 @@ class HtmlPartitionerOptions:
             if not content_type.startswith("text/html"):
                 raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
+            self._document_url = getattr(response, "url", None) or self._url
             return response.text
 
         raise ValueError("Exactly one of filename, file, text, or url must be specified.")
