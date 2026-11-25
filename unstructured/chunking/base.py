@@ -1061,13 +1061,13 @@ class _Chunker:
 
     def _chunk_metadata(self) -> ElementMetadata:
         """Fresh metadata for one text-split chunk of the pre-chunk."""
-        # -- we need to make a copy, otherwise adding a field would also change metadata value
-        # -- already assigned to another chunk. A shallow copy suffices for scalar fields, but
-        # -- `enrichment_origins` is mutable, so deep-copy it. (Deep-copying the whole metadata is
-        # -- avoided because it may carry the full `orig_elements`.)
+        # -- each chunk owns its mutable metadata, including lists and nested data-source
+        # -- fields. Keep original-element references shared instead of copying the source
+        # -- document once for every text split.
         metadata = copy.copy(self._consolidated_metadata)
-        if metadata.enrichment_origins is not None:
-            metadata.enrichment_origins = copy.deepcopy(metadata.enrichment_origins)
+        for field_name, value in metadata.fields.items():
+            if field_name != "orig_elements":
+                setattr(metadata, field_name, copy.deepcopy(value))
         return metadata
 
     @cached_property
