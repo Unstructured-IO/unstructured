@@ -3444,9 +3444,31 @@ class _PreChunkAccumulator:
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
         self._pre_chunk: PreChunk | None = None
+        self._pending_elements: list[Element] = []
+        self._character_length: int | None = None
+        self._contains_table = False
+        # -- token counts (and custom measures) are not additive across text boundaries --
+        self._incremental_characters = (
+            not opts.use_token_counting
+            and getattr(opts.measure, "__func__", None) is ChunkingOptions.measure
+        )
+        self._use_incremental_characters = self._incremental_characters
 
     def add_pre_chunk(self, pre_chunk: PreChunk) -> None:
         """Add a pre-chunk to the accumulator for possible combination with next pre-chunk."""
+        self._prepare_for(pre_chunk)
+        if self._use_incremental_characters:
+            if self._pre_chunk is None:
+                self._pre_chunk = pre_chunk
+            else:
+                self._character_length = self._combined_character_length(pre_chunk)
+                self._pending_elements.extend(pre_chunk._elements)
+            if self._opts.isolate_table:
+                self._contains_table = self._contains_table or _elements_contain_table_family(
+                    pre_chunk._elements
+                )
+            return
+
         self._pre_chunk = (
             pre_chunk if self._pre_chunk is None else self._pre_chunk.combine(pre_chunk)
         )
@@ -3460,9 +3482,13 @@ class _PreChunkAccumulator:
         if not self._pre_chunk:
             return
         # -- otherwise generate the combined pre-chunk --
+        self._combine_pending_elements()
         yield self._pre_chunk
         # -- and reset the accumulator (to empty) --
         self._pre_chunk = None
+        self._character_length = None
+        self._contains_table = False
+        self._use_incremental_characters = self._incremental_characters
 
     def will_fit(self, pre_chunk: PreChunk) -> bool:
         """True when there is room for `pre_chunk` in accumulator.
@@ -3475,7 +3501,57 @@ class _PreChunkAccumulator:
         if self._pre_chunk is None:
             return True
 
+        self._prepare_for(pre_chunk)
+        if self._use_incremental_characters:
+            if self._opts.isolate_table and (
+                self._contains_table or _elements_contain_table_family(pre_chunk._elements)
+            ):
+                return False
+            if self._current_character_length >= self._opts.combine_text_under_n_chars:
+                return False
+            return self._combined_character_length(pre_chunk) <= self._opts.hard_max
+
         return self._pre_chunk.can_combine(pre_chunk)
+
+    def _combine_pending_elements(self) -> None:
+        """Flatten the accepted sections once, retaining the first pre-chunk's overlap state."""
+        if not self._pending_elements:
+            return
+        assert self._pre_chunk is not None
+        self._pre_chunk = self._pre_chunk.combine(
+            PreChunk(self._pending_elements, overlap_prefix="", opts=self._opts)
+        )
+        self._pending_elements = []
+
+    def _combined_character_length(self, pre_chunk: PreChunk) -> int:
+        """Size after adding the new section's text, without its redundant overlap prefix."""
+        segments = pre_chunk._iter_text_segments()
+        if pre_chunk._overlap_prefix:
+            next(segments)
+        size = count = 0
+        for segment in segments:
+            size += len(segment)
+            count += 1
+        separator_count = max(0, count - 1) + bool(count and self._current_character_length)
+        return (
+            self._current_character_length + size + separator_count * len(self._opts.text_separator)
+        )
+
+    @property
+    def _current_character_length(self) -> int:
+        """Length of accepted text, including only the first section's overlap prefix."""
+        if self._character_length is None:
+            assert self._pre_chunk is not None
+            self._character_length = len(self._pre_chunk._text)
+        return self._character_length
+
+    def _prepare_for(self, pre_chunk: PreChunk) -> None:
+        """Keep custom pre-chunks or differing option objects on their original combine path."""
+        if self._use_incremental_characters and (
+            type(pre_chunk) is not PreChunk or pre_chunk._opts is not self._opts
+        ):
+            self._combine_pending_elements()
+            self._use_incremental_characters = False
 
 
 # ================================================================================================
