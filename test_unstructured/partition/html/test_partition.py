@@ -2530,15 +2530,19 @@ def _parent_texts(elements: list[Element]) -> dict[str, str | None]:
 
 @pytest.mark.parametrize("unique_element_ids", [False, True])
 @pytest.mark.parametrize("heading", ["", "<h1>Guide</h1>"])
+# -- a figure inside phrasing is traversed before the item's own text becomes a `ListItem` --
+@pytest.mark.parametrize("wrapper", ["{}", '<a href="/detail">{}</a>', "<b><span>{}</span></b>"])
 def test_partition_html_keeps_a_figure_and_the_list_after_it_inside_their_list_item(
-    heading: str, unique_element_ids: bool
+    wrapper: str, heading: str, unique_element_ids: bool
 ):
     """An image or caption ended the enclosing list item, so a nested list lost its parent."""
-    html_text = (
-        f"<html><body>{heading}<ul><li>Outer step"
+    figure = wrapper.format(
         '<figure><img src="/diagram.png" alt="Diagram"><pre>x = 1</pre>'
         "<table><tr><td>Metric</td><td>10</td></tr></table>"
         "<figcaption>Caption.</figcaption></figure>"
+    )
+    html_text = (
+        f"<html><body>{heading}<ul><li>Outer step{figure}"
         "<ul><li>Inner step</li></ul></li><li>Outer sibling</li></ul>"
         "<p>Text after the list.</p></body></html>"
     )
@@ -2560,6 +2564,7 @@ def test_partition_html_keeps_a_figure_and_the_list_after_it_inside_their_list_i
     assert len(elements) == (9 if heading else 8)
 
     soup = BeautifulSoup(elements_to_html(elements, no_group_by_page=True), "html.parser")
+    assert all(len(soup.find_all(id=e.id)) == 1 for e in elements)
     tags = {e.text: soup.find(id=e.id) for e in elements}
     for text in ("Diagram", "x = 1", "Metric 10", "Caption.", "Inner step"):
         assert tags[text].find_parent("li") is tags["Outer step"]
@@ -2588,10 +2593,13 @@ def test_partition_html_keeps_a_figure_and_the_list_after_it_inside_their_list_i
         ),
     ],
 )
+@pytest.mark.parametrize("wrapper", ["{}", '<a href="/detail">{}</a>'])
 def test_partition_html_a_figure_in_a_list_leaves_the_other_parents_unchanged(
-    list_html: str, figure_parent: str
+    wrapper: str, list_html: str, figure_parent: str
 ):
-    figure = '<figure><img src="/d.png" alt="Diagram"><figcaption>Caption.</figcaption></figure>'
+    figure = wrapper.format(
+        '<figure><img src="/d.png" alt="Diagram"><figcaption>Caption.</figcaption></figure>'
+    )
     html_text = "<html><body><h1>Guide</h1>{}<p>Text after the list.</p></body></html>"
 
     with_figure, without_figure = (

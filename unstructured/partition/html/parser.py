@@ -498,27 +498,28 @@ class Figure(Flow):
     """
 
     def iter_elements(self) -> Iterator[Element]:
-        """Parent the figure's content to the list item it is in, when there is one.
+        """Hand the figure's content to the list items it is in, when there are any.
 
         `set_element_hierarchy()` has no rule for an image or caption under a list item, so it
-        would end the item there and a nested list after the figure would lose its parent. Content
+        would end the item there and a nested list after the figure would lose its parent. The
+        list items parent the content as it passes through them (see `ListItemBlock`). Content
         with a `parent_id` is skipped by that pass and leaves the item in place.
         """
-        parent_id = None
+        list_items = []
         for ancestor in self.iterancestors():
             if isinstance(ancestor, Figure):
                 break
-            if isinstance(ancestor, ListItemBlock) and ancestor._figure_parent_id:
-                parent_id = ancestor._figure_parent_id
-                break
+            if isinstance(ancestor, ListItemBlock):
+                list_items.append(ancestor)
 
-        if parent_id is None:
+        if not list_items:
             yield from super().iter_elements()
             return
 
         for element in set_element_hierarchy(list(super().iter_elements())):
             if element.metadata.parent_id is None:
-                element.metadata.parent_id = parent_id
+                for list_item in list_items:
+                    list_item._figure_elements[id(element)] = element
             yield element
 
 
@@ -561,6 +562,10 @@ class ListItemBlock(Flow):
     def iter_elements(self) -> Iterator[Element]:
         """Adopt a sole text block, as produced by Markdown loose lists."""
         self._figure_parent_id = None
+        # -- unparented figure content in this item, by `id()`. A figure inside phrasing such as
+        # -- `<a>` is traversed before the item's own text is flushed, so its content is parented
+        # -- when it passes through here, in document order, not when it is generated. --
+        self._figure_elements: dict[int, Element] = {}
         if len(self) == 1 and not (self.text or "").strip():
             child = self[0]
             # Only unwrap ordinary text blocks, not tables, images, headings, or code.
@@ -581,6 +586,9 @@ class ListItemBlock(Flow):
 
         depth = self._element_accum._category_depth(ListItem)
         for element in super().iter_elements():
+            is_figure_content = self._figure_elements.pop(id(element), None) is not None
+            if is_figure_content and element.metadata.parent_id is None and self._figure_parent_id:
+                element.metadata.parent_id = self._figure_parent_id
             if element.metadata.parent_id is None and (
                 isinstance(element, Title)
                 or (
