@@ -14,6 +14,7 @@ import pandas as pd
 import xlrd
 from msoffcrypto import OfficeFile
 from msoffcrypto.exceptions import FileFormatError
+from openpyxl.cell.cell import TYPE_ERROR
 from pandas.io.excel._openpyxl import OpenpyxlReader
 from pandas.io.formats.format import DataFrameFormatter
 from pandas.io.formats.html import HTMLFormatter
@@ -62,6 +63,7 @@ def partition_xlsx(
     include_header: bool = False,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
+    include_cell_errors: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -84,6 +86,9 @@ def partition_xlsx(
         and is the text content of the table (no structure).
     include_header
         Determines whether or not header info is included in text and medatada.text_as_html
+    include_cell_errors
+        If True, preserve XLSX error values such as #DIV/0! and #N/A as visible text. By default
+        retain the reader's missing-cell treatment. This option does not calculate formulas.
 
     Notes
     -----
@@ -98,6 +103,7 @@ def partition_xlsx(
         find_subtable=find_subtable,
         include_header=include_header,
         infer_table_structure=infer_table_structure,
+        include_cell_errors=include_cell_errors,
     )
 
     elements: list[Element] = []
@@ -203,7 +209,7 @@ class ExcelWorkbookReader:
 
 @contextmanager
 def open_excel_workbook(
-    file_bytes: bytes, *, compact_empty_rows: bool = False
+    file_bytes: bytes, *, compact_empty_rows: bool = False, preserve_error_cells: bool = False
 ) -> Iterator[ExcelWorkbookReader]:
     """Open a workbook after rejecting password-protected files and validating its cell count.
 
@@ -221,11 +227,12 @@ def open_excel_workbook(
         raise UnprocessableEntityError("Not a valid XLSX or XLS file.")
     compact_empty_rows = compact_empty_rows and engine == "openpyxl"
     _check_worksheet_cell_count(file_bytes, engine, env_config.XLSX_MAX_CELLS, compact_empty_rows)
-    reader = (
-        _RowCompactingOpenpyxlReader(io.BytesIO(file_bytes))
-        if compact_empty_rows
-        else pd.ExcelFile(io.BytesIO(file_bytes), engine=engine)
-    )
+    if engine == "openpyxl":
+        reader_cls = _RowCompactingOpenpyxlReader if compact_empty_rows else _ErrorPreservingReader
+        reader_kwargs = {"preserve_error_cells": True} if preserve_error_cells else {}
+        reader = reader_cls(io.BytesIO(file_bytes), **reader_kwargs)
+    else:
+        reader = pd.ExcelFile(io.BytesIO(file_bytes), engine=engine)
     try:
         yield ExcelWorkbookReader(reader)
     finally:
@@ -263,12 +270,14 @@ class _XlsxPartitionerOptions:
         find_subtable: bool,
         include_header: bool,
         infer_table_structure: bool,
+        include_cell_errors: bool = False,
     ):
         self._file_path = file_path
         self._file = file
         self._find_subtable = find_subtable
         self._include_header = include_header
         self._infer_table_structure = infer_table_structure
+        self._include_cell_errors = include_cell_errors
 
     @cached_property
     def find_subtable(self) -> bool:
@@ -306,7 +315,11 @@ class _XlsxPartitionerOptions:
     @cached_property
     def sheets(self) -> dict[str, pd.DataFrame]:
         """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
-        with open_excel_workbook(self._file_bytes, compact_empty_rows=self.find_subtable) as reader:
+        with open_excel_workbook(
+            self._file_bytes,
+            compact_empty_rows=self.find_subtable,
+            preserve_error_cells=self._include_cell_errors,
+        ) as reader:
             return {
                 name: reader.parse(name, header=self.header_row_idx) for name in reader.sheet_names
             }
@@ -579,7 +592,20 @@ class _SubtableParser:
 _LEADING_EMPTY_ROWS_KEPT = 2
 
 
-class _RowCompactingOpenpyxlReader(OpenpyxlReader):
+class _ErrorPreservingReader(OpenpyxlReader):
+    """Optionally keep displayed Excel errors instead of turning them into missing cells."""
+
+    def __init__(self, *args: Any, preserve_error_cells: bool = False, **kwargs: Any):
+        self._preserve_error_cells = preserve_error_cells
+        super().__init__(*args, **kwargs)
+
+    def _convert_cell(self, cell: Any) -> Any:
+        if self._preserve_error_cells and cell.data_type == TYPE_ERROR:
+            return cell.value
+        return super()._convert_cell(cell)
+
+
+class _RowCompactingOpenpyxlReader(_ErrorPreservingReader):
     """Pandas' openpyxl reader, but each run of empty rows is read as a single empty row.
 
     A worksheet whose used-range is stretched by a far-away cell, such as one value at row 1M below
