@@ -182,9 +182,8 @@ def _mean(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union[f
     Args:
         rounding (int): optional argument that allows user to define decimal points. Default at 3.
     """
-    # Filter out None values, as `_stdev` and `_pstdev` do: an unmeasured score is
-    # not a score, and statistics.mean raises on it rather than ignoring it.
-    scores = [score for score in scores if score is not None]
+    # Pandas represents missing scores as NaN or NA after reading reports or grouping data.
+    scores = [score for score in scores if pd.notna(score)]
     if len(scores) == 0:
         return None
     mean = statistics.mean(scores)
@@ -201,8 +200,7 @@ def _stdev(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union[
     Args:
         rounding (int): optional argument that allows user to define decimal points. Default at 3.
     """
-    # Filter out None values
-    scores = [score for score in scores if score is not None]
+    scores = [score for score in scores if pd.notna(score)]
     # Proceed only if there are more than one value
     if len(scores) <= 1:
         return None
@@ -219,7 +217,7 @@ def _pstdev(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union
     Args:
         rounding (int): optional argument that allows user to define decimal points. Default at 3.
     """
-    scores = [score for score in scores if score is not None]
+    scores = [score for score in scores if pd.notna(score)]
     if len(scores) <= 1:
         return None
     if not rounding:
