@@ -398,7 +398,11 @@ class _FileTypeDetector:
             return None
 
         if mime_type.endswith("xml"):
-            return FileType.HTML if extension in (".html", ".htm") else FileType.XML
+            is_html = (
+                FileType.from_mime_type(mime_type) is FileType.HTML
+                or FileType.from_extension(extension) is FileType.HTML
+            )
+            return FileType.HTML if is_html else FileType.XML
 
         if differentiator := _TextFileDifferentiator.applies(self._ctx):
             return differentiator.file_type

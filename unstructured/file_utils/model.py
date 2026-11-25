@@ -316,9 +316,9 @@ class FileType(enum.Enum):
         "html",
         cast(list[str], []),
         None,
-        [".html", ".htm"],
+        [".html", ".htm", ".xhtml", ".xht"],
         "text/html",
-        cast(list[str], []),
+        ["application/xhtml+xml"],
     )
     JPG = (
         "jpg",

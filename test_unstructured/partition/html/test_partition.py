@@ -232,7 +232,10 @@ def test_partition_html_from_url_raises_on_response_of_wrong_content_type(safe_g
         headers={"Content-Type": "application/json"},
     )
 
-    with pytest.raises(ValueError, match="Expected content type text/html. Got application/json."):
+    with pytest.raises(
+        ValueError,
+        match=r"Expected content type text/html or application/xhtml\+xml\. Got application/json\.",
+    ):
         partition_html(url="https://fake.url")
 
 
