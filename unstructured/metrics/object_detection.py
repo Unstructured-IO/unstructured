@@ -323,6 +323,17 @@ class ObjectDetectionEvalProcessor:
                     for every element in boxes1 and boxes2
         """
 
+        def upcast_coordinates(boxes: torch.Tensor) -> torch.Tensor:
+            """Promote narrow coordinates before subtraction and area multiplication."""
+            if boxes.dtype in (torch.float16, torch.bfloat16):
+                return boxes.float()
+            if boxes.dtype in (torch.uint8, torch.int8, torch.int16, torch.int32):
+                return boxes.long()
+            return boxes
+
+        box1 = upcast_coordinates(box1)
+        box2 = upcast_coordinates(box2)
+
         def box_area(box):
             # box = 4xn
             return (box[2] - box[0]) * (box[3] - box[1])
