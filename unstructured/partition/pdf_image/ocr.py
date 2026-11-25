@@ -22,7 +22,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     bboxes1_is_almost_subregion_of_bboxes2,
 )
 from unstructured.partition.utils.config import env_config
-from unstructured.partition.utils.constants import OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT, OCRMode
+from unstructured.partition.utils.constants import OCR_AGENT_PADDLE, OCRMode
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.telemetry import mark_partition_ocr_used, mark_partition_table_extraction
 from unstructured.utils import requires_dependencies
@@ -40,13 +40,13 @@ def process_data_with_ocr(
     extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
     infer_table_structure: bool = False,
-    ocr_agent: str = OCR_AGENT_TESSERACT,
+    ocr_agent: Optional[str] = None,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = env_config.PDF_RENDER_DPI,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
     password: Optional[str] = None,
-    table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    table_ocr_agent: Optional[str] = None,
     image_paths: Optional[List[str]] = None,
 ) -> "DocumentLayout":
     """
@@ -113,13 +113,13 @@ def process_file_with_ocr(
     extracted_layout: List[TextRegions],
     is_image: bool = False,
     infer_table_structure: bool = False,
-    ocr_agent: str = OCR_AGENT_TESSERACT,
+    ocr_agent: Optional[str] = None,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = env_config.PDF_RENDER_DPI,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
     password: Optional[str] = None,
-    table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    table_ocr_agent: Optional[str] = None,
     image_paths: Optional[List[str]] = None,
 ) -> "DocumentLayout":
     """
@@ -221,12 +221,12 @@ def supplement_page_layout_with_ocr(
     page_layout: "PageLayout",
     image: PILImage.Image,
     infer_table_structure: bool = False,
-    ocr_agent: str = OCR_AGENT_TESSERACT,
+    ocr_agent: Optional[str] = None,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     extracted_regions: Optional[TextRegions] = None,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
-    table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    table_ocr_agent: Optional[str] = None,
 ) -> "PageLayout":
     """
     Supplement an PageLayout with OCR results depending on OCR mode.
@@ -236,10 +236,13 @@ def supplement_page_layout_with_ocr(
     with no text and add text from OCR to each element.
     """
 
+    resolved_ocr_agent = (
+        OCRAgent.get_configured_ocr_agent_module() if ocr_agent is None else ocr_agent
+    )
     language = ocr_languages
-    if ocr_agent == OCR_AGENT_PADDLE:
+    if resolved_ocr_agent == OCR_AGENT_PADDLE:
         language = tesseract_to_paddle_language(ocr_languages)
-    _ocr_agent = OCRAgent.get_instance(ocr_agent_module=ocr_agent, language=language)
+    _ocr_agent = OCRAgent.get_instance(ocr_agent_module=resolved_ocr_agent, language=language)
     if ocr_mode == OCRMode.FULL_PAGE.value:
         mark_partition_ocr_used()
         ocr_layout = _ocr_agent.get_layout_from_image(image)
@@ -277,11 +280,16 @@ def supplement_page_layout_with_ocr(
 
     # Note(yuming): use the OCR data from entire page OCR for table extraction
     if infer_table_structure:
+        resolved_table_ocr_agent = (
+            OCRAgent.get_configured_ocr_agent_module()
+            if table_ocr_agent is None
+            else table_ocr_agent
+        )
         language = ocr_languages
-        if table_ocr_agent == OCR_AGENT_PADDLE:
+        if resolved_table_ocr_agent == OCR_AGENT_PADDLE:
             language = tesseract_to_paddle_language(ocr_languages)
         _table_ocr_agent = OCRAgent.get_instance(
-            ocr_agent_module=table_ocr_agent, language=language
+            ocr_agent_module=resolved_table_ocr_agent, language=language
         )
         from unstructured_inference.models import tables
 

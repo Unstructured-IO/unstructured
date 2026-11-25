@@ -703,3 +703,88 @@ def test_process_file_with_ocr_uses_given_image_paths_without_rendering(mocker, 
 
     assert seen == [(doc.pages[0], (50, 50)), (doc.pages[1], (60, 70))]
     assert result.pages == doc.pages
+
+
+def test_supplement_page_layout_with_ocr_invalid_env_ocr(monkeypatch):
+    monkeypatch.setenv("OCR_AGENT", "invalid_ocr")
+    with pytest.raises(ValueError):
+        _ = ocr.supplement_page_layout_with_ocr(page_layout=None, image=None)
+
+
+def test_process_file_with_ocr_defaults_to_env_ocr_agent(
+    monkeypatch, mock_ocr_get_instance, mocker, mock_page
+):
+    from unstructured_inference.models import tables
+
+    from unstructured.partition.pdf_image.ocr import PILImage
+
+    monkeypatch.setenv("OCR_AGENT", OCR_AGENT_PADDLE)
+    mocker.patch.object(PILImage, "open", return_value=Image.new("RGB", (100, 100)))
+    mocker.patch.object(tables, "load_agent")
+    mocker.patch.object(tables, "tables_agent", MagicMock())
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [mock_page]
+
+    ocr.process_file_with_ocr(
+        "foo",
+        doc,
+        [],
+        infer_table_structure=True,
+        is_image=True,
+        ocr_languages="eng",
+    )
+
+    assert mock_ocr_get_instance.call_args_list == [
+        mocker.call(ocr_agent_module=OCR_AGENT_PADDLE, language="en"),
+        mocker.call(ocr_agent_module=OCR_AGENT_PADDLE, language="en"),
+    ]
+
+
+def test_supplement_page_layout_with_ocr_uses_paddle_env_without_pytesseract(monkeypatch, mocker):
+    import importlib.abc
+    import sys
+
+    from unstructured_inference.models import tables
+
+    class _BlockPytesseractFinder(importlib.abc.MetaPathFinder):
+        def find_spec(self, fullname, path, target=None):
+            if fullname == "unstructured_pytesseract" or fullname.startswith(
+                "unstructured_pytesseract."
+            ):
+                raise ModuleNotFoundError("No module named 'unstructured_pytesseract'")
+            return None
+
+    monkeypatch.setenv("OCR_AGENT", OCR_AGENT_PADDLE)
+    monkeypatch.syspath_prepend("")
+    finder = _BlockPytesseractFinder()
+    monkeypatch.setattr(sys, "meta_path", [finder, *sys.meta_path])
+    for mod_name in [m for m in list(sys.modules) if "tesseract" in m]:
+        monkeypatch.delitem(sys.modules, mod_name, raising=False)
+
+    OCRAgent.get_instance.cache_clear()
+    try:
+        mocker.patch.object(OCRAgentPaddle, "load_agent", return_value=MagicMock(ocr=mock_ocr))
+        mocker.patch.object(tables, "load_agent")
+        mock_tables_agent = MagicMock()
+        mock_tables_agent.predict.return_value = ""
+        mocker.patch.object(tables, "tables_agent", mock_tables_agent)
+
+        page = MagicMock(spec=PageLayout)
+        page.elements_array = LayoutElements(
+            element_coords=np.array([[0.0, 0.0, 50.0, 50.0]]),
+            texts=np.array([""]),
+            element_class_ids=np.array([0]),
+            element_class_id_map={0: ElementType.TABLE},
+        )
+
+        result = ocr.supplement_page_layout_with_ocr(
+            page_layout=page,
+            image=Image.new("RGB", (100, 100)),
+            infer_table_structure=True,
+            ocr_languages="eng",
+        )
+
+        assert result is page
+        mock_tables_agent.predict.assert_called_once()
+    finally:
+        OCRAgent.get_instance.cache_clear()

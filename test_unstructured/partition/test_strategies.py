@@ -3,7 +3,11 @@ import pytest
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.elements import Text
 from unstructured.partition import pdf, strategies
-from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.partition.utils.constants import (
+    OCR_AGENT_GOOGLEVISION,
+    OCR_AGENT_PADDLE,
+    PartitionStrategy,
+)
 
 
 @pytest.mark.parametrize(
@@ -156,3 +160,48 @@ def test_pdf_strategy_can_resolve_to_fast(monkeypatch, strategy, installed, expe
     assert strategies.pdf_strategy_can_resolve_to_fast(strategy) is expected
     resolved = strategies.determine_pdf_or_image_strategy(strategy, pdf_text_extractable=True)
     assert (resolved == PartitionStrategy.FAST) is expected
+
+
+@pytest.mark.parametrize(
+    ("ocr_agent", "installed", "expected_strategy", "expected_can_fast"),
+    [
+        (
+            OCR_AGENT_PADDLE,
+            {"paddle", "unstructured_paddleocr"},
+            PartitionStrategy.OCR_ONLY,
+            False,
+        ),
+        (
+            OCR_AGENT_PADDLE,
+            {"unstructured_pytesseract"},
+            PartitionStrategy.FAST,
+            True,
+        ),
+        (
+            OCR_AGENT_GOOGLEVISION,
+            {"google.cloud.vision"},
+            PartitionStrategy.OCR_ONLY,
+            False,
+        ),
+        (
+            "",
+            {"unstructured_pytesseract"},
+            PartitionStrategy.FAST,
+            True,
+        ),
+    ],
+)
+def test_determine_strategy_checks_configured_ocr_agent_dependencies(
+    monkeypatch, ocr_agent, installed, expected_strategy, expected_can_fast
+):
+    monkeypatch.setenv("OCR_AGENT", ocr_agent)
+    monkeypatch.setattr(strategies, "dependency_exists", lambda dep: dep in installed)
+
+    assert (
+        strategies.pdf_strategy_can_resolve_to_fast(PartitionStrategy.OCR_ONLY) is expected_can_fast
+    )
+    resolved = strategies.determine_pdf_or_image_strategy(
+        PartitionStrategy.OCR_ONLY,
+        pdf_text_extractable=True,
+    )
+    assert resolved == expected_strategy
