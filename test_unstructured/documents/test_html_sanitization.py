@@ -1,7 +1,8 @@
 """Unit tests for the shared HTML output-sanitization policy (GHSA-v5mq-3xhg-98m9)."""
 
-import pytest
+from html.parser import HTMLParser
 
+import pytest
 from unstructured.documents.html_sanitization import (
     ALLOWED_URL_SCHEMES,
     is_event_handler_attribute,
@@ -11,6 +12,17 @@ from unstructured.documents.html_sanitization import (
     sanitize_html_fragment,
     sanitize_style_attribute,
 )
+
+
+class _AnchorCollector(HTMLParser):
+    """Collect parsed start tags so tests can assert on real attributes."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.tags: list[tuple[str, dict[str, str]]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.tags.append((tag, {key: value or "" for key, value in attrs}))
 
 
 class DescribeIsSafeUrl:
@@ -268,6 +280,82 @@ class DescribeSanitizeHtmlFragment:
             '<a href="https://example.com" target="_blank" rel="noopener noreferrer">x</a>'
         )
         assert cleaned.count("rel=") == 1
+
+    def it_appends_missing_rel_tokens_to_a_partial_rel(self):
+        # -- a blank-target anchor that already carries a partial rel must
+        #    still receive the required reverse-tabnabbing tokens, matching
+        #    the behavior of ``sanitize_attributes`` --
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank" rel="nofollow">x</a>'
+        )
+        assert "noopener" in cleaned
+        assert "noreferrer" in cleaned
+        assert cleaned.count("rel=") == 1
+
+    def it_only_rewrites_the_real_rel_attribute(self):
+        # -- `rel=` inside other attribute values is inert text. Rewriting it
+        #    as if it were an attribute would let handler-looking text escape
+        #    its quoted value and become an executable attribute. --
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com/?rel=1" target="_blank" '
+            'title="rel=2" data-note="rel=x onmouseover=alert(1)" rel="nofollow">x</a>'
+        )
+        parser = _AnchorCollector()
+        parser.feed(cleaned)
+        assert len(parser.tags) == 1
+        tag, attrs = parser.tags[0]
+        assert tag == "a"
+        assert "onmouseover" not in attrs
+        assert attrs["data-note"] == "rel=x onmouseover=alert(1)"
+        assert attrs["href"] == "https://example.com/?rel=1"
+        assert {"nofollow", "noopener", "noreferrer"} <= set(attrs["rel"].split())
+
+    def it_adds_rel_without_splitting_quoted_values(self):
+        # -- a `>` inside a quoted value must not truncate the start tag, and
+        #    `rel=` in href/data-* must not be treated as a rel attribute --
+        cleaned = sanitize_html_fragment(
+            '<a target="_blank" href="https://example.com/?rel=1" '
+            'title="a > b" data-note="rel=x onmouseover=alert(1)">x</a>'
+        )
+        parser = _AnchorCollector()
+        parser.feed(cleaned)
+        assert len(parser.tags) == 1
+        tag, attrs = parser.tags[0]
+        assert tag == "a"
+        assert "onmouseover" not in attrs
+        assert attrs["data-note"] == "rel=x onmouseover=alert(1)"
+        assert attrs["href"] == "https://example.com/?rel=1"
+        assert {"noopener", "noreferrer"} <= set(attrs["rel"].split())
+
+    @pytest.mark.parametrize(
+        "fragment",
+        [
+            '<a rel="nofollow" target="_blank" href="https://example.com">x</a>',
+            "<a target='_blank' rel='nofollow' href='https://example.com'>x</a>",
+            '<a href="https://example.com" rel=nofollow target="_blank">x</a>',
+        ],
+    )
+    def it_backfills_partial_rel_regardless_of_order_or_quoting(self, fragment: str):
+        cleaned = sanitize_html_fragment(fragment)
+        parser = _AnchorCollector()
+        parser.feed(cleaned)
+        assert len(parser.tags) == 1
+        _, attrs = parser.tags[0]
+        assert {"nofollow", "noopener", "noreferrer"} <= set(attrs["rel"].split())
+        assert cleaned.count("rel=") == 1
+
+    def it_overrides_an_explicit_opener_with_the_required_tokens(self):
+        # -- documents the intentional compatibility decision: this path
+        #    matches ``sanitize_attributes``, so an explicit ``opener`` keeps
+        #    its token but ``noopener`` still wins for security --
+        cleaned = sanitize_html_fragment(
+            '<a target="_blank" rel="opener" href="https://example.com">x</a>'
+        )
+        parser = _AnchorCollector()
+        parser.feed(cleaned)
+        assert len(parser.tags) == 1
+        _, attrs = parser.tags[0]
+        assert set(attrs["rel"].split()) == {"opener", "noopener", "noreferrer"}
 
     def it_filters_inline_styles(self):
         cleaned = sanitize_html_fragment(
