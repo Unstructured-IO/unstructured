@@ -44,6 +44,7 @@ def write_image(image: Union[Image.Image, np.ndarray], output_image_path: str):
 
     Raises:
     - ValueError: If the provided image type is neither PIL Image nor numpy ndarray.
+    - OSError: If the image cannot be written to the output path.
 
     Returns:
     - None: The function writes the image to the specified path but does not return any value.
@@ -52,7 +53,8 @@ def write_image(image: Union[Image.Image, np.ndarray], output_image_path: str):
     if isinstance(image, Image.Image):
         image.save(output_image_path)
     elif isinstance(image, np.ndarray):
-        cv2.imwrite(output_image_path, image)
+        if not cv2.imwrite(output_image_path, image):
+            raise OSError(f"Failed to write image to {output_image_path}")
     else:
         raise ValueError("Unsupported Image Type")
 
