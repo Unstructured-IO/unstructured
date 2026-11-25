@@ -60,6 +60,7 @@ def partition_xlsx(
     file: Optional[IO[bytes]] = None,
     find_subtable: bool = True,
     include_header: bool = False,
+    include_hidden_sheets: bool = True,
     infer_table_structure: bool = True,
     starting_page_number: int = 1,
     **kwargs: Any,
@@ -84,6 +85,9 @@ def partition_xlsx(
         and is the text content of the table (no structure).
     include_header
         Determines whether or not header info is included in text and medatada.text_as_html
+    include_hidden_sheets
+        Include hidden and very-hidden worksheets by default. When False, skip them without
+        reading their cell data. Page numbers still refer to the original workbook sheet order.
 
     Notes
     -----
@@ -97,6 +101,7 @@ def partition_xlsx(
         file=file,
         find_subtable=find_subtable,
         include_header=include_header,
+        include_hidden_sheets=include_hidden_sheets,
         infer_table_structure=infer_table_structure,
     )
 
@@ -104,6 +109,8 @@ def partition_xlsx(
     for page_number, (sheet_name, sheet) in enumerate(
         opts.sheets.items(), start=starting_page_number
     ):
+        if sheet is None:
+            continue
         if not opts.find_subtable:
             text, html = _render_table(sheet, opts)
 
@@ -200,6 +207,13 @@ class ExcelWorkbookReader:
             sheet_name=sheet_name, header=header, keep_default_na=False, na_values=[""]
         )
 
+    def is_sheet_hidden(self, sheet_name: str) -> bool:
+        """Whether XLSX/XLS marks the worksheet hidden or very hidden."""
+        book = self._reader.book
+        if isinstance(book, xlrd.book.Book):
+            return book.sheet_by_name(sheet_name).visibility != 0
+        return book[sheet_name].sheet_state != "visible"
+
 
 @contextmanager
 def open_excel_workbook(
@@ -263,12 +277,14 @@ class _XlsxPartitionerOptions:
         find_subtable: bool,
         include_header: bool,
         infer_table_structure: bool,
+        include_hidden_sheets: bool = True,
     ):
         self._file_path = file_path
         self._file = file
         self._find_subtable = find_subtable
         self._include_header = include_header
         self._infer_table_structure = infer_table_structure
+        self._include_hidden_sheets = include_hidden_sheets
 
     @cached_property
     def find_subtable(self) -> bool:
@@ -304,11 +320,16 @@ class _XlsxPartitionerOptions:
         return self._file_path
 
     @cached_property
-    def sheets(self) -> dict[str, pd.DataFrame]:
-        """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
+    def sheets(self) -> dict[str, pd.DataFrame | None]:
+        """Worksheets in workbook order; skipped hidden sheets retain a None placeholder."""
         with open_excel_workbook(self._file_bytes, compact_empty_rows=self.find_subtable) as reader:
             return {
-                name: reader.parse(name, header=self.header_row_idx) for name in reader.sheet_names
+                name: (
+                    reader.parse(name, header=self.header_row_idx)
+                    if self._include_hidden_sheets or not reader.is_sheet_hidden(name)
+                    else None
+                )
+                for name in reader.sheet_names
             }
 
     @cached_property
