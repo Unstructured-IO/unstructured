@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import pytest
 from lxml.html import fragment_fromstring
+from pytest_mock import MockerFixture
 
 from unstructured.common.html_table import (
     HtmlCell,
@@ -405,6 +406,20 @@ class DescribeHtmlRow:
         )
 
         assert list(row.iter_cell_texts()) == ["ID", "Category Link", "Extra spacing"]
+
+    def and_it_normalizes_each_cell_only_once_across_repeated_iterations(
+        self, mocker: MockerFixture
+    ):
+        normalize_ = mocker.patch(
+            "unstructured.common.html_table.normalize_html_cell_text",
+            wraps=normalize_html_cell_text,
+        )
+        row = HtmlRow(fragment_fromstring("<tr><td>a</td><td> </td><td>b<br/>c</td></tr>"))
+
+        for _ in range(3):
+            assert list(row.iter_cell_texts()) == ["a", "b c"]
+
+        assert normalize_.call_count == 3
 
     def it_knows_when_it_represents_a_header_row(self):
         assert HtmlRow(fragment_fromstring("<tr><td>a</td></tr>")).is_header is False
