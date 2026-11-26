@@ -7,6 +7,8 @@ import csv
 import io
 import itertools
 import re
+import shutil
+import tempfile
 from functools import cached_property, partial
 from typing import IO, Any, Callable, Iterator, NoReturn, cast
 from urllib.parse import urlparse
@@ -47,7 +49,8 @@ def partition_csv(
     filename
         A string defining the target filename path.
     file
-        A file-like object using "rb" mode --> open(filename, "rb").
+        A file-like object using "rb" mode --> open(filename, "rb"). A stream that cannot seek
+        back, such as the read end of a pipe, is read once into a temporary file.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     include_header
@@ -68,12 +71,16 @@ def partition_csv(
     )
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
-    with ctx.open() as file:
-        check_cell_count(file, ctx.delimiter, ctx.encoding, header=ctx.header is not None)
-    with ctx.open() as file:
-        dataframe = read_delimited_text(
-            file, sep=ctx.delimiter, header=ctx.header, encoding=ctx.encoding
-        )
+    try:
+        with ctx.open() as file:
+            check_cell_count(file, ctx.delimiter, ctx.encoding, header=ctx.header is not None)
+        with ctx.open() as file:
+            dataframe = read_delimited_text(
+                file, sep=ctx.delimiter, header=ctx.header, encoding=ctx.encoding
+            )
+    finally:
+        # -- close the copy made of a `file` that cannot seek, when there is one --
+        ctx.close()
 
     if not len(dataframe.columns):
         # -- an empty file holds no table --
@@ -763,6 +770,19 @@ def _read_whole_lines(file: IO[bytes], limit: int) -> list[bytes]:
             start = end + 1
 
 
+# -- the most a copy of a stream that cannot seek holds in memory before it spills to a temporary
+# -- file, the same bound `partition_tsv()` gives the copy it makes of such a stream --
+_SPOOL_MAX_MEMORY_BYTES = 64 * 1024 * 1024
+
+
+@contextlib.contextmanager
+def _spooled_copy(file: IO[bytes]) -> Iterator[IO[bytes]]:
+    """The rest of `file`, from where it stands, copied once to a temporary file."""
+    with tempfile.SpooledTemporaryFile(max_size=_SPOOL_MAX_MEMORY_BYTES) as copy:
+        shutil.copyfileobj(file, copy)
+        yield cast(IO[bytes], copy)
+
+
 class _CsvPartitioningContext:
     """Encapsulates the partitioning-run details.
 
@@ -783,6 +803,8 @@ class _CsvPartitioningContext:
         self._encoding = encoding
         self._include_header = include_header
         self._infer_table_structure = infer_table_structure
+        self._copy_of_file: IO[bytes] | None = None
+        self._copy_scope = contextlib.ExitStack()  # -- closes the copy, see `.close()` --
 
     @classmethod
     def load(
@@ -860,12 +882,34 @@ class _CsvPartitioningContext:
             with get_handle(self._file_path, "rb", compression="infer", is_text=False) as handles:
                 yield cast(IO[bytes], handles.handle)
         else:
-            file = self._file
-            assert file is not None  # -- guaranteed by `._validate()` --
+            file = self._rereadable_file()
             # -- Be polite on principle. Reset file-pointer both before and after use --
             file.seek(0)
             yield file
             file.seek(0)
+
+    def _rereadable_file(self) -> IO[bytes]:
+        """`self._file`, or the copy of it made for a stream that cannot seek back.
+
+        The delimiter sniff, the size check and the read each read `self._file` from its start.
+        A stream that cannot seek back, such as the read end of a pipe, can be read only once, so
+        the rest of it is copied once to a temporary file, which spills to disk when large, and
+        every read then takes the copy; `close()` removes it. A reader without the optional
+        `seekable()` query is rewound as it always has been.
+        """
+        if self._copy_of_file is not None:
+            return self._copy_of_file
+        file = cast(IO[bytes], self._file)  # -- guaranteed by `._validate()` --
+        seekable = getattr(file, "seekable", None)
+        if not callable(seekable) or seekable():
+            return file
+        self._copy_of_file = self._copy_scope.enter_context(_spooled_copy(file))
+        return self._copy_of_file
+
+    def close(self) -> None:
+        """Close the copy made of a `file` that cannot seek, when there is one."""
+        self._copy_scope.close()
+        self._copy_of_file = None
 
     def _validate(self) -> _CsvPartitioningContext:
         """Raise on invalid argument values."""

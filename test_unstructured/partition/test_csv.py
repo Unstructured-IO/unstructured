@@ -8,8 +8,11 @@ import gzip
 import io
 import itertools
 import lzma
+import os
 import sys
+import tempfile
 from pathlib import Path
+from typing import IO, Any, cast
 
 import pandas as pd
 import pytest
@@ -979,3 +982,126 @@ def test_partition_csv_rejects_a_URL_filename_without_fetching_it() -> None:
     # -- `partition(url=...)`, whose fetch applies the safe-HTTP checks --
     with pytest.raises(ValueError, match="use partition"):
         partition_csv("http://127.0.0.1:1/documents/stanley-cups.csv")
+
+
+class _Pipe(io.RawIOBase):
+    """A readable stream that cannot seek, like the read end of a pipe."""
+
+    def __init__(self, data: bytes) -> None:
+        self._data = io.BytesIO(data)
+
+    def readable(self) -> bool:
+        return True
+
+    def seekable(self) -> bool:
+        return False
+
+    def readinto(self, buffer: Any) -> int:
+        chunk = self._data.read(len(buffer))
+        buffer[: len(chunk)] = chunk
+        return len(chunk)
+
+
+class _ReaderWithoutSeekable:
+    """A readable, rewinding adapter that does not provide the optional `seekable()` query."""
+
+    def __init__(self, stream: io.BytesIO) -> None:
+        self._stream = stream
+
+    def read(self, size: int = -1) -> bytes:
+        return self._stream.read(size)
+
+    def readline(self, size: int = -1) -> bytes:
+        return self._stream.readline(size)
+
+    def readlines(self, hint: int = -1) -> list[bytes]:
+        return self._stream.readlines(hint)
+
+    def seek(self, offset: int, whence: int = io.SEEK_SET) -> int:
+        return self._stream.seek(offset, whence)
+
+    def tell(self) -> int:
+        return self._stream.tell()
+
+
+@pytest.fixture
+def spooled_copies(monkeypatch: pytest.MonkeyPatch) -> list[IO[bytes]]:
+    """Every temporary file `partition_csv()` copies a `file` that cannot seek to."""
+    copies: list[IO[bytes]] = []
+    spooled_temporary_file = tempfile.SpooledTemporaryFile
+
+    def recording_spooled_temporary_file(*args: Any, **kwargs: Any) -> IO[bytes]:
+        copy = spooled_temporary_file(*args, **kwargs)
+        copies.append(copy)
+        return copy
+
+    monkeypatch.setattr(tempfile, "SpooledTemporaryFile", recording_spooled_temporary_file)
+    return copies
+
+
+@pytest.mark.parametrize("include_header", [False, True])
+@pytest.mark.parametrize("text", ["a,b\n1,2\n", "a;b\n1;2\n"])
+def test_partition_csv_reads_a_stream_that_cannot_seek(text: str, include_header: bool):
+    (expected,) = partition_csv(file=io.BytesIO(text.encode()), include_header=include_header)
+    (actual,) = partition_csv(
+        file=io.BufferedReader(_Pipe(text.encode())), include_header=include_header
+    )
+
+    assert actual.text == expected.text == "a b 1 2"
+    assert actual.metadata.text_as_html == expected.metadata.text_as_html
+
+
+def test_partition_csv_from_a_real_pipe(spooled_copies: list[IO[bytes]]):
+    reader_fd, writer_fd = os.pipe()
+    with os.fdopen(writer_fd, "wb") as writer:
+        writer.write(b"a,b\n1,2\n")
+    with os.fdopen(reader_fd, "rb") as reader:
+        assert not reader.seekable()
+
+        (table,) = partition_csv(file=reader)
+
+        assert table.text == "a b 1 2"
+        # -- the stream is consumed and left open for its caller, and its copy is gone --
+        assert reader.read() == b""
+        assert not reader.closed
+    assert len(spooled_copies) == 1
+    assert spooled_copies[0].closed
+
+
+def test_partition_csv_closes_the_copy_it_made_when_the_size_check_rejects_the_stream(
+    monkeypatch: pytest.MonkeyPatch, spooled_copies: list[IO[bytes]]
+):
+    # -- the size check reads the copy before Pandas does, and the copy is closed when it raises --
+    monkeypatch.setenv("CSV_MAX_CELLS", "3")
+
+    with pytest.raises(UnprocessableEntityError, match="CSV_MAX_CELLS"):
+        partition_csv(file=io.BufferedReader(_Pipe(b"a,b\n1,2\n")))
+
+    assert len(spooled_copies) == 1
+    assert spooled_copies[0].closed
+
+
+def test_partition_csv_rewinds_a_file_that_can_seek_and_copies_none_of_it(
+    spooled_copies: list[IO[bytes]],
+):
+    stream = io.BytesIO(b"a,b\n1,2\n")
+
+    (table,) = partition_csv(file=stream)
+
+    assert table.text == "a b 1 2"
+    assert stream.tell() == 0
+    assert not stream.closed
+    assert spooled_copies == []
+
+
+def test_partition_csv_rewinds_a_reader_without_a_seekable_query(
+    spooled_copies: list[IO[bytes]],
+):
+    stream = io.BytesIO(b"a,b\n1,2\n")
+
+    (table,) = partition_csv(file=cast(IO[bytes], _ReaderWithoutSeekable(stream)))
+
+    assert table.text == "a b 1 2"
+    assert stream.tell() == 0
+    assert not stream.closed
+    assert spooled_copies == []
