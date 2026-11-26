@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import html
+import re
 from functools import cached_property
 from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
@@ -206,6 +207,8 @@ class HtmlTable:
         for e in noise_elements:
             e.drop_tag()
 
+        cell_elements = set(table.xpath(".//td | .//th | .//td//* | .//th//*"))
+
         # -- normalize and compactify the HTML --
         for e in table.iter():
             # -- Strip cosmetic attributes like border="1", class="dataframe" added
@@ -221,24 +224,37 @@ class HtmlTable:
             if e.tag == "th":
                 e.tag = "td"
 
-            # -- normalize whitespace in element text; this removes indent whitespace before nested
-            # -- elements and reduces whitespace between words to a single space.
+            # -- Text-node edges inside cells can separate inline words. Only structural
+            # -- indentation is safe to strip here; cell edges are trimmed below.
             if e.text:
-                e.text = " ".join(e.text.split())
+                e.text = re.sub(r"\s+", " ", e.text)
+                if e.tag in ("table", "tr") or e not in cell_elements:
+                    e.text = e.text.strip()
 
-            # -- normalize tails. A tail is the text between an element's closing tag and the
-            # -- start of the next sibling. Pure-whitespace tails are pretty-printing noise and
-            # -- can be dropped, but tails can also carry real content (e.g. mixed inline
-            # -- markup like `<b>foo</b> bar <b>baz</b>` or text between `<br/>` tags), which
-            # -- must be preserved.
             if e.tail:
                 parts = e.tail.split()
                 if not parts:
-                    e.tail = None
+                    e.tail = (
+                        " "
+                        if e.tag not in ("table", "tr", "td") and e.getparent() in cell_elements
+                        else None
+                    )
                 else:
                     prefix = " " if e.tail[0].isspace() else ""
                     suffix = " " if e.tail[-1].isspace() else ""
                     e.tail = prefix + " ".join(parts) + suffix
+
+        # -- Trim the actual cell edges, which may lie inside nested inline elements.
+        for cell in table.xpath(".//td"):
+            text_nodes = cell.xpath(".//text()")
+            for nodes, strip in ((text_nodes, str.lstrip), (reversed(text_nodes), str.rstrip)):
+                for node in nodes:
+                    parent = node.getparent()
+                    attr = "tail" if node.is_tail else "text"
+                    text = strip(getattr(parent, attr) or "")
+                    setattr(parent, attr, text)
+                    if text:
+                        break
 
         return cls(
             table,
