@@ -204,6 +204,20 @@ def test_clean_prefix(text, pattern, ignore_case, strip, expected):
 
 
 @pytest.mark.parametrize(
+    ("text", "pattern", "expected"),
+    [
+        # Only the leading occurrence may be removed, whichever branch matches.
+        ("Hello World", "Hi|World", "Hello World"),
+        ("World of Hello World", "Hi|World", "of Hello World"),
+        ("Hi there, Hi", "Hi|World", "there, Hi"),
+        ("Note: see Note", "Note:|NB:", "see Note"),
+    ],
+)
+def test_clean_prefix_anchors_every_alternative(text, pattern, expected):
+    assert core.clean_prefix(text, pattern) == expected
+
+
+@pytest.mark.parametrize(
     ("text", "pattern", "ignore_case", "strip", "expected"),
     [
         ("The END! END", r"(END|STOP)", False, True, "The END!"),
@@ -214,6 +228,20 @@ def test_clean_prefix(text, pattern, ignore_case, strip, expected):
 )
 def test_clean_postfix(text, pattern, ignore_case, strip, expected):
     assert core.clean_postfix(text, pattern, ignore_case, strip) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "pattern", "expected"),
+    [
+        # Only the trailing occurrence may be removed, whichever branch matches.
+        ("Hi there", "Hi|World", "Hi there"),
+        ("Hi there World", "Hi|World", "Hi there"),
+        ("Bye, Hi", "Hi|World", "Bye,"),
+        ("See END here and END", "END|STOP", "See END here and"),
+    ],
+)
+def test_clean_postfix_anchors_every_alternative(text, pattern, expected):
+    assert core.clean_postfix(text, pattern) == expected
 
 
 def test_group_broken_paragraphs():
