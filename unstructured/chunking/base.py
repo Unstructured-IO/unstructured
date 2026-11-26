@@ -6,6 +6,7 @@ import collections
 import copy
 import heapq
 import itertools
+import math
 import uuid
 from functools import cached_property, lru_cache
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, NamedTuple, Sequence, cast
@@ -16,13 +17,16 @@ from lxml.html import fragment_fromstring
 from typing_extensions import Self, TypeAlias
 
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable, _format_td
+from unstructured.documents.coordinates import Orientation
 from unstructured.documents.elements import (
     CodeSnippet,
     CompositeElement,
     ConsolidationStrategy,
+    CoordinatesMetadata,
     Element,
     ElementMetadata,
     Image,
+    Point,
     Table,
     TableChunk,
     Title,
@@ -251,6 +255,12 @@ class ChunkingOptions:
         """
         arg_value = self._kwargs.get("include_orig_elements")
         return True if arg_value is None else bool(arg_value)
+
+    @cached_property
+    def multipage_sections(self) -> bool:
+        """Whether by-title chunking allows a section to span pages."""
+        arg_value = self._kwargs.get("multipage_sections")
+        return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
 
     @cached_property
     def repeat_table_headers(self) -> bool:
@@ -981,13 +991,67 @@ class _Chunker:
             if size > SPLIT_ORIG_ELEMENTS_MAX_CHARS:
                 _warn_orig_elements_omitted(size)
                 self._omit_orig_elements = True
-        yield CompositeElement(text=s, metadata=self._chunk_metadata())
+        metadata = self._chunk_metadata()
+        if not self._opts.multipage_sections and not remainder and not self._prefix_len:
+            metadata.coordinates = self._single_page_coordinates(metadata)
+        yield CompositeElement(text=s, metadata=metadata)
 
         # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
         # -- Note these get continuation_metadata which includes is_continuation=True.
         while remainder:
             s, remainder = split(remainder)
             yield CompositeElement(text=s, metadata=self._continuation_metadata())
+
+    def _single_page_coordinates(
+        self, chunk_metadata: ElementMetadata
+    ) -> CoordinatesMetadata | None:
+        """Enclose all contributing text on the chunk's page in its original coordinate system."""
+        if chunk_metadata.page_number is None:
+            return None
+
+        system = None
+        points: list[Point] = []
+        for element in self._elements:
+            if not element.text.strip():  # Page breaks, for example, contribute no text.
+                continue
+
+            metadata = element.metadata
+            coords = metadata.coordinates
+            if (
+                metadata.page_number != chunk_metadata.page_number
+                or metadata.filename != chunk_metadata.filename
+                or metadata.file_directory != chunk_metadata.file_directory
+                or metadata.attached_to_filename != chunk_metadata.attached_to_filename
+                or metadata.url != chunk_metadata.url
+                or metadata.data_source != chunk_metadata.data_source
+                or coords is None
+                or not coords.points
+                or coords.system is None
+            ):
+                return None
+            if system is None:
+                system = coords.system
+            elif coords.system != system:
+                return None
+            points.extend(coords.points)
+
+        if system is None:
+            return None
+        try:
+            if not all(math.isfinite(x) and math.isfinite(y) for x, y in points):
+                return None
+        except (TypeError, ValueError, OverflowError):
+            # Serialized metadata may contain incomplete or nonnumeric points.
+            return None
+        xs, ys = zip(*points)
+        left, right = min(xs), max(xs)
+        top, bottom = min(ys), max(ys)
+        if system.orientation is Orientation.CARTESIAN:
+            top, bottom = bottom, top
+        return CoordinatesMetadata(
+            points=((left, top), (left, bottom), (right, bottom), (right, top)),
+            system=copy.copy(system),
+        )
 
     @cached_property
     def _all_metadata_values(self) -> dict[str, list[Any]]:
