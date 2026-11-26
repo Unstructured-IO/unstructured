@@ -7,6 +7,7 @@ from __future__ import annotations
 import base64
 import email.policy
 import io
+import os
 import tempfile
 from email.message import EmailMessage
 from typing import IO, Any
@@ -74,6 +75,64 @@ def test_partition_email_from_spooled_temp_file_can_partition_an_email():
         file.seek(0)
 
         assert partition_email(file=file) == EXPECTED_OUTPUT
+
+
+def test_partition_email_reads_a_file_like_object_that_cannot_seek():
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        eml_bytes = f.read()
+
+    expected = partition_email(file=io.BytesIO(eml_bytes))
+
+    reader_fd, writer_fd = os.pipe()
+    with os.fdopen(writer_fd, "wb") as writer:
+        writer.write(eml_bytes)
+    with os.fdopen(reader_fd, "rb") as reader:
+        assert not reader.seekable()
+        elements = partition_email(file=reader)
+        assert reader.read() == b""
+        assert not reader.closed
+
+    assert elements == expected
+
+
+def test_partition_email_still_rewinds_a_seekable_file():
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        eml_bytes = f.read()
+
+    expected = partition_email(file=io.BytesIO(eml_bytes))
+
+    stream = io.BytesIO(eml_bytes)
+    stream.read(7)  # -- like a caller that peeked at the first bytes before partitioning --
+    elements = partition_email(file=stream)
+
+    assert elements == expected
+
+
+class _StreamWithoutSeekableQuery:
+    """Readable, rewindable adapter without the optional seekable() query."""
+
+    def __init__(self, stream):
+        self.stream = stream
+
+    def read(self, *args):
+        return self.stream.read(*args)
+
+    def seek(self, *args):
+        return self.stream.seek(*args)
+
+
+def test_partition_email_still_rewinds_a_stream_without_a_seekable_query():
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        eml_bytes = f.read()
+
+    expected = partition_email(file=io.BytesIO(eml_bytes))
+
+    stream = io.BytesIO(eml_bytes)
+    stream.read(7)
+    elements = partition_email(file=_StreamWithoutSeekableQuery(stream))
+
+    assert elements == expected
+    assert stream.tell() == len(eml_bytes)
 
 
 def test_partition_email_can_partition_an_HTML_only_email_with_Base64_ISO_8859_1_charset():
