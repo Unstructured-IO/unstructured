@@ -11,15 +11,22 @@ import pytest
 from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock, input_path
 from unstructured.chunking.base import CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.chunking.basic import chunk_elements
-from unstructured.chunking.title import _ByTitleChunkingOptions, chunk_by_title
-from unstructured.documents.coordinates import CoordinateSystem
+from unstructured.chunking.title import (
+    _ByTitleChunkingOptions,
+    chunk_by_title,
+    iter_chunks_by_title,
+)
+from unstructured.documents.coordinates import CoordinateSystem, PixelSpace, PointSpace
 from unstructured.documents.elements import (
     CheckBox,
     CompositeElement,
     CoordinatesMetadata,
+    DataSourceMetadata,
     Element,
     ElementMetadata,
     ListItem,
+    PageBreak,
+    Points,
     Table,
     TableChunk,
     Text,
@@ -521,6 +528,152 @@ def test_chunk_by_title_drops_extra_metadata():
     )
 
     assert str(chunks[1]) == str(CompositeElement("An Okay Day\n\nToday is an okay day."))
+
+
+@pytest.fixture()
+def page_elements() -> list[Text]:
+    """Two text regions from different positions on the same PDF page."""
+    return [
+        Text(
+            text,
+            metadata=ElementMetadata(
+                filename="source.pdf",
+                file_directory="docs",
+                page_number=1,
+                coordinates=CoordinatesMetadata(points, PixelSpace(100, 100)),
+            ),
+        )
+        for text, points in (
+            ("First region", ((20, 10), (20, 30), (75, 30), (75, 10))),
+            ("Second region", ((10, 40), (10, 65), (90, 65), (90, 40))),
+        )
+    ]
+
+
+@pytest.mark.parametrize(
+    ("system_type", "expected_points"),
+    [
+        (PixelSpace, ((10, 10), (10, 65), (90, 65), (90, 10))),
+        (PointSpace, ((10, 65), (10, 10), (90, 10), (90, 65))),
+    ],
+)
+@pytest.mark.parametrize("include_orig_elements", [True, False])
+def test_chunk_coordinates_enclose_the_elements_on_the_page(
+    page_elements: list[Text],
+    system_type: type[CoordinateSystem],
+    expected_points: Points,
+    include_orig_elements: bool,
+) -> None:
+    """The box follows the source orientation, independent of original-element retention."""
+    for element in page_elements:
+        assert element.metadata.coordinates is not None
+        element.metadata.coordinates.system = system_type(100, 100)
+
+    (chunk,) = chunk_by_title(
+        page_elements, multipage_sections=False, include_orig_elements=include_orig_elements
+    )
+
+    assert chunk.metadata.coordinates == CoordinatesMetadata(expected_points, system_type(100, 100))
+    assert chunk.metadata.orig_elements == (page_elements if include_orig_elements else None)
+
+
+def test_chunk_coordinates_ignore_an_empty_page_break(page_elements: list[Text]) -> None:
+    """A page-break marker contributes no text or geometry to the streaming result."""
+    elements = [*page_elements, PageBreak("", metadata=ElementMetadata(page_number=1))]
+
+    (chunk,) = iter_chunks_by_title(elements, multipage_sections=False)
+
+    assert chunk.metadata.coordinates == CoordinatesMetadata(
+        ((10, 10), (10, 65), (90, 65), (90, 10)), PixelSpace(100, 100)
+    )
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("page_number", 2),
+        ("page_number", None),
+        ("filename", "other.pdf"),
+        ("file_directory", "other"),
+        ("attached_to_filename", "other.eml"),
+        ("url", "https://example.org/other.pdf"),
+        ("data_source", DataSourceMetadata(record_locator={"path": "other/source.pdf"})),
+        ("coordinates", None),
+        ("coordinates", CoordinatesMetadata(None, None)),
+        ("coordinates", CoordinatesMetadata(((float("nan"), 40), (90, 65)), PixelSpace(100, 100))),
+        ("coordinates", CoordinatesMetadata(((10, 40), (90, 65)), PixelSpace(200, 100))),
+        ("coordinates", CoordinatesMetadata(((10, 40), (90, 65)), PointSpace(100, 100))),
+        (
+            "coordinates",
+            CoordinatesMetadata.from_dict(
+                {
+                    "points": [[10]],
+                    "system": "PixelSpace",
+                    "layout_width": 100,
+                    "layout_height": 100,
+                }
+            ),
+        ),
+        (
+            "coordinates",
+            CoordinatesMetadata.from_dict(
+                {
+                    "points": [["x", 5]],
+                    "system": "PixelSpace",
+                    "layout_width": 100,
+                    "layout_height": 100,
+                }
+            ),
+        ),
+    ],
+)
+def test_chunk_coordinates_require_a_common_page_and_coordinate_system(
+    page_elements: list[Text], field: str, value: Any
+) -> None:
+    """Even recombined short sections must share a document, page and coordinate frame."""
+    setattr(page_elements[1].metadata, field, value)
+
+    (chunk,) = chunk_by_title(
+        page_elements, multipage_sections=False, combine_text_under_n_chars=500
+    )
+
+    assert chunk.text == "First region\n\nSecond region"
+    assert chunk.metadata.coordinates is None
+
+
+def test_chunk_coordinates_are_omitted_by_default(page_elements: list[Text]) -> None:
+    """The default title and basic strategies retain their existing metadata."""
+    (title_chunk,) = chunk_by_title(page_elements)
+    (basic_chunk,) = chunk_elements(page_elements)
+
+    assert title_chunk.metadata.coordinates is None
+    assert basic_chunk.metadata.coordinates is None
+
+
+def test_chunk_coordinates_are_omitted_when_text_is_split(page_elements: list[Text]) -> None:
+    """Character ranges split from one element have no known individual bounds."""
+    chunks = chunk_by_title([page_elements[0]], multipage_sections=False, max_characters=6)
+
+    assert [chunk.text for chunk in chunks] == ["First", "region"]
+    assert all(chunk.metadata.coordinates is None for chunk in chunks)
+
+
+def test_chunk_coordinates_are_omitted_when_text_from_the_previous_chunk_overlaps(
+    page_elements: list[Text],
+) -> None:
+    """A carried suffix has no separate bounds to combine with those of the new text."""
+    first, second = chunk_by_title(
+        page_elements,
+        multipage_sections=False,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=5,
+        overlap=6,
+        overlap_all=True,
+    )
+
+    assert first.metadata.coordinates == page_elements[0].metadata.coordinates
+    assert second.text == "region\n\nSecond region"
+    assert second.metadata.coordinates is None
 
 
 def test_it_considers_separator_length_when_pre_chunking():

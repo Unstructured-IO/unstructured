@@ -9,7 +9,6 @@ from functools import cached_property
 from typing import Iterable, Iterator, Optional
 
 from unstructured.chunking.base import (
-    CHUNK_MULTI_PAGE_DEFAULT,
     BoundaryPredicate,
     ChunkingOptions,
     PreChunkCombiner,
@@ -68,6 +67,9 @@ def chunk_by_title(
         Mutually exclusive with `max_characters`.
     multipage_sections
         If True, sections can span multiple pages. Defaults to True.
+        When False, an unsplit text chunk has bounding-box coordinates if all its text elements
+        have coordinates in the same system on the same source page. Chunks that include overlap
+        from an earlier chunk have no bounding box.
     new_after_n_chars
         Cuts off new sections once they reach a length of n characters (soft max). Defaults to
         `max_characters` when not specified, which effectively disables any soft window.
@@ -255,12 +257,6 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         """
         arg_value = self._kwargs.get("combine_text_under_n_chars")
         return self.hard_max if arg_value is None else arg_value
-
-    @cached_property
-    def multipage_sections(self) -> bool:
-        """When False, break pre-chunks on page-boundaries."""
-        arg_value = self._kwargs.get("multipage_sections")
-        return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
 
     def _validate(self) -> None:
         """Raise ValueError if request option-set is invalid."""
