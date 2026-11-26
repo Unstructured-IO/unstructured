@@ -67,6 +67,9 @@ def test_clean_bullets(text, expected):
         ("1..2.3 four", "1..2.3 four"),
         ("Fig. 2: The relationship", "Fig. 2: The relationship"),
         ("23 is everywhere", "23 is everywhere"),
+        ("", ""),
+        ("   ", "   "),
+        ("\n", "\n"),
     ],
 )
 def test_clean_ordered_bullets(text, expected):
