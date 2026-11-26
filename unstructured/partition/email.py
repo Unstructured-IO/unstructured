@@ -82,6 +82,8 @@ def partition_email(
     Args:
         filename: str path of the target file.
         file: A file-like object open for reading bytes (not str) e.g. --> open(filename, "rb").
+            A stream that cannot seek back, such as the read end of a pipe, is read once from
+            where it stands.
         content_source: The preferred message body. Many emails contain both a plain-text and an
             HTML version of the message body. By default, the HTML version will be used when
             available. Specifying "text/plain" will cause the plain-text version to be preferred.
@@ -336,7 +338,10 @@ class EmailPartitioningContext:
                 self._file.read(0), bytes
             ):
                 raise ValueError("file object must be opened in binary mode")
-            self._file.seek(0)
+            # -- a stream that cannot seek back, such as the read end of a pipe, is read once
+            # -- from where it stands, the same way partition_json() accepts it --
+            if not hasattr(self._file, "seekable") or self._file.seekable():
+                self._file.seek(0)
 
         if self._content_source not in VALID_CONTENT_SOURCES:
             raise ValueError(
