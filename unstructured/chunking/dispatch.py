@@ -198,6 +198,13 @@ def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
     # -- combine HTML if all chunks have it --
     if all(c.metadata.text_as_html for c in chunks):
         combined = fragment_fromstring("<table></table>")
+        # -- preserve a caption carried by the first chunk (see chunking of captioned tables) --
+        first_html = chunks[0].metadata.text_as_html
+        if first_html:
+            parsed_first = fragment_fromstring(first_html)
+            caption_elements = parsed_first.xpath("./caption")
+            for cap in caption_elements:
+                combined.append(cap)
         canonical_header_row_count, canonical_header_rows = _first_carried_header_rows(chunks)
         if canonical_header_rows:
             thead = fragment_fromstring("<thead></thead>")

@@ -278,6 +278,28 @@ class HtmlTable:
         # -- blank cells will introduce extra whitespace, so normalize after accumulating --
         return " ".join(table_text.split())
 
+    @cached_property
+    def caption(self) -> "HtmlElement | None":
+        """The table's `<caption>` element, when present."""
+        captions = self._table.xpath("./caption")
+        return captions[0] if captions else None
+
+    @cached_property
+    def caption_text(self) -> str:
+        """Normalized text of the table's `<caption>`, or ``""`` when absent."""
+        cap = self.caption
+        if cap is None:
+            return ""
+        return " ".join(cap.text_content().split())
+
+    @cached_property
+    def caption_html(self) -> str | None:
+        """Serialized `<caption>...</caption>` fragment, or ``None`` when absent."""
+        cap = self.caption
+        if cap is None:
+            return None
+        return etree.tostring(cap, encoding=str)
+
 
 class HtmlRow:
     """A `<tr>` element."""

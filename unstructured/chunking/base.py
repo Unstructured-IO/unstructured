@@ -1228,6 +1228,22 @@ class _TableChunker:
             return None
 
     @cached_property
+    def _caption_text(self) -> str:
+        """Normalized text of this table's `<caption>`, or ``""`` when absent."""
+        html_table = self._html_table
+        if html_table is None:
+            return ""
+        return html_table.caption_text
+
+    @cached_property
+    def _caption_html(self) -> str | None:
+        """Serialized `<caption>...</caption>` fragment for this table, or ``None``."""
+        html_table = self._html_table
+        if html_table is None:
+            return None
+        return html_table.caption_html
+
+    @cached_property
     def _leading_header_row_count(self) -> int:
         """Number of contiguous leading rows that should be treated as table headers."""
         html_table = self._html_table
@@ -1308,10 +1324,23 @@ class _TableChunker:
         if omit_orig_elements:
             _warn_orig_elements_omitted(size)
 
+        caption_text = self._caption_text
+        caption_html = self._caption_html
         for chunk_index, (text, html) in enumerate(itertools.chain(first_pairs, text_html_pairs)):
             metadata = self._metadata
             if omit_orig_elements:
                 metadata.orig_elements = None
+            # -- a split table's caption (see partition_html) must survive the split: keep it on
+            # -- the first chunk's text and HTML, mirroring an unsplit `Table` --
+            if chunk_index == 0 and caption_text:
+                if not (text or "").lstrip().startswith(caption_text):
+                    text = (caption_text + (" " + text if text else "")).strip()
+                if (
+                    html is not None
+                    and caption_html is not None
+                    and "<caption>" not in (html or "")
+                ):
+                    html = (html or "").replace("<table>", "<table>" + caption_html, 1)
             if html is not None:
                 metadata.text_as_html = html
             else:
