@@ -88,6 +88,13 @@ from unstructured.partition.utils.constants import (
     OCRMode,
     PartitionStrategy,
 )
+from unstructured.partition.utils.progress import (
+    STAGE_OCR,
+    STAGE_TEXT,
+    ProgressCallback,
+    progress_requested,
+    report_page_progress,
+)
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import patch_psparser
 from unstructured.telemetry import (
@@ -187,6 +194,8 @@ def partition_pdf(
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
     pdfminer_word_margin: Optional[float] = 0.185,
+    progress_callback: Optional[ProgressCallback] = None,
+    show_progress: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -258,6 +267,16 @@ def partition_pdf(
         If two characters on the same line are further apart than this margin then they are
         considered to be two separate words, and an intermediate space will be added for
         readability. The margin is specified relative to the width of the character.
+    progress_callback
+        Called with a `PartitionProgress` each time a page finishes, so a caller can show
+        its own progress indicator for a long document. The `stage` is "text" while the text
+        layer is read and "ocr" while rendered pages are run through OCR; `pages_done` counts
+        from 1 within the stage and `total_pages` is the page count when it is known. Off by
+        default. Callback failures are logged and disable that callback for the stage;
+        extraction continues.
+    show_progress
+        If True, a `tqdm` progress bar is drawn on stderr for each stage. Off by default.
+        Progress-bar failures are logged and do not interrupt extraction.
     """
 
     exactly_one(filename=filename, file=file)
@@ -285,6 +304,8 @@ def partition_pdf(
         pdfminer_char_margin=pdfminer_char_margin,
         pdfminer_line_overlap=pdfminer_line_overlap,
         pdfminer_word_margin=pdfminer_word_margin,
+        progress_callback=progress_callback,
+        show_progress=show_progress,
         **kwargs,
     )
 
@@ -314,6 +335,8 @@ def partition_pdf_or_image(
     pdfminer_word_margin: Optional[float] = 0.185,
     ocr_agent: str = OCR_AGENT_TESSERACT,
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    progress_callback: Optional[ProgressCallback] = None,
+    show_progress: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -337,6 +360,12 @@ def partition_pdf_or_image(
 
     extracted_elements: list[list[Element]] = []
     pdf_text_extractable = False
+
+    # -- the page count is only read when someone is listening for progress, so the default
+    # -- path does not pay for a second parse of the document.
+    progress_total_pages: Optional[int] = None
+    if not is_image and progress_requested(progress_callback, show_progress):
+        progress_total_pages = _count_pdf_pages_for_progress(filename=filename, file=file)
 
     if not is_image:
         # -- fast reads text only through PDFMiner, so a vector-heavy PDF is still extracted
@@ -363,6 +392,9 @@ def partition_pdf_or_image(
                     starting_page_number=starting_page_number,
                     password=password,
                     pdfminer_config=pdfminer_config,
+                    progress_callback=progress_callback,
+                    show_progress=show_progress,
+                    progress_total_pages=progress_total_pages,
                     **kwargs,
                 )
                 pdf_text_extractable = any(
@@ -433,6 +465,8 @@ def partition_pdf_or_image(
                 pdfminer_config=pdfminer_config,
                 ocr_agent=ocr_agent,
                 table_ocr_agent=table_ocr_agent,
+                progress_callback=progress_callback,
+                show_progress=show_progress,
                 **kwargs,
             )
             # NOTE(crag): do not call _process_uncategorized_text_elements here, because
@@ -459,6 +493,9 @@ def partition_pdf_or_image(
                 metadata_last_modified=metadata_last_modified or last_modified,
                 starting_page_number=starting_page_number,
                 password=password,
+                progress_callback=progress_callback,
+                show_progress=show_progress,
+                progress_total_pages=progress_total_pages,
                 **kwargs,
             )
             return _process_uncategorized_text_elements(elements)
@@ -580,25 +617,35 @@ def _process_pdfminer_pages(
     starting_page_number: int = 1,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
+    progress_callback: Optional[ProgressCallback] = None,
+    show_progress: bool = False,
+    progress_total_pages: Optional[int] = None,
     **kwargs,
 ) -> list[list[Element]]:
     """Uses PDFMiner to split a document into pages and process them."""
 
-    return [
-        _pdfminer_page_elements(
-            page,
-            page_layout,
-            page_number=page_number,
-            filename=filename,
-            metadata_last_modified=metadata_last_modified,
-            languages=languages,
-            annotation_threshold=annotation_threshold,
-        )
+    elements: list[list[Element]] = []
+    with report_page_progress(
+        STAGE_TEXT, progress_total_pages, progress_callback, show_progress
+    ) as reporter:
         for page_number, (page, page_layout) in enumerate(
             open_pdfminer_pages_generator(fp, password=password, pdfminer_config=pdfminer_config),
             start=starting_page_number,
-        )
-    ]
+        ):
+            elements.append(
+                _pdfminer_page_elements(
+                    page,
+                    page_layout,
+                    page_number=page_number,
+                    filename=filename,
+                    metadata_last_modified=metadata_last_modified,
+                    languages=languages,
+                    annotation_threshold=annotation_threshold,
+                )
+            )
+            if reporter:
+                reporter.page_done()
+    return elements
 
 
 @requires_dependencies("pdfminer")
@@ -751,6 +798,24 @@ def _get_pdf_page_number(
     else:
         raise ValueError("Either 'file' or 'filename' must be provided.")
     return number_of_pages
+
+
+def _count_pdf_pages_for_progress(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+) -> Optional[int]:
+    """The document's page count for progress totals, or None when it cannot be read.
+
+    Progress reporting must never make partitioning fail, so a document pypdf cannot open
+    simply reports without a total.
+    """
+    try:
+        if isinstance(file, bytes):
+            return PdfReader(io.BytesIO(file)).get_num_pages()
+        return _get_pdf_page_number(filename=filename, file=file)
+    except Exception as e:
+        logger.debug("Could not count PDF pages for progress reporting: %s", e)
+        return None
 
 
 def check_pdf_hi_res_max_pages_exceeded(
@@ -1263,6 +1328,8 @@ def _partition_pdf_or_image_local(
     pdfminer_config: Optional[PDFMinerConfig] = None,
     ocr_agent: str = OCR_AGENT_TESSERACT,
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    progress_callback: Optional[ProgressCallback] = None,
+    show_progress: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -1418,6 +1485,8 @@ def _partition_pdf_or_image_local(
                 ocr_layout_dumper=ocr_layout_dumper,
                 password=password,
                 table_ocr_agent=table_ocr_agent,
+                progress_callback=progress_callback,
+                show_progress=show_progress,
                 image_paths=page_image_paths,
             )
         else:
@@ -1481,6 +1550,8 @@ def _partition_pdf_or_image_local(
                 ocr_layout_dumper=ocr_layout_dumper,
                 password=password,
                 table_ocr_agent=table_ocr_agent,
+                progress_callback=progress_callback,
+                show_progress=show_progress,
                 image_paths=page_image_paths,
             )
 
@@ -1649,6 +1720,9 @@ def _partition_pdf_or_image_with_ocr(
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
     password: Optional[str] = None,
+    progress_callback: Optional[ProgressCallback] = None,
+    show_progress: bool = False,
+    progress_total_pages: Optional[int] = None,
     **kwargs: Any,
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
@@ -1661,22 +1735,10 @@ def _partition_pdf_or_image_with_ocr(
         image = PILImage.open(file) if file is not None else PILImage.open(filename)
         images.append(image)
 
-        for page_number, image in enumerate(images, start=starting_page_number):
-            page_elements = _partition_pdf_or_image_with_ocr_from_image(
-                image=image,
-                languages=languages,
-                ocr_languages=ocr_languages,
-                page_number=page_number,
-                include_page_breaks=include_page_breaks,
-                metadata_last_modified=metadata_last_modified,
-                **kwargs,
-            )
-            elements.extend(page_elements)
-    else:
-        for page_number, image in enumerate(
-            convert_pdf_to_images(filename, file, password=password), start=starting_page_number
-        ):
-            try:
+        with report_page_progress(
+            STAGE_OCR, len(images), progress_callback, show_progress
+        ) as reporter:
+            for page_number, image in enumerate(images, start=starting_page_number):
                 page_elements = _partition_pdf_or_image_with_ocr_from_image(
                     image=image,
                     languages=languages,
@@ -1686,9 +1748,32 @@ def _partition_pdf_or_image_with_ocr(
                     metadata_last_modified=metadata_last_modified,
                     **kwargs,
                 )
-            finally:
-                image.close()
-            elements.extend(page_elements)
+                elements.extend(page_elements)
+                if reporter:
+                    reporter.page_done()
+    else:
+        with report_page_progress(
+            STAGE_OCR, progress_total_pages, progress_callback, show_progress
+        ) as reporter:
+            for page_number, image in enumerate(
+                convert_pdf_to_images(filename, file, password=password),
+                start=starting_page_number,
+            ):
+                try:
+                    page_elements = _partition_pdf_or_image_with_ocr_from_image(
+                        image=image,
+                        languages=languages,
+                        ocr_languages=ocr_languages,
+                        page_number=page_number,
+                        include_page_breaks=include_page_breaks,
+                        metadata_last_modified=metadata_last_modified,
+                        **kwargs,
+                    )
+                finally:
+                    image.close()
+                elements.extend(page_elements)
+                if reporter:
+                    reporter.page_done()
 
     return elements
 

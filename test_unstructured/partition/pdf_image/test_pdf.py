@@ -21,7 +21,7 @@ import pytest
 from pdf2image.exceptions import PDFPageCountError
 from pdfminer.pdfdocument import PDFPasswordIncorrect
 from PIL import Image
-from pypdf import PdfWriter
+from pypdf import PdfReader, PdfWriter
 from pypdf.errors import LimitReachedError
 from pypdf.generic import (
     ArrayObject,
@@ -2924,3 +2924,203 @@ def test_partition_pdf_hi_res_matches_a_failed_full_pass_when_a_later_page_fails
         elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
 
     assert [e.to_dict() for e in elements] == [e.to_dict() for e in expected]
+
+
+# -- progress reporting (#2351) ---------------------------------------------------------------
+
+
+def test_partition_pdf_fast_reports_text_progress_per_page():
+    from unstructured.partition.utils.progress import STAGE_TEXT, PartitionProgress
+
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    events: list[PartitionProgress] = []
+
+    elements = pdf.partition_pdf(
+        filename=filename, strategy=PartitionStrategy.FAST, progress_callback=events.append
+    )
+
+    page_count = len({el.metadata.page_number for el in elements})
+    assert len(events) == page_count
+    assert {event.stage for event in events} == {STAGE_TEXT}
+    assert [event.pages_done for event in events] == list(range(1, page_count + 1))
+    assert {event.total_pages for event in events} == {page_count}
+
+
+def test_partition_pdf_fast_reports_text_progress_from_file_object():
+    from unstructured.partition.utils.progress import STAGE_TEXT
+
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    events = []
+
+    with open(filename, "rb") as f:
+        pdf.partition_pdf(file=f, strategy=PartitionStrategy.FAST, progress_callback=events.append)
+
+    assert events
+    assert events[-1].stage == STAGE_TEXT
+    assert events[-1].pages_done == events[-1].total_pages == len(events)
+
+
+def test_partition_pdf_does_not_count_pages_unless_progress_is_requested():
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+
+    with mock.patch.object(pdf, "_count_pdf_pages_for_progress") as count_pages:
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
+
+    count_pages.assert_not_called()
+
+
+def test_partition_pdf_progress_survives_an_unreadable_page_count():
+    from unstructured.partition.utils.progress import STAGE_TEXT
+
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    events = []
+
+    with mock.patch.object(pdf, "_get_pdf_page_number", side_effect=RuntimeError("no count")):
+        pdf.partition_pdf(
+            filename=filename, strategy=PartitionStrategy.FAST, progress_callback=events.append
+        )
+
+    assert events
+    assert {(event.stage, event.total_pages) for event in events} == {(STAGE_TEXT, None)}
+
+
+def test_partition_pdf_hi_res_forwards_progress_arguments_to_ocr():
+    filename = example_doc_path("pdf/DA-1p.pdf")
+    callback = mock.MagicMock()
+
+    with mock.patch.object(ocr, "process_file_with_ocr", mock.MagicMock()) as mock_process:
+        pdf.partition_pdf(
+            filename=filename,
+            strategy=PartitionStrategy.HI_RES,
+            progress_callback=callback,
+            show_progress=True,
+        )
+
+    assert mock_process.call_args[1]["progress_callback"] is callback
+    assert mock_process.call_args[1]["show_progress"] is True
+
+
+def test_partition_pdf_hi_res_progress_is_off_by_default():
+    filename = example_doc_path("pdf/DA-1p.pdf")
+
+    with mock.patch.object(ocr, "process_file_with_ocr", mock.MagicMock()) as mock_process:
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
+
+    assert mock_process.call_args[1]["progress_callback"] is None
+    assert mock_process.call_args[1]["show_progress"] is False
+
+
+def test_partition_pdf_ocr_only_reports_ocr_progress_per_page():
+    from unstructured.partition.pdf_image import pdf_image_utils
+    from unstructured.partition.utils.progress import STAGE_OCR
+
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    events = []
+    fake_pages = [Image.new("RGB", (10, 10)) for _ in range(2)]
+
+    with (
+        mock.patch.object(pdf_image_utils, "convert_pdf_to_images", return_value=iter(fake_pages)),
+        mock.patch.object(pdf, "_partition_pdf_or_image_with_ocr_from_image", return_value=[]),
+    ):
+        pdf.partition_pdf(
+            filename=filename,
+            strategy=PartitionStrategy.OCR_ONLY,
+            progress_callback=events.append,
+        )
+
+    assert [(event.stage, event.pages_done, event.total_pages) for event in events] == [
+        (STAGE_OCR, 1, 2),
+        (STAGE_OCR, 2, 2),
+    ]
+
+
+def test_partition_image_ocr_only_reports_one_ocr_page():
+    from unstructured.partition.image import partition_image
+    from unstructured.partition.utils.progress import STAGE_OCR
+
+    filename = example_doc_path("img/layout-parser-paper-fast.jpg")
+    events = []
+
+    with mock.patch.object(pdf, "_partition_pdf_or_image_with_ocr_from_image", return_value=[]):
+        partition_image(
+            filename=filename,
+            strategy=PartitionStrategy.OCR_ONLY,
+            progress_callback=events.append,
+        )
+
+    assert [(event.stage, event.pages_done, event.total_pages) for event in events] == [
+        (STAGE_OCR, 1, 1)
+    ]
+
+
+def test_partition_pdf_show_progress_draws_a_bar_per_stage():
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    bar = mock.MagicMock()
+
+    with mock.patch("tqdm.auto.tqdm", return_value=bar) as tqdm_cls:
+        elements = pdf.partition_pdf(
+            filename=filename, strategy=PartitionStrategy.FAST, show_progress=True
+        )
+
+    page_count = len({el.metadata.page_number for el in elements})
+    tqdm_cls.assert_called_once()
+    assert tqdm_cls.call_args.kwargs["total"] == page_count
+    assert bar.update.call_count == page_count
+    bar.close.assert_called_once_with()
+
+
+@pytest.mark.parametrize("strategy", [PartitionStrategy.FAST, PartitionStrategy.AUTO])
+@pytest.mark.parametrize("failure_page", [2, 3])
+def test_progress_callback_failure_preserves_all_extracted_text(strategy, failure_page, tmp_path):
+    source = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    filename = tmp_path / "three-pages.pdf"
+    writer = PdfWriter()
+    writer.append(source)
+    writer.add_page(PdfReader(source).pages[0])
+    writer.write(filename)
+    expected = pdf.partition_pdf(filename=filename, strategy=strategy)
+    seen = []
+
+    def callback(event):
+        seen.append(event.pages_done)
+        if event.pages_done == failure_page:
+            raise RuntimeError("reporting sink full")
+
+    actual = pdf.partition_pdf(filename=filename, strategy=strategy, progress_callback=callback)
+    assert [element.text for element in actual] == [element.text for element in expected]
+    assert len(seen) == failure_page
+
+
+@pytest.mark.parametrize("operation", ["update", "close"])
+@pytest.mark.parametrize("strategy", [PartitionStrategy.FAST, PartitionStrategy.AUTO])
+def test_progress_bar_failure_preserves_all_extracted_text(operation, strategy):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    expected = pdf.partition_pdf(filename=filename, strategy=strategy)
+    bar = mock.MagicMock()
+    getattr(bar, operation).side_effect = RuntimeError("reporting sink full")
+    with mock.patch("tqdm.auto.tqdm", return_value=bar):
+        actual = pdf.partition_pdf(filename=filename, strategy=strategy, show_progress=True)
+    assert [element.text for element in actual] == [element.text for element in expected]
+
+
+@pytest.mark.parametrize("failure_page", [2, 3])
+def test_ocr_progress_failure_does_not_abort_remaining_pages(failure_page):
+    from unstructured.partition.pdf_image import pdf_image_utils
+
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    pages = [Image.new("RGB", (10, 10)) for _ in range(3)]
+
+    def callback(event):
+        if event.pages_done == failure_page:
+            raise RuntimeError("reporting sink full")
+
+    with (
+        mock.patch.object(pdf_image_utils, "convert_pdf_to_images", return_value=iter(pages)),
+        mock.patch.object(
+            pdf, "_partition_pdf_or_image_with_ocr_from_image", return_value=[]
+        ) as process,
+    ):
+        pdf.partition_pdf(
+            filename=filename, strategy=PartitionStrategy.OCR_ONLY, progress_callback=callback
+        )
+    assert process.call_count == 3
