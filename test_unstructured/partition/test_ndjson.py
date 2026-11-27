@@ -334,6 +334,19 @@ def and_it_keeps_an_array_valued_line_as_a_single_Text_element():
     assert elements == [Text(text='[\n  {\n    "a": 1\n  },\n  {\n    "b": 2\n  }\n]')]
 
 
+@pytest.mark.parametrize("separator", ["\u0085", "\u2028", "\u2029"])
+def and_it_keeps_a_string_holding_a_unicode_line_break_in_its_record(separator: str):
+    # -- JSON allows these unescaped inside a string; only "\n" ends an NDJSON record --
+    text = f'{{"note": "one{separator}two"}}\n{{"sku": "B-200"}}\n'
+
+    elements = partition_ndjson(text=text)
+
+    assert [json.loads(e.text) for e in elements] == [
+        {"note": f"one{separator}two"},
+        {"sku": "B-200"},
+    ]
+
+
 def and_it_skips_blank_lines():
     text = '{"sku": "A-100"}\n\n   \n{"sku": "B-200"}\n'
 
