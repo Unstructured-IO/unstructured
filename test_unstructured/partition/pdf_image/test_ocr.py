@@ -748,3 +748,43 @@ def test_process_data_with_ocr_forwards_progress_arguments(mocker):
 
     assert process_file.call_args.kwargs["progress_callback"] is callback
     assert process_file.call_args.kwargs["show_progress"] is True
+
+
+def test_process_file_with_ocr_uses_given_image_paths_without_rendering(mocker, tmp_path):
+    from unstructured.partition.pdf_image.ocr import PILImage
+
+    def fail_render(*args, **kwargs):
+        raise AssertionError("pdf must not be rendered when image_paths are given")
+
+    mocker.patch.object(ocr, "convert_pdf_to_image", side_effect=fail_render)
+    seen = []
+
+    def record(page_layout, image, **kwargs):
+        seen.append((page_layout, image.size))
+        return page_layout
+
+    mocker.patch.object(ocr, "supplement_page_layout_with_ocr", side_effect=record)
+    page_paths = []
+    for i, size in enumerate(((50, 50), (60, 70))):
+        page_path = tmp_path / f"page-{i}.png"
+        PILImage.new("RGB", size).save(page_path)
+        page_paths.append(str(page_path))
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [MagicMock(), MagicMock()]
+
+    events = []
+    result = ocr.process_file_with_ocr(
+        "foo.pdf",
+        doc,
+        [[], []],
+        is_image=False,
+        image_paths=page_paths,
+        progress_callback=events.append,
+    )
+
+    assert seen == [(doc.pages[0], (50, 50)), (doc.pages[1], (60, 70))]
+    assert [(e.stage, e.pages_done, e.total_pages) for e in events] == [
+        ("ocr", 1, 2),
+        ("ocr", 2, 2),
+    ]
+    assert result.pages == doc.pages

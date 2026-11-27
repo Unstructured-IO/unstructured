@@ -334,7 +334,7 @@ class ChunkingOptions:
         return new_after_n_chars_arg
 
     @cached_property
-    def split(self) -> Callable[[str], tuple[str, str]]:
+    def split(self) -> _TextSplitter:
         """A text-splitting function suitable for splitting the text of an oversized pre-chunk.
 
         The function is pre-configured with the chosen chunking window size and any other applicable
@@ -645,6 +645,7 @@ class PreChunkBuilder:
         self._opts = opts
         self._separator_len = len(opts.text_separator)
         self._elements: list[Element] = []
+        self._contains_table = False
 
         # -- overlap is only between pre-chunks so starts empty --
         self._overlap_prefix: str = ""
@@ -655,6 +656,7 @@ class PreChunkBuilder:
 
     def add_element(self, element: Element) -> None:
         """Add `element` to this section."""
+        self._contains_table = self._contains_table or _element_is_table_family(element)
         # -- do not prefix a table-only pre-chunk with narrative overlap from the prior chunk --
         if (
             self._opts.isolate_table
@@ -727,7 +729,7 @@ class PreChunkBuilder:
                 return len(self._elements) == 0
 
             # -- no non-table element may share a pre-chunk with a `Table` --
-            if _elements_contain_table_family(self._elements):
+            if self._contains_table:
                 return False
 
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
@@ -757,6 +759,7 @@ class PreChunkBuilder:
         """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
         self._overlap_prefix = overlap_prefix
         self._elements.clear()
+        self._contains_table = False
         self._text_segments = [overlap_prefix] if overlap_prefix else []
         self._text_len = len(overlap_prefix)
 
@@ -856,7 +859,12 @@ class PreChunk:
                     self._elements[0], self._overlap_prefix, self._opts
                 )
         else:
-            yield from _Chunker.iter_chunks(self._elements, self._text, self._opts)
+            prefix_len = (
+                len(self._overlap_prefix) + len(self._opts.text_separator)
+                if self._overlap_prefix
+                else 0
+            )
+            yield from _Chunker.iter_chunks(self._elements, self._text, self._opts, prefix_len)
 
     @cached_property
     def overlap_tail(self) -> str:
@@ -926,22 +934,25 @@ class _Chunker:
     Produces zero-or-more `CompositeElement` objects.
     """
 
-    def __init__(self, elements: Iterable[Element], text: str, opts: ChunkingOptions) -> None:
+    def __init__(
+        self, elements: Iterable[Element], text: str, opts: ChunkingOptions, prefix_len: int = 0
+    ) -> None:
         self._elements = list(elements)
         self._text = text
         self._opts = opts
+        self._prefix_len = prefix_len
         self._omit_orig_elements = False
 
     @classmethod
     def iter_chunks(
-        cls, elements: Iterable[Element], text: str, opts: ChunkingOptions
+        cls, elements: Iterable[Element], text: str, opts: ChunkingOptions, prefix_len: int = 0
     ) -> Iterator[CompositeElement]:
         """Form zero or more chunks from `elements`.
 
         One `CompositeElement` is produced when all `elements` will fit. Otherwise there is a
         single `Text`-subtype element and chunks are formed by splitting.
         """
-        return cls(elements, text, opts)._iter_chunks()
+        return cls(elements, text, opts, prefix_len)._iter_chunks()
 
     def _iter_chunks(self) -> Iterator[CompositeElement]:
         """Form zero or more chunks from `elements`."""
@@ -954,7 +965,16 @@ class _Chunker:
         split = self._opts.split
 
         # -- emit first chunk --
-        s, remainder = split(self._text)
+        if self._prefix_len and not self._opts.use_token_counting:
+            s, remainder = split(self._text, self._prefix_len)
+            # A retry without the synthetic prefix can expose a whitespace-only split.
+            # Keep first-chunk metadata for the first fragment actually emitted.
+            while not s and remainder:
+                s, remainder = split(remainder)
+            if not s:
+                return
+        else:
+            s, remainder = split(self._text)
         # -- each chunk split from a very large element would repeat it in `.orig_elements` --
         if remainder and self._opts.include_orig_elements and len(self._elements) == 1:
             size = _payload_size(self._elements[0])
@@ -1250,9 +1270,14 @@ class _TableChunker:
         def _iter_text_splits() -> Iterator[tuple[str, None]]:
             text_remainder = self._text_with_overlap
             split = self._opts.split
+            prefix_len = len(self._overlap_prefix) + 1 if self._overlap_prefix else 0
             while text_remainder:
                 # -- split off the next chunk-worth of characters into a TableChunk --
-                chunk_text, text_remainder = split(text_remainder)
+                if prefix_len and not self._opts.use_token_counting:
+                    chunk_text, text_remainder = split(text_remainder, prefix_len)
+                else:
+                    chunk_text, text_remainder = split(text_remainder)
+                prefix_len = 0
                 yield chunk_text, None
 
         yield from self._make_table_chunks(_iter_text_splits())
@@ -2844,7 +2869,7 @@ class _TextSplitter:
     def __init__(self, opts: ChunkingOptions):
         self._opts = opts
 
-    def __call__(self, s: str) -> tuple[str, str]:
+    def __call__(self, s: str, prefix_len: int = 0) -> tuple[str, str]:
         """Return pair of strings split from `s` on the best match of configured patterns.
 
         The first string is the split, the second is the remainder of the string. The split string
@@ -2877,6 +2902,8 @@ class _TextSplitter:
             if (
                 # -- no available split with this separator --
                 not fragment
+                # -- the first split must include text beyond a carried prefix --
+                or (prefix_len and len(fragment) <= prefix_len)
                 # -- split did not progress, consuming part of the string --
                 or len(remainder) >= len(s)
             ):
@@ -2886,6 +2913,10 @@ class _TextSplitter:
         # -- the terminal "" pattern is not actually executed via regex since its implementation is
         # -- trivial and provides a hard back-stop here in this method. No separator is used between
         # -- tail and remainder on arb-char split.
+        # The prefix and separator are synthetic. Drop them when they leave no room for source
+        # text; otherwise a hard split can emit only the carried overlap.
+        if prefix_len and len(s[:maxlen].rstrip()) <= prefix_len:
+            return self(s[prefix_len:])
         return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
 
     def _fits_token_budget(self, s: str) -> bool:

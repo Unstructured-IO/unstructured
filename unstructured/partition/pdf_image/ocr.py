@@ -54,6 +54,7 @@ def process_data_with_ocr(
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
     progress_callback: Optional[ProgressCallback] = None,
     show_progress: bool = False,
+    image_paths: Optional[List[str]] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given data and supplement the output DocumentLayout
@@ -79,6 +80,9 @@ def process_data_with_ocr(
 
     - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to
       env_config.PDF_RENDER_DPI's value.
+
+    - image_paths (List[str], optional): Page images already rendered from the PDF at
+      `pdf_image_dpi`. When given, the PDF is not rendered again.
 
     - ocr_layout_dumper (OCRLayoutDumper, optional): The OCR layout dumper to save the OCR layout.
 
@@ -111,6 +115,7 @@ def process_data_with_ocr(
             table_ocr_agent=table_ocr_agent,
             progress_callback=progress_callback,
             show_progress=show_progress,
+            image_paths=image_paths,
         )
 
     return merged_layouts
@@ -132,6 +137,7 @@ def process_file_with_ocr(
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
     progress_callback: Optional[ProgressCallback] = None,
     show_progress: bool = False,
+    image_paths: Optional[List[str]] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
@@ -165,6 +171,8 @@ def process_file_with_ocr(
 
     - show_progress (bool, optional): If True, draw a tqdm progress bar while pages are OCR'd.
       Defaults to False.
+    - image_paths (List[str], optional): Page images already rendered from the PDF at
+      `pdf_image_dpi`. When given, the PDF is not rendered again.
 
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
@@ -203,14 +211,15 @@ def process_file_with_ocr(
                 return DocumentLayout.from_pages(merged_page_layouts)
         else:
             with tempfile.TemporaryDirectory() as temp_dir:
-                _image_paths = convert_pdf_to_image(
-                    filename,
-                    dpi=pdf_image_dpi,
-                    output_folder=temp_dir,
-                    path_only=True,
-                    password=password,
-                )
-                image_paths = cast(List[str], _image_paths)
+                if image_paths is None:
+                    _image_paths = convert_pdf_to_image(
+                        filename,
+                        dpi=pdf_image_dpi,
+                        output_folder=temp_dir,
+                        path_only=True,
+                        password=password,
+                    )
+                    image_paths = cast(List[str], _image_paths)
 
                 with report_page_progress(
                     STAGE_OCR, len(image_paths), progress_callback, show_progress
