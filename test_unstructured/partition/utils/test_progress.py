@@ -86,3 +86,23 @@ def test_no_bar_without_show_progress():
 def test_module_exports_stage_names():
     assert progress.STAGE_TEXT == "text"
     assert progress.STAGE_OCR == "ocr"
+
+
+def test_failed_callback_is_disabled_while_bar_continues():
+    callback = mock.Mock(side_effect=RuntimeError("full"))
+    bar = mock.MagicMock()
+    with mock.patch("tqdm.auto.tqdm", return_value=bar):
+        with report_page_progress(STAGE_TEXT, 3, callback, True) as reporter:
+            for _ in range(3):
+                reporter.page_done()
+    callback.assert_called_once()
+    assert bar.update.call_count == 3
+    bar.close.assert_called_once()
+
+
+def test_failed_bar_setup_does_not_prevent_callback():
+    callback = mock.Mock()
+    with mock.patch("tqdm.auto.tqdm", side_effect=RuntimeError("no terminal")):
+        with report_page_progress(STAGE_TEXT, 1, callback, True) as reporter:
+            reporter.page_done()
+    callback.assert_called_once()

@@ -14,9 +14,12 @@ passes for one document, so a callback may see the page count restart with a new
 
 from __future__ import annotations
 
+import logging
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Callable, Iterator, Optional
+
+logger = logging.getLogger(__name__)
 
 STAGE_TEXT = "text"
 STAGE_OCR = "ocr"
@@ -46,7 +49,10 @@ ProgressCallback = Callable[[PartitionProgress], None]
 
 
 class PageProgressReporter:
-    """Reports page completions of one stage to a callback and/or a tqdm bar."""
+    """Reports page completions; failed sinks are logged and disabled for this stage.
+
+    Reporting errors never discard extracted content or trigger extraction fallbacks.
+    """
 
     def __init__(
         self,
@@ -63,25 +69,41 @@ class PageProgressReporter:
         if show_progress:
             from tqdm.auto import tqdm
 
-            self._bar = tqdm(total=total_pages, desc=f"partition {stage}", unit="page", leave=False)
+            try:
+                self._bar = tqdm(
+                    total=total_pages, desc=f"partition {stage}", unit="page", leave=False
+                )
+            except Exception:
+                logger.warning("Disabling failed partition progress bar", exc_info=True)
 
     def page_done(self) -> None:
         """Record that one more page of this stage has finished."""
         self.pages_done += 1
         if self._bar is not None:
-            self._bar.update(1)
+            try:
+                self._bar.update(1)
+            except Exception:
+                logger.warning("Disabling failed partition progress bar", exc_info=True)
+                self.close()
         if self._progress_callback is not None:
-            self._progress_callback(
-                PartitionProgress(
-                    stage=self.stage, pages_done=self.pages_done, total_pages=self.total_pages
+            try:
+                self._progress_callback(
+                    PartitionProgress(
+                        stage=self.stage, pages_done=self.pages_done, total_pages=self.total_pages
+                    )
                 )
-            )
+            except Exception:
+                self._progress_callback = None
+                logger.warning("Disabling failed partition progress callback", exc_info=True)
 
     def close(self) -> None:
         """Release the progress bar, if one was drawn."""
         if self._bar is not None:
-            self._bar.close()
-            self._bar = None
+            bar, self._bar = self._bar, None
+            try:
+                bar.close()
+            except Exception:
+                logger.warning("Partition progress bar cleanup failed", exc_info=True)
 
 
 def progress_requested(progress_callback: Optional[ProgressCallback], show_progress: bool) -> bool:

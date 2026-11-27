@@ -20,7 +20,7 @@ import pytest
 from pdf2image.exceptions import PDFPageCountError
 from pdfminer.pdfdocument import PDFPasswordIncorrect
 from PIL import Image
-from pypdf import PdfWriter
+from pypdf import PdfReader, PdfWriter
 from pypdf.errors import LimitReachedError
 from pypdf.generic import (
     ArrayObject,
@@ -2921,3 +2921,60 @@ def test_partition_pdf_show_progress_draws_a_bar_per_stage():
     assert tqdm_cls.call_args.kwargs["total"] == page_count
     assert bar.update.call_count == page_count
     bar.close.assert_called_once_with()
+
+
+@pytest.mark.parametrize("strategy", [PartitionStrategy.FAST, PartitionStrategy.AUTO])
+@pytest.mark.parametrize("failure_page", [2, 3])
+def test_progress_callback_failure_preserves_all_extracted_text(strategy, failure_page, tmp_path):
+    source = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    filename = tmp_path / "three-pages.pdf"
+    writer = PdfWriter()
+    writer.append(source)
+    writer.add_page(PdfReader(source).pages[0])
+    writer.write(filename)
+    expected = pdf.partition_pdf(filename=filename, strategy=strategy)
+    seen = []
+
+    def callback(event):
+        seen.append(event.pages_done)
+        if event.pages_done == failure_page:
+            raise RuntimeError("reporting sink full")
+
+    actual = pdf.partition_pdf(filename=filename, strategy=strategy, progress_callback=callback)
+    assert [element.text for element in actual] == [element.text for element in expected]
+    assert len(seen) == failure_page
+
+
+@pytest.mark.parametrize("operation", ["update", "close"])
+@pytest.mark.parametrize("strategy", [PartitionStrategy.FAST, PartitionStrategy.AUTO])
+def test_progress_bar_failure_preserves_all_extracted_text(operation, strategy):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    expected = pdf.partition_pdf(filename=filename, strategy=strategy)
+    bar = mock.MagicMock()
+    getattr(bar, operation).side_effect = RuntimeError("reporting sink full")
+    with mock.patch("tqdm.auto.tqdm", return_value=bar):
+        actual = pdf.partition_pdf(filename=filename, strategy=strategy, show_progress=True)
+    assert [element.text for element in actual] == [element.text for element in expected]
+
+
+@pytest.mark.parametrize("failure_page", [2, 3])
+def test_ocr_progress_failure_does_not_abort_remaining_pages(failure_page):
+    from unstructured.partition.pdf_image import pdf_image_utils
+
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    pages = [Image.new("RGB", (10, 10)) for _ in range(3)]
+
+    def callback(event):
+        if event.pages_done == failure_page:
+            raise RuntimeError("reporting sink full")
+
+    with (
+        mock.patch.object(pdf_image_utils, "convert_pdf_to_images", return_value=iter(pages)),
+        mock.patch.object(
+            pdf, "_partition_pdf_or_image_with_ocr_from_image", return_value=[]
+        ) as process,
+    ):
+        pdf.partition_pdf(
+            filename=filename, strategy=PartitionStrategy.OCR_ONLY, progress_callback=callback
+        )
+    assert process.call_count == 3

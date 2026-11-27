@@ -269,9 +269,11 @@ def partition_pdf(
         its own progress indicator for a long document. The `stage` is "text" while the text
         layer is read and "ocr" while rendered pages are run through OCR; `pages_done` counts
         from 1 within the stage and `total_pages` is the page count when it is known. Off by
-        default.
+        default. Callback failures are logged and disable that callback for the stage;
+        extraction continues.
     show_progress
         If True, a `tqdm` progress bar is drawn on stderr for each stage. Off by default.
+        Progress-bar failures are logged and do not interrupt extraction.
     """
 
     exactly_one(filename=filename, file=file)
