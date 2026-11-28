@@ -250,9 +250,9 @@ def supplement_page_layout_with_ocr(
         # individual block mode still keeps using the list data structure for elements instead of
         # the vectorized page_layout.elements_array data structure
         for i, text in enumerate(page_layout.elements_array.texts):
-            # The full-page path replaces invalid extracted text (for example a non-empty
-            # "(cid:42)" run); do the same here instead of keeping it without OCR.
-            if text and valid_text(text):
+            # Block-only agents recover invalid text here because they cannot use the
+            # full-page merge. Spatial agents historically only fill empty blocks in this mode.
+            if text and (_ocr_agent.page_layout_supported or valid_text(text)):
                 continue
             padding = env_config.IMAGE_CROP_PAD
             cropped_image = image.crop(

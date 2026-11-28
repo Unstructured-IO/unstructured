@@ -138,6 +138,14 @@ class OCRAgentMiniCPM(OCRAgent):
 
     @staticmethod
     def _encode_image(image: PILImage.Image) -> str:
+        if image.mode == "I":
+            # PNG stores integer grayscale at up to 16 bits.
+            image = image.convert("I;16")
+        elif image.mode not in {"1", "L", "LA", "P", "I;16", "I;16B", "RGB", "RGBA"}:
+            if image.mode == "La":
+                # Pillow needs straight alpha before converting premultiplied grayscale to RGB.
+                image = image.convert("LA")
+            image = image.convert("RGB")
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
             encoded = base64.b64encode(buffer.getvalue()).decode("ascii")

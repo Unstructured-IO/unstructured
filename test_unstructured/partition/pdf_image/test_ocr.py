@@ -75,6 +75,21 @@ def test_supplement_page_layout_with_ocr_invalid_ocr():
         )
 
 
+def test_tesseract_individual_blocks_only_recognizes_empty_text():
+    image = Image.new("RGB", (40, 20))
+    page = PageLayout(number=1, image=image)
+    page.elements_array = LayoutElements(
+        element_coords=np.array([[0, 0, 20, 20], [20, 0, 40, 20]]),
+        texts=np.array(["(cid:42)", ""], dtype=object),
+    )
+
+    with patch.object(OCRAgentTesseract, "get_text_from_image", return_value="word") as recognize:
+        ocr.supplement_page_layout_with_ocr(page, image, ocr_mode="individual_blocks")
+
+    recognize.assert_called_once()
+    assert page.elements_array.texts.tolist() == ["(cid:42)", "word"]
+
+
 def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     monkeypatch.setattr(
         OCRAgentTesseract,

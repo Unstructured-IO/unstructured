@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import base64
+from io import BytesIO
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -57,6 +59,44 @@ def test_get_text_from_image_sends_openai_request(agent):
     assert content[0] == {"type": "text", "text": "Text Recognition:"}
     assert content[1]["type"] == "image_url"
     assert content[1]["image_url"]["url"].startswith("data:image/png;base64,")
+
+
+@pytest.mark.parametrize(("mode", "png_mode"), [("CMYK", "RGB"), ("RGBA", "RGBA")])
+def test_encode_image_preserves_source_pixels(mode, png_mode):
+    color = (30, 60, 90, 120)
+    image = Image.new(mode, (1, 1), color)
+
+    url = OCRAgentMiniCPM._encode_image(image)
+
+    assert image.mode == mode
+    assert image.getpixel((0, 0)) == color
+    with Image.open(BytesIO(base64.b64decode(url.split(",", 1)[1]))) as png:
+        assert png.mode == png_mode
+        assert png.getpixel((0, 0)) == image.convert(png_mode).getpixel((0, 0))
+
+
+def test_partition_image_ocr_only_sends_cmyk_jpeg_as_rgb_png(tmp_path, monkeypatch, request):
+    pytest.importorskip("unstructured_inference")
+    pytest.importorskip("unstructured_pytesseract")
+    from unstructured.partition.image import partition_image
+    from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+
+    monkeypatch.setenv("OCR_AGENT", OCR_AGENT_MINICPM)
+    monkeypatch.setenv("MINICPM_OCR_BASE_URL", "http://localhost:8000/v1")
+    OCRAgent.get_instance.cache_clear()
+    request.addfinalizer(OCRAgent.get_instance.cache_clear)
+    jpeg = tmp_path / "cmyk.jpg"
+    Image.new("CMYK", (20, 10), (0, 255, 0, 0)).save(jpeg)
+
+    with patch(POST, return_value=_response("ocr@example.com")) as post:
+        elements = partition_image(filename=str(jpeg), strategy="ocr_only")
+
+    assert [element.text for element in elements] == ["ocr@example.com"]
+    post.assert_called_once()
+    content = post.call_args.kwargs["json"]["messages"][0]["content"]
+    url = content[1]["image_url"]["url"]
+    with Image.open(BytesIO(base64.b64decode(url.split(",", 1)[1]))) as png:
+        assert (png.format, png.mode, png.size) == ("PNG", "RGB", (20, 10))
 
 
 def test_custom_prompt_overrides_default(monkeypatch):
