@@ -115,6 +115,31 @@ class ENVConfig:
         return self._get_string("GOOGLEVISION_API_ENDPOINT", "")
 
     @property
+    def MINICPM_OCR_BASE_URL(self) -> str:
+        """OpenAI-compatible base URL for a MiniCPM-OCR service (e.g. http://host:8000/v1)"""
+        return self._get_string("MINICPM_OCR_BASE_URL", "")
+
+    @property
+    def MINICPM_OCR_MODEL(self) -> str:
+        """Model name exposed by the MiniCPM-OCR service"""
+        return self._get_string("MINICPM_OCR_MODEL", "minicpm-ocr")
+
+    @property
+    def MINICPM_OCR_API_KEY(self) -> str:
+        """Optional bearer token for the MiniCPM-OCR service"""
+        return self._get_string("MINICPM_OCR_API_KEY", "")
+
+    @property
+    def MINICPM_OCR_TIMEOUT(self) -> int:
+        """Per-request read timeout for MiniCPM-OCR, in seconds"""
+        return self._get_int("MINICPM_OCR_TIMEOUT", 120)
+
+    @property
+    def MINICPM_OCR_PROMPT(self) -> str:
+        """Recognition prompt sent to MiniCPM-OCR"""
+        return self._get_string("MINICPM_OCR_PROMPT", "Text Recognition:")
+
+    @property
     def OCR_AGENT(self) -> str:
         """OCR Agent to use"""
         return self._get_string("OCR_AGENT", OCR_AGENT_TESSERACT)
